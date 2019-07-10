@@ -21,7 +21,8 @@ import {
 const useStyles = makeStyles(theme => ({
   card: {
     maxWidth: 650,
-    marginTop: 25
+    marginTop: 25,
+    marginLeft: 10
   },
   media: {
     height: 0,

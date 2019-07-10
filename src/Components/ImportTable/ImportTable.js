@@ -160,21 +160,7 @@ const EnhancedTableToolbar = props => {
         )}
       </div>
       <div className={classes.spacer} />
-      <div className={classes.actions}>
-        {numSelected > 0 ? (
-          <Tooltip title="Delete">
-            <IconButton aria-label="Delete">
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        ) : (
-          <Tooltip title="Filter list">
-            <IconButton aria-label="Filter list">
-              <FilterListIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-      </div>
+      <div className={classes.actions} />
     </Toolbar>
   );
 };
@@ -188,7 +174,7 @@ const divStyle = {
 };
 const useStyles = makeStyles(theme => ({
   root: {
-    width: "98%",
+    width: "99%",
     marginTop: theme.spacing(3)
   },
   paper: {

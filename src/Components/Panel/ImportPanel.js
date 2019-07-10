@@ -37,7 +37,7 @@ const rows = [
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: "98%",
+    width: "99%",
     marginTop: theme.spacing(3),
     overflowX: "auto"
   },

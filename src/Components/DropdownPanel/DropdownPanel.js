@@ -10,7 +10,8 @@ class DropdownPanel extends Component {
       minWidth: 275,
       overflow: "visible",
       marginTop: 25,
-      height: 148
+      height: 148,
+      marginLeft: 10
     };
 
     const divStyle = {

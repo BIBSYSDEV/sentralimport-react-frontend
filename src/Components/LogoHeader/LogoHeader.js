@@ -1,15 +1,24 @@
 import React, { Component } from "react";
-import { Navbar, NavbarBrand, Nav } from "reactstrap";
+import { Navbar, Nav } from "react-bootstrap";
+import logo from "../LogoHeader/logo.svg";
 
 class LogoHeader extends Component {
   render() {
     return (
-      <div>
-        <Navbar color="light" light expand="md">
-          <NavbarBrand>CRISTIN Sentralimport</NavbarBrand>
-          <Nav className="ml-auto" navbar />
-        </Navbar>
-      </div>
+      <Navbar collapseOnSelect expand="lg" bg="light" variant="dark">
+        <Nav>
+          <img
+            src={logo}
+            alt="CRISTIN - Current Research Information System in Norway"
+          />
+        </Nav>
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="mr-auto" />
+          <Nav>
+            <Nav.Item>CRISTIN Sentralimport</Nav.Item>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
     );
   }
 }
