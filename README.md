@@ -2,7 +2,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Beskrivelse
 
-Dette er en prototype for sentralimport til CRISTIN.
+Dette er en prototype for en reactapplikasjon for sentralimport til CRISTIN.
 
 For mer info om app: https://app.cristin.no/
 
