@@ -1,5 +1,12 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Beskrivelse
+
+Dette er en prototype for sentralimport til CRISTIN.
+For mer info om app: https://app.cristin.no/
+
+For dokumentasjon av REST-API: https://api.cristin.no/index.html
+
 ## Available Scripts
 
 In the project directory, you can run:
