@@ -7,7 +7,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
-import { red } from "@material-ui/core/colors";
+import { red, orange } from "@material-ui/core/colors";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import {
@@ -40,6 +40,9 @@ const useStyles = makeStyles(theme => ({
   },
   avatar: {
     backgroundColor: red[500]
+  },
+  formControl: {
+    marginRight: "auto"
   }
 }));
 
@@ -102,6 +105,7 @@ export default function FilterForm() {
             className={classes.group}
             value={value}
             onChange={handleChange}
+            color="primary"
           >
             <FormControlLabel
               value=""
@@ -125,7 +129,7 @@ export default function FilterForm() {
           })}
           onClick={handleExpandClick}
           aria-expanded={expanded}
-          aria-label="Show more"
+          aria-label="Alle institusjoner"
         >
           <ExpandMoreIcon />
         </IconButton>

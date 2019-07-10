@@ -9,7 +9,7 @@ class LogoHeader extends Component {
         <Nav>
           <img
             src={logo}
-            alt="CRISTIN - Current Research Information System in Norway"
+            alt="CRISTIN - Current Research Information System In Norway"
           />
         </Nav>
         <Navbar.Collapse id="responsive-navbar-nav">
