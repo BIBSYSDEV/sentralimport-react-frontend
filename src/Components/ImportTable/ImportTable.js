@@ -12,14 +12,10 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-import Checkbox from "@material-ui/core/Checkbox";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import DeleteIcon from "@material-ui/icons/Delete";
-import FilterListIcon from "@material-ui/icons/FilterList";
-import ResultModal from "../ResultModal/ResultModal";
 import data from "../ImportTable/data";
-import { fontWeight, borderLeft } from "@material-ui/system";
+
+import { Modal, ModalManager, Effect } from "react-dynamic-modal";
+import ResultModal from "../ResultModal/ResultModal";
 
 const rows = data;
 
@@ -191,13 +187,15 @@ const useStyles = makeStyles(theme => ({
 
 export default function EnhancedTable() {
   const classes = useStyles();
+  const [modalData, setModalData] = React.useState();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("Dato registrert");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [isOpen, setOpen] = React.useState(false);
+  const [visible, setVisible] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [participants, setParticipants] = React.useState([]);
+  const [selectedPost, setSelectedPost] = React.useState();
 
   function handleRequestSort(event, property) {
     const isDesc = orderBy === property && order === "desc";
@@ -230,7 +228,9 @@ export default function EnhancedTable() {
         selected.slice(selectedIndex + 1)
       );
     }
-    setSelected(newSelected);
+    setVisible(true);
+    setOpen(true);
+    setModalData(data[selectedIndex]);
   }
 
   function handleChangePage(event, newPage) {
@@ -240,10 +240,6 @@ export default function EnhancedTable() {
   function handleChangeRowsPerPage(event) {
     setRowsPerPage(+event.target.value);
     setPage(0);
-  }
-
-  function handleParticipants(index, data) {
-    setParticipants(data[index].participants);
   }
 
   const isSelected = name => selected.indexOf(name) !== -1;
@@ -273,7 +269,9 @@ export default function EnhancedTable() {
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
-                    <TableRow>
+                    <TableRow
+                      onClick={(event, name) => handleClick(event, name)}
+                    >
                       <TableCell padding="checkbox" />
                       <TableCell
                         component="th"
@@ -335,6 +333,8 @@ export default function EnhancedTable() {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
+
+      <ResultModal open={open} data={modalData} />
     </div>
   );
 }

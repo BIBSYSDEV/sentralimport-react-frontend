@@ -1,31 +1,61 @@
 import React from "react";
-import Modal from "react-responsive-modal";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import data from "../ResultModal/data";
 
-export default class ResultModal extends React.Component {
+class ResultModal extends React.Component {
   state = {
-    open: false
+    modal: false,
+    index: this.props.index
   };
 
-  componentDidMount() {
-    this.state = this.props.open;
+  toggle = this.toggle.bind(this);
+
+  toggle() {
+    this.setState(prevState => ({
+      modal: !prevState.modal
+    }));
   }
 
-  onOpenModal = () => {
-    this.setState({ open: true });
-  };
-
-  onCloseModal = () => {
-    this.setState({ open: false });
-  };
+  componentDidRender() {}
 
   render() {
-    const { open } = this.state;
+    let modalData = this.state.modaldata;
+
     return (
-      <div>
-        <Modal open={open} onClose={this.onCloseModal} center>
-          <h2>Simple centered modal</h2>
-        </Modal>
-      </div>
+      <Modal
+        isOpen={this.props.open}
+        toggle={this.toggle}
+        className={this.props.className}
+      >
+        <ModalHeader toggle={this.toggle}>
+          {" "}
+          Detaljert info om prosjekt:{" "}
+          {this.props.data.title.en || this.props.data.title.nb}
+        </ModalHeader>
+        <ModalBody>
+          <div>Språk: {this.props.data.main_language}</div>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={this.toggle}>
+            Do Something
+          </Button>{" "}
+          <Button color="secondary" onClick={this.toggle}>
+            Cancel
+          </Button>
+        </ModalFooter>
+      </Modal>
     );
   }
 }
+
+ResultModal.defaultProps = {
+  data: {
+    title: {
+      nb: "Tittelen",
+      en: "The title"
+    },
+    main_language: "nb"
+  }
+};
+
+export default ResultModal;
