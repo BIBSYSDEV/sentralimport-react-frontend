@@ -27,7 +27,7 @@ class ResultModal extends React.Component {
         toggle={this.toggle}
         className={this.props.className}
       >
-        <ModalHeader toggle={this.toggle}>
+        <ModalHeader toggle={this.props.handleClose}>
           {" "}
           Detaljert info om prosjekt:{" "}
           {this.props.data.title.en || this.props.data.title.nb}
@@ -36,10 +36,10 @@ class ResultModal extends React.Component {
           <div>Språk: {this.props.data.main_language}</div>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={this.toggle}>
+          <Button color="primary" onClick={this.props.handleClose}>
             Do Something
           </Button>{" "}
-          <Button color="secondary" onClick={this.toggle}>
+          <Button color="secondary" onClick={this.props.handleClose}>
             Cancel
           </Button>
         </ModalFooter>

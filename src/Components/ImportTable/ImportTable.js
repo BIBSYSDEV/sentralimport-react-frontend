@@ -203,6 +203,10 @@ export default function EnhancedTable() {
     setOrderBy(property);
   }
 
+  function handleClose() {
+    setOpen(false);
+  }
+
   function handleSelectAllClick(event) {
     if (event.target.checked) {
       const newSelecteds = rows.map(n => n.name);
@@ -334,7 +338,11 @@ export default function EnhancedTable() {
         />
       </Paper>
 
-      <ResultModal open={open} data={modalData} />
+      <ResultModal
+        open={open}
+        data={modalData}
+        handleClose={handleClose.bind(this)}
+      />
     </div>
   );
 }
