@@ -14,8 +14,8 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import data from "../ImportTable/data";
 
-import { Modal, ModalManager, Effect } from "react-dynamic-modal";
 import ResultModal from "../ResultModal/ResultModal";
+import { Checkbox } from "@material-ui/core";
 
 const rows = data;
 
@@ -192,15 +192,18 @@ export default function EnhancedTable() {
   const [orderBy, setOrderBy] = React.useState("Dato registrert");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [visible, setVisible] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [selectedPost, setSelectedPost] = React.useState();
+  const [tableData, setTableData] = React.useState([]);
+
+  function componentDidMount() {
+    setTableData(data);
+  }
 
   function handleRequestSort(event, property) {
-    const isDesc = orderBy === property && order === "desc";
+    const isDesc = orderBy === property.date && order === "desc";
     setOrder(isDesc ? "asc" : "desc");
-    setOrderBy(property);
+    setOrderBy(property.date);
   }
 
   function handleClose() {
@@ -216,25 +219,10 @@ export default function EnhancedTable() {
     setSelected([]);
   }
 
-  function handleClick(event, name) {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setVisible(true);
+  function handleClick(event, labelId) {
+    console.log(labelId);
     setOpen(true);
-    setModalData(data[selectedIndex]);
+    setModalData(rows[labelId.labelId]);
   }
 
   function handleChangePage(event, newPage) {
@@ -270,26 +258,34 @@ export default function EnhancedTable() {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+                  const labelId = index;
 
                   return (
                     <TableRow
-                      onClick={(event, name) => handleClick(event, name)}
+                      hover
+                      id={labelId}
+                      onClick={event => handleClick(event, { labelId })}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row.name}
+                      selected={isItemSelected}
                     >
-                      <TableCell padding="checkbox" />
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
-                      >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={isItemSelected}
+                          inputProps={{ "aria-labelledby": labelId }}
+                        />
+                      </TableCell>
+                      <TableCell component="th" scope="row" padding="none" />
+
+                      <TableCell>
                         {data[index].participants.map(participant => (
                           <div style={divStyle}>
-                            {participant.first_name} {participant.surname},
+                            {participant.surname}, {participant.first_name};
                           </div>
                         ))}
-                        {data[index].title.en}
-                        {data[index].title.nb}
+                        {data[index].title.en || data[index].title.nb}.
                       </TableCell>
                       <TableCell align="right">
                         {data[index].project_categories[0].name.en}
