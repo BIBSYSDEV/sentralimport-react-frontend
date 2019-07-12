@@ -312,5 +312,625 @@
         }
       }
     ]
+  },
+  {
+    "cristin_project_id": "664868",
+    "publishable": true,
+    "published": true,
+    "title": {
+      "en": "Violence in Sámi communities"
+    },
+    "main_language": "en",
+    "start_date": "2019-05-01T00:00:00.000Z",
+    "end_date": "2019-12-31T00:00:00.000Z",
+    "status": "ACTIVE",
+    "created": {
+      "date": "2019-07-10T20:53:58.000Z"
+    },
+    "last_modified": {
+      "date": "2019-07-10T20:56:32.000Z"
+    },
+    "coordinating_institution": {
+      "institution": {
+        "cristin_institution_id": "6077",
+        "institution_name": {
+          "en": "Norwegian Center for Studies on Violence and Traumatic Stress"
+        },
+        "url": "https://api.cristin.no/v2/institutions/6077"
+      },
+      "unit": {
+        "cristin_unit_id": "6077.0.0.0",
+        "unit_name": {
+          "en": "Norwegian Center for Studies on Violence and Traumatic Stress"
+        },
+        "url": "https://api.cristin.no/v2/units/6077.0.0.0"
+      }
+    },
+    "participants": [
+      {
+        "cristin_person_id": "1503",
+        "first_name": "Solveig",
+        "surname": "Bergman",
+        "url": "https://api.cristin.no/v2/persons/1503",
+        "roles": [
+          {
+            "role_code": "PRO_PARTICIPANT",
+            "institution": {
+              "cristin_institution_id": "6077"
+            },
+            "unit": {
+              "cristin_unit_id": "6077.0.0.0",
+              "unit_name": {
+                "en": "Norwegian Center for Studies on Violence and Traumatic Stress"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "cristin_person_id": "8718",
+        "first_name": "Margunn",
+        "surname": "Bjørnholt",
+        "url": "https://api.cristin.no/v2/persons/8718",
+        "roles": [
+          {
+            "role_code": "PRO_MANAGER",
+            "institution": {
+              "cristin_institution_id": "6077"
+            },
+            "unit": {
+              "cristin_unit_id": "6077.0.0.0",
+              "unit_name": {
+                "en": "Norwegian Center for Studies on Violence and Traumatic Stress"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "project_categories": [
+      {
+        "code": "APPLIEDRESEARCH",
+        "name": {
+          "en": "Applied Research"
+        }
+      }
+    ]
+  },
+  {
+    "cristin_project_id": "663560",
+    "publishable": true,
+    "published": true,
+    "title": {
+      "en": "Mongolian Medicine: Different Modes of Multispecies Knowledge Transmission"
+    },
+    "main_language": "en",
+    "start_date": "2019-05-01T00:00:00.000Z",
+    "end_date": "2021-05-31T00:00:00.000Z",
+    "status": "ACTIVE",
+    "created": {
+      "date": "2019-07-02T14:34:18.000Z"
+    },
+    "last_modified": {
+      "date": "2019-07-02T14:51:54.000Z"
+    },
+    "coordinating_institution": {
+      "institution": {
+        "cristin_institution_id": "80500058",
+        "institution_name": {
+          "nb": "The Australian National University"
+        },
+        "url": "https://api.cristin.no/v2/institutions/80500058"
+      },
+      "unit": {
+        "cristin_unit_id": "80500058.0.0.0",
+        "unit_name": {
+          "nb": "The Australian National University"
+        },
+        "url": "https://api.cristin.no/v2/units/80500058.0.0.0"
+      }
+    },
+    "participants": [
+      {
+        "cristin_person_id": "22073",
+        "first_name": "Benedikte Victoria",
+        "surname": "Lindskog",
+        "url": "https://api.cristin.no/v2/persons/22073",
+        "roles": [
+          {
+            "role_code": "PRO_PARTICIPANT",
+            "institution": {
+              "cristin_institution_id": "215"
+            },
+            "unit": {
+              "cristin_unit_id": "215.0.0.0",
+              "unit_name": {
+                "en": "OsloMet - Oslo Metropolitan University"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "cristin_person_id": "141142",
+        "first_name": "Li",
+        "surname": "Narangoa",
+        "url": "https://api.cristin.no/v2/persons/141142",
+        "roles": [
+          {
+            "role_code": "PRO_MANAGER",
+            "institution": {
+              "cristin_institution_id": "80500058"
+            },
+            "unit": {
+              "cristin_unit_id": "80500058.0.0.0",
+              "unit_name": {
+                "nb": "The Australian National University"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "cristin_person_id": "422396",
+        "first_name": "Robert C.",
+        "surname": "Cumming",
+        "url": "https://api.cristin.no/v2/persons/422396",
+        "roles": [
+          {
+            "role_code": "PRO_PARTICIPANT",
+            "institution": {
+              "cristin_institution_id": "80500073"
+            },
+            "unit": {
+              "cristin_unit_id": "80500073.0.0.0",
+              "unit_name": {
+                "nb": "University of Sydney"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "cristin_person_id": "1104821",
+        "first_name": "Natasha",
+        "surname": "Fijn",
+        "url": "https://api.cristin.no/v2/persons/1104821",
+        "roles": [
+          {
+            "role_code": "PRO_PARTICIPANT",
+            "institution": {
+              "cristin_institution_id": "80500058"
+            },
+            "unit": {
+              "cristin_unit_id": "80500058.0.0.0",
+              "unit_name": {
+                "nb": "The Australian National University"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "cristin_person_id": "1104824",
+        "first_name": "Wuliji",
+        "surname": "Ao",
+        "url": "https://api.cristin.no/v2/persons/1104824",
+        "roles": [
+          {
+            "role_code": "PRO_PARTICIPANT",
+            "institution": {
+              "cristin_institution_id": "80500058"
+            },
+            "unit": {
+              "cristin_unit_id": "80500058.0.0.0",
+              "unit_name": {
+                "nb": "The Australian National University"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "project_categories": [
+      {
+        "code": "APPLIEDRESEARCH",
+        "name": {
+          "en": "Applied Research"
+        }
+      }
+    ]
+  },
+  {
+    "cristin_project_id": "663398",
+    "publishable": true,
+    "published": true,
+    "title": {
+      "en": "Strategic Institute Project - Flexible methods and tools for uncertainty analysis of complex systems"
+    },
+    "main_language": "en",
+    "start_date": "2014-06-01T00:00:00.000Z",
+    "end_date": "2017-12-31T00:00:00.000Z",
+    "status": "CONCLUDED",
+    "created": {
+      "date": "2019-07-01T14:32:35.000Z"
+    },
+    "last_modified": {
+      "date": "2019-07-01T15:09:32.000Z"
+    },
+    "coordinating_institution": {
+      "institution": {
+        "cristin_institution_id": "2057",
+        "institution_name": {
+          "en": "NORCE Norwegian Research Centre AS"
+        },
+        "url": "https://api.cristin.no/v2/institutions/2057"
+      },
+      "unit": {
+        "cristin_unit_id": "2057.0.0.0",
+        "unit_name": {
+          "en": "NORCE Norwegian Research Centre AS"
+        },
+        "url": "https://api.cristin.no/v2/units/2057.0.0.0"
+      }
+    },
+    "project_funding_sources": [
+      {
+        "funding_source_code": "CMR",
+        "project_code": "13071",
+        "funding_source_name": {
+          "en": "Christian Michelsen Research"
+        }
+      }
+    ],
+    "total_funding_amount": {
+      "currency_code": "NOK",
+      "amount": 6000000
+    },
+    "participants": [
+      {
+        "cristin_person_id": "49278",
+        "first_name": "Camilla",
+        "surname": "Sætre",
+        "url": "https://api.cristin.no/v2/persons/49278",
+        "roles": [
+          {
+            "role_code": "PRO_PARTICIPANT",
+            "institution": {
+              "cristin_institution_id": "2057"
+            },
+            "unit": {
+              "cristin_unit_id": "2057.93.0.0",
+              "unit_name": {
+                "en": "Christian Michelsen Research"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "cristin_person_id": "51758",
+        "first_name": "Armin",
+        "surname": "Pobitzer",
+        "url": "https://api.cristin.no/v2/persons/51758",
+        "roles": [
+          {
+            "role_code": "PRO_PARTICIPANT",
+            "institution": {
+              "cristin_institution_id": "2057"
+            },
+            "unit": {
+              "cristin_unit_id": "2057.93.0.0",
+              "unit_name": {
+                "en": "Christian Michelsen Research"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "cristin_person_id": "333690",
+        "first_name": "Ranveig Nygaard",
+        "surname": "Bjørk",
+        "url": "https://api.cristin.no/v2/persons/333690",
+        "roles": [
+          {
+            "role_code": "PRO_MANAGER",
+            "institution": {
+              "cristin_institution_id": "2057"
+            },
+            "unit": {
+              "cristin_unit_id": "2057.93.0.0",
+              "unit_name": {
+                "en": "Christian Michelsen Research"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "cristin_person_id": "443292",
+        "first_name": "Ingvar",
+        "surname": "Henne",
+        "url": "https://api.cristin.no/v2/persons/443292",
+        "roles": [
+          {
+            "role_code": "PRO_PARTICIPANT",
+            "institution": {
+              "cristin_institution_id": "2057"
+            },
+            "unit": {
+              "cristin_unit_id": "2057.93.0.0",
+              "unit_name": {
+                "en": "Christian Michelsen Research"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "cristin_person_id": "534225",
+        "first_name": "Astrid Marie",
+        "surname": "Skålvik",
+        "url": "https://api.cristin.no/v2/persons/534225",
+        "roles": [
+          {
+            "role_code": "PRO_PARTICIPANT",
+            "institution": {
+              "cristin_institution_id": "2057"
+            },
+            "unit": {
+              "cristin_unit_id": "2057.93.0.0",
+              "unit_name": {
+                "en": "Christian Michelsen Research"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "cristin_person_id": "989306",
+        "first_name": "Eivind Nag",
+        "surname": "Mosland",
+        "url": "https://api.cristin.no/v2/persons/989306",
+        "roles": [
+          {
+            "role_code": "PRO_PARTICIPANT",
+            "institution": {
+              "cristin_institution_id": "2057"
+            },
+            "unit": {
+              "cristin_unit_id": "2057.93.0.0",
+              "unit_name": {
+                "en": "Christian Michelsen Research"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "academic_summary": {
+      "en": "<p>The project aims at developing new and flexible methods for uncertainty calculation, new methods for identifying and quantifying correlation, new and<br /> improved methods for user interaction and visualization in addition to developing a generic system builder. As proof of concept for the new methods and systems developed, demonstrators such as a dynamic uncertainty calculator based on a generic system builder will be implemented as part of the<br /> project.</p> "
+    },
+    "project_categories": [
+      {
+        "code": "APPLIEDRESEARCH",
+        "name": {
+          "en": "Applied Research"
+        }
+      }
+    ],
+    "academic_disciplines": [
+      {
+        "code": "400",
+        "name": {
+          "en": "Mathematics and natural scienses"
+        }
+      },
+      {
+        "code": "413",
+        "name": {
+          "en": "Applied mathematics"
+        }
+      },
+      {
+        "code": "430",
+        "name": {
+          "en": "Physics"
+        }
+      },
+      {
+        "code": "512",
+        "name": {
+          "en": "Petroleum engineering"
+        }
+      }
+    ],
+    "keywords": [
+      {
+        "code": "2647",
+        "name": {
+          "en": "Measurement techniques"
+        }
+      },
+      {
+        "code": "14850",
+        "name": {
+          "en": "Measurement errors"
+        }
+      },
+      {
+        "code": "54576",
+        "name": {
+          "en": "Uncertainty analysis"
+        }
+      }
+    ],
+    "results": [
+      "https://api.cristin.no/v2/results/1405240",
+      "https://api.cristin.no/v2/results/1443256",
+      "https://api.cristin.no/v2/results/1705272",
+      "https://api.cristin.no/v2/results/1709093"
+    ]
+  },
+  {
+    "cristin_project_id": "662932",
+    "publishable": true,
+    "published": true,
+    "title": {
+      "en": "Digital Food Futures: design perspectives on health, technology and everyday eating"
+    },
+    "main_language": "en",
+    "start_date": "2019-01-06T00:00:00.000Z",
+    "end_date": "2023-01-06T00:00:00.000Z",
+    "status": "ACTIVE",
+    "created": {
+      "date": "2019-06-28T11:52:57.000Z"
+    },
+    "last_modified": {
+      "date": "2019-06-28T12:34:40.000Z"
+    },
+    "coordinating_institution": {
+      "institution": {
+        "cristin_institution_id": "215",
+        "institution_name": {
+          "en": "Oslomet - Oslo Metropolitan University"
+        },
+        "url": "https://api.cristin.no/v2/institutions/215"
+      },
+      "unit": {
+        "cristin_unit_id": "215.0.0.0",
+        "unit_name": {
+          "en": "OsloMet - Oslo Metropolitan University"
+        },
+        "url": "https://api.cristin.no/v2/units/215.0.0.0"
+      }
+    },
+    "participants": [
+      {
+        "cristin_person_id": "18848",
+        "first_name": "Kristin",
+        "surname": "Halvorsen",
+        "url": "https://api.cristin.no/v2/persons/18848",
+        "roles": [
+          {
+            "role_code": "PRO_PARTICIPANT",
+            "institution": {
+              "cristin_institution_id": "215"
+            },
+            "unit": {
+              "cristin_unit_id": "215.0.0.0",
+              "unit_name": {
+                "en": "OsloMet - Oslo Metropolitan University"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "cristin_person_id": "33660",
+        "first_name": "Johannes",
+        "surname": "Daae",
+        "url": "https://api.cristin.no/v2/persons/33660",
+        "roles": [
+          {
+            "role_code": "PRO_PARTICIPANT",
+            "institution": {
+              "cristin_institution_id": "215"
+            },
+            "unit": {
+              "cristin_unit_id": "215.0.0.0",
+              "unit_name": {
+                "en": "OsloMet - Oslo Metropolitan University"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "cristin_person_id": "325998",
+        "first_name": "Laura",
+        "surname": "Terragni",
+        "url": "https://api.cristin.no/v2/persons/325998",
+        "roles": [
+          {
+            "role_code": "PRO_PARTICIPANT",
+            "institution": {
+              "cristin_institution_id": "215"
+            },
+            "unit": {
+              "cristin_unit_id": "215.0.0.0",
+              "unit_name": {
+                "en": "OsloMet - Oslo Metropolitan University"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "cristin_person_id": "326027",
+        "first_name": "Astrid",
+        "surname": "Skjerven",
+        "url": "https://api.cristin.no/v2/persons/326027",
+        "roles": [
+          {
+            "role_code": "PRO_PARTICIPANT",
+            "institution": {
+              "cristin_institution_id": "215"
+            },
+            "unit": {
+              "cristin_unit_id": "215.0.0.0",
+              "unit_name": {
+                "en": "OsloMet - Oslo Metropolitan University"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "cristin_person_id": "853282",
+        "first_name": "James",
+        "surname": "Lowley",
+        "url": "https://api.cristin.no/v2/persons/853282",
+        "roles": [
+          {
+            "role_code": "PRO_MANAGER",
+            "institution": {
+              "cristin_institution_id": "215"
+            },
+            "unit": {
+              "cristin_unit_id": "215.0.0.0",
+              "unit_name": {
+                "en": "OsloMet - Oslo Metropolitan University"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "project_categories": [
+      {
+        "code": "PHD",
+        "name": {
+          "en": "Ph.D. Project"
+        }
+      }
+    ],
+    "academic_disciplines": [
+      {
+        "code": "640",
+        "name": {
+          "en": "Industrial and product design"
+        }
+      }
+    ],
+    "keywords": [
+      {
+        "code": "41604",
+        "name": {
+          "en": "Design for Sustainability"
+        }
+      }
+    ]
   }
 ]

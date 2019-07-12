@@ -15,7 +15,6 @@ import Paper from "@material-ui/core/Paper";
 import data from "../ImportTable/data";
 
 import ResultModal from "../ResultModal/ResultModal";
-import { Checkbox } from "@material-ui/core";
 
 const rows = data;
 
@@ -194,16 +193,11 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0);
   const [open, setOpen] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [tableData, setTableData] = React.useState([]);
-
-  function componentDidMount() {
-    setTableData(data);
-  }
 
   function handleRequestSort(event, property) {
-    const isDesc = orderBy === property.date && order === "desc";
+    const isDesc = orderBy === property && order === "desc";
     setOrder(isDesc ? "asc" : "desc");
-    setOrderBy(property.date);
+    setOrderBy(property);
   }
 
   function handleClose() {
@@ -219,10 +213,9 @@ export default function EnhancedTable() {
     setSelected([]);
   }
 
-  function handleClick(event, labelId) {
-    console.log(labelId);
+  function handleClick(event, row) {
     setOpen(true);
-    setModalData(rows[labelId.labelId]);
+    setModalData(row.row);
   }
 
   function handleChangePage(event, newPage) {
@@ -264,47 +257,40 @@ export default function EnhancedTable() {
                     <TableRow
                       hover
                       id={labelId}
-                      onClick={event => handleClick(event, { labelId })}
+                      onClick={event => handleClick(event, { row })}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={labelId}
                       selected={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          inputProps={{ "aria-labelledby": labelId }}
-                        />
-                      </TableCell>
                       <TableCell component="th" scope="row" padding="none" />
 
                       <TableCell>
-                        {data[index].participants.map(participant => (
+                        {row.participants.map(participant => (
                           <div style={divStyle}>
                             {participant.surname}, {participant.first_name};
                           </div>
                         ))}
-                        {data[index].title.en || data[index].title.nb}.
+                        {row.title.en || row.title.nb}.
                       </TableCell>
                       <TableCell align="right">
-                        {data[index].project_categories[0].name.en}
+                        {row.project_categories.map(category => (
+                          <div>{category.name.en}</div>
+                        ))}
                       </TableCell>
                       <TableCell align="right">
-                        {
-                          data[index].coordinating_institution.institution
-                            .institution_name.en
-                        }
+                        {row.coordinating_institution.institution
+                          .institution_name.en ||
+                          row.coordinating_institution.institution
+                            .institution_name.nb}
                       </TableCell>
+                      <TableCell align="right">{row.created.date}</TableCell>
                       <TableCell align="right">
-                        {data[index].created.date}
-                      </TableCell>
-                      <TableCell align="right">
-                        {" "}
-                        {
-                          data[index].coordinating_institution.institution
-                            .institution_name.en
-                        }
+                        {row.coordinating_institution.institution
+                          .institution_name.en ||
+                          row.coordinating_institution.institution
+                            .institution_name.nb}
                       </TableCell>
                     </TableRow>
                   );

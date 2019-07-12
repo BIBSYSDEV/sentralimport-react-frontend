@@ -25,7 +25,7 @@ class ResultModal extends React.Component {
         className={this.props.className}
       >
         <ModalHeader toggle={this.props.handleClose}>
-          {this.props.data.title.en || this.props.data.title.nb}
+          Importvalg for resultat
         </ModalHeader>
         <ModalBody>
           <div>
