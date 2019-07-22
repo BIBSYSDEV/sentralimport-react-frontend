@@ -267,7 +267,7 @@ export default function EnhancedTable() {
                       <TableCell component="th" scope="row" padding="none" />
 
                       <TableCell>
-                        {row.participants.map(participant => (
+                        {row.participants.slice(0, 5).map(participant => (
                           <div style={divStyle}>
                             {participant.surname}, {participant.first_name};
                           </div>

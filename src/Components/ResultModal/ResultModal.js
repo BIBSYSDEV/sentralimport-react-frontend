@@ -15,8 +15,6 @@ class ResultModal extends React.Component {
     }));
   }
 
-  componentDidRender() {}
-
   render() {
     return (
       <Modal
@@ -29,16 +27,18 @@ class ResultModal extends React.Component {
         </ModalHeader>
         <ModalBody>
           <div>
+            Publikasjon:
             {this.props.data.participants.map(participant => (
               <div>
                 {participant.surname}, {participant.first_name};
               </div>
             ))}
+            {this.props.data.title.en || this.props.data.title.nb}
           </div>
         </ModalBody>
         <ModalFooter>
           <Button color="secondary" onClick={this.props.handleClose}>
-            Cancel
+            Lukk
           </Button>
         </ModalFooter>
       </Modal>

@@ -9,13 +9,15 @@ import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import { red, orange } from "@material-ui/core/colors";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import InstitutionSelect from "../InstitutionSelect/InstitutionSelect";
 
 import {
   FormControl,
   FormLabel,
   RadioGroup,
   Radio,
-  FormControlLabel
+  FormControlLabel,
+  Checkbox
 } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
@@ -51,6 +53,7 @@ export default function FilterForm() {
   const [expanded, setExpanded] = React.useState(false);
   const [status, setStatus] = React.useState("Ikke importert");
   const [value, setValue] = React.useState("");
+  const [isDisabled, setDisabled] = React.useState(false);
 
   function handleChange(event) {
     setValue(event.target.value);
@@ -64,10 +67,25 @@ export default function FilterForm() {
     setStatus(event.target.value);
   }
 
+  function handleCheck() {
+    console.log(isDisabled);
+    if (isDisabled === false) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  }
+
   return (
     <Card className={classes.card}>
       <CardHeader title="Filtrering" />
       <CardContent>
+        <FormControlLabel
+          control={<Checkbox onClick={handleCheck} />}
+          label="Sampublikasjoner"
+        />
+        <InstitutionSelect disabled={!isDisabled} />
+        <p />
         <FormControl component="fieldset" className={classes.formControl}>
           <FormLabel component="legend">Importstatus</FormLabel>
           <RadioGroup
@@ -111,14 +129,26 @@ export default function FilterForm() {
               value=""
               control={<Radio />}
               label="Ingen filtrering"
+              disabled={isDisabled}
             />
-            <FormControlLabel value="UIO" control={<Radio />} label="UIO" />
+            <FormControlLabel
+              value="UIO"
+              control={<Radio />}
+              label="UIO"
+              disabled={isDisabled}
+            />
             <FormControlLabel
               value="OsloMet"
               control={<Radio />}
               label="OsloMet"
+              disabled={isDisabled}
             />
-            <FormControlLabel value="UIB" control={<Radio />} label="UIB" />
+            <FormControlLabel
+              value="UIB"
+              control={<Radio />}
+              label="UIB"
+              disabled={isDisabled}
+            />
           </RadioGroup>
         </FormControl>
       </CardContent>
@@ -145,9 +175,24 @@ export default function FilterForm() {
               value={value}
               onChange={handleChange}
             >
-              <FormControlLabel value="UIS" control={<Radio />} label="UIS" />
-              <FormControlLabel value="NTNU" control={<Radio />} label="NTNU" />
-              <FormControlLabel value="UOS" control={<Radio />} label="UOS" />
+              <FormControlLabel
+                value="UIS"
+                control={<Radio />}
+                label="UIS"
+                disabled={isDisabled}
+              />
+              <FormControlLabel
+                value="NTNU"
+                control={<Radio />}
+                label="NTNU"
+                disabled={isDisabled}
+              />
+              <FormControlLabel
+                value="UOS"
+                control={<Radio />}
+                label="UOS"
+                disabled={isDisabled}
+              />
             </RadioGroup>
           </FormControl>
         </CardContent>
