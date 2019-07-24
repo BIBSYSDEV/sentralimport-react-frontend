@@ -78,7 +78,7 @@ export default function FilterForm() {
 
   return (
     <Card className={classes.card}>
-      <CardHeader title="Filtrering" />
+      <CardHeader title="Institusjoner" />
       <CardContent>
         <FormControlLabel
           control={<Checkbox onClick={handleCheck} />}
