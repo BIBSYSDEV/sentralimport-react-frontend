@@ -7,7 +7,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
-import { red, orange } from "@material-ui/core/colors";
+import { red } from "@material-ui/core/colors";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import InstitutionSelect from "../InstitutionSelect/InstitutionSelect";
 
@@ -52,7 +52,7 @@ export default function FilterForm() {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [status, setStatus] = React.useState("Ikke importert");
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState("Ingen filtrering");
   const [isDisabled, setDisabled] = React.useState(false);
 
   function handleChange(event) {
@@ -68,14 +68,8 @@ export default function FilterForm() {
   }
 
   function handleCheck() {
-    console.log(isDisabled);
-    if (isDisabled === false) {
-      setDisabled(true);
-    } else {
-      setDisabled(false);
-    }
+    setDisabled(!isDisabled);
   }
-
   return (
     <Card className={classes.card}>
       <CardHeader title="Institusjoner" />
@@ -126,7 +120,7 @@ export default function FilterForm() {
             color="primary"
           >
             <FormControlLabel
-              value=""
+              value="Ingen filtrering"
               control={<Radio />}
               label="Ingen filtrering"
               disabled={isDisabled}

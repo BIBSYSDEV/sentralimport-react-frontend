@@ -6,8 +6,7 @@ import {
   ListGroupItemHeading,
   ListGroupItemText
 } from "reactstrap";
-import { fontWeight } from "@material-ui/system";
-import { RadioGroup, Radio } from "@material-ui/core";
+import { Radio } from "@material-ui/core";
 
 export default function ResultModal(props) {
   const [selected, setSelected] = React.useState("0");

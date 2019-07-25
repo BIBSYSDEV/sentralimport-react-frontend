@@ -7,7 +7,7 @@ import Grid from "@material-ui/core/Grid/Grid";
 import FilterForm from "./Components/FilterForm/FilterForm";
 import DropdownPanel from "./Components/DropdownPanel/DropdownPanel";
 
-function App() {
+export default function App() {
   return (
     <div className="App">
       <Grid container spacing={3}>
@@ -34,5 +34,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
