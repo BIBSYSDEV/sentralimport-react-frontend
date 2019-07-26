@@ -54,6 +54,7 @@ export default function FilterForm() {
   const [status, setStatus] = React.useState("Ikke importert");
   const [value, setValue] = React.useState("Ingen filtrering");
   const [isDisabled, setDisabled] = React.useState(false);
+  const [selected, setSelected] = React.useState([]);
 
   function handleChange(event) {
     setValue(event.target.value);
@@ -70,6 +71,11 @@ export default function FilterForm() {
   function handleCheck() {
     setDisabled(!isDisabled);
   }
+
+  function handleSelect(event) {
+    let value = Array.from(event.target.options, option => option.value);
+    setSelected({ values: value });
+  }
   return (
     <Card className={classes.card}>
       <CardHeader title="Institusjoner" />
@@ -78,7 +84,7 @@ export default function FilterForm() {
           control={<Checkbox onClick={handleCheck} />}
           label="Sampublikasjoner"
         />
-        <InstitutionSelect disabled={!isDisabled} />
+        <InstitutionSelect disabled={!isDisabled} onChange={handleSelect} />
         <p />
         <FormControl component="fieldset" className={classes.formControl}>
           <FormLabel component="legend">Importstatus</FormLabel>

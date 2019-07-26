@@ -19,6 +19,7 @@ export default function InstitutionSelect(props) {
       className="basic-multi-select"
       classNamePrefix="select"
       isDisabled={props.disabled}
+      onChange={props.onChange}
     />
   );
 }

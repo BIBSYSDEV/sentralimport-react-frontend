@@ -7,12 +7,25 @@ import {
   ListGroupItemText
 } from "reactstrap";
 import { Radio } from "@material-ui/core";
+import InnerModal from "../InnerModal/InnerModal";
 
 export default function ResultModal(props) {
   const [selected, setSelected] = React.useState("0");
+  const [innerModal, setInnerModal] = React.useState(false);
 
   function handleChange(event) {
     setSelected(event.target.value);
+  }
+
+  function handleSubmit() {
+    if (selected === "1") {
+      setInnerModal(true);
+    } else if (selected === 0) {
+    }
+  }
+
+  function handleClose() {
+    setInnerModal(false);
   }
 
   return (
@@ -57,10 +70,15 @@ export default function ResultModal(props) {
         </ListGroup>
       </ModalBody>
       <ModalFooter>
-        <Button color="secondary" onClick={props.handleClose}>
-          Lukk
+        <Button color="primary" onClick={handleSubmit}>
+          Submit
         </Button>
       </ModalFooter>
+      <InnerModal
+        open={innerModal}
+        toggle={handleClose.bind(this)}
+        data={props.data}
+      />
     </Modal>
   );
 }
