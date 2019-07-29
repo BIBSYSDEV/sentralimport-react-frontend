@@ -21,6 +21,7 @@ export default function ResultModal(props) {
     if (selected === "1") {
       setInnerModal(true);
     } else if (selected === 0) {
+      this.props.handleClose();
     }
   }
 

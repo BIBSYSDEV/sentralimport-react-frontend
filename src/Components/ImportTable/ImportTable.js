@@ -189,7 +189,6 @@ export default function EnhancedTable() {
   const [modalData, setModalData] = React.useState();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("Dato registrert");
-  const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [open, setOpen] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -202,15 +201,6 @@ export default function EnhancedTable() {
 
   function handleClose() {
     setOpen(false);
-  }
-
-  function handleSelectAllClick(event) {
-    if (event.target.checked) {
-      const newSelecteds = rows.map(n => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
   }
 
   function handleClick(event, row) {
@@ -227,22 +217,18 @@ export default function EnhancedTable() {
     setPage(0);
   }
 
-  const isSelected = name => selected.indexOf(name) !== -1;
-
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar />
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead
-              numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
             />
@@ -250,7 +236,6 @@ export default function EnhancedTable() {
               {stableSort(rows, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
                   const labelId = index;
 
                   return (
@@ -259,10 +244,8 @@ export default function EnhancedTable() {
                       id={labelId}
                       onClick={event => handleClick(event, { row })}
                       role="checkbox"
-                      aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={labelId}
-                      selected={isItemSelected}
                     >
                       <TableCell component="th" scope="row" padding="none" />
 
@@ -285,7 +268,9 @@ export default function EnhancedTable() {
                           row.coordinating_institution.institution
                             .institution_name.nb}
                       </TableCell>
-                      <TableCell align="right">{row.created.date}</TableCell>
+                      <TableCell align="right">
+                        {row.created.date.substring(0, 10)}
+                      </TableCell>
                       <TableCell align="right">
                         {row.coordinating_institution.institution
                           .institution_name.en ||

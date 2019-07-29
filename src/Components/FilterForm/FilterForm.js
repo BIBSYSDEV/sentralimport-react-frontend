@@ -72,10 +72,6 @@ export default function FilterForm() {
     setDisabled(!isDisabled);
   }
 
-  function handleSelect(event) {
-    let value = Array.from(event.target.options, option => option.value);
-    setSelected({ values: value });
-  }
   return (
     <Card className={classes.card}>
       <CardHeader title="Institusjoner" />
@@ -84,7 +80,7 @@ export default function FilterForm() {
           control={<Checkbox onClick={handleCheck} />}
           label="Sampublikasjoner"
         />
-        <InstitutionSelect disabled={!isDisabled} onChange={handleSelect} />
+        <InstitutionSelect disabled={!isDisabled} />
         <p />
         <FormControl component="fieldset" className={classes.formControl}>
           <FormLabel component="legend">Importstatus</FormLabel>
