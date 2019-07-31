@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
-import { TextField, FormGroup } from "@material-ui/core";
+import { TextField, FormGroup, Button } from "@material-ui/core";
 import { Form } from "reactstrap";
 
 export default function InnerModal(props) {
@@ -53,6 +53,11 @@ export default function InnerModal(props) {
               onChange={handleChangeAarstall}
               margin="normal"
             />
+          </FormGroup>
+          <FormGroup>
+            <Button color="primary" onClick={props.toggle}>
+              Submit
+            </Button>
           </FormGroup>
         </Form>
       </ModalBody>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -6,6 +6,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import axios from "axios";
 
 const StyledTableCell = withStyles(theme => ({
   head: {
@@ -29,11 +30,6 @@ function createData(kilde, antall, importert, ikkeImportert, ikkeAktuelle) {
   return { kilde, antall, importert, ikkeImportert, ikkeAktuelle };
 }
 
-const rows = [
-  createData("SCOPUS", 200, 100, 100, 30),
-  createData("Wos", 70, 50, 20, 10)
-];
-
 const useStyles = makeStyles(theme => ({
   root: {
     width: "99%",
@@ -47,6 +43,29 @@ const useStyles = makeStyles(theme => ({
 
 export default function CustomizedTables() {
   const classes = useStyles();
+
+  const [data, setData] = React.useState([]);
+
+  useEffect(() => {
+    getNumbers();
+  }, []);
+
+  async function getNumbers() {
+    const numbers = await axios.get(
+      "https://w3utv-jb-cris02/criswsinta/sentralimport/publicationCount/2018"
+    );
+    setData(numbers);
+  }
+
+  const rows = [
+    createData(
+      "SCOPUS",
+      data.totalCount,
+      data.importedCount,
+      data.notImportedCount,
+      data.notRelevantCount
+    )
+  ];
 
   return (
     <div>

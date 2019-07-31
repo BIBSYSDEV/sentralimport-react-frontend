@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import { lighten, makeStyles } from "@material-ui/core/styles";
@@ -13,10 +13,9 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import data from "../ImportTable/data";
+import axios from "axios";
 
 import ResultModal from "../ResultModal/ResultModal";
-
-const rows = data;
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -192,6 +191,32 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0);
   const [open, setOpen] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rows, setRows] = React.useState([]);
+
+  useEffect(() => {
+    getRows();
+  }, []);
+
+  async function getRows() {
+    const temp = await axios.get(
+      "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=2018"
+    );
+    handleRows(temp.data);
+  }
+
+  function handleRows(temp) {
+    setRows(temp);
+  }
+
+  function desc(a, b, orderBy) {
+    if (b[orderBy] < a[orderBy]) {
+      return -1;
+    }
+    if (b[orderBy] > a[orderBy]) {
+      return 1;
+    }
+    return 0;
+  }
 
   function handleRequestSort(event, property) {
     const isDesc = orderBy === property && order === "desc";
@@ -213,12 +238,13 @@ export default function EnhancedTable() {
   }
 
   function handleChangeRowsPerPage(event) {
-    setRowsPerPage(+event.target.value);
+    setRowsPerPage(event.target.value);
     setPage(0);
   }
 
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    rowsPerPage -
+    Math.min(rowsPerPage, rows != null ? rows.length - page * rowsPerPage : 0);
 
   return (
     <div className={classes.root}>
@@ -230,7 +256,7 @@ export default function EnhancedTable() {
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={rows != null ? rows.length : 0}
             />
             <TableBody>
               {stableSort(rows, getSorting(order, orderBy))
@@ -250,32 +276,18 @@ export default function EnhancedTable() {
                       <TableCell component="th" scope="row" padding="none" />
 
                       <TableCell>
-                        {row.participants.slice(0, 5).map(participant => (
-                          <div style={divStyle}>
-                            {participant.surname}, {participant.first_name};
-                          </div>
+                        {row.author.slice(0, 5).map(authors => (
+                          <div style={divStyle}>{authors.authorName};</div>
                         ))}
-                        {row.title.en || row.title.nb}.
+                        {row.title}
                       </TableCell>
                       <TableCell align="right">
-                        {row.project_categories.map(category => (
-                          <div>{category.name.en}</div>
-                        ))}
+                        <div>{row.category}</div>
                       </TableCell>
+                      <TableCell align="right">{row.sourceName}</TableCell>
+                      <TableCell align="right">{row.registered}</TableCell>
                       <TableCell align="right">
-                        {row.coordinating_institution.institution
-                          .institution_name.en ||
-                          row.coordinating_institution.institution
-                            .institution_name.nb}
-                      </TableCell>
-                      <TableCell align="right">
-                        {row.created.date.substring(0, 10)}
-                      </TableCell>
-                      <TableCell align="right">
-                        {row.coordinating_institution.institution
-                          .institution_name.en ||
-                          row.coordinating_institution.institution
-                            .institution_name.nb}
+                        {row.author[0].institution[0]}
                       </TableCell>
                     </TableRow>
                   );

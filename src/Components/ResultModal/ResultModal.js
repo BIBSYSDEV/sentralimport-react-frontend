@@ -6,7 +6,12 @@ import {
   ListGroupItemHeading,
   ListGroupItemText
 } from "reactstrap";
-import { Radio } from "@material-ui/core";
+import {
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormControlLabel
+} from "@material-ui/core";
 import InnerModal from "../InnerModal/InnerModal";
 
 export default function ResultModal(props) {
@@ -56,16 +61,20 @@ export default function ResultModal(props) {
           </ListGroupItem>
           <ListGroupItem>
             <div>
-              <Radio
-                checked={selected === "0"}
-                onChange={handleChange}
-                value="0"
-              />
-              <Radio
-                checked={selected === "1"}
-                onChange={handleChange}
-                value="1"
-              />
+              <FormControl>
+                <RadioGroup onChange={handleChange} row>
+                  <FormControlLabel
+                    value="0"
+                    control={<Radio />}
+                    label="Ikke importer"
+                  />
+                  <FormControlLabel
+                    value="1"
+                    control={<Radio />}
+                    label="Opprett ny cristin-publikasjon basert på importpublikasjon"
+                  />
+                </RadioGroup>
+              </FormControl>
             </div>
           </ListGroupItem>
         </ListGroup>
