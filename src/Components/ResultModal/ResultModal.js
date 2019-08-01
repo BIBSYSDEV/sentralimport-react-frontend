@@ -18,6 +18,10 @@ export default function ResultModal(props) {
   const [selected, setSelected] = React.useState("0");
   const [innerModal, setInnerModal] = React.useState(false);
 
+  const divStyle = {
+    fontWeight: "bold"
+  };
+
   function handleChange(event) {
     setSelected(event.target.value);
   }
@@ -25,8 +29,8 @@ export default function ResultModal(props) {
   function handleSubmit() {
     if (selected === "1") {
       setInnerModal(true);
-    } else if (selected === 0) {
-      this.props.handleClose();
+    } else if (selected === "0") {
+      props.handleClose();
     }
   }
 
@@ -44,12 +48,10 @@ export default function ResultModal(props) {
           <ListGroupItem>
             <ListGroupItemHeading>Importpublikasjon:</ListGroupItemHeading>
             <ListGroupItemText>
-              {props.data.participants.map(participant => (
-                <text>
-                  {participant.surname}, {participant.first_name};{" "}
-                </text>
+              {props.data.author.map(authors => (
+                <text style={divStyle}>{authors.authorName}; </text>
               ))}
-              {props.data.title.en || props.data.title.nb}
+              {props.data.title}
             </ListGroupItemText>
           </ListGroupItem>
           <ListGroupItem>
@@ -62,7 +64,7 @@ export default function ResultModal(props) {
           <ListGroupItem>
             <div>
               <FormControl>
-                <RadioGroup onChange={handleChange} row>
+                <RadioGroup onChange={handleChange} value={selected} row>
                   <FormControlLabel
                     value="0"
                     control={<Radio />}
@@ -95,11 +97,15 @@ export default function ResultModal(props) {
 
 ResultModal.defaultProps = {
   data: {
-    title: {
-      nb: "Tittelen",
-      en: "The title"
-    },
-    participants: []
+    title: "title",
+    author: [
+      {
+        authorName: "default1"
+      },
+      {
+        authorName: "default2"
+      }
+    ]
   },
   isOpen: false
 };

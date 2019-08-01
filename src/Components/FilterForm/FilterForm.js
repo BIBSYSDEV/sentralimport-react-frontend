@@ -54,7 +54,6 @@ export default function FilterForm() {
   const [status, setStatus] = React.useState("Ikke importert");
   const [value, setValue] = React.useState("Ingen filtrering");
   const [isDisabled, setDisabled] = React.useState(false);
-  const [selected, setSelected] = React.useState([]);
 
   function handleChange(event) {
     setValue(event.target.value);
@@ -70,6 +69,8 @@ export default function FilterForm() {
 
   function handleCheck() {
     setDisabled(!isDisabled);
+
+    setValue("Ingen filtrering");
   }
 
   return (

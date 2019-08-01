@@ -50,11 +50,15 @@ export default function CustomizedTables() {
     getNumbers();
   }, []);
 
-  async function getNumbers() {
-    const numbers = await axios.get(
-      "https://w3utv-jb-cris02/criswsinta/sentralimport/publicationCount/2018"
-    );
-    setData(numbers);
+  function getNumbers() {
+    axios
+      .get(
+        "https://w3utv-jb-cris02/criswsinta/sentralimport/publicationCount/2018"
+      )
+      .then(response => {
+        setData(response);
+        console.log(response);
+      });
   }
 
   const rows = [
@@ -88,7 +92,7 @@ export default function CustomizedTables() {
             {rows.map(row => (
               <StyledTableRow key={row.kilde}>
                 <StyledTableCell component="th" scope="row">
-                  {row.kilde}
+                  SCOPUS
                 </StyledTableCell>
                 <StyledTableCell align="right">{row.antall}</StyledTableCell>
                 <StyledTableCell align="right">{row.importert}</StyledTableCell>

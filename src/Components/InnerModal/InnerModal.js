@@ -4,15 +4,25 @@ import { TextField, FormGroup, Button } from "@material-ui/core";
 import { Form } from "reactstrap";
 
 export default function InnerModal(props) {
-  const [tittel, setTittel] = React.useState(
-    props.data.title.en || props.data.title.nb
-  );
+  const kilde = props.data.sourceName;
 
-  const [aarstall, setAarstall] = React.useState(
-    props.data.created.date.substring(0, 4)
-  );
+  const [tittel, setTittel] = React.useState(props.data.title);
 
-  const kilde = "SCOPUS";
+  const [aarstall, setAarstall] = React.useState(props.data.registered);
+
+  const [kategori, setKategori] = React.useState(props.data.category);
+
+  const [lang, setLang] = React.useState(props.data.originalLanguage);
+
+  const [utgivelse, setUtgivelse] = React.useState(
+    "Volum " +
+      props.data.volume +
+      " (" +
+      props.data.pageFrom +
+      "-" +
+      props.data.pageTo +
+      ") "
+  );
 
   function handleChangeTittel(event) {
     setTittel(event.target.value);
@@ -20,6 +30,18 @@ export default function InnerModal(props) {
 
   function handleChangeAarstall(event) {
     setAarstall(event.target.value);
+  }
+
+  function handleChangeKategori(event) {
+    setKategori(event.target.value);
+  }
+
+  function handleChangeLang(event) {
+    setLang(event.target.value);
+  }
+
+  function handleChangeUtgivelse(event) {
+    setUtgivelse(event.target.value);
   }
 
   return (
@@ -49,9 +71,37 @@ export default function InnerModal(props) {
             <TextField
               id="import-aarstall"
               label="Årstall"
-              value={aarstall}
+              value={aarstall.substring(aarstall.length - 4, aarstall.length)}
               onChange={handleChangeAarstall}
               margin="normal"
+            />
+          </FormGroup>
+          <FormGroup>
+            <TextField
+              id="import-kategori"
+              label="Kategori"
+              value={kategori}
+              onChange={handleChangeKategori}
+              margin="normal"
+            />
+          </FormGroup>
+          <FormGroup>
+            <TextField
+              id="import-lang"
+              label="Språk"
+              value={lang}
+              onChange={handleChangeLang}
+              margin="normal"
+            />
+          </FormGroup>
+          <FormGroup>
+            <TextField
+              id="import-utgivelsesdata"
+              label="Utgivelsesdata"
+              value={utgivelse}
+              onChange={handleChangeUtgivelse}
+              margin="normal"
+              disabled
             />
           </FormGroup>
           <FormGroup>
