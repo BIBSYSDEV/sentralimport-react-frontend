@@ -65,6 +65,7 @@ export default function InnerModal(props) {
               value={tittel}
               onChange={handleChangeTittel}
               margin="normal"
+              multiline
             />
           </FormGroup>
           <FormGroup>
