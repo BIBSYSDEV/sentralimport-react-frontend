@@ -10,6 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import { red } from "@material-ui/core/colors";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import InstitutionSelect from "../InstitutionSelect/InstitutionSelect";
+import Icon from "@material-ui/core/Icon";
 
 import {
   FormControl,
@@ -31,11 +32,8 @@ const useStyles = makeStyles(theme => ({
     paddingTop: "54.25%" // 16:9
   },
   expand: {
-    transform: "rotate(0deg)",
     marginLeft: "auto",
-    transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest
-    })
+    transform: "rotate(0deg)"
   },
   expandOpen: {
     transform: "rotate(180deg)"
@@ -75,14 +73,9 @@ export default function FilterForm() {
 
   return (
     <Card className={classes.card}>
-      <CardHeader title="Institusjoner" />
+      <CardHeader title="Importstatus" />
+      <hr />
       <CardContent>
-        <FormControlLabel
-          control={<Checkbox onClick={handleCheck} />}
-          label="Sampublikasjoner"
-        />
-        <InstitutionSelect disabled={!isDisabled} />
-        <p />
         <FormControl component="fieldset" className={classes.formControl}>
           <FormLabel component="legend">Importstatus</FormLabel>
           <RadioGroup
@@ -111,7 +104,16 @@ export default function FilterForm() {
             />
           </RadioGroup>
         </FormControl>
-
+        <hr />
+        <CardHeader title="Institusjoner" />
+        <hr />
+        <p>
+          <FormControlLabel
+            control={<Checkbox onClick={handleCheck} />}
+            label="Sampublikasjoner"
+          />
+          <InstitutionSelect disabled={!isDisabled} />
+        </p>
         <FormControl component="fieldset" className={classes.formControl}>
           <FormLabel component="legend">Institusjoner</FormLabel>
           <RadioGroup
@@ -158,7 +160,9 @@ export default function FilterForm() {
           aria-expanded={expanded}
           aria-label="Alle institusjoner"
         >
-          <ExpandMoreIcon />
+          <Icon className={classes.icon} color="secondary">
+            keyboard_arrow_down
+          </Icon>
         </IconButton>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>

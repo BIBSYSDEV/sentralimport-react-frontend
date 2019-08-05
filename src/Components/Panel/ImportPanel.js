@@ -53,7 +53,7 @@ export default function CustomizedTables() {
   function getNumbers() {
     axios
       .get(
-        "https://w3utv-jb-cris02/criswsinta/sentralimport/publicationCount/2018"
+        "https://w3utv-jb-cris02/criswsinta/sentralimport/publicationCount/2019"
       )
       .then(response => {
         setData(response);

@@ -56,6 +56,7 @@ export default function InnerModal(props) {
               value={kilde}
               margin="normal"
               disabled
+              required
             />
           </FormGroup>
           <FormGroup>
@@ -66,6 +67,7 @@ export default function InnerModal(props) {
               onChange={handleChangeTittel}
               margin="normal"
               multiline
+              required
             />
           </FormGroup>
           <FormGroup>
@@ -75,6 +77,7 @@ export default function InnerModal(props) {
               value={aarstall.substring(aarstall.length - 4, aarstall.length)}
               onChange={handleChangeAarstall}
               margin="normal"
+              required
             />
           </FormGroup>
           <FormGroup>
@@ -84,6 +87,7 @@ export default function InnerModal(props) {
               value={kategori}
               onChange={handleChangeKategori}
               margin="normal"
+              required
             />
           </FormGroup>
           <FormGroup>
@@ -93,6 +97,7 @@ export default function InnerModal(props) {
               value={lang}
               onChange={handleChangeLang}
               margin="normal"
+              required
             />
           </FormGroup>
           <FormGroup>
@@ -103,6 +108,7 @@ export default function InnerModal(props) {
               onChange={handleChangeUtgivelse}
               margin="normal"
               disabled
+              required
             />
           </FormGroup>
           <FormGroup>

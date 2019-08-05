@@ -55,7 +55,9 @@ export default function ResultModal(props) {
             </ListGroupItemText>
           </ListGroupItem>
           <ListGroupItem>
-            <ListGroupItemHeading>Cristinpublikasjoner:</ListGroupItemHeading>
+            <ListGroupItemHeading>
+              Cristinpublikasjoner (Velg korrekt publikasjon fra Cristin):
+            </ListGroupItemHeading>
             <ListGroupItemText>
               Det finnes ingen Cristinpublikasjoner som matcher
               importpublikasjonen
