@@ -112,7 +112,7 @@ export default function InnerModal(props) {
             />
           </FormGroup>
           <FormGroup>
-            <Button color="primary" onClick={props.toggle}>
+            <Button color="green" onClick={props.toggle}>
               Submit
             </Button>
           </FormGroup>

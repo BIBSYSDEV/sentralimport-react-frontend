@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { green } from "@material-ui/core/colors";
 import {
   ListGroup,
   ListGroupItem,
@@ -10,9 +11,11 @@ import {
   Radio,
   RadioGroup,
   FormControl,
-  FormControlLabel
+  FormControlLabel,
+  createMuiTheme
 } from "@material-ui/core";
 import InnerModal from "../InnerModal/InnerModal";
+import { ThemeProvider } from "@material-ui/styles";
 
 export default function ResultModal(props) {
   const [selected, setSelected] = React.useState("0");
@@ -20,6 +23,10 @@ export default function ResultModal(props) {
 
   const divStyle = {
     fontWeight: "bold"
+  };
+
+  const style = {
+    background: "green"
   };
 
   function handleChange(event) {
@@ -84,7 +91,7 @@ export default function ResultModal(props) {
         </ListGroup>
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={handleSubmit}>
+        <Button style={style} onClick={handleSubmit}>
           Submit
         </Button>
       </ModalFooter>
