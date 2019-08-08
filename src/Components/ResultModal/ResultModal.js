@@ -1,6 +1,5 @@
 import React from "react";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import { green } from "@material-ui/core/colors";
 import {
   ListGroup,
   ListGroupItem,
@@ -11,11 +10,9 @@ import {
   Radio,
   RadioGroup,
   FormControl,
-  FormControlLabel,
-  createMuiTheme
+  FormControlLabel
 } from "@material-ui/core";
 import InnerModal from "../InnerModal/InnerModal";
-import { ThemeProvider } from "@material-ui/styles";
 
 export default function ResultModal(props) {
   const [selected, setSelected] = React.useState("0");
@@ -56,7 +53,9 @@ export default function ResultModal(props) {
             <ListGroupItemHeading>Importpublikasjon:</ListGroupItemHeading>
             <ListGroupItemText>
               {props.data.author.map(authors => (
-                <text style={divStyle}>{authors.authorName}; </text>
+                <span style={divStyle} key={authors.authorName}>
+                  {authors.authorName};{" "}
+                </span>
               ))}
               {props.data.title}
             </ListGroupItemText>

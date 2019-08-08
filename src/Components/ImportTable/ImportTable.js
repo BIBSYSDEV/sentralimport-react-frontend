@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import clsx from "clsx";
 import PropTypes from "prop-types";
 import { lighten, makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -9,10 +8,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-import data from "../ImportTable/data";
 import axios from "axios";
 
 import ResultModal from "../ResultModal/ResultModal";
@@ -98,9 +95,7 @@ function EnhancedTableHead(props) {
 }
 
 EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.string.isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired
@@ -134,33 +129,17 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
 
   return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0
-      })}
-    >
-      <div className={classes.title}>
-        {numSelected > 0 ? (
-          <Typography color="inherit" variant="subtitle1">
-            {numSelected} selected
-          </Typography>
-        ) : (
-          <Typography variant="h6" id="tableTitle">
-            Importer
-          </Typography>
-        )}
-      </div>
+    <div className={classes.title}>
+      <Typography variant="h6" id="tableTitle">
+        Importer
+      </Typography>
+
       <div className={classes.spacer} />
       <div className={classes.actions} />
-    </Toolbar>
+    </div>
   );
-};
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired
 };
 
 const divStyle = {
@@ -277,7 +256,9 @@ export default function EnhancedTable() {
 
                       <TableCell>
                         {row.author.slice(0, 5).map(authors => (
-                          <div style={divStyle}>{authors.authorName};</div>
+                          <div style={divStyle} key={authors.authorName}>
+                            {authors.authorName};
+                          </div>
                         ))}
                         {row.title}
                       </TableCell>

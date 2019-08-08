@@ -12,8 +12,8 @@ const institutions = [
 export default function InstitutionSelect(props) {
   return (
     <Select
-      placeholder="Søk på sampublikasjoner"
-      isMulti
+      placeholder="Søk på institusjoner"
+      isMulti={props.isMulti}
       name="institutionSelect"
       options={institutions}
       className="basic-multi-select"
