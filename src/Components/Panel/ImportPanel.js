@@ -7,6 +7,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import axios from "axios";
+import { Context } from "../../Context";
 
 const StyledTableCell = withStyles(theme => ({
   head: {
@@ -43,22 +44,27 @@ const useStyles = makeStyles(theme => ({
 
 export default function CustomizedTables() {
   const classes = useStyles();
-
+  const [prevYear, setPrevYear] = React.useState(0);
   const [data, setData] = React.useState([]);
+  let { state } = React.useContext(Context);
 
   useEffect(() => {
     getNumbers();
-  }, []);
+  }, [state.currentImportYear]);
 
   function getNumbers() {
-    axios
-      .get(
-        "https://w3utv-jb-cris02/criswsinta/sentralimport/publicationCount/2019"
-      )
-      .then(response => {
-        setData(response);
-        console.log(response);
-      });
+    if (state.currentImportYear.value !== prevYear) {
+      axios
+        .get(
+          "https://w3utv-jb-cris02/criswsinta/sentralimport/publicationCount/" +
+            state.currentImportYear.value
+        )
+        .then(response => {
+          setData(response);
+          console.log(response);
+        });
+      setPrevYear(state.currentImportYear.value);
+    }
   }
 
   const rows = [

@@ -50,10 +50,15 @@ export default function FilterForm() {
 
   function handleCheck() {
     setMulti(!multi);
+    dispatch({ type: "setSampublikasjon", payload: !state.isSampublikasjon });
   }
 
   function handleStatusChange(event) {
     dispatch({ type: "setImportStatus", payload: event.target.value });
+  }
+
+  function handleChange(option) {
+    dispatch({ type: "setInstitution", payload: option });
   }
 
   return (
@@ -80,13 +85,6 @@ export default function FilterForm() {
               control={<Radio />}
               label="Importert"
             />
-
-            <FormControlLabel
-              value="Ikke aktuelle"
-              disabled
-              control={<Radio />}
-              label="Ikke aktuelle"
-            />
           </RadioGroup>
         </FormControl>
         <hr />
@@ -97,7 +95,7 @@ export default function FilterForm() {
             control={<Checkbox onClick={handleCheck} />}
             label="Sampublikasjoner"
           />
-          <InstitutionSelect isMulti={multi} />
+          <InstitutionSelect isMulti={false} onChange={handleChange} />
         </div>
       </CardContent>
     </Card>

@@ -11,6 +11,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import axios from "axios";
+import { Context } from "../../Context";
 
 import ResultModal from "../ResultModal/ResultModal";
 
@@ -171,14 +172,31 @@ export default function EnhancedTable() {
   const [open, setOpen] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
+  let { state } = React.useContext(Context);
 
   useEffect(() => {
     getRows();
-  }, []);
+  }, [state.currentImportYear]);
+
+  useEffect(() => {
+    getRows();
+  }, [state.currentImportStatus]);
+
+  useEffect(() => {
+    getRows();
+  }, [state.currentInstitution]);
+
+  useEffect(() => {
+    getRows();
+  }, [state.isSampublikasjon]);
 
   async function getRows() {
     const temp = await axios.get(
-      "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=2018"
+      "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
+        state.currentImportYear.value +
+        "&copublication=" +
+        state.isSampublikasjon +
+        "&per_page=5"
     );
     handleRows(temp.data);
   }
