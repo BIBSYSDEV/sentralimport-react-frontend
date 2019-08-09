@@ -27,10 +27,6 @@ const StyledTableRow = withStyles(theme => ({
   }
 }))(TableRow);
 
-function createData(kilde, antall, importert, ikkeImportert, ikkeAktuelle) {
-  return { kilde, antall, importert, ikkeImportert, ikkeAktuelle };
-}
-
 const useStyles = makeStyles(theme => ({
   root: {
     width: "99%",
@@ -60,22 +56,11 @@ export default function CustomizedTables() {
             state.currentImportYear.value
         )
         .then(response => {
-          setData(response);
-          console.log(response);
+          setData(response.data);
         });
       setPrevYear(state.currentImportYear.value);
     }
   }
-
-  const rows = [
-    createData(
-      "SCOPUS",
-      data.totalCount,
-      data.importedCount,
-      data.notImportedCount,
-      data.notRelevantCount
-    )
-  ];
 
   return (
     <div>
@@ -95,21 +80,21 @@ export default function CustomizedTables() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map(row => (
-              <StyledTableRow key={row.kilde}>
-                <StyledTableCell component="th" scope="row">
-                  SCOPUS
-                </StyledTableCell>
-                <StyledTableCell align="right">{row.antall}</StyledTableCell>
-                <StyledTableCell align="right">{row.importert}</StyledTableCell>
-                <StyledTableCell align="right">
-                  {row.ikkeImportert}
-                </StyledTableCell>
-                <StyledTableCell align="right">
-                  {row.ikkeAktuelle}
-                </StyledTableCell>
-              </StyledTableRow>
-            ))}
+            <StyledTableRow>
+              <StyledTableCell component="th" scope="row">
+                SCOPUS
+              </StyledTableCell>
+              <StyledTableCell align="right">{data.totalCount}</StyledTableCell>
+              <StyledTableCell align="right">
+                {data.importedCount}
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                {data.notImportedCount}
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                {data.notRelevantCount}
+              </StyledTableCell>
+            </StyledTableRow>
           </TableBody>
         </Table>
       </Paper>

@@ -52,12 +52,12 @@ export default function ResultModal(props) {
           <ListGroupItem>
             <ListGroupItemHeading>Importpublikasjon:</ListGroupItemHeading>
             <ListGroupItemText>
-              {props.data.author.map(authors => (
-                <span style={divStyle} key={authors.authorName}>
-                  {authors.authorName};{" "}
+              {props.data.authors.map(author => (
+                <span style={divStyle} key={author.sequenceNr}>
+                  {author.authorName};{" "}
                 </span>
               ))}
-              {props.data.title}
+              {props.data.languages[0].title}
             </ListGroupItemText>
           </ListGroupItem>
           <ListGroupItem>
@@ -105,13 +105,19 @@ export default function ResultModal(props) {
 
 ResultModal.defaultProps = {
   data: {
-    title: "title",
-    author: [
+    authors: [
       {
-        authorName: "default1"
+        authorName: "default1",
+        sequenceNr: 0
       },
       {
-        authorName: "default2"
+        authorName: "default2",
+        sequenceNr: 1
+      }
+    ],
+    languages: [
+      {
+        title: "title"
       }
     ]
   },

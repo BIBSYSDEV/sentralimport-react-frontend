@@ -3,7 +3,7 @@ import React from "react";
 let Context = React.createContext();
 
 let initialState = {
-  currentImportYear: { value: 2019, label: "2019" },
+  currentImportYear: { value: 2018, label: "2018" },
   currentImportStatus: "Ikke importert",
   currentInstitution: "Ingen filtrering",
   isSampublikasjon: false

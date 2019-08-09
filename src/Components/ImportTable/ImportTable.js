@@ -191,14 +191,27 @@ export default function EnhancedTable() {
   }, [state.isSampublikasjon]);
 
   async function getRows() {
-    const temp = await axios.get(
-      "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
-        state.currentImportYear.value +
-        "&copublication=" +
-        state.isSampublikasjon +
-        "&per_page=5"
-    );
-    handleRows(temp.data);
+    if (state.currentInstitution.value !== null) {
+      const temp = await axios.get(
+        "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
+          state.currentImportYear.value +
+          "&copublication=" +
+          state.isSampublikasjon +
+          "&institution=" +
+          state.currentInstitution +
+          "&per_page=5"
+      );
+      handleRows(temp.data);
+    } else {
+      const temp = await axios.get(
+        "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
+          state.currentImportYear.value +
+          "&copublication=" +
+          state.isSampublikasjon +
+          "&per_page=5"
+      );
+      handleRows(temp.data);
+    }
   }
 
   function handleRows(temp) {
@@ -273,12 +286,12 @@ export default function EnhancedTable() {
                       <TableCell component="th" scope="row" padding="none" />
 
                       <TableCell>
-                        {row.author.slice(0, 5).map(authors => (
-                          <div style={divStyle} key={authors.authorName}>
-                            {authors.authorName};
+                        {row.authors.slice(0, 5).map(author => (
+                          <div style={divStyle} key={author.authorName}>
+                            {author.authorName};
                           </div>
                         ))}
-                        {row.title}
+                        {row.languages[0].title}
                       </TableCell>
                       <TableCell align="right">
                         <div>{row.category}</div>
@@ -286,7 +299,16 @@ export default function EnhancedTable() {
                       <TableCell align="right">{row.sourceName}</TableCell>
                       <TableCell align="right">{row.registered}</TableCell>
                       <TableCell align="right">
-                        {row.author[0].institution[0]}
+                        {row.authors[0].institutions[0].institutionName !==
+                        null ? (
+                          <p>
+                            {row.authors[0].institutions[0].institutionName}
+                          </p>
+                        ) : (
+                          <p>
+                            {row.authors[1].institutions[0].institutionName}
+                          </p>
+                        )}
                       </TableCell>
                     </TableRow>
                   );
