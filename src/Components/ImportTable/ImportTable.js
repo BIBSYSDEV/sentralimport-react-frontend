@@ -191,25 +191,28 @@ export default function EnhancedTable() {
   }, [state.isSampublikasjon]);
 
   async function getRows() {
-    if (state.currentInstitution.value !== null) {
+    if (
+      state.currentInstitution !==
+      ("Ingen filtrering" || "Ingen institusjon valgt")
+    ) {
       const temp = await axios.get(
         "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
           state.currentImportYear.value +
           "&copublication=" +
           state.isSampublikasjon +
           "&institution=" +
-          state.currentInstitution +
+          state.currentInstitution.value +
           "&per_page=5"
       );
+      console.log(temp);
       handleRows(temp.data);
     } else {
       const temp = await axios.get(
         "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
           state.currentImportYear.value +
-          "&copublication=" +
-          state.isSampublikasjon +
           "&per_page=5"
       );
+      console.log(temp);
       handleRows(temp.data);
     }
   }

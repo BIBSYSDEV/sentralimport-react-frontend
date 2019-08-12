@@ -6,23 +6,13 @@ import { Form } from "reactstrap";
 export default function InnerModal(props) {
   const kilde = props.data.sourceName;
 
-  const [tittel, setTittel] = React.useState(props.data.title);
+  const [tittel, setTittel] = React.useState(props.data.languages[0].title);
 
   const [aarstall, setAarstall] = React.useState(props.data.registered);
 
   const [kategori, setKategori] = React.useState(props.data.category);
 
-  const [lang, setLang] = React.useState(props.data.originalLanguage);
-
-  const [utgivelse, setUtgivelse] = React.useState(
-    "Volum " +
-      props.data.volume +
-      " (" +
-      props.data.pageFrom +
-      "-" +
-      props.data.pageTo +
-      ") "
-  );
+  const [lang, setLang] = React.useState(props.data.languages[0].lang);
 
   function handleChangeTittel(event) {
     setTittel(event.target.value);
@@ -38,10 +28,6 @@ export default function InnerModal(props) {
 
   function handleChangeLang(event) {
     setLang(event.target.value);
-  }
-
-  function handleChangeUtgivelse(event) {
-    setUtgivelse(event.target.value);
   }
 
   return (
@@ -104,8 +90,17 @@ export default function InnerModal(props) {
             <TextField
               id="import-utgivelsesdata"
               label="Utgivelsesdata"
-              value={utgivelse}
-              onChange={handleChangeUtgivelse}
+              value={
+                props.data.channel
+                  ? "Volum " +
+                    props.data.channel.volume +
+                    " (" +
+                    props.data.channel.pageFrom +
+                    "-" +
+                    props.data.channel.pageTo +
+                    ") "
+                  : "Ingen utgivelsesdata funnet"
+              }
               margin="normal"
               disabled
               required
@@ -121,3 +116,21 @@ export default function InnerModal(props) {
     </Modal>
   );
 }
+
+InnerModal.defaultProps = {
+  data: {
+    registered: "200",
+    categroy: "CAT",
+    languages: [
+      {
+        lang: "EN",
+        title: "Title"
+      }
+    ],
+    channel: {
+      volume: "100",
+      pageFrom: "1",
+      pageTo: "10"
+    }
+  }
+};

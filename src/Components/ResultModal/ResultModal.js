@@ -115,11 +115,19 @@ ResultModal.defaultProps = {
         sequenceNr: 1
       }
     ],
+    registered: "200",
+    categroy: "CAT",
     languages: [
       {
-        title: "title"
+        lang: "EN",
+        title: "Title"
       }
-    ]
+    ],
+    channel: {
+      volume: "100",
+      pageFrom: "1",
+      pageTo: "10"
+    }
   },
   isOpen: false
 };
