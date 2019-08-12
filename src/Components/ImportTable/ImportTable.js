@@ -191,10 +191,7 @@ export default function EnhancedTable() {
   }, [state.isSampublikasjon]);
 
   async function getRows() {
-    if (
-      state.currentInstitution !==
-      ("Ingen filtrering" || "Ingen institusjon valgt")
-    ) {
+    if (state.currentInstitution.value !== null) {
       const temp = await axios.get(
         "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
           state.currentImportYear.value +
