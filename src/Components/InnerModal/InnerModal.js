@@ -2,8 +2,9 @@ import React from "react";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import { TextField, FormGroup, Button } from "@material-ui/core";
 import { Form } from "reactstrap";
+import { withSnackbar } from "notistack";
 
-export default function InnerModal(props) {
+function InnerModal(props) {
   const kilde = props.data.sourceName;
 
   const [tittel, setTittel] = React.useState(props.data.languages[0].title);
@@ -30,9 +31,21 @@ export default function InnerModal(props) {
     setLang(event.target.value);
   }
 
+  function handleSubmit() {
+    props.enqueueSnackbar("Endringer lagret", {
+      variant: "success"
+    });
+    props.toggle();
+  }
+
+  function handleClose() {
+    props.enqueueSnackbar("Endringer er ikke lagret!", { variant: "warning" });
+    props.toggle();
+  }
+
   return (
     <Modal isOpen={props.open}>
-      <ModalHeader toggle={props.toggle}>Import av publikasjon</ModalHeader>
+      <ModalHeader toggle={handleClose}>Import av publikasjon</ModalHeader>
       <ModalBody>
         <Form>
           <FormGroup>
@@ -107,7 +120,7 @@ export default function InnerModal(props) {
             />
           </FormGroup>
           <FormGroup>
-            <Button color="primary" onClick={props.toggle}>
+            <Button color="primary" onClick={handleSubmit}>
               Submit
             </Button>
           </FormGroup>
@@ -134,3 +147,5 @@ InnerModal.defaultProps = {
     }
   }
 };
+
+export default withSnackbar(InnerModal);
