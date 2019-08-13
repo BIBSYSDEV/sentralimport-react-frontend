@@ -116,7 +116,7 @@ ResultModal.defaultProps = {
       }
     ],
     registered: "200",
-    categroy: "CAT",
+    category: "CAT",
     languages: [
       {
         lang: "EN",

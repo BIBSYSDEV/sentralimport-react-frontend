@@ -176,19 +176,12 @@ export default function EnhancedTable() {
 
   useEffect(() => {
     getRows();
-  }, [state.currentImportYear]);
-
-  useEffect(() => {
-    getRows();
-  }, [state.currentImportStatus]);
-
-  useEffect(() => {
-    getRows();
-  }, [state.currentInstitution]);
-
-  useEffect(() => {
-    getRows();
-  }, [state.isSampublikasjon]);
+  }, [
+    state.currentImportYear,
+    state.isSampublikasjon,
+    state.currentImportStatus,
+    state.currentInstitution
+  ]);
 
   async function getRows() {
     if (state.currentInstitution.value !== null) {
@@ -280,14 +273,14 @@ export default function EnhancedTable() {
                       id={labelId}
                       onClick={event => handleClick(event, { row })}
                       role="checkbox"
-                      tabIndex={-1}
+                      tabIndex={0}
                       key={labelId}
                     >
                       <TableCell component="th" scope="row" padding="none" />
 
                       <TableCell>
                         {row.authors.slice(0, 5).map(author => (
-                          <div style={divStyle} key={author.authorName}>
+                          <div style={divStyle} key={author.sequenceNr}>
                             {author.authorName};
                           </div>
                         ))}
@@ -299,15 +292,13 @@ export default function EnhancedTable() {
                       <TableCell align="right">{row.sourceName}</TableCell>
                       <TableCell align="right">{row.registered}</TableCell>
                       <TableCell align="right">
-                        {row.authors[0].institutions[0].institutionName !==
-                        null ? (
+                        {row.authors[0].institutions &&
+                        row.authors[0].institutions[0].institutionName ? (
                           <p>
                             {row.authors[0].institutions[0].institutionName}
                           </p>
                         ) : (
-                          <p>
-                            {row.authors[1].institutions[0].institutionName}
-                          </p>
+                          <p>{}</p>
                         )}
                       </TableCell>
                     </TableRow>
