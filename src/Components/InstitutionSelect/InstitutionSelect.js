@@ -14,12 +14,10 @@ export default function InstitutionSelect(props) {
   return (
     <Select
       placeholder="Søk på institusjoner"
-      isMulti={props.isMulti}
       name="institutionSelect"
       options={institutions}
       className="basic-multi-select"
       classNamePrefix="select"
-      isDisabled={props.disabled}
       onChange={props.onChange}
     />
   );

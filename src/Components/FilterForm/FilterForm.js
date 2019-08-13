@@ -44,12 +44,10 @@ const useStyles = makeStyles(theme => ({
 
 export default function FilterForm() {
   const classes = useStyles();
-  const [multi, setMulti] = React.useState(false);
 
   let { state, dispatch } = React.useContext(Context);
 
   function handleCheck() {
-    setMulti(!multi);
     dispatch({ type: "setSampublikasjon", payload: !state.isSampublikasjon });
   }
 
@@ -95,7 +93,7 @@ export default function FilterForm() {
             control={<Checkbox onClick={handleCheck} />}
             label="Sampublikasjoner"
           />
-          <InstitutionSelect isMulti={false} onChange={handleChange} />
+          <InstitutionSelect onChange={handleChange} />
         </div>
       </CardContent>
     </Card>
