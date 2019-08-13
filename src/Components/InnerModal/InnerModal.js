@@ -32,14 +32,19 @@ function InnerModal(props) {
   }
 
   function handleSubmit() {
-    props.enqueueSnackbar("Endringer lagret", {
-      variant: "success"
-    });
+    props.enqueueSnackbar(
+      "Publikasjon med id: " + props.data.pubId + " opprettet",
+      {
+        variant: "success"
+      }
+    );
     props.toggle();
   }
 
   function handleClose() {
-    props.enqueueSnackbar("Endringer er ikke lagret!", { variant: "warning" });
+    props.enqueueSnackbar("Endringer er ikke blitt lagret.", {
+      variant: "warning"
+    });
     props.toggle();
   }
 
