@@ -184,7 +184,10 @@ export default function EnhancedTable() {
   ]);
 
   async function getRows() {
-    if (state.currentInstitution.value !== null) {
+    if (
+      state.currentInstitution.value !== null &&
+      state.currentInstitution.value !== " "
+    ) {
       const temp = await axios.get(
         "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
           state.currentImportYear.value +

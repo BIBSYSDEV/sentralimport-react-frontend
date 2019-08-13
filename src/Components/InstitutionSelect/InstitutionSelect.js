@@ -3,7 +3,7 @@ import React from "react";
 import Select from "react-select";
 
 const institutions = [
-  { value: null, label: "Ingen institusjon valgt" },
+  { value: " ", label: "Ingen institusjon" },
   { value: "UIO", label: "Universitetet i Oslo" },
   { value: "UIB", label: "Universitetet i Bergen" },
   { value: "UIS", label: "Universitetet i Stavanger" },
