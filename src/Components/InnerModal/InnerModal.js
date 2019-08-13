@@ -33,7 +33,7 @@ function InnerModal(props) {
 
   function handleSubmit() {
     props.enqueueSnackbar(
-      "Publikasjon med id: " + props.data.pubId + " opprettet",
+      "Importerte publikasjon med id: " + props.data.pubId,
       {
         variant: "success"
       }
