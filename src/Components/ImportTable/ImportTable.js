@@ -196,7 +196,7 @@ export default function EnhancedTable() {
       if (state.currentImportStatus !== "ikke aktuelle") {
         fetchString = fetchString + ("&imported=" + state.currentImportStatus);
       } else {
-        fetchString = fetchString + "&aktuell=false";
+        fetchString = fetchString + "&relevant=false";
       }
     } else {
       fetchString =
