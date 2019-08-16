@@ -4,7 +4,7 @@ let Context = React.createContext();
 
 let initialState = {
   currentImportYear: { value: 2018, label: "2018" },
-  currentImportStatus: "Ikke importert",
+  currentImportStatus: "false",
   currentInstitution: { value: null, label: "Ingen filtrering" },
   isSampublikasjon: false
 };

@@ -184,44 +184,41 @@ export default function EnhancedTable() {
   ]);
 
   async function getRows() {
+    var fetchString =
+      "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
+      state.currentImportYear.value +
+      "&per_page=5";
+
     if (
-      state.currentInstitution.value !== null &&
-      state.currentInstitution.value !== " "
+      state.currentInstitution.value === null ||
+      state.currentInstitution.value === " "
     ) {
-      const temp = await axios.get(
-        "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
-          state.currentImportYear.value +
-          "&copublication=" +
-          state.isSampublikasjon +
-          "&institution=" +
-          state.currentInstitution.value +
-          "&per_page=5"
-      );
-      console.log(temp);
-      handleRows(temp.data);
+      if (state.currentImportStatus !== "ikke aktuelle") {
+        fetchString = fetchString + ("&imported=" + state.currentImportStatus);
+      } else {
+        fetchString = fetchString + "&aktuell=false";
+      }
     } else {
-      const temp = await axios.get(
-        "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
-          state.currentImportYear.value +
-          "&per_page=5"
-      );
-      console.log(temp);
-      handleRows(temp.data);
+      fetchString =
+        fetchString +
+        ("&institution=" +
+          state.currentInstitution.value +
+          "&copublication=" +
+          state.isSampublikasjon);
+      if (state.currentImportStatus !== "ikke aktuelle") {
+        fetchString = fetchString + ("&imported=" + state.currentImportStatus);
+      } else {
+        fetchString = fetchString + "&aktuell=false";
+      }
     }
+    console.log(fetchString);
+    const temp = await axios.get(fetchString);
+    console.log(temp);
+    handleRows(temp.data);
   }
 
   function handleRows(temp) {
     setRows(temp);
-  }
-
-  function desc(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-      return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-      return 1;
-    }
-    return 0;
   }
 
   function handleRequestSort(event, property) {
@@ -239,6 +236,13 @@ export default function EnhancedTable() {
     setModalData(row.row);
   }
 
+  function handleKeyPress(event, row) {
+    if (event.keyCode === 13) {
+      setOpen(true);
+      setModalData(row.row);
+    }
+  }
+
   function handleChangePage(event, newPage) {
     setPage(newPage);
   }
@@ -246,6 +250,10 @@ export default function EnhancedTable() {
   function handleChangeRowsPerPage(event) {
     setRowsPerPage(event.target.value);
     setPage(0);
+  }
+
+  function handleFocus(event) {
+    event.target.focus();
   }
 
   const emptyRows =
@@ -278,6 +286,8 @@ export default function EnhancedTable() {
                       role="checkbox"
                       tabIndex={0}
                       key={labelId}
+                      onKeyDown={event => handleKeyPress(event, { row })}
+                      onChange={event => handleFocus(event)}
                     >
                       <TableCell component="th" scope="row" padding="none" />
 

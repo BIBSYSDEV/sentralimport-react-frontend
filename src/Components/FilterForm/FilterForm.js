@@ -74,14 +74,19 @@ export default function FilterForm() {
             onChange={handleStatusChange}
           >
             <FormControlLabel
-              value="Ikke importert"
+              value="false"
               control={<Radio />}
               label="Ikke importert"
             />
             <FormControlLabel
-              value="Importert"
+              value="true"
               control={<Radio />}
               label="Importert"
+            />
+            <FormControlLabel
+              value="ikke aktuelle"
+              control={<Radio />}
+              label="Ikke aktuelle"
             />
           </RadioGroup>
         </FormControl>

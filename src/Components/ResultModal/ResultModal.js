@@ -94,6 +94,7 @@ export default function ResultModal(props) {
           Submit
         </Button>
       </ModalFooter>
+
       <InnerModal
         open={innerModal}
         toggle={handleClose.bind(this)}
