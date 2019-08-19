@@ -12,6 +12,14 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import axios from "axios";
 import { Context } from "../../Context";
+import { FixedSizeList as VList } from "react-window";
+import IconButton from "@material-ui/core/IconButton";
+import PeopleIcon from "@material-ui/icons/People";
+import Popover from "react-bootstrap/Popover";
+import PopoverContent from "react-bootstrap/PopoverContent";
+import { PopoverTitle } from "react-bootstrap/PopoverTitle";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Overlay from "react-bootstrap/Overlay";
 
 import ResultModal from "../ResultModal/ResultModal";
 
@@ -61,6 +69,12 @@ const headRows = [
     numeric: true,
     disablePadding: false,
     label: "Eierinstitusjon"
+  },
+  {
+    id: "Forfattere",
+    numeric: true,
+    disablePadding: false,
+    label: "Forfattere"
   }
 ];
 
@@ -173,6 +187,18 @@ export default function EnhancedTable() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
   let { state } = React.useContext(Context);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  function handlePopoverOpen(event) {
+    event.preventDefault();
+    setAnchorEl(event.currentTarget);
+  }
+
+  function handlePopoverClose() {
+    setAnchorEl(null);
+  }
+
+  const popOpen = Boolean(anchorEl);
 
   useEffect(() => {
     getRows();
@@ -256,6 +282,16 @@ export default function EnhancedTable() {
     event.target.focus();
   }
 
+  const Row = ({ data, index, style }) => {
+    const items = data;
+    return (
+      <div style={style}>
+        {items[index].sequenceNr} {items[index].authorName}
+        {items[index].institutions[0].institutionName}
+      </div>
+    );
+  };
+
   const emptyRows =
     rowsPerPage -
     Math.min(rowsPerPage, rows != null ? rows.length - page * rowsPerPage : 0);
@@ -280,7 +316,6 @@ export default function EnhancedTable() {
 
                   return (
                     <TableRow
-                      hover
                       id={labelId}
                       onClick={event => handleClick(event, { row })}
                       role="checkbox"
@@ -297,6 +332,7 @@ export default function EnhancedTable() {
                             {author.authorName};
                           </div>
                         ))}
+                        {" (" + row.authors.length + ") "}
                         {row.languages[0].title}
                       </TableCell>
                       <TableCell align="right">
@@ -313,6 +349,38 @@ export default function EnhancedTable() {
                         ) : (
                           <p>{}</p>
                         )}
+                      </TableCell>
+                      <TableCell align="right">
+                        <div className="list">
+                          <div>
+                            <OverlayTrigger
+                              trigger="hover"
+                              placement="bottom"
+                              overlay={
+                                <Popover>
+                                  <Popover.Title as="h3">
+                                    Forfatterliste
+                                  </Popover.Title>
+                                  <PopoverContent>
+                                    <VList
+                                      height={150}
+                                      itemCount={row.authors.length}
+                                      itemSize={35}
+                                      width={300}
+                                      itemData={row.authors}
+                                    >
+                                      {Row}
+                                    </VList>
+                                  </PopoverContent>
+                                </Popover>
+                              }
+                            >
+                              <IconButton>
+                                <PeopleIcon />
+                              </IconButton>
+                            </OverlayTrigger>
+                          </div>
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
