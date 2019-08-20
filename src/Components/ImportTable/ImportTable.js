@@ -12,16 +12,10 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import axios from "axios";
 import { Context } from "../../Context";
-import { FixedSizeList as VList } from "react-window";
 import IconButton from "@material-ui/core/IconButton";
 import PeopleIcon from "@material-ui/icons/People";
-import Popover from "react-bootstrap/Popover";
-import PopoverContent from "react-bootstrap/PopoverContent";
-import { PopoverTitle } from "react-bootstrap/PopoverTitle";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Overlay from "react-bootstrap/Overlay";
-
 import ResultModal from "../ResultModal/ResultModal";
+import AuthorListModal from "../AuthorListModal/AuthorListModal";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -186,19 +180,9 @@ export default function EnhancedTable() {
   const [open, setOpen] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
+  const [authorList, setAuthorList] = React.useState(false);
+  const [authorData, setAuthorData] = React.useState();
   let { state } = React.useContext(Context);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  function handlePopoverOpen(event) {
-    event.preventDefault();
-    setAnchorEl(event.currentTarget);
-  }
-
-  function handlePopoverClose() {
-    setAnchorEl(null);
-  }
-
-  const popOpen = Boolean(anchorEl);
 
   useEffect(() => {
     getRows();
@@ -257,6 +241,17 @@ export default function EnhancedTable() {
     setOpen(false);
   }
 
+  function handleCloseList() {
+    setAuthorList(false);
+  }
+
+  function handleAuthorClick(event, row) {
+    if (authorList !== true) {
+      setAuthorList(true);
+      setAuthorData(row);
+    }
+  }
+
   function handleClick(event, row) {
     setOpen(true);
     setModalData(row.row);
@@ -281,16 +276,6 @@ export default function EnhancedTable() {
   function handleFocus(event) {
     event.target.focus();
   }
-
-  const Row = ({ data, index, style }) => {
-    const items = data;
-    return (
-      <div style={style}>
-        {items[index].sequenceNr} {items[index].authorName}
-        {items[index].institutions[0].institutionName}
-      </div>
-    );
-  };
 
   const emptyRows =
     rowsPerPage -
@@ -353,32 +338,15 @@ export default function EnhancedTable() {
                       <TableCell align="right">
                         <div className="list">
                           <div>
-                            <OverlayTrigger
-                              trigger="hover"
-                              placement="bottom"
-                              overlay={
-                                <Popover>
-                                  <Popover.Title as="h3">
-                                    Forfatterliste
-                                  </Popover.Title>
-                                  <PopoverContent>
-                                    <VList
-                                      height={150}
-                                      itemCount={row.authors.length}
-                                      itemSize={35}
-                                      width={300}
-                                      itemData={row.authors}
-                                    >
-                                      {Row}
-                                    </VList>
-                                  </PopoverContent>
-                                </Popover>
-                              }
+                            <IconButton
+                              onClick={e => {
+                                handleAuthorClick(e, row);
+                                e.stopPropagation();
+                              }}
+                              id="PopoverLegacy"
                             >
-                              <IconButton>
-                                <PeopleIcon />
-                              </IconButton>
-                            </OverlayTrigger>
+                              <PeopleIcon />
+                            </IconButton>
                           </div>
                         </div>
                       </TableCell>
@@ -414,6 +382,11 @@ export default function EnhancedTable() {
         open={open}
         data={modalData}
         handleClose={handleClose.bind(this)}
+      />
+      <AuthorListModal
+        open={authorList}
+        data={authorData}
+        handleClose={handleCloseList}
       />
     </div>
   );
