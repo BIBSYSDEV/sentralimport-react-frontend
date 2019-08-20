@@ -21,7 +21,9 @@ export default function AuthorListModal(props) {
       <ModalHeader toggle={props.handleClose}>Forfatterliste</ModalHeader>
       <ModalBody>
         <VList
-          height={300}
+          height={
+            props.data.authors.length < 5 ? props.data.authors.length * 60 : 250
+          }
           itemCount={props.data.authors.length}
           itemSize={55}
           width={475}

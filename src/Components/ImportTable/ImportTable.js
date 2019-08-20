@@ -47,7 +47,7 @@ const headRows = [
   {
     id: "Publikasjon",
     numeric: false,
-    disablePadding: true,
+    disablePadding: false,
     label: "Publikasjon"
   },
   { id: "Kategori", numeric: true, disablePadding: false, label: "Kategori" },
@@ -68,7 +68,7 @@ const headRows = [
     id: "Forfattere",
     numeric: true,
     disablePadding: false,
-    label: "Forfattere"
+    label: ""
   }
 ];
 
@@ -336,19 +336,14 @@ export default function EnhancedTable() {
                         )}
                       </TableCell>
                       <TableCell align="right">
-                        <div className="list">
-                          <div>
-                            <IconButton
-                              onClick={e => {
-                                handleAuthorClick(e, row);
-                                e.stopPropagation();
-                              }}
-                              id="PopoverLegacy"
-                            >
-                              <PeopleIcon />
-                            </IconButton>
-                          </div>
-                        </div>
+                        <IconButton
+                          onClick={e => {
+                            handleAuthorClick(e, row);
+                            e.stopPropagation();
+                          }}
+                        >
+                          <PeopleIcon />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   );
