@@ -93,6 +93,13 @@ function EnhancedTableHead(props) {
               active={orderBy === row.id}
               direction={order}
               onClick={createSortHandler(row.id)}
+              disabled={
+                row.id !== "Eierinstitusjon" &&
+                row.id !== "Publikasjon" &&
+                row.id !== "Forfattere"
+                  ? false
+                  : true
+              }
             >
               {row.label}
             </TableSortLabel>
@@ -174,8 +181,8 @@ const useStyles = makeStyles(theme => ({
 export default function EnhancedTable() {
   const classes = useStyles();
   const [modalData, setModalData] = React.useState();
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("Dato registrert");
+  const [order, setOrder] = React.useState("desc");
+  const [orderBy, setOrderBy] = React.useState("Kilde");
   const [page, setPage] = React.useState(0);
   const [open, setOpen] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -317,6 +324,7 @@ export default function EnhancedTable() {
                             {author.authorName};
                           </div>
                         ))}
+                        {row.authors.length > 5 ? " et al " : ""}
                         {" (" + row.authors.length + ") "}
                         {row.languages[0].title}
                       </TableCell>
