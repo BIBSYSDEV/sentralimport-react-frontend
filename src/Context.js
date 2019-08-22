@@ -6,7 +6,8 @@ let initialState = {
   currentImportYear: { value: 2018, label: "2018" },
   currentImportStatus: "false",
   currentInstitution: { value: null, label: "Ingen filtrering" },
-  isSampublikasjon: false
+  isSampublikasjon: false,
+  currentPageNr: 1
 };
 
 let reducer = (state, action) => {
@@ -21,6 +22,8 @@ let reducer = (state, action) => {
       return { ...state, currentInstitution: action.payload };
     case "setSampublikasjon":
       return { ...state, isSampublikasjon: action.payload };
+    case "setPageNr":
+      return { ...state, currentPageNr: action.payload };
     default:
       return state;
   }

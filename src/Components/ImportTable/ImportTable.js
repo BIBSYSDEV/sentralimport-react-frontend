@@ -16,6 +16,7 @@ import IconButton from "@material-ui/core/IconButton";
 import PeopleIcon from "@material-ui/icons/People";
 import ResultModal from "../ResultModal/ResultModal";
 import AuthorListModal from "../AuthorListModal/AuthorListModal";
+import Pagination from "../Pagination/Pagination";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -280,10 +281,6 @@ export default function EnhancedTable() {
     setPage(0);
   }
 
-  function handleFocus(event) {
-    event.target.focus();
-  }
-
   const emptyRows =
     rowsPerPage -
     Math.min(rowsPerPage, rows != null ? rows.length - page * rowsPerPage : 0);
@@ -311,10 +308,8 @@ export default function EnhancedTable() {
                       id={labelId}
                       onClick={event => handleClick(event, { row })}
                       role="checkbox"
-                      tabIndex={0}
                       key={labelId}
                       onKeyDown={event => handleKeyPress(event, { row })}
-                      onChange={event => handleFocus(event)}
                     >
                       <TableCell component="th" scope="row" padding="none" />
 
@@ -380,6 +375,7 @@ export default function EnhancedTable() {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
+      <Pagination />
 
       <ResultModal
         open={open}
