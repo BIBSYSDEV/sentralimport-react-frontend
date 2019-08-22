@@ -187,7 +187,9 @@ export default function EnhancedTable() {
   const [orderBy, setOrderBy] = React.useState("Kilde");
   const [page, setPage] = React.useState(state.currentPageNr);
   const [open, setOpen] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(
+    state.currentPerPage.value
+  );
   const [rows, setRows] = React.useState([]);
   const [authorList, setAuthorList] = React.useState(false);
   const [authorData, setAuthorData] = React.useState();
@@ -204,6 +206,11 @@ export default function EnhancedTable() {
   useEffect(() => {
     handleChangePage(state.currentPageNr);
   }, [state.currentPageNr]);
+
+  useEffect(() => {
+    setRowsPerPage(state.currentPerPage.value);
+    setPage(0);
+  }, [state.currentPerPage]);
 
   async function getRows() {
     var fetchString =

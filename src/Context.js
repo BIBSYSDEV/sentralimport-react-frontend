@@ -7,7 +7,8 @@ let initialState = {
   currentImportStatus: "false",
   currentInstitution: { value: null, label: "Ingen filtrering" },
   isSampublikasjon: false,
-  currentPageNr: 1
+  currentPageNr: 0,
+  currentPerPage: { value: 5, label: "5" }
 };
 
 let reducer = (state, action) => {
@@ -24,6 +25,8 @@ let reducer = (state, action) => {
       return { ...state, isSampublikasjon: action.payload };
     case "setPageNr":
       return { ...state, currentPageNr: action.payload };
+    case "setPerPage":
+      return { ...state, currentPerPage: action.payload };
     default:
       return state;
   }
