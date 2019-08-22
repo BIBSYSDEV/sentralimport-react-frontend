@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Input, Paper } from "@material-ui/core";
+import { Button, Input, Paper, Grid } from "@material-ui/core";
 import { Context } from "../../Context";
 import Select from "react-select";
 import AuthorListModal from "../AuthorListModal/AuthorListModal";
@@ -36,29 +36,43 @@ export default function Pagination() {
 
   return (
     <Paper>
-      <span>
-        <Select
-          style={{ width: "auto" }}
-          name="rowsPerPageSelect"
-          options={rowsPerPage}
-          className="basic-multi-select"
-          classNamePrefix="select"
-          onChange={onChangePerPage}
-          defaultValue={rowsPerPage[0]}
-        />
-        {state.currentPageNr * state.currentPerPage.value + 1} -{" "}
-        {(state.currentPageNr + 1) * state.currentPerPage.value}, side:{" "}
-        <Input value={state.currentPageNr} onChange={e => changePage(e)} />
-        &nbsp;
-        <Button
-          onClick={decrementPage}
-          disabled={state.currentPageNr > 0 ? false : true}
-        >
-          {"< "}Forrige
-        </Button>
-        &nbsp;
-        <Button onClick={incrementPage}> Neste {" >"}</Button>
-      </span>
+      <div>
+        <Grid container direction="row">
+          <Grid item xs={2}>
+            <div>Publikasjoner per side: &nbsp;</div>
+          </Grid>
+
+          <Grid item xs={1}>
+            <Select
+              name="rowsPerPageSelect"
+              options={rowsPerPage}
+              className="basic-multi-select"
+              classNamePrefix="select"
+              onChange={onChangePerPage}
+              defaultValue={rowsPerPage[0]}
+            />
+          </Grid>
+          <Grid item xs>
+            <div>
+              {state.currentPageNr * state.currentPerPage.value + 1} -{" "}
+              {(state.currentPageNr + 1) * state.currentPerPage.value}, side:{" "}
+              <Input
+                value={state.currentPageNr}
+                onChange={e => changePage(e)}
+              />
+              &nbsp;
+              <Button
+                onClick={decrementPage}
+                disabled={state.currentPageNr > 0 ? false : true}
+              >
+                {"< "}Forrige
+              </Button>
+              &nbsp;
+              <Button onClick={incrementPage}> Neste {" >"}</Button>
+            </div>
+          </Grid>
+        </Grid>
+      </div>
     </Paper>
   );
 }
