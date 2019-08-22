@@ -24,7 +24,7 @@ export default function Pagination() {
 
   return (
     <div>
-      Paginering, side:{" "}
+      {(state.currentPageNr - 1) * 5 + 1} - {state.currentPageNr * 5}, side:{" "}
       <Input value={state.currentPageNr} onChange={e => changePage(e)} />
       &nbsp;
       <Button

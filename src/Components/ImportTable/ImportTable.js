@@ -181,16 +181,16 @@ const useStyles = makeStyles(theme => ({
 
 export default function EnhancedTable() {
   const classes = useStyles();
+  let { state } = React.useContext(Context);
   const [modalData, setModalData] = React.useState();
   const [order, setOrder] = React.useState("desc");
   const [orderBy, setOrderBy] = React.useState("Kilde");
-  const [page, setPage] = React.useState(0);
+  const [page, setPage] = React.useState(state.currentPageNr);
   const [open, setOpen] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
   const [authorList, setAuthorList] = React.useState(false);
   const [authorData, setAuthorData] = React.useState();
-  let { state } = React.useContext(Context);
 
   useEffect(() => {
     getRows();
@@ -200,6 +200,10 @@ export default function EnhancedTable() {
     state.currentImportStatus,
     state.currentInstitution
   ]);
+
+  useEffect(() => {
+    handleChangePage(state.currentPageNr);
+  }, [state.currentPageNr]);
 
   async function getRows() {
     var fetchString =
@@ -272,7 +276,7 @@ export default function EnhancedTable() {
     }
   }
 
-  function handleChangePage(event, newPage) {
+  function handleChangePage(newPage) {
     setPage(newPage);
   }
 
@@ -360,6 +364,7 @@ export default function EnhancedTable() {
           </Table>
         </div>
         <TablePagination
+          hidden={true}
           rowsPerPageOptions={[5, 10]}
           component="div"
           count={rows.length}
