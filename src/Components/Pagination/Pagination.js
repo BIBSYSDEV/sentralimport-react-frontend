@@ -22,7 +22,7 @@ export default function Pagination() {
   }
 
   function changePage(event) {
-    if (event.target.value > 0) {
+    if (event.target.value >= 0) {
       console.log(event.target.value);
       dispatch({ type: "setPageNr", payload: parseInt(event.target.value) });
     } else {

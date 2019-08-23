@@ -93,7 +93,8 @@ function EnhancedTableHead(props) {
             <TableSortLabel
               active={orderBy === row.id}
               direction={order}
-              onClick={createSortHandler(row.id)}
+              onClick={createSortHandler(row.id)
+              }
               disabled={
                 row.id !== "Eierinstitusjon" &&
                 row.id !== "Publikasjon" &&
@@ -146,11 +147,12 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
   const classes = useToolbarStyles();
+  let {state} = React.useContext(Context);
 
   return (
     <div className={classes.title}>
       <Typography variant="h6" id="tableTitle">
-        Importer
+        Importer {state.currentSortOrder} {state.currentSortValue}
       </Typography>
 
       <div className={classes.spacer} />
@@ -181,10 +183,10 @@ const useStyles = makeStyles(theme => ({
 
 export default function EnhancedTable() {
   const classes = useStyles();
-  let { state } = React.useContext(Context);
+  let { state, dispatch } = React.useContext(Context);
   const [modalData, setModalData] = React.useState();
-  const [order, setOrder] = React.useState("desc");
-  const [orderBy, setOrderBy] = React.useState("Kilde");
+  const [order, setOrder] = React.useState(state.currentSortOrder);
+  const [orderBy, setOrderBy] = React.useState(state.currentSortValue);
   const [page, setPage] = React.useState(state.currentPageNr);
   const [open, setOpen] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(
@@ -253,7 +255,9 @@ export default function EnhancedTable() {
   function handleRequestSort(event, property) {
     const isDesc = orderBy === property && order === "desc";
     setOrder(isDesc ? "asc" : "desc");
+    dispatch({ type: "setSortOrder", payload: (isDesc ? "asc" : "desc" )});
     setOrderBy(property);
+    dispatch({ type: "setSortValue", payload: property});
   }
 
   function handleClose() {

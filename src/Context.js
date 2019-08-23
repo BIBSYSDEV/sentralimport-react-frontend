@@ -8,7 +8,9 @@ let initialState = {
   currentInstitution: { value: null, label: "Ingen filtrering" },
   isSampublikasjon: false,
   currentPageNr: 0,
-  currentPerPage: { value: 5, label: "5" }
+  currentPerPage: { value: 5, label: "5" },
+  currentSortValue: "Kilde",
+  currentSortOrder: "desc"
 };
 
 let reducer = (state, action) => {
@@ -27,6 +29,10 @@ let reducer = (state, action) => {
       return { ...state, currentPageNr: action.payload };
     case "setPerPage":
       return { ...state, currentPerPage: action.payload };
+    case "setSortValue":
+      return { ...state, currentSortValue: action.payload };
+    case "setSortOrder":
+      return { ...state, currentSortOrder: action.payload };
     default:
       return state;
   }
