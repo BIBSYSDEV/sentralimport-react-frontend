@@ -147,12 +147,11 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
   const classes = useToolbarStyles();
-  let {state} = React.useContext(Context);
 
   return (
     <div className={classes.title}>
       <Typography variant="h6" id="tableTitle">
-        Importer {state.currentSortOrder} {state.currentSortValue}
+        Importer
       </Typography>
 
       <div className={classes.spacer} />
@@ -218,7 +217,14 @@ export default function EnhancedTable() {
     var fetchString =
       "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
       state.currentImportYear.value +
-      "&per_page=5";
+      "&per_page=" +
+      state.currentPerPage.value +
+      "&page=" +
+      state.currentPageNr +
+      "&sort=" + 
+      state.currentSortValue +
+      " " +
+      state.currentSortOrder;
 
     if (
       state.currentInstitution.value === null ||
