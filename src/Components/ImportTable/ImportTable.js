@@ -93,8 +93,7 @@ function EnhancedTableHead(props) {
             <TableSortLabel
               active={orderBy === row.id}
               direction={order}
-              onClick={createSortHandler(row.id)
-              }
+              onClick={createSortHandler(row.id)}
               disabled={
                 row.id !== "Eierinstitusjon" &&
                 row.id !== "Publikasjon" &&
@@ -201,7 +200,11 @@ export default function EnhancedTable() {
     state.currentImportYear,
     state.isSampublikasjon,
     state.currentImportStatus,
-    state.currentInstitution
+    state.currentInstitution,
+    state.currentPerPage,
+    state.currentPageNr,
+    state.currentSortOrder,
+    state.currentSortValue
   ]);
 
   useEffect(() => {
@@ -221,7 +224,7 @@ export default function EnhancedTable() {
       state.currentPerPage.value +
       "&page=" +
       state.currentPageNr +
-      "&sort=" + 
+      "&sort=" +
       state.currentSortValue +
       " " +
       state.currentSortOrder;
@@ -261,9 +264,9 @@ export default function EnhancedTable() {
   function handleRequestSort(event, property) {
     const isDesc = orderBy === property && order === "desc";
     setOrder(isDesc ? "asc" : "desc");
-    dispatch({ type: "setSortOrder", payload: (isDesc ? "asc" : "desc" )});
+    dispatch({ type: "setSortOrder", payload: isDesc ? "asc" : "desc" });
     setOrderBy(property);
-    dispatch({ type: "setSortValue", payload: property});
+    dispatch({ type: "setSortValue", payload: property });
   }
 
   function handleClose() {
