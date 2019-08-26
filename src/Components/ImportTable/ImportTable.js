@@ -388,8 +388,6 @@ export default function EnhancedTable() {
           rowsPerPageOptions={[5, 10]}
           component="div"
           count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
           backIconButtonProps={{
             "aria-label": "Previous Page"
           }}

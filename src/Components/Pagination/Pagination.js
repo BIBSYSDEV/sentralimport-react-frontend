@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Input, Paper, Grid } from "@material-ui/core";
 import { Context } from "../../Context";
 import Select from "react-select";
-import AuthorListModal from "../AuthorListModal/AuthorListModal";
 
 export default function Pagination() {
   let { state, dispatch } = React.useContext(Context);
@@ -12,6 +11,10 @@ export default function Pagination() {
     { value: 10, label: "10" },
     { value: 15, label: "15" }
   ];
+
+  useEffect(() => {
+    dispatch({ type: "setPageNr", payload: 0 });
+  }, [state.currentPerPage]);
 
   function decrementPage() {
     dispatch({ type: "setPageNr", payload: state.currentPageNr - 1 });
