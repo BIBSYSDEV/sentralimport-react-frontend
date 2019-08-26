@@ -207,15 +207,6 @@ export default function EnhancedTable() {
     state.currentSortValue
   ]);
 
-  useEffect(() => {
-    handleChangePage(state.currentPageNr);
-  }, [state.currentPageNr]);
-
-  useEffect(() => {
-    setRowsPerPage(state.currentPerPage.value);
-    setPage(0);
-  }, [state.currentPerPage]);
-
   async function getRows() {
     var fetchString =
       "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +

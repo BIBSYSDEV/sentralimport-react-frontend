@@ -17,11 +17,15 @@ export default function Pagination() {
   }, [state.currentPerPage]);
 
   function decrementPage() {
+    console.log(state.currentPageNr);
     dispatch({ type: "setPageNr", payload: state.currentPageNr - 1 });
+    console.log(state.currentPageNr);
   }
 
   function incrementPage() {
+    console.log(state.currentPageNr);
     dispatch({ type: "setPageNr", payload: state.currentPageNr + 1 });
+    console.log(state.currentPageNr);
   }
 
   function changePage(event) {
