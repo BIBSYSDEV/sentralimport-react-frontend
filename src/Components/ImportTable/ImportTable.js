@@ -195,6 +195,18 @@ export default function EnhancedTable() {
   const [authorData, setAuthorData] = React.useState();
 
   useEffect(() => {
+    resetPageNr();
+  }, [
+    state.currentImportYear,
+    state.isSampublikasjon,
+    state.currentImportStatus,
+    state.currentInstitution,
+    state.currentPerPage,
+    state.currentSortOrder,
+    state.currentSortValue
+  ]);
+
+  useEffect(() => {
     getRows();
   }, [
     state.currentImportYear,
@@ -207,18 +219,14 @@ export default function EnhancedTable() {
     state.currentSortValue
   ]);
 
+  useEffect(() => {
+    handleChangeRowsPerPage(state.currentPerPage);
+  }, [state.currentPerPage]);
+
   async function getRows() {
     var fetchString =
-      "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
-      state.currentImportYear.value +
-      "&per_page=" +
-      state.currentPerPage.value +
-      "&page=" +
-      state.currentPageNr +
-      "&sort=" +
-      state.currentSortValue +
-      " " +
-      state.currentSortOrder;
+      "http://localhost:8080/criswsint/sentralimport/publications?year_published=" +
+      state.currentImportYear.value;
 
     if (
       state.currentInstitution.value === null ||
@@ -242,10 +250,24 @@ export default function EnhancedTable() {
         fetchString = fetchString + "&relevant=false";
       }
     }
+    fetchString =
+      fetchString +
+      "&per_page=" +
+      state.currentPerPage.value +
+      "&page=" +
+      (state.currentPageNr + 1);
     console.log(fetchString);
     const temp = await axios.get(fetchString);
     console.log(temp);
     handleRows(temp.data);
+  }
+
+  function handleChangeRowsPerPage() {
+    setRowsPerPage(state.currentPerPage);
+  }
+
+  function resetPageNr() {
+    dispatch({ type: "setPageNr", payload: 0 });
   }
 
   function handleRows(temp) {
@@ -287,13 +309,8 @@ export default function EnhancedTable() {
     }
   }
 
-  function handleChangePage(newPage) {
-    setPage(newPage);
-  }
-
-  function handleChangeRowsPerPage(event) {
-    setRowsPerPage(event.target.value);
-    setPage(0);
+  function handleChangeRowsPerPage(option) {
+    setRowsPerPage(option.value);
   }
 
   const emptyRows =
@@ -378,6 +395,7 @@ export default function EnhancedTable() {
           hidden={true}
           rowsPerPageOptions={[5, 10]}
           component="div"
+          rowsPerPage={rowsPerPage}
           count={rows.length}
           backIconButtonProps={{
             "aria-label": "Previous Page"
@@ -385,7 +403,6 @@ export default function EnhancedTable() {
           nextIconButtonProps={{
             "aria-label": "Next Page"
           }}
-          onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Button, Input, Paper, Grid } from "@material-ui/core";
 import { Context } from "../../Context";
 import Select from "react-select";
@@ -12,24 +12,16 @@ export default function Pagination() {
     { value: 15, label: "15" }
   ];
 
-  useEffect(() => {
-    dispatch({ type: "setPageNr", payload: 0 });
-  }, [state.currentPerPage]);
-
   function decrementPage() {
-    console.log(state.currentPageNr);
     dispatch({ type: "setPageNr", payload: state.currentPageNr - 1 });
-    console.log(state.currentPageNr);
   }
 
   function incrementPage() {
-    console.log(state.currentPageNr);
     dispatch({ type: "setPageNr", payload: state.currentPageNr + 1 });
-    console.log(state.currentPageNr);
   }
 
   function changePage(event) {
-    if (event.target.value >= 0) {
+    if (event.target.value >= 1) {
       console.log(event.target.value);
       dispatch({ type: "setPageNr", payload: parseInt(event.target.value) });
     } else {
