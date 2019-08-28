@@ -51,10 +51,10 @@ const headRows = [
     disablePadding: false,
     label: "Publikasjon"
   },
-  { id: "kategori", numeric: true, disablePadding: false, label: "Kategori" },
-  { id: "kilde", numeric: true, disablePadding: false, label: "Kilde" },
+  { id: "category", numeric: true, disablePadding: false, label: "Kategori" },
+  { id: "source", numeric: true, disablePadding: false, label: "Kilde" },
   {
-    id: "dato_opprettet",
+    id: "date",
     numeric: true,
     disablePadding: false,
     label: "Dato opprettet"
@@ -252,6 +252,10 @@ export default function EnhancedTable() {
     }
     fetchString =
       fetchString +
+      "&sort=" +
+      state.currentSortValue +
+      " " +
+      state.currentSortOrder +
       "&per_page=" +
       state.currentPerPage.value +
       "&page=" +
@@ -320,13 +324,13 @@ export default function EnhancedTable() {
     for (var h = 0; h < authorList.length; h++) {
       var check = 0;
       for (var i = 0; i < inst.length; i++) {
-        if (inst[i] === authorList[h].institutions[0].institutionName) {
+        if (inst[i] === authorList[h].institutions[0].acronym) {
           check++;
         }
       }
       if (check === 0) {
-        if (authorList[h].institutions[0].institutionName !== "") {
-          inst.push(authorList[h].institutions[0].institutionName);
+        if (authorList[h].institutions[0].acronym !== "") {
+          inst.push(authorList[h].institutions[0].acronym);
         }
       }
     }
@@ -334,7 +338,6 @@ export default function EnhancedTable() {
       <div>
         {inst.map(ins => (
           <div>
-            <div> &nbsp; </div>
             <div>{ins}</div>
           </div>
         ))}

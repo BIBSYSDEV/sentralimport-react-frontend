@@ -9,7 +9,7 @@ let initialState = {
   isSampublikasjon: false,
   currentPageNr: 0,
   currentPerPage: { value: 5, label: "5" },
-  currentSortValue: "kilde",
+  currentSortValue: "date",
   currentSortOrder: "desc"
 };
 

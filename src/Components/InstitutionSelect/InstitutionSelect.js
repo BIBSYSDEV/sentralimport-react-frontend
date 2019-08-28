@@ -7,7 +7,7 @@ const institutions = [
   { value: "UIO", label: "Universitetet i Oslo" },
   { value: "UIB", label: "Universitetet i Bergen" },
   { value: "UIS", label: "Universitetet i Stavanger" },
-  { value: "OsloMet", label: "Oslo Metropolitan University" }
+  { value: "NTNU", label: "Norges Teknisk-Naturvitenskapelige Universitet" }
 ];
 
 export default function InstitutionSelect(props) {
