@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment } from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { lighten, makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -267,9 +267,9 @@ export default function EnhancedTable() {
     handleRows(temp.data);
   }
 
-  function handleChangeRowsPerPage() {
+  /* function handleChangeRowsPerPage() {
     setRowsPerPage(state.currentPerPage);
-  }
+  } */
 
   function resetPageNr() {
     dispatch({ type: "setPageNr", payload: 0 });
