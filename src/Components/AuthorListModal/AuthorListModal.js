@@ -25,7 +25,7 @@ export default function AuthorListModal(props) {
             props.data.authors.length < 5 ? props.data.authors.length * 60 : 250
           }
           itemCount={props.data.authors.length}
-          itemSize={55}
+          itemSize={75}
           width={475}
           itemData={props.data.authors}
         >

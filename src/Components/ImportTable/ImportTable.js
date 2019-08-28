@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Fragment } from "react";
 import PropTypes from "prop-types";
 import { lighten, makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -51,13 +51,13 @@ const headRows = [
     disablePadding: false,
     label: "Publikasjon"
   },
-  { id: "Kategori", numeric: true, disablePadding: false, label: "Kategori" },
-  { id: "Kilde", numeric: true, disablePadding: false, label: "Kilde" },
+  { id: "kategori", numeric: true, disablePadding: false, label: "Kategori" },
+  { id: "kilde", numeric: true, disablePadding: false, label: "Kilde" },
   {
-    id: "Dato registrert",
+    id: "dato_opprettet",
     numeric: true,
     disablePadding: false,
-    label: "Dato registrert"
+    label: "Dato opprettet"
   },
   {
     id: "Eierinstitusjon",
@@ -256,6 +256,7 @@ export default function EnhancedTable() {
       state.currentPerPage.value +
       "&page=" +
       (state.currentPageNr + 1);
+
     console.log(fetchString);
     const temp = await axios.get(fetchString);
     console.log(temp);
@@ -313,6 +314,34 @@ export default function EnhancedTable() {
     setRowsPerPage(option.value);
   }
 
+  function handleOwnerInstitutions(row) {
+    var inst = [];
+    var authorList = row.authors;
+    for (var h = 0; h < authorList.length; h++) {
+      var check = 0;
+      for (var i = 0; i < inst.length; i++) {
+        if (inst[i] === authorList[h].institutions[0].institutionName) {
+          check++;
+        }
+      }
+      if (check === 0) {
+        if (authorList[h].institutions[0].institutionName !== "") {
+          inst.push(authorList[h].institutions[0].institutionName);
+        }
+      }
+    }
+    return (
+      <div>
+        {inst.map(ins => (
+          <div>
+            <div> &nbsp; </div>
+            <div>{ins}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   const emptyRows =
     rowsPerPage -
     Math.min(rowsPerPage, rows != null ? rows.length - page * rowsPerPage : 0);
@@ -361,14 +390,7 @@ export default function EnhancedTable() {
                       <TableCell align="right">{row.sourceName}</TableCell>
                       <TableCell align="right">{row.registered}</TableCell>
                       <TableCell align="right">
-                        {row.authors[0].institutions &&
-                        row.authors[0].institutions[0].institutionName ? (
-                          <p>
-                            {row.authors[0].institutions[0].institutionName}
-                          </p>
-                        ) : (
-                          <p>{}</p>
-                        )}
+                        {handleOwnerInstitutions(row)}
                       </TableCell>
                       <TableCell align="right">
                         <IconButton
