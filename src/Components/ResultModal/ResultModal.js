@@ -13,6 +13,7 @@ import {
   FormControlLabel
 } from "@material-ui/core";
 import InnerModal from "../InnerModal/InnerModal";
+import { Duplicates } from "./Duplicates"
 
 export default function ResultModal(props) {
   const [selected, setSelected] = React.useState("0");
@@ -25,6 +26,7 @@ export default function ResultModal(props) {
   const style = {
     background: "green"
   };
+
 
   function handleChange(event) {
     setSelected(event.target.value);
@@ -64,29 +66,28 @@ export default function ResultModal(props) {
             <ListGroupItemHeading>
               Cristinpublikasjoner (Velg korrekt publikasjon fra Cristin):
             </ListGroupItemHeading>
-            <ListGroupItemText>
-              Det finnes ingen Cristinpublikasjoner som matcher
-              importpublikasjonen
-            </ListGroupItemText>
-          </ListGroupItem>
-          <ListGroupItem>
             <div>
-              <FormControl>
-                <RadioGroup onChange={handleChange} value={selected} row>
-                  <FormControlLabel
-                    value="0"
-                    control={<Radio />}
-                    label="Ikke importer"
-                  />
-                  <FormControlLabel
-                    value="1"
-                    control={<Radio />}
-                    label="Opprett ny cristin-publikasjon basert på importpublikasjon"
-                  />
-                </RadioGroup>
-              </FormControl>
+                <Duplicates publication={props.data}/>
             </div>
           </ListGroupItem>
+          {/*<ListGroupItem>*/}
+            {/*<div>*/}
+              {/*<FormControl>*/}
+                {/*<RadioGroup onChange={handleChange} value={selected} row>*/}
+                  {/*<FormControlLabel*/}
+                    {/*value="0"*/}
+                    {/*control={<Radio />}*/}
+                    {/*label="Ikke importer"*/}
+                  {/*/>*/}
+                  {/*<FormControlLabel*/}
+                    {/*value="1"*/}
+                    {/*control={<Radio />}*/}
+                    {/*label="Opprett ny cristin-publikasjon basert på importpublikasjon"*/}
+                  {/*/>*/}
+                {/*</RadioGroup>*/}
+              {/*</FormControl>*/}
+            {/*</div>*/}
+          {/*</ListGroupItem>*/}
         </ListGroup>
       </ModalBody>
       <ModalFooter>
