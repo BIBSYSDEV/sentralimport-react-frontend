@@ -1,8 +1,6 @@
 import React from "react";
 
 function ImportPage(props) {
-  let { state } = React.useContext(Context);
-  const [importType, setImportType] = React.useState(0);
   const [isEqual, setIsEqual] = React.useState(false);
 
   function checkEquality() {
@@ -20,18 +18,7 @@ function ImportPage(props) {
     }
   }
 
-  function handleImportType() {
-    /* checks if a new publication is being imported */
-    /* or if an import is being merged with an already */
-    /* existing CRISTIN publication */
-    if (statement) {
-      /* if props contains a dataset from an already existing CRISTIN publication, set values accordingly */
-    } else {
-      /* else do not set fields id and date_created (generate them on form submit?) */
-    }
-  }
-
-  return <div>Page goes here</div>;
+  return <div>{checkEquality}</div>;
 }
 
 export default ImportPage;

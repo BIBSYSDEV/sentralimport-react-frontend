@@ -13,6 +13,8 @@ import {
   FormControlLabel
 } from "@material-ui/core";
 import InnerModal from "../InnerModal/InnerModal";
+import { BrowserRouter, Route, Link } from "react-router-dom";
+
 
 export default function ResultModal(props) {
   const [selected, setSelected] = React.useState("0");
@@ -33,6 +35,9 @@ export default function ResultModal(props) {
   function handleSubmit() {
     if (selected === "1") {
       setInnerModal(true);
+      return(
+        
+      );
     } else if (selected === "0") {
       props.handleClose();
     }

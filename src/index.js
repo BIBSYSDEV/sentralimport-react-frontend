@@ -6,11 +6,14 @@ import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-table/react-table.css";
 import { SnackbarProvider } from "notistack";
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.render(
-  <SnackbarProvider maxSnack={1}>
-    <App />
-  </SnackbarProvider>,
+  <BrowserRouter>
+    <SnackbarProvider maxSnack={1}>
+      <App />
+    </SnackbarProvider>
+  </BrowserRouter>,
   document.getElementById("root")
 );
 
