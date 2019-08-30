@@ -6,12 +6,16 @@ import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-table/react-table.css";
 import { SnackbarProvider } from "notistack";
-import { BrowserRouter } from "react-router-dom";
+import { Switch, BrowserRouter, Route } from "react-router-dom";
+import ImportPage from "./Components/ImportPage/ImportPage";
 
 ReactDOM.render(
   <BrowserRouter>
     <SnackbarProvider maxSnack={1}>
-      <App />
+      <Switch>
+        <Route exact path="/" component={App} />
+        <Route path="/importpage" component={ImportPage} />
+      </Switch>
     </SnackbarProvider>
   </BrowserRouter>,
   document.getElementById("root")

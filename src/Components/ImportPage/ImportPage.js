@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "react-bootstrap";
 
 function ImportPage(props) {
   const [isEqual, setIsEqual] = React.useState(false);
@@ -18,7 +19,7 @@ function ImportPage(props) {
     }
   }
 
-  return <div>{checkEquality}</div>;
+  return <div>Hello page</div>;
 }
 
 export default ImportPage;
