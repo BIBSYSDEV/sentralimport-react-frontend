@@ -3,6 +3,7 @@ import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import { TextField, FormGroup, Button } from "@material-ui/core";
 import { Form } from "reactstrap";
 import { withSnackbar } from "notistack";
+import { width } from "@material-ui/system";
 
 function InnerModal(props) {
   const kilde = props.data.sourceName;
@@ -49,7 +50,7 @@ function InnerModal(props) {
   }
 
   return (
-    <Modal isOpen={props.open}>
+    <Modal isOpen={props.open} size="xl">
       <ModalHeader toggle={handleClose}>Import av publikasjon</ModalHeader>
       <ModalBody>
         <Form>
