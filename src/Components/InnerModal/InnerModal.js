@@ -5,25 +5,68 @@ import { Form } from "reactstrap";
 import { withSnackbar } from "notistack";
 
 function InnerModal(props) {
-  const kilde = props.data.sourceName;
+  const [kilde, setKilde] = React.useState(props.data.sourceName);
 
   const [tittel, setTittel] = React.useState(props.data.languages[0].title);
 
-  const [aarstall, setAarstall] = React.useState(props.data.registered);
+  const [aarstall, setAarstall] = React.useState(
+    props.data.registered.substring(
+      props.data.registered.length - 4,
+      props.data.registered.length
+    )
+  );
 
   const [kategori, setKategori] = React.useState(props.data.category);
 
   const [lang, setLang] = React.useState(props.data.languages[0].lang);
 
+  const [kildeIsEqual, setKildeIsEqual] = React.useState(true);
+
+  const [tittelIsEqual, setTittelIsEqual] = React.useState(true);
+
+  const [aarstallIsEqual, setAarstallIsEqual] = React.useState(true);
+
+  const [kategoriIsEqual, setKategoriIsEqual] = React.useState(true);
+
+  function handleChangeKilde(event) {
+    if (event.target.value !== props.data.sourceName) {
+      setKildeIsEqual(false);
+    } else {
+      setKildeIsEqual(true);
+    }
+    setKilde(event.target.value);
+  }
+
   function handleChangeTittel(event) {
+    if (event.target.value !== props.data.languages[0].title) {
+      setTittelIsEqual(false);
+    } else {
+      setTittelIsEqual(true);
+    }
     setTittel(event.target.value);
   }
 
   function handleChangeAarstall(event) {
+    if (
+      event.target.value !==
+      props.data.registered.substring(
+        props.data.registered.length - 4,
+        props.data.registered.length
+      )
+    ) {
+      setAarstallIsEqual(false);
+    } else {
+      setAarstallIsEqual(true);
+    }
     setAarstall(event.target.value);
   }
 
   function handleChangeKategori(event) {
+    if (event.target.value !== props.data.category) {
+      setKategoriIsEqual(false);
+    } else {
+      setKategoriIsEqual(true);
+    }
     setKategori(event.target.value);
   }
 
@@ -48,6 +91,31 @@ function InnerModal(props) {
     props.toggle();
   }
 
+  function copyKilde() {
+    setKilde(props.data.sourceName);
+    setKildeIsEqual(true);
+  }
+
+  function copyTittel() {
+    setTittel(props.data.languages[0].title);
+    setTittelIsEqual(true);
+  }
+
+  function copyAarstall() {
+    setAarstall(
+      props.data.registered.substring(
+        props.data.registered.length - 4,
+        props.data.registered.length
+      )
+    );
+    setAarstallIsEqual(true);
+  }
+
+  function copyKategori() {
+    setKategori(props.data.category);
+    setKategoriIsEqual(true);
+  }
+
   const buttonStyle = {
     marginTop: "30px"
   };
@@ -56,30 +124,26 @@ function InnerModal(props) {
     <Modal isOpen={props.open} size="xl">
       <ModalHeader toggle={handleClose}>Import av publikasjon</ModalHeader>
       <ModalBody>
-        <Grid
-          container
-          direction="row"
-          justify="center"
-          alignItems="center"
-          spacing={3}
-        >
+        <Grid container direction="row" justify="center" alignItems="center">
           <Grid container item xs={12} sm={4}>
             <Form>
               <h3>Importpublikasjon</h3>
               <FormGroup>
                 <Grid item>
-                  <div>
-                    <TextField
-                      id="import-kilde"
-                      label="Kilde"
-                      value={kilde}
-                      margin="normal"
-                      disabled
-                      required
-                    />
-
-                    <Button style={buttonStyle}> => </Button>
-                  </div>
+                  <TextField
+                    id="import-kilde"
+                    label="Kilde"
+                    value={props.data.sourceName}
+                    margin="normal"
+                    disabled
+                  />
+                  {kildeIsEqual ? (
+                    <Button style={buttonStyle}> == </Button>
+                  ) : (
+                    <Button style={buttonStyle} onClick={copyKilde}>
+                      =>
+                    </Button>
+                  )}
                 </Grid>
               </FormGroup>
               <FormGroup>
@@ -87,14 +151,17 @@ function InnerModal(props) {
                   <TextField
                     id="import-tittel"
                     label="Tittel"
-                    value={tittel}
-                    onChange={handleChangeTittel}
+                    value={props.data.languages[0].title}
                     margin="normal"
-                    multiline
-                    required
                     disabled
                   />
-                  <Button style={buttonStyle}> => </Button>
+                  {tittelIsEqual ? (
+                    <Button style={buttonStyle}> == </Button>
+                  ) : (
+                    <Button style={buttonStyle} onClick={copyTittel}>
+                      =>
+                    </Button>
+                  )}
                 </Grid>
               </FormGroup>
               <FormGroup>
@@ -102,16 +169,20 @@ function InnerModal(props) {
                   <TextField
                     id="import-aarstall"
                     label="Årstall"
-                    value={aarstall.substring(
-                      aarstall.length - 4,
-                      aarstall.length
+                    value={props.data.registered.substring(
+                      props.data.registered.length - 4,
+                      props.data.registered.length
                     )}
-                    onChange={handleChangeAarstall}
                     margin="normal"
-                    required
                     disabled
                   />
-                  <Button style={buttonStyle}> => </Button>
+                  {aarstallIsEqual ? (
+                    <Button style={buttonStyle}> == </Button>
+                  ) : (
+                    <Button style={buttonStyle} onClick={copyAarstall}>
+                      =>
+                    </Button>
+                  )}
                 </Grid>
               </FormGroup>
               <FormGroup>
@@ -119,13 +190,17 @@ function InnerModal(props) {
                   <TextField
                     id="import-kategori"
                     label="Kategori"
-                    value={kategori}
-                    onChange={handleChangeKategori}
+                    value={props.data.category}
                     margin="normal"
-                    required
                     disabled
                   />
-                  <Button style={buttonStyle}> => </Button>
+                  {kategoriIsEqual ? (
+                    <Button style={buttonStyle}> == </Button>
+                  ) : (
+                    <Button style={buttonStyle} onClick={copyKategori}>
+                      =>
+                    </Button>
+                  )}
                 </Grid>
               </FormGroup>
               <FormGroup>
@@ -133,10 +208,8 @@ function InnerModal(props) {
                   <TextField
                     id="import-lang"
                     label="Språk"
-                    value={lang}
-                    onChange={handleChangeLang}
+                    value={props.data.languages[0].lang}
                     margin="normal"
-                    required
                     disabled
                   />
                   <Button style={buttonStyle}> => </Button>
@@ -160,7 +233,6 @@ function InnerModal(props) {
                     }
                     margin="normal"
                     disabled
-                    required
                   />
                   <Button style={buttonStyle}> => </Button>
                 </Grid>
@@ -178,6 +250,7 @@ function InnerModal(props) {
                   id="import-kilde"
                   label="Kilde"
                   value={kilde}
+                  onChange={event => handleChangeKilde(event)}
                   margin="normal"
                   required
                 />
@@ -186,11 +259,10 @@ function InnerModal(props) {
                 <TextField
                   id="import-tittel"
                   label="Tittel"
+                  name="Tittel"
                   value={tittel}
-                  onChange={handleChangeTittel}
+                  onChange={event => handleChangeTittel(event)}
                   margin="normal"
-                  multiline
-                  required
                 />
               </FormGroup>
               <FormGroup>
