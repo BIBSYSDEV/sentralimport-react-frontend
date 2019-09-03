@@ -185,7 +185,8 @@ export default function EnhancedTable() {
 
   async function getRows() {
     var fetchString =
-      "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
+      "http://localhost:8080/criswsint/sentralimport/publications?year_published=" +
+      //"https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
       state.currentImportYear.value +
       "&per_page=5";
 

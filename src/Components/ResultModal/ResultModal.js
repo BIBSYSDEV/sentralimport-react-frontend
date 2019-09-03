@@ -6,18 +6,13 @@ import {
   ListGroupItemHeading,
   ListGroupItemText
 } from "reactstrap";
-import {
-  Radio,
-  RadioGroup,
-  FormControl,
-  FormControlLabel
-} from "@material-ui/core";
 import InnerModal from "../InnerModal/InnerModal";
 import { Duplicates } from "./Duplicates"
+import {Context} from "../../Context";
 
 export default function ResultModal(props) {
-  const [selected, setSelected] = React.useState("0");
   const [innerModal, setInnerModal] = React.useState(false);
+  let { state } = React.useContext(Context);
 
   const divStyle = {
     fontWeight: "bold"
@@ -27,16 +22,13 @@ export default function ResultModal(props) {
     background: "green"
   };
 
-
-  function handleChange(event) {
-    setSelected(event.target.value);
-  }
-
   function handleSubmit() {
-    if (selected === "1") {
-      setInnerModal(true);
-    } else if (selected === "0") {
-      props.handleClose();
+    if (state.selectedValue === "true") {
+        setInnerModal(true);
+    } else if (state.selectedValue === "false") {
+        props.handleClose();
+    } else {
+        console.log(state.selectedPublication);
     }
   }
 
@@ -70,24 +62,6 @@ export default function ResultModal(props) {
                 <Duplicates publication={props.data}/>
             </div>
           </ListGroupItem>
-          {/*<ListGroupItem>*/}
-            {/*<div>*/}
-              {/*<FormControl>*/}
-                {/*<RadioGroup onChange={handleChange} value={selected} row>*/}
-                  {/*<FormControlLabel*/}
-                    {/*value="0"*/}
-                    {/*control={<Radio />}*/}
-                    {/*label="Ikke importer"*/}
-                  {/*/>*/}
-                  {/*<FormControlLabel*/}
-                    {/*value="1"*/}
-                    {/*control={<Radio />}*/}
-                    {/*label="Opprett ny cristin-publikasjon basert på importpublikasjon"*/}
-                  {/*/>*/}
-                {/*</RadioGroup>*/}
-              {/*</FormControl>*/}
-            {/*</div>*/}
-          {/*</ListGroupItem>*/}
         </ListGroup>
       </ModalBody>
       <ModalFooter>

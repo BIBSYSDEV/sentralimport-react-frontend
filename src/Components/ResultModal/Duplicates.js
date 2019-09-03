@@ -1,22 +1,21 @@
 import React, { useEffect } from 'react';
 import { Result } from './Result';
 import axios from "axios";
+import { Context } from "../../Context";
 import {
     Radio,
     RadioGroup,
-    FormControl,
     FormControlLabel
 } from "@material-ui/core";
 import {
-    ListGroup,
-    ListGroupItem,
-    ListGroupItemHeading,
-    ListGroupItemText
+    ListGroupItem
 } from "reactstrap";
 
 export function Duplicates(props) {
 
     const [data, setdata] = React.useState([]);
+    let { state } = React.useContext(Context);
+    const [selected, setSelected] = React.useState("false");
     let searchString = "";
 
     useEffect(() => {
@@ -46,16 +45,20 @@ export function Duplicates(props) {
         fetch();
     }, []);
 
+    function handleChange(event) {
+        state.selectedValue = event.target.value;
+        setSelected(event.target.value);
+        state.selectedPublication = data.find(element => element.data.cristin_result_id === event.target.value);
+    }
+
     return (
         <div>
             <ul className={`no-padding`}>
-                <RadioGroup name="test" >
-                    <ListGroupItem>
+                <RadioGroup onChange={handleChange} value={selected} >
                 { data.length > 0 ?
                     data.map((item, i) => <Result data={item.data} key={i} />) :
                     <p>Det finnes ingen Cristinpublikasjoner som matcher importpublikasjonen</p>
                 }
-                    </ListGroupItem>
                     <ListGroupItem>
                         <FormControlLabel
                             value="false"
@@ -77,23 +80,24 @@ export function Duplicates(props) {
 async function fetchDuplicates(searchTerms) {
     let results = [];
     console.log("fething...");
-    const searchResults = await axios.get("http://localhost:8080/crisrest/results" + searchTerms);
-    //const searchResults = await axios.get("https://api.cristin-utv.uio.no/v2/results" + searchTerms);
+    const searchResults = await axios.get("https://api.cristin-utv.uio.no/v2/results" + searchTerms);
 
     if (searchTerms.includes('doi')) {
-        results.push({
-            data: searchResults.data[0]
-        });
+        for (let i = 0; i < searchResults.data.length; i++) {
+            results.push({
+                data: searchResults.data[i]
+            });
+        }
+
     } else {
         for (let i = 0; i < searchResults.data.length; i++) {
-            //let res = await axios.get("https://api.cristin-utv.uio.no/v2/results/" + searchResults.data[i].id);
-            let res = await axios.get("http://localhost:8080/crisrest/results/" + searchResults.data[i].id);
+            let res = await axios.get("https://api.cristin-utv.uio.no/v2/results/" + searchResults.data[i].id);
             results.push(res);
         }
     }
 
     for (let i = 0; i < results.length; i++) {
-        let authors = await axios.get("http://localhost:8080/crisrest/results/" + results[i].data.cristin_result_id + "/contributors");
+        let authors = await axios.get("https://api.cristin-utv.uio.no/v2/results/" + results[i].data.cristin_result_id + "/contributors");
         results[i].data.authors = authors.data;
     }
 
