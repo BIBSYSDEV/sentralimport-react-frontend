@@ -20,6 +20,10 @@ function InnerModal(props) {
 
   const [lang, setLang] = React.useState(props.data.languages[0].lang);
 
+  const [doi, setDoi] = React.useState(
+    props.data.doi ? props.data.doi : "Ingen DOI funnet for publikasjon"
+  );
+
   const [kildeIsEqual, setKildeIsEqual] = React.useState(true);
 
   const [tittelIsEqual, setTittelIsEqual] = React.useState(true);
@@ -27,6 +31,10 @@ function InnerModal(props) {
   const [aarstallIsEqual, setAarstallIsEqual] = React.useState(true);
 
   const [kategoriIsEqual, setKategoriIsEqual] = React.useState(true);
+
+  const [langIsEqual, setLangIsEqual] = React.useState(true);
+
+  const [doiIsEqual, setDoiIsEqual] = React.useState(true);
 
   function handleChangeKilde(event) {
     if (event.target.value !== props.data.sourceName) {
@@ -71,7 +79,21 @@ function InnerModal(props) {
   }
 
   function handleChangeLang(event) {
+    if (event.target.value !== props.data.languages[0].lang) {
+      setLangIsEqual(false);
+    } else {
+      setLangIsEqual(true);
+    }
     setLang(event.target.value);
+  }
+
+  function handleChangeDoi(event) {
+    if (event.target.value !== props.data.doi) {
+      setDoiIsEqual(false);
+    } else {
+      setDoiIsEqual(true);
+    }
+    setDoi(event.target.value);
   }
 
   function handleSubmit() {
@@ -116,6 +138,18 @@ function InnerModal(props) {
     setKategoriIsEqual(true);
   }
 
+  function copyLang() {
+    setLang(props.data.languages[0].lang);
+    setLangIsEqual(true);
+  }
+
+  function copyDoi() {
+    setDoi(
+      props.data.doi ? props.data.doi : "Ingen DOI funnet for publikasjon"
+    );
+    setDoiIsEqual(true);
+  }
+
   const buttonStyle = {
     marginTop: "30px"
   };
@@ -141,6 +175,24 @@ function InnerModal(props) {
                     <Button style={buttonStyle}> == </Button>
                   ) : (
                     <Button style={buttonStyle} onClick={copyKilde}>
+                      =>
+                    </Button>
+                  )}
+                </Grid>
+              </FormGroup>
+              <FormGroup>
+                <Grid item>
+                  <TextField
+                    id="import-doi"
+                    label="Doi"
+                    value={props.data.doi || "Ingen DOI funnet for publikasjon"}
+                    margin="normal"
+                    disabled
+                  />
+                  {doiIsEqual ? (
+                    <Button style={buttonStyle}> == </Button>
+                  ) : (
+                    <Button style={buttonStyle} onClick={copyDoi}>
                       =>
                     </Button>
                   )}
@@ -212,7 +264,13 @@ function InnerModal(props) {
                     margin="normal"
                     disabled
                   />
-                  <Button style={buttonStyle}> => </Button>
+                  {langIsEqual ? (
+                    <Button style={buttonStyle}> == </Button>
+                  ) : (
+                    <Button style={buttonStyle} onClick={copyLang}>
+                      =>
+                    </Button>
+                  )}
                 </Grid>
               </FormGroup>
               <FormGroup>
@@ -251,6 +309,16 @@ function InnerModal(props) {
                   label="Kilde"
                   value={kilde}
                   onChange={event => handleChangeKilde(event)}
+                  margin="normal"
+                  required
+                />
+              </FormGroup>
+              <FormGroup>
+                <TextField
+                  id="import-doi"
+                  label="Doi"
+                  value={doi}
+                  onChange={event => handleChangeDoi(event)}
                   margin="normal"
                   required
                 />
