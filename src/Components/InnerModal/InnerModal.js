@@ -1,6 +1,12 @@
 import React from "react";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
-import { TextField, FormGroup, Button, Grid } from "@material-ui/core";
+import {
+  TextField,
+  FormGroup,
+  Button,
+  Grid,
+  FormControl
+} from "@material-ui/core";
 import { Form } from "reactstrap";
 import { withSnackbar } from "notistack";
 
@@ -151,14 +157,21 @@ function InnerModal(props) {
   }
 
   const buttonStyle = {
-    marginTop: "30px"
+    marginTop: "30px",
+    marginLeft: "10px"
   };
 
   return (
     <Modal isOpen={props.open} size="xl">
       <ModalHeader toggle={handleClose}>Import av publikasjon</ModalHeader>
       <ModalBody>
-        <Grid container direction="row" justify="center" alignItems="center">
+        <Grid
+          container
+          direction="row"
+          justify="center"
+          alignItems="center"
+          sm={12}
+        >
           <Grid container item xs={12} sm={4}>
             <Form>
               <h3>Importpublikasjon</h3>
@@ -314,14 +327,16 @@ function InnerModal(props) {
                 />
               </FormGroup>
               <FormGroup>
-                <TextField
-                  id="import-doi"
-                  label="Doi"
-                  value={doi}
-                  onChange={event => handleChangeDoi(event)}
-                  margin="normal"
-                  required
-                />
+                <FormControl required>
+                  <TextField
+                    id="import-doi"
+                    label="Doi"
+                    value={doi}
+                    onChange={event => handleChangeDoi(event)}
+                    margin="normal"
+                    required
+                  />
+                </FormControl>
               </FormGroup>
               <FormGroup>
                 <TextField
@@ -331,6 +346,7 @@ function InnerModal(props) {
                   value={tittel}
                   onChange={event => handleChangeTittel(event)}
                   margin="normal"
+                  required
                 />
               </FormGroup>
               <FormGroup>

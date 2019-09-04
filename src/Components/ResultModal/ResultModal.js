@@ -14,7 +14,6 @@ import {
 } from "@material-ui/core";
 import InnerModal from "../InnerModal/InnerModal";
 import { Redirect } from "react-router-dom";
-import { width } from "@material-ui/system";
 
 export default function ResultModal(props) {
   const [selected, setSelected] = React.useState("0");
@@ -31,10 +30,6 @@ export default function ResultModal(props) {
   const modalStyle = {
     height: "100%",
     width: "100%"
-  };
-
-  const importPage = () => {
-    return <Redirect from="/" to="/importpage" />;
   };
 
   function handleChange(event) {
