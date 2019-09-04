@@ -42,6 +42,13 @@ function InnerModal(props) {
 
   const [doiIsEqual, setDoiIsEqual] = React.useState(true);
 
+  const buttonStyle = {
+    marginTop: "30px",
+    marginLeft: "10px"
+  };
+
+  const importType = 0;
+
   function handleChangeKilde(event) {
     if (event.target.value !== props.data.sourceName) {
       setKildeIsEqual(false);
@@ -156,11 +163,6 @@ function InnerModal(props) {
     setDoiIsEqual(true);
   }
 
-  const buttonStyle = {
-    marginTop: "30px",
-    marginLeft: "10px"
-  };
-
   return (
     <Modal isOpen={props.open} size="xl">
       <ModalHeader toggle={handleClose}>Import av publikasjon</ModalHeader>
@@ -175,6 +177,28 @@ function InnerModal(props) {
           <Grid container item xs={12} sm={4}>
             <Form>
               <h3>Importpublikasjon</h3>
+              <FormGroup>
+                <Grid item>
+                  <TextField
+                    id="import-id"
+                    label="Pubid"
+                    value={props.data.pubId}
+                    margin="normal"
+                    disabled
+                  />
+                </Grid>
+              </FormGroup>
+              <FormGroup>
+                <Grid item>
+                  <TextField
+                    id="import-registrert"
+                    label="Dato registrert"
+                    value={props.data.registered}
+                    margin="normal"
+                    disabled
+                  />
+                </Grid>
+              </FormGroup>
               <FormGroup>
                 <Grid item>
                   <TextField
@@ -313,101 +337,113 @@ function InnerModal(props) {
               </FormGroup>
             </Form>
           </Grid>
-          <Grid container item xs={12} sm={4}>
-            <Form>
-              <h3> Cristinpublikasjon </h3>
-              <FormGroup>
+
+          <Form>
+            <h3> Cristinpublikasjon </h3>
+            <FormGroup>
+              <TextField
+                id="cristin-id"
+                label="Cristinid"
+                margin="normal"
+                disabled
+              />
+            </FormGroup>
+            <FormGroup>
+              <TextField
+                id="import-opprettet"
+                label="Dato opprettet"
+                margin="normal"
+                disabled
+              />
+            </FormGroup>
+            <FormGroup>
+              <TextField
+                id="import-kilde"
+                label="Kilde"
+                value={kilde}
+                onChange={event => handleChangeKilde(event)}
+                margin="normal"
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <FormControl required>
                 <TextField
-                  id="import-kilde"
-                  label="Kilde"
-                  value={kilde}
-                  onChange={event => handleChangeKilde(event)}
+                  id="import-doi"
+                  label="Doi"
+                  value={doi}
+                  onChange={event => handleChangeDoi(event)}
                   margin="normal"
                   required
                 />
-              </FormGroup>
-              <FormGroup>
-                <FormControl required>
-                  <TextField
-                    id="import-doi"
-                    label="Doi"
-                    value={doi}
-                    onChange={event => handleChangeDoi(event)}
-                    margin="normal"
-                    required
-                  />
-                </FormControl>
-              </FormGroup>
-              <FormGroup>
-                <TextField
-                  id="import-tittel"
-                  label="Tittel"
-                  name="Tittel"
-                  value={tittel}
-                  onChange={event => handleChangeTittel(event)}
-                  margin="normal"
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <TextField
-                  id="import-aarstall"
-                  label="Årstall"
-                  value={aarstall.substring(
-                    aarstall.length - 4,
-                    aarstall.length
-                  )}
-                  onChange={handleChangeAarstall}
-                  margin="normal"
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <TextField
-                  id="import-kategori"
-                  label="Kategori"
-                  value={kategori}
-                  onChange={handleChangeKategori}
-                  margin="normal"
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <TextField
-                  id="import-lang"
-                  label="Språk"
-                  value={lang}
-                  onChange={handleChangeLang}
-                  margin="normal"
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <TextField
-                  id="import-utgivelsesdata"
-                  label="Utgivelsesdata"
-                  value={
-                    props.data.channel
-                      ? "Volum " +
-                        props.data.channel.volume +
-                        " (" +
-                        props.data.channel.pageFrom +
-                        "-" +
-                        props.data.channel.pageTo +
-                        ") "
-                      : "Ingen utgivelsesdata funnet"
-                  }
-                  margin="normal"
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <Button color="primary" onClick={handleSubmit}>
-                  Submit
-                </Button>
-              </FormGroup>
-            </Form>
-          </Grid>
+              </FormControl>
+            </FormGroup>
+            <FormGroup>
+              <TextField
+                id="import-tittel"
+                label="Tittel"
+                name="Tittel"
+                value={tittel}
+                onChange={event => handleChangeTittel(event)}
+                margin="normal"
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <TextField
+                id="import-aarstall"
+                label="Årstall"
+                value={aarstall.substring(aarstall.length - 4, aarstall.length)}
+                onChange={handleChangeAarstall}
+                margin="normal"
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <TextField
+                id="import-kategori"
+                label="Kategori"
+                value={kategori}
+                onChange={handleChangeKategori}
+                margin="normal"
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <TextField
+                id="import-lang"
+                label="Språk"
+                value={lang}
+                onChange={handleChangeLang}
+                margin="normal"
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <TextField
+                id="import-utgivelsesdata"
+                label="Utgivelsesdata"
+                value={
+                  props.data.channel
+                    ? "Volum " +
+                      props.data.channel.volume +
+                      " (" +
+                      props.data.channel.pageFrom +
+                      "-" +
+                      props.data.channel.pageTo +
+                      ") "
+                    : "Ingen utgivelsesdata funnet"
+                }
+                margin="normal"
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <Button color="primary" onClick={handleSubmit}>
+                Submit
+              </Button>
+            </FormGroup>
+          </Form>
         </Grid>
       </ModalBody>
     </Modal>
