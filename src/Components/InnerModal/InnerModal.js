@@ -47,6 +47,10 @@ function InnerModal(props) {
     marginLeft: "10px"
   };
 
+  const tittelButtonStyle = {
+    marginTop: tittel.length / 2 + 10
+  };
+
   const importType = 0;
 
   function handleChangeKilde(event) {
@@ -243,11 +247,12 @@ function InnerModal(props) {
                     value={props.data.languages[0].title}
                     margin="normal"
                     disabled
+                    multiline
                   />
                   {tittelIsEqual ? (
-                    <Button style={buttonStyle}> == </Button>
+                    <Button style={tittelButtonStyle}> == </Button>
                   ) : (
-                    <Button style={buttonStyle} onClick={copyTittel}>
+                    <Button style={tittelButtonStyle} onClick={copyTittel}>
                       =>
                     </Button>
                   )}
@@ -387,6 +392,7 @@ function InnerModal(props) {
                 onChange={event => handleChangeTittel(event)}
                 margin="normal"
                 required
+                multiline
               />
             </FormGroup>
             <FormGroup>
