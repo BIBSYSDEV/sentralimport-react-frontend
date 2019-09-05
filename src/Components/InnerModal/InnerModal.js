@@ -5,10 +5,14 @@ import {
   FormGroup,
   Button,
   Grid,
-  FormControl
+  FormControl,
+  Icon,
+  IconButton
 } from "@material-ui/core";
 import { Form } from "reactstrap";
 import { withSnackbar } from "notistack";
+import TrendingFlatIcon from "@material-ui/icons/TrendingFlat";
+import DragHandleIcon from "@material-ui/icons/DragHandle";
 
 function InnerModal(props) {
   const [kilde, setKilde] = React.useState(props.data.sourceName);
@@ -43,15 +47,13 @@ function InnerModal(props) {
   const [doiIsEqual, setDoiIsEqual] = React.useState(true);
 
   const buttonStyle = {
-    marginTop: "30px",
+    marginTop: "20px",
     marginLeft: "10px"
   };
 
   const tittelButtonStyle = {
-    marginTop: tittel.length / 2 + 10
+    marginTop: props.data.languages[0].title.length / 2 + 10
   };
-
-  const importType = 0;
 
   function handleChangeKilde(event) {
     if (event.target.value !== props.data.sourceName) {
@@ -213,11 +215,13 @@ function InnerModal(props) {
                     disabled
                   />
                   {kildeIsEqual ? (
-                    <Button style={buttonStyle}> == </Button>
+                    <IconButton style={buttonStyle}>
+                      <DragHandleIcon />
+                    </IconButton>
                   ) : (
-                    <Button style={buttonStyle} onClick={copyKilde}>
-                      =>
-                    </Button>
+                    <IconButton style={buttonStyle} onClick={copyKilde}>
+                      <TrendingFlatIcon />
+                    </IconButton>
                   )}
                 </Grid>
               </FormGroup>
@@ -231,11 +235,13 @@ function InnerModal(props) {
                     disabled
                   />
                   {doiIsEqual ? (
-                    <Button style={buttonStyle}> == </Button>
+                    <IconButton style={buttonStyle}>
+                      <DragHandleIcon />
+                    </IconButton>
                   ) : (
-                    <Button style={buttonStyle} onClick={copyDoi}>
-                      =>
-                    </Button>
+                    <IconButton style={buttonStyle} onClick={copyDoi}>
+                      <TrendingFlatIcon />
+                    </IconButton>
                   )}
                 </Grid>
               </FormGroup>
@@ -250,11 +256,13 @@ function InnerModal(props) {
                     multiline
                   />
                   {tittelIsEqual ? (
-                    <Button style={tittelButtonStyle}> == </Button>
+                    <IconButton style={tittelButtonStyle}>
+                      <DragHandleIcon />
+                    </IconButton>
                   ) : (
-                    <Button style={tittelButtonStyle} onClick={copyTittel}>
-                      =>
-                    </Button>
+                    <IconButton style={tittelButtonStyle} onClick={copyTittel}>
+                      <TrendingFlatIcon />
+                    </IconButton>
                   )}
                 </Grid>
               </FormGroup>
@@ -271,11 +279,13 @@ function InnerModal(props) {
                     disabled
                   />
                   {aarstallIsEqual ? (
-                    <Button style={buttonStyle}> == </Button>
+                    <IconButton style={buttonStyle}>
+                      <DragHandleIcon />
+                    </IconButton>
                   ) : (
-                    <Button style={buttonStyle} onClick={copyAarstall}>
-                      =>
-                    </Button>
+                    <IconButton style={buttonStyle} onClick={copyAarstall}>
+                      <TrendingFlatIcon />
+                    </IconButton>
                   )}
                 </Grid>
               </FormGroup>
@@ -289,11 +299,13 @@ function InnerModal(props) {
                     disabled
                   />
                   {kategoriIsEqual ? (
-                    <Button style={buttonStyle}> == </Button>
+                    <IconButton style={buttonStyle}>
+                      <DragHandleIcon />
+                    </IconButton>
                   ) : (
-                    <Button style={buttonStyle} onClick={copyKategori}>
-                      =>
-                    </Button>
+                    <IconButton style={buttonStyle} onClick={copyKategori}>
+                      <TrendingFlatIcon />
+                    </IconButton>
                   )}
                 </Grid>
               </FormGroup>
@@ -307,11 +319,13 @@ function InnerModal(props) {
                     disabled
                   />
                   {langIsEqual ? (
-                    <Button style={buttonStyle}> == </Button>
+                    <IconButton style={buttonStyle}>
+                      <DragHandleIcon />
+                    </IconButton>
                   ) : (
-                    <Button style={buttonStyle} onClick={copyLang}>
-                      =>
-                    </Button>
+                    <IconButton style={buttonStyle} onClick={copyLang}>
+                      <TrendingFlatIcon />
+                    </IconButton>
                   )}
                 </Grid>
               </FormGroup>
@@ -334,7 +348,6 @@ function InnerModal(props) {
                     margin="normal"
                     disabled
                   />
-                  <Button style={buttonStyle}> => </Button>
                 </Grid>
               </FormGroup>
               <FormGroup>
@@ -470,6 +483,22 @@ InnerModal.defaultProps = {
       volume: "100",
       pageFrom: "1",
       pageTo: "10"
+    }
+  },
+  crispub: {
+    crisId: "1234",
+    registered: "300",
+    category: "Cat2",
+    languages: [
+      {
+        lang: "EN",
+        title: "Lengre tittel"
+      }
+    ],
+    channel: {
+      volume: "350",
+      pageFrom: "22",
+      pageTo: "34"
     }
   }
 };

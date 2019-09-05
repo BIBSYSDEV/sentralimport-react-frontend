@@ -69,7 +69,7 @@ const headRows = [
     id: "Forfattere",
     numeric: true,
     disablePadding: false,
-    label: ""
+    label: "Forfatterliste"
   }
 ];
 

@@ -13,7 +13,6 @@ import {
   FormControlLabel
 } from "@material-ui/core";
 import InnerModal from "../InnerModal/InnerModal";
-import { Redirect } from "react-router-dom";
 
 export default function ResultModal(props) {
   const [selected, setSelected] = React.useState("0");
@@ -25,11 +24,6 @@ export default function ResultModal(props) {
 
   const style = {
     background: "green"
-  };
-
-  const modalStyle = {
-    height: "100%",
-    width: "100%"
   };
 
   function handleChange(event) {
