@@ -6,13 +6,15 @@ import {
   Button,
   Grid,
   FormControl,
-  Icon,
-  IconButton
+  IconButton,
+  FormControlLabel,
+  FormLabel
 } from "@material-ui/core";
 import { Form } from "reactstrap";
 import { withSnackbar } from "notistack";
 import TrendingFlatIcon from "@material-ui/icons/TrendingFlat";
 import DragHandleIcon from "@material-ui/icons/DragHandle";
+import Select from "react-select";
 
 function InnerModal(props) {
   const [kilde, setKilde] = React.useState(props.data.sourceName);
@@ -46,13 +48,29 @@ function InnerModal(props) {
 
   const [doiIsEqual, setDoiIsEqual] = React.useState(true);
 
+  const [journalIsEqual, setJournalIsEqual] = React.useState(true);
+
+  const [selectedJournal, setSelectedJournal] = React.useState({
+    value: " ",
+    label: "Ingen tidsskrift funnet"
+  });
+
+  const journals = [
+    { value: " ", label: "Ingen tidsskrift funnet" },
+    {
+      value: "Journal of Clinical Oncology",
+      label: "Journal of Clinical Oncology"
+    }
+  ];
+
   const buttonStyle = {
     marginTop: "20px",
-    marginLeft: "10px"
+    marginLeft: "50px"
   };
 
   const tittelButtonStyle = {
-    marginTop: props.data.languages[0].title.length / 2 + 10
+    marginTop: props.data.languages[0].title.length / 2 + 10,
+    marginLeft: "50px"
   };
 
   function handleChangeKilde(event) {
@@ -169,6 +187,27 @@ function InnerModal(props) {
     setDoiIsEqual(true);
   }
 
+  function copyJournal() {
+    setSelectedJournal(
+      props.data.channel.journalName
+        ? {
+            value: props.data.channel.journalName,
+            label: props.data.channel.journalName
+          }
+        : { value: " ", label: "Ingen tidsskrift funnet" }
+    );
+    setJournalIsEqual(true);
+  }
+
+  function onChangeJournal(option) {
+    if (option.value !== props.data.channel.journalName) {
+      setJournalIsEqual(false);
+    } else {
+      setJournalIsEqual(true);
+    }
+    setSelectedJournal(option);
+  }
+
   return (
     <Modal isOpen={props.open} size="xl">
       <ModalHeader toggle={handleClose}>Import av publikasjon</ModalHeader>
@@ -220,6 +259,29 @@ function InnerModal(props) {
                     </IconButton>
                   ) : (
                     <IconButton style={buttonStyle} onClick={copyKilde}>
+                      <TrendingFlatIcon />
+                    </IconButton>
+                  )}
+                </Grid>
+              </FormGroup>
+              <FormGroup>
+                <Grid item>
+                  <TextField
+                    id="import-tidsskrift"
+                    label="Tidsskrift"
+                    value={
+                      props.data.channel.journalName ||
+                      "Ingen tidsskrift funnet"
+                    }
+                    margin="normal"
+                    disabled
+                  />
+                  {journalIsEqual ? (
+                    <IconButton style={buttonStyle}>
+                      <DragHandleIcon />
+                    </IconButton>
+                  ) : (
+                    <IconButton style={buttonStyle} onClick={copyJournal}>
                       <TrendingFlatIcon />
                     </IconButton>
                   )}
@@ -382,6 +444,18 @@ function InnerModal(props) {
                 onChange={event => handleChangeKilde(event)}
                 margin="normal"
                 required
+              />
+            </FormGroup>
+            <FormGroup>
+              <FormLabel> Tidsskrift </FormLabel>
+              <Select
+                placeholder="Søk på tidsskrift"
+                name="journalSelect"
+                options={journals}
+                value={selectedJournal}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                onChange={onChangeJournal}
               />
             </FormGroup>
             <FormGroup>
