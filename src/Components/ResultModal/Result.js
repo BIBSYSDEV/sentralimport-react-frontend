@@ -1,6 +1,6 @@
 import ResultIcon from "../../assets/icons/result-active.svg";
 import React from "react";
-import '../../assets//styles/Results.scss'
+import '../../assets/styles/Results.scss'
 import {
     Radio
 } from "@material-ui/core";

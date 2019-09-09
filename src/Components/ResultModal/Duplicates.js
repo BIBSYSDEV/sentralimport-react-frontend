@@ -37,8 +37,8 @@ export function Duplicates(props) {
                 }
 
                 searchString += ")&per_page=5";
-                console.log(searchString);
             }
+            console.log(searchString);
             await fetchDuplicates(searchString)
                 .then(response => setdata(response));
         }
