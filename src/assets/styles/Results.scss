@@ -1,14 +1,6 @@
 @import "./common";
 
 .card-horiz {
-  &.prosjekter {
-    border-color: $color-red;
-  }
-
-  &.biobanker {
-    border-color: $color-blue;
-  }
-
   &.result {
     border-color: $color-purple;
     width:100%;
@@ -27,14 +19,6 @@
 .result {
   padding: 1em;
   width: 80%;
-
-  &.prosjekter {
-    color: $color-red;
-  }
-
-  &.biobanker {
-    color: $color-blue;
-  }
 
   &.result {
     color: $color-purple;
@@ -72,10 +56,5 @@
 
   .italic {
     font-style: italic;
-  }
-
-  img.biobank-available {
-    max-height: 1em;
-    float: right;
   }
 }
