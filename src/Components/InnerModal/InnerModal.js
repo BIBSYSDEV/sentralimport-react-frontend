@@ -7,7 +7,6 @@ import {
   Grid,
   FormControl,
   IconButton,
-  FormControlLabel,
   FormLabel
 } from "@material-ui/core";
 import { Form } from "reactstrap";
@@ -77,6 +76,10 @@ function InnerModal(props) {
   const tittelButtonStyle = {
     marginTop: props.data.languages[0].title.length / 2 + 10,
     marginLeft: "50px"
+  };
+
+  const selectStyle = {
+    marginTop: "15px"
   };
 
   function handleChangeKilde(event) {
@@ -186,7 +189,7 @@ function InnerModal(props) {
 
   function copyJournal() {
     setSelectedJournal(
-      props.data.channel.journalName
+      props.data.channel
         ? {
             value: props.data.channel.journalName,
             label: props.data.channel.journalName
@@ -197,7 +200,7 @@ function InnerModal(props) {
   }
 
   function onChangeJournal(option) {
-    if (option.value !== props.data.channel.journalName) {
+    if (option.value !== " ") {
       setJournalIsEqual(false);
     } else {
       setJournalIsEqual(true);
@@ -296,10 +299,7 @@ function InnerModal(props) {
                     <TextField
                       id="import-tidsskrift"
                       label="Tidsskrift"
-                      value={
-                        props.data.channel.journalName ||
-                        "Ingen tidsskrift funnet"
-                      }
+                      value={"Ingen tidsskrift funnet"}
                       margin="normal"
                       disabled
                     />
@@ -344,17 +344,13 @@ function InnerModal(props) {
                       value={props.data.languages[0].title}
                       margin="normal"
                       disabled
-                      multiline
                     />
                     {tittelIsEqual ? (
-                      <IconButton style={tittelButtonStyle}>
+                      <IconButton style={buttonStyle}>
                         <DragHandleIcon />
                       </IconButton>
                     ) : (
-                      <IconButton
-                        style={tittelButtonStyle}
-                        onClick={copyTittel}
-                      >
+                      <IconButton style={buttonStyle} onClick={copyTittel}>
                         <TrendingFlatIcon />
                       </IconButton>
                     )}
@@ -479,7 +475,7 @@ function InnerModal(props) {
                 />
               </FormGroup>
               <FormGroup>
-                <FormLabel> Tidsskrift </FormLabel>
+                <FormLabel style={selectStyle}> Tidsskrift </FormLabel>
                 <Select
                   placeholder="Søk på tidsskrift"
                   name="journalSelect"
@@ -511,7 +507,6 @@ function InnerModal(props) {
                   onChange={event => handleChangeTittel(event)}
                   margin="normal"
                   required
-                  multiline
                 />
               </FormGroup>
               <FormGroup>
@@ -600,25 +595,10 @@ InnerModal.defaultProps = {
       }
     ],
     channel: {
+      journalName: "Ingen tidsskrift funnet",
       volume: "100",
       pageFrom: "1",
       pageTo: "10"
-    }
-  },
-  crispub: {
-    crisId: "1234",
-    registered: "300",
-    category: "Cat2",
-    languages: [
-      {
-        lang: "EN",
-        title: "Lengre tittel"
-      }
-    ],
-    channel: {
-      volume: "350",
-      pageFrom: "22",
-      pageTo: "34"
     }
   }
 };
