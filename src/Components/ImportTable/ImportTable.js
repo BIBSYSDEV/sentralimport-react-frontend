@@ -267,10 +267,6 @@ export default function EnhancedTable() {
     handleRows(temp.data);
   }
 
-  /* function handleChangeRowsPerPage() {
-    setRowsPerPage(state.currentPerPage);
-  } */
-
   function resetPageNr() {
     dispatch({ type: "setPageNr", payload: 0 });
   }

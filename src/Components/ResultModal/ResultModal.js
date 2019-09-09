@@ -52,11 +52,14 @@ export default function ResultModal(props) {
           <ListGroupItem>
             <ListGroupItemHeading>Importpublikasjon:</ListGroupItemHeading>
             <ListGroupItemText>
-              {props.data.authors.map(author => (
+              {props.data.authors.slice(0, 5).map(author => (
                 <span style={divStyle} key={author.sequenceNr}>
                   {author.authorName};{" "}
                 </span>
               ))}
+              {props.data.authors.length > 5
+                ? "et al (" + props.data.authors.length + ") "
+                : ""}
               {props.data.languages[0].title}
             </ListGroupItemText>
           </ListGroupItem>
