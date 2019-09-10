@@ -73,10 +73,10 @@ function InnerModal(props) {
     marginLeft: "50px"
   };
 
-  const tittelButtonStyle = {
-    marginTop: props.data.languages[0].title.length / 2 + 10,
-    marginLeft: "50px"
-  };
+  // const tittelButtonStyle = {
+  //   marginTop: props.data.languages[0].title.length / 2 + 10,
+  //   marginLeft: "50px"
+  // };
 
   const selectStyle = {
     marginTop: "15px"
