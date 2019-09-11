@@ -10,37 +10,61 @@ export default function Validation(props) {
     switch (fieldName) {
       case "tittel":
         var tittelValid = value.length >= 6;
-        // something
+        var tittelError = "Tittel er for kort er mangler";
+        {
+          tittelValid ? " " : formErrors.push(tittelError);
+        }
         break;
       case "doi":
         var doiValid = value.match(/^([0-9]+)[.]([0-9]{4})[/]([\w-.]{1,})/i);
-        // dersom doi har galt format skriv error
+        var doiError = "Doi har feil format";
+        {
+          doiValid ? " " : formErrors.push(doiError);
+        }
         break;
       case "utgivelse":
         var utgivelseValid = value.match(
           /^(Volum)[ ]([0-9]{1,})[ ]([(]([0-9]{1,4})[-]([0-9]{1,4})[)])([\w-., ]{0,})/i
         );
-        // dersom utgivelse har feil format skriv error
+        var utgivelseError = "Utgivelsesdata har galt format";
+        {
+          utgivelseValid ? " " : formErrors.push(utgivelseError);
+        }
         break;
       case "kilde":
         var kildeValid = value.length >= 3;
-        // dersom kilde er for kort skriv error
+        var kildeError = "Kilde er for kort";
+        {
+          kildeValid ? " " : formErrors.push(kildeError);
+        }
         break;
       case "tidsskrift":
         var tidsskriftValid = value !== "";
-        // dersom tidsskrift er tom skriv error
+        var tidsskriftError = "Ingen tidsskrift valgt";
+        {
+          tidsskriftValid ? " " : formErrors.push(tidsskriftError);
+        }
         break;
       case "aarstall":
         var aarstallValid = value.length === 4 && value <= "2019";
-        // dersom aarstall er galt skriv error
+        var aarstallError = "Årstall er galt/over grensen";
+        {
+          aarstallValid ? " " : formErrors.push(aarstallError);
+        }
         break;
       case "kategori":
         var kategoriValid = value.length > 3;
-        // dersom kategori er for kort skriv error
+        var kategoriError = "Kategori er for kort";
+        {
+          kategoriValid ? " " : formErrors.push(kategoriError);
+        }
         break;
       case "spraak":
         var spraakValid = value.length == 2;
-        // dersom spraak er galt skriv error
+        var spraakError = "Språkkode er i galt format";
+        {
+          spraakValid ? " " : formErrors.push(spraakError);
+        }
         break;
       default:
         break;
@@ -49,9 +73,6 @@ export default function Validation(props) {
   return (
     <div>
       <p>Errors in form</p>
-      {formErrors.map(error => {
-        <span>{error}</span>;
-      })}
     </div>
   );
 }
