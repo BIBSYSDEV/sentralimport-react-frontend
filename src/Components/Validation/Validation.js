@@ -1,69 +1,94 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { Context } from "../../Context";
 
 export default function Validation(props) {
-  const formErrors = [];
+  var formErrors = [];
+  let { state } = React.useContext(Context);
 
-  var doiRegEx = /^([0-9]+)[.]([0-9]{4})[/]([\w-.]{1,})/i;
-  var utgivelseRegEx = /^(Volum)[ ]([0-9]{1,})[ ]([(]([0-9]{1,4})[-]([0-9]{1,4})[)])/i;
+  useEffect(() => {
+    validateField();
+    console.log(formErrors);
+  }, [state.validation, state.selectedField]);
+
+  function updateErrors(error) {
+    formErrors.push(error);
+    console.log("here");
+  }
+
+  function removeError(error) {
+    formErrors.splice(formErrors.indexOf(error), 1);
+    console.log("there");
+  }
 
   function validateField() {
-    switch (fieldName) {
+    switch (state.selectedField) {
       case "tittel":
-        var tittelValid = value.length >= 6;
+        var tittelValid = state.validation.length >= 6;
         var tittelError = "Tittel er for kort er mangler";
         {
-          tittelValid ? " " : formErrors.push(tittelError);
+          !tittelValid ? updateErrors(tittelError) : removeError(tittelError);
         }
         break;
       case "doi":
-        var doiValid = value.match(/^([0-9]+)[.]([0-9]{4})[/]([\w-.]{1,})/i);
+        var doiValid = state.validation.match(
+          /^([0-9]+)[.]([0-9]{4})[/]([\w-.]{1,})/i
+        );
         var doiError = "Doi har feil format";
         {
-          doiValid ? " " : formErrors.push(doiError);
+          doiValid ? removeError(doiError) : updateErrors(doiError);
         }
         break;
       case "utgivelse":
-        var utgivelseValid = value.match(
+        var utgivelseValid = state.validation.match(
           /^(Volum)[ ]([0-9]{1,})[ ]([(]([0-9]{1,4})[-]([0-9]{1,4})[)])([\w-., ]{0,})/i
         );
         var utgivelseError = "Utgivelsesdata har galt format";
         {
-          utgivelseValid ? " " : formErrors.push(utgivelseError);
+          utgivelseValid
+            ? removeError(utgivelseError)
+            : updateErrors(utgivelseError);
         }
         break;
       case "kilde":
-        var kildeValid = value.length >= 3;
+        var kildeValid = state.validation.length >= 3;
         var kildeError = "Kilde er for kort";
         {
-          kildeValid ? " " : formErrors.push(kildeError);
+          kildeValid ? removeError(utgivelseError) : updateErrors(kildeError);
         }
         break;
       case "tidsskrift":
-        var tidsskriftValid = value !== "";
+        var tidsskriftValid = state.validation.length > 3;
         var tidsskriftError = "Ingen tidsskrift valgt";
         {
-          tidsskriftValid ? " " : formErrors.push(tidsskriftError);
+          tidsskriftValid
+            ? removeError(tidsskriftError)
+            : updateErrors(tidsskriftError);
         }
         break;
       case "aarstall":
-        var aarstallValid = value.length === 4 && value <= "2019";
+        var aarstallValid =
+          state.validation.length === 4 && state.validation <= "2019";
         var aarstallError = "Årstall er galt/over grensen";
         {
-          aarstallValid ? " " : formErrors.push(aarstallError);
+          aarstallValid
+            ? removeError(aarstallError)
+            : updateErrors(aarstallError);
         }
         break;
       case "kategori":
-        var kategoriValid = value.length > 3;
+        var kategoriValid = state.validation.length > 3;
         var kategoriError = "Kategori er for kort";
         {
-          kategoriValid ? " " : formErrors.push(kategoriError);
+          kategoriValid
+            ? removeError(kategoriError)
+            : updateErrors(kategoriError);
         }
         break;
       case "spraak":
-        var spraakValid = value.length == 2;
+        var spraakValid = state.validation.length == 2;
         var spraakError = "Språkkode er i galt format";
         {
-          spraakValid ? " " : formErrors.push(spraakError);
+          spraakValid ? removeError(spraakError) : updateErrors(spraakError);
         }
         break;
       default:
@@ -72,7 +97,7 @@ export default function Validation(props) {
   }
   return (
     <div>
-      <p>Errors in form</p>
+      <p>Errors in form: {formErrors[0]}</p>
     </div>
   );
 }

@@ -16,8 +16,12 @@ import DragHandleIcon from "@material-ui/icons/DragHandle";
 import Select from "react-select";
 import ConfirmationDialog from "../ConfirmationDialog/ConfirmationDialog";
 import ClosingDialog from "../ClosingDialog/ClosingDialog";
+import Validation from "../Validation/Validation";
+import { Context } from "../../Context";
 
 function InnerModal(props) {
+  let { state, dispatch } = React.useContext(Context);
+
   const [kilde, setKilde] = React.useState(props.data.sourceName);
 
   const [tittel, setTittel] = React.useState(props.data.languages[0].title);
@@ -55,6 +59,10 @@ function InnerModal(props) {
     value: " ",
     label: "Ingen tidsskrift funnet"
   });
+
+  const [selectedField, setSelectedField] = React.useState("");
+
+  const [validation, setValidation] = React.useState("");
 
   const journals = [
     { value: " ", label: "Ingen tidsskrift funnet" },
@@ -140,6 +148,8 @@ function InnerModal(props) {
       setDoiIsEqual(true);
     }
     setDoi(event.target.value);
+    dispatch({ type: "setSelectedField", payload: "doi" });
+    dispatch({ type: "setValidation", payload: event.target.value });
   }
 
   function handleSubmit() {
@@ -206,6 +216,9 @@ function InnerModal(props) {
       setJournalIsEqual(true);
     }
     setSelectedJournal(option);
+    console.log(option.value);
+    dispatch({ type: "setSelectedField", payload: "tidsskrift" });
+    dispatch({ type: "setValidation", payload: option.value });
   }
 
   function toggle() {
@@ -569,6 +582,7 @@ function InnerModal(props) {
             </Form>
           </Grid>
         </ModalBody>
+        <Validation fieldName={selectedField} value={validation} />
       </Modal>
       <ClosingDialog
         open={dialogAbortOpen}

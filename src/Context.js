@@ -10,7 +10,9 @@ let initialState = {
   currentPageNr: 0,
   currentPerPage: { value: 5, label: "5" },
   currentSortValue: "date",
-  currentSortOrder: "desc"
+  currentSortOrder: "desc",
+  selectedField: "",
+  validation: ""
 };
 
 let reducer = (state, action) => {
@@ -33,6 +35,10 @@ let reducer = (state, action) => {
       return { ...state, currentSortValue: action.payload };
     case "setSortOrder":
       return { ...state, currentSortOrder: action.payload };
+    case "setSelectedField":
+      return { ...state, selectedField: action.payload };
+    case "setValidation":
+      return { ...state, validation: action.payload };
     default:
       return state;
   }
