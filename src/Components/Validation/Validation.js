@@ -1,23 +1,34 @@
 import React, { useEffect } from "react";
 import { Context } from "../../Context";
 
-export default function Validation(props) {
-  var formErrors = [];
-  let { state } = React.useContext(Context);
+export default function Validation() {
+  let { state, dispatch } = React.useContext(Context);
 
   useEffect(() => {
     validateField();
-    console.log(formErrors);
   }, [state.validation, state.selectedField]);
 
   function updateErrors(error) {
-    formErrors.push(error);
-    console.log("here");
+    if (state.formErrors.includes(error)) {
+      console.log("already has error");
+    } else {
+      dispatch({
+        type: "setFormErrors",
+        payload: state.formErrors.concat(error)
+      });
+    }
   }
 
   function removeError(error) {
-    formErrors.splice(formErrors.indexOf(error), 1);
-    console.log("there");
+    if (state.formErrors.length === 1) {
+      var emptyArr = state.formErrors;
+      emptyArr.pop();
+      dispatch({ type: "setFormErrors", payload: emptyArr });
+    }
+    dispatch({
+      type: "setFormErrors",
+      payload: state.formErrors.splice(state.formErrors.indexOf(error), 1)
+    });
   }
 
   function validateField() {
@@ -85,7 +96,7 @@ export default function Validation(props) {
         }
         break;
       case "spraak":
-        var spraakValid = state.validation.length == 2;
+        var spraakValid = state.validation.length === 2;
         var spraakError = "Språkkode er i galt format";
         {
           spraakValid ? removeError(spraakError) : updateErrors(spraakError);
@@ -97,7 +108,14 @@ export default function Validation(props) {
   }
   return (
     <div>
-      <p>Errors in form: {formErrors[0]}</p>
+      <p>
+        Errors in form:{" "}
+        {state.formErrors.length >= 1 ? (
+          state.formErrors
+        ) : (
+          <p>Ingen feil i form</p>
+        )}
+      </p>
     </div>
   );
 }

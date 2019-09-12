@@ -20,7 +20,7 @@ import Validation from "../Validation/Validation";
 import { Context } from "../../Context";
 
 function InnerModal(props) {
-  let { state, dispatch } = React.useContext(Context);
+  let { dispatch } = React.useContext(Context);
 
   const [kilde, setKilde] = React.useState(props.data.sourceName);
 
@@ -60,10 +60,6 @@ function InnerModal(props) {
     label: "Ingen tidsskrift funnet"
   });
 
-  const [selectedField, setSelectedField] = React.useState("");
-
-  const [validation, setValidation] = React.useState("");
-
   const journals = [
     { value: " ", label: "Ingen tidsskrift funnet" },
     {
@@ -97,6 +93,8 @@ function InnerModal(props) {
       setKildeIsEqual(true);
     }
     setKilde(event.target.value);
+    dispatch({ type: "setSelectedField", payload: "kilde" });
+    dispatch({ type: "setValidation", payload: event.target.value });
   }
 
   function handleChangeTittel(event) {
@@ -216,7 +214,7 @@ function InnerModal(props) {
       setJournalIsEqual(true);
     }
     setSelectedJournal(option);
-    console.log(option.value);
+    console.log(option.label);
     dispatch({ type: "setSelectedField", payload: "tidsskrift" });
     dispatch({ type: "setValidation", payload: option.value });
   }
@@ -582,7 +580,7 @@ function InnerModal(props) {
             </Form>
           </Grid>
         </ModalBody>
-        <Validation fieldName={selectedField} value={validation} />
+        <Validation />
       </Modal>
       <ClosingDialog
         open={dialogAbortOpen}

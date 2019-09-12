@@ -12,7 +12,8 @@ let initialState = {
   currentSortValue: "date",
   currentSortOrder: "desc",
   selectedField: "",
-  validation: ""
+  validation: "",
+  formErrors: []
 };
 
 let reducer = (state, action) => {
@@ -39,6 +40,8 @@ let reducer = (state, action) => {
       return { ...state, selectedField: action.payload };
     case "setValidation":
       return { ...state, validation: action.payload };
+    case "setFormErrors":
+      return { ...state, formErrors: action.payload };
     default:
       return state;
   }
