@@ -42,7 +42,7 @@ export default function Validation() {
     switch (state.selectedField) {
       case "tittel":
         var tittelValid = state.validation.length >= 6;
-        var tittelError = "Tittel er for kort er mangler";
+        var tittelError = "Tittel er for kort/mangler";
         {
           !tittelValid ? updateErrors(tittelError) : removeError(tittelError);
         }
@@ -117,9 +117,9 @@ export default function Validation() {
   return (
     <div>
       <p>
-        Errors in form:{" "}
+        Feil i form:{" "}
         {state.formErrors.length >= 1 ? (
-          state.formErrors.join(", ")
+          <p>{state.formErrors.join(", ")}</p>
         ) : (
           <p>Ingen feil i form</p>
         )}

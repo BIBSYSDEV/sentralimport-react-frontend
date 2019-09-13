@@ -104,6 +104,8 @@ function InnerModal(props) {
       setTittelIsEqual(true);
     }
     setTittel(event.target.value);
+    dispatch({ type: "setSelectedField", payload: "tittel" });
+    dispatch({ type: "setValidation", payload: event.target.value });
   }
 
   function handleChangeAarstall(event) {
@@ -119,6 +121,8 @@ function InnerModal(props) {
       setAarstallIsEqual(true);
     }
     setAarstall(event.target.value);
+    dispatch({ type: "setSelectedField", payload: "aarstall" });
+    dispatch({ type: "setValidation", payload: event.target.value });
   }
 
   function handleChangeKategori(event) {
@@ -128,6 +132,8 @@ function InnerModal(props) {
       setKategoriIsEqual(true);
     }
     setKategori(event.target.value);
+    dispatch({ type: "setSelectedField", payload: "kategori" });
+    dispatch({ type: "setValidation", payload: event.target.value });
   }
 
   function handleChangeLang(event) {
@@ -137,6 +143,8 @@ function InnerModal(props) {
       setLangIsEqual(true);
     }
     setLang(event.target.value);
+    dispatch({ type: "setSelectedField", payload: "spraak" });
+    dispatch({ type: "setValidation", payload: event.target.value });
   }
 
   function handleChangeDoi(event) {
