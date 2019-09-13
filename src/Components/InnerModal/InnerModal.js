@@ -20,7 +20,7 @@ import Validation from "../Validation/Validation";
 import { Context } from "../../Context";
 
 function InnerModal(props) {
-  let { dispatch } = React.useContext(Context);
+  let { state, dispatch } = React.useContext(Context);
 
   const [kilde, setKilde] = React.useState(props.data.sourceName);
 
@@ -573,7 +573,11 @@ function InnerModal(props) {
                 />
               </FormGroup>
               <FormGroup>
-                <Button color="primary" onClick={handleSubmit}>
+                <Button
+                  disabled={state.formErrors.length >= 1}
+                  color="primary"
+                  onClick={handleSubmit}
+                >
                   Submit
                 </Button>
               </FormGroup>

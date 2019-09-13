@@ -10,25 +10,32 @@ export default function Validation() {
 
   function updateErrors(error) {
     if (state.formErrors.includes(error)) {
-      console.log("already has error");
+      console.log("already has error" + error);
     } else {
+      var erray = [];
+      erray.push(error);
+      var tempArr = state.formErrors.concat(erray);
       dispatch({
         type: "setFormErrors",
-        payload: state.formErrors.concat(error)
+        payload: tempArr
       });
     }
   }
 
   function removeError(error) {
-    if (state.formErrors.length === 1) {
+    if (state.formErrors.length === 1 && state.formErrors[0] === error) {
       var emptyArr = state.formErrors;
       emptyArr.pop();
       dispatch({ type: "setFormErrors", payload: emptyArr });
+    } else if (state.formErrors.includes(error)) {
+      var newErrors = state.formErrors;
+      newErrors.splice(newErrors.indexOf(error), 1);
+      console.log(newErrors);
+      dispatch({
+        type: "setFormErrors",
+        payload: newErrors
+      });
     }
-    dispatch({
-      type: "setFormErrors",
-      payload: state.formErrors.splice(state.formErrors.indexOf(error), 1)
-    });
   }
 
   function validateField() {
@@ -62,9 +69,10 @@ export default function Validation() {
         break;
       case "kilde":
         var kildeValid = state.validation.length >= 3;
+        console.log(kildeValid);
         var kildeError = "Kilde er for kort";
         {
-          kildeValid ? removeError(utgivelseError) : updateErrors(kildeError);
+          kildeValid ? removeError(kildeError) : updateErrors(kildeError);
         }
         break;
       case "tidsskrift":
@@ -111,7 +119,7 @@ export default function Validation() {
       <p>
         Errors in form:{" "}
         {state.formErrors.length >= 1 ? (
-          state.formErrors
+          state.formErrors.join(", ")
         ) : (
           <p>Ingen feil i form</p>
         )}
