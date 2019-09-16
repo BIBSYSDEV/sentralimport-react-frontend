@@ -7,8 +7,19 @@ import {
   DialogContent,
   DialogContentText
 } from "@material-ui/core";
+import { Context } from "../../Context";
 
 export default function ClosingDialog(props) {
+  let { dispatch } = React.useContext(Context);
+
+  var emptyArray = [];
+
+  function emptyArr() {
+    dispatch({ type: "setFormErrors", payload: emptyArray });
+    dispatch({ type: "setSelectedField", payload: "tidsskrift" });
+    dispatch({ type: "setValidation", payload: " " });
+  }
+
   return (
     <Dialog open={props.open} onClose={props.handleClose}>
       <DialogTitle>Avbryt import</DialogTitle>
@@ -22,7 +33,13 @@ export default function ClosingDialog(props) {
         <Button color="secondary" onClick={props.handleCloseDialog}>
           Nei
         </Button>
-        <Button color="primary" onClick={props.handleClose}>
+        <Button
+          color="primary"
+          onClick={event => {
+            emptyArr();
+            props.handleClose();
+          }}
+        >
           Ja
         </Button>
       </DialogActions>

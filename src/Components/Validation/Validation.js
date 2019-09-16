@@ -43,72 +43,72 @@ export default function Validation() {
       case "tittel":
         var tittelValid = state.validation.length >= 6;
         var tittelError = "Tittel er for kort/mangler";
-        {
-          !tittelValid ? updateErrors(tittelError) : removeError(tittelError);
-        }
+
+        !tittelValid ? updateErrors(tittelError) : removeError(tittelError);
+
         break;
       case "doi":
         var doiValid = state.validation.match(
-          /^([0-9]+)[.]([0-9]{4})[/]([\w-.]{1,})/i
+          /^([0-9]{2})[.]([0-9]{4})[/]([\w-.]{1,})/i
         );
         var doiError = "Doi har feil format";
-        {
-          doiValid ? removeError(doiError) : updateErrors(doiError);
-        }
+
+        doiValid ? removeError(doiError) : updateErrors(doiError);
+
         break;
       case "utgivelse":
         var utgivelseValid = state.validation.match(
           /^(Volum)[ ]([0-9]{1,})[ ]([(]([0-9]{1,4})[-]([0-9]{1,4})[)])([\w-., ]{0,})/i
         );
         var utgivelseError = "Utgivelsesdata har galt format";
-        {
-          utgivelseValid
-            ? removeError(utgivelseError)
-            : updateErrors(utgivelseError);
-        }
+
+        utgivelseValid
+          ? removeError(utgivelseError)
+          : updateErrors(utgivelseError);
+
         break;
       case "kilde":
         var kildeValid = state.validation.length >= 3;
         console.log(kildeValid);
         var kildeError = "Kilde er for kort";
-        {
-          kildeValid ? removeError(kildeError) : updateErrors(kildeError);
-        }
+
+        kildeValid ? removeError(kildeError) : updateErrors(kildeError);
+
         break;
       case "tidsskrift":
         var tidsskriftValid = state.validation.length > 3;
         var tidsskriftError = "Ingen tidsskrift valgt";
-        {
-          tidsskriftValid
-            ? removeError(tidsskriftError)
-            : updateErrors(tidsskriftError);
-        }
+
+        tidsskriftValid
+          ? removeError(tidsskriftError)
+          : updateErrors(tidsskriftError);
+
         break;
       case "aarstall":
         var aarstallValid =
           state.validation.length === 4 && state.validation <= "2019";
         var aarstallError = "Årstall er galt/over grensen";
-        {
-          aarstallValid
-            ? removeError(aarstallError)
-            : updateErrors(aarstallError);
-        }
+
+        aarstallValid
+          ? removeError(aarstallError)
+          : updateErrors(aarstallError);
+
         break;
       case "kategori":
         var kategoriValid = state.validation.length > 3;
         var kategoriError = "Kategori er for kort";
-        {
-          kategoriValid
-            ? removeError(kategoriError)
-            : updateErrors(kategoriError);
-        }
+
+        kategoriValid
+          ? removeError(kategoriError)
+          : updateErrors(kategoriError);
+
         break;
       case "spraak":
         var spraakValid = state.validation.length === 2;
         var spraakError = "Språkkode er i galt format";
-        {
-          spraakValid ? removeError(spraakError) : updateErrors(spraakError);
-        }
+
+        spraakValid ? removeError(spraakError) : updateErrors(spraakError);
+
         break;
       default:
         break;
