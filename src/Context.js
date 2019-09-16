@@ -11,8 +11,8 @@ let initialState = {
   currentPerPage: { value: 5, label: "5" },
   currentSortValue: "date",
   currentSortOrder: "desc",
-  selectedField: "",
-  validation: "",
+  selectedField: "tidsskrift",
+  validation: " ",
   formErrors: []
 };
 

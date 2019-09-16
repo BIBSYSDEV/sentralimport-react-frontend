@@ -7,8 +7,15 @@ import {
   DialogContent,
   DialogContentText
 } from "@material-ui/core";
+import { Context } from "../../Context";
 
 export default function ConfirmationDialog(props) {
+  let { dispatch } = React.useContext(Context);
+
+  function emptyArr() {
+    dispatch({ type: "setSelectedField", payload: "tidsskrift" });
+    dispatch({ type: "setValidation", payload: " " });
+  }
   return (
     <Dialog open={props.open} onClose={props.handleClose}>
       <DialogTitle>Bekreft import</DialogTitle>
@@ -21,7 +28,13 @@ export default function ConfirmationDialog(props) {
         <Button color="secondary" onClick={props.handleCloseDialog}>
           Avbryt
         </Button>
-        <Button color="primary" onClick={props.handleClose}>
+        <Button
+          color="primary"
+          onClick={() => {
+            props.handleClose();
+            emptyArr();
+          }}
+        >
           Importer
         </Button>
       </DialogActions>
