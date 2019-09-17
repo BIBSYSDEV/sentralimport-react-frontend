@@ -35,7 +35,7 @@ export default function ClosingDialog(props) {
         </Button>
         <Button
           color="primary"
-          onClick={event => {
+          onClick={() => {
             emptyArr();
             props.handleClose();
           }}

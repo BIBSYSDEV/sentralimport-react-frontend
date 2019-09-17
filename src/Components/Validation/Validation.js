@@ -4,9 +4,12 @@ import { Context } from "../../Context";
 export default function Validation() {
   let { state, dispatch } = React.useContext(Context);
 
+  // Ved åpning av ny publikasjon sjekk alle felter for feil/mangler
+
   useEffect(() => {
     validateField();
-  }, [state.validation, state.selectedField]);
+    console.log(state.selectedField);
+  }, [state.selectedField, state.validation]);
 
   function updateErrors(error) {
     if (state.formErrors.includes(error)) {
@@ -44,7 +47,7 @@ export default function Validation() {
         var tittelValid = state.validation.length >= 6;
         var tittelError = "Tittel er for kort/mangler";
 
-        !tittelValid ? updateErrors(tittelError) : removeError(tittelError);
+        tittelValid ? removeError(tittelError) : updateErrors(tittelError);
 
         break;
       case "doi":
@@ -58,7 +61,7 @@ export default function Validation() {
         break;
       case "utgivelse":
         var utgivelseValid = state.validation.match(
-          /^(Volum)[ ]([0-9]{1,})[ ]([(]([0-9]{1,4})[-]([0-9]{1,4})[)])([\w-., ]{0,})/i
+          /^(Volum)[ ]([0-9-]{1,})[ ]([(]([0-9]{1,4})[-]([0-9]{1,4})[)])([\w-., ]{0,})/i
         );
         var utgivelseError = "Utgivelsesdata har galt format";
 
@@ -116,14 +119,14 @@ export default function Validation() {
   }
   return (
     <div>
-      <p>
-        Feil i form:{" "}
+      <div>
+        Feil i form:
         {state.formErrors.length >= 1 ? (
           <p>{state.formErrors.join(", ")}</p>
         ) : (
           <p>Ingen feil i form</p>
         )}
-      </p>
+      </div>
     </div>
   );
 }

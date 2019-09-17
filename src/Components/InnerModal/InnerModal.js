@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import {
   TextField,
@@ -77,14 +77,21 @@ function InnerModal(props) {
     marginLeft: "50px"
   };
 
-  // const tittelButtonStyle = {
-  //   marginTop: props.data.languages[0].title.length / 2 + 10,
-  //   marginLeft: "50px"
-  // };
-
   const selectStyle = {
     marginTop: "15px"
   };
+
+  useEffect(() => {
+    checkDoi();
+  }, []);
+
+  function checkDoi() {
+    dispatch({ type: "setSelectedField", payload: "doi" });
+    dispatch({
+      type: "setValidation",
+      payload: props.data.doi ? props.data.doi : "Doi ikke funnet"
+    });
+  }
 
   function handleChangeKilde(event) {
     if (event.target.value !== props.data.sourceName) {
@@ -169,11 +176,15 @@ function InnerModal(props) {
   function copyKilde() {
     setKilde(props.data.sourceName);
     setKildeIsEqual(true);
+    dispatch({ type: "setSelectedField", payload: "kilde" });
+    dispatch({ type: "setValidation", payload: props.data.sourceName });
   }
 
   function copyTittel() {
     setTittel(props.data.languages[0].title);
     setTittelIsEqual(true);
+    dispatch({ type: "setSelectedField", payload: "tittel" });
+    dispatch({ type: "setValidation", payload: props.data.languages[0].title });
   }
 
   function copyAarstall() {
@@ -184,16 +195,28 @@ function InnerModal(props) {
       )
     );
     setAarstallIsEqual(true);
+    dispatch({ type: "setSelectedField", payload: "aarstall" });
+    dispatch({
+      type: "setValidation",
+      payload: props.data.registered.substring(
+        props.data.registered.length - 4,
+        props.data.registered.length
+      )
+    });
   }
 
   function copyKategori() {
     setKategori(props.data.category);
     setKategoriIsEqual(true);
+    dispatch({ type: "setSelectedField", payload: "kategori" });
+    dispatch({ type: "setValidation", payload: props.data.category });
   }
 
   function copyLang() {
     setLang(props.data.languages[0].lang);
     setLangIsEqual(true);
+    dispatch({ type: "setSelectedField", payload: "spraak" });
+    dispatch({ type: "setValidation", payload: props.data.languages[0].lang });
   }
 
   function copyDoi() {
@@ -201,18 +224,25 @@ function InnerModal(props) {
       props.data.doi ? props.data.doi : "Ingen DOI funnet for publikasjon"
     );
     setDoiIsEqual(true);
+    dispatch({ type: "setSelectedField", payload: "doi" });
+    dispatch({ type: "setValidation", payload: props.data.doi });
   }
 
   function copyJournal() {
     setSelectedJournal(
       props.data.channel
         ? {
-            value: props.data.channel.journalName,
-            label: props.data.channel.journalName
+            value: "x",
+            label: "Ingen tidsskrift funnet"
           }
-        : { value: " ", label: "Ingen tidsskrift funnet" }
+        : { value: "x", label: "Ingen tidsskrift funnet" }
     );
     setJournalIsEqual(true);
+    dispatch({ type: "setSelectedField", payload: "tidsskrift" });
+    dispatch({
+      type: "setValidation",
+      payload: { value: "x", label: "Ingen tidsskrift funnet" }
+    });
   }
 
   function onChangeJournal(option) {
