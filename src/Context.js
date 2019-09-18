@@ -11,9 +11,9 @@ let initialState = {
   currentPerPage: { value: 5, label: "5" },
   currentSortValue: "date",
   currentSortOrder: "desc",
-  selectedField: "tidsskrift",
+  selectedField: "",
   validation: " ",
-  formErrors: []
+  formErrors: ["Ingen tidsskrift valgt"]
 };
 
 let reducer = (state, action) => {

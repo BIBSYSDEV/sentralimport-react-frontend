@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Context } from "../../Context";
 
-export default function Validation() {
+export default function Validation(props) {
   let { state, dispatch } = React.useContext(Context);
 
   // Ved åpning av ny publikasjon sjekk alle felter for feil/mangler
@@ -10,6 +10,11 @@ export default function Validation() {
     validateField();
     console.log(state.selectedField);
   }, [state.selectedField, state.validation]);
+
+  useEffect(() => {
+    checkAllFields();
+    console.log(props.publication.pubId);
+  }, [props.publication.pubId]);
 
   function updateErrors(error) {
     if (state.formErrors.includes(error)) {
@@ -117,6 +122,104 @@ export default function Validation() {
         break;
     }
   }
+
+  function checkAllFields() {
+    var fieldErrors = [];
+    var data = [
+      { name: "kilde", value: props.publication.sourceName },
+      { name: "tidsskrift", value: "x" },
+      {
+        name: "doi",
+        value: props.publication.doi
+          ? props.publication.doi
+          : "Ingen doi funnet"
+      },
+      { name: "tittel", value: props.publication.languages[0].title },
+      {
+        name: "aarstall",
+        value: props.publication.registered.substring(
+          props.publication.registered.length - 4,
+          props.publication.registered.length
+        )
+      },
+      { name: "kategori", value: props.publication.category },
+      { name: "spraak", value: props.publication.languages[0].lang }
+    ];
+    for (var i = 0; i < data.length; i++) {
+      console.log(data[i].value);
+      switch (data[i].name) {
+        case "tittel":
+          var tittelValid = data[i].value.length >= 6;
+          var tittelError = "Tittel er for kort/mangler";
+
+          !tittelValid ? fieldErrors.push(tittelError) : fieldErrors.push();
+
+          break;
+        case "doi":
+          var doiValid = data[i].value.match(
+            /^([0-9]{2})[.]([0-9]{4})[/]([\w-.]{1,})/i
+          );
+          var doiError = "Doi har feil format";
+
+          !doiValid ? fieldErrors.push(doiError) : fieldErrors.push();
+
+          break;
+        case "utgivelse":
+          var utgivelseValid = data[i].value.match(
+            /^(Volum)[ ]([0-9-]{1,})[ ]([(]([0-9]{1,4})[-]([0-9]{1,4})[)])([\w-., ]{0,})/i
+          );
+          var utgivelseError = "Utgivelsesdata har galt format";
+
+          !utgivelseValid
+            ? fieldErrors.push(utgivelseError)
+            : fieldErrors.push();
+
+          break;
+        case "kilde":
+          var kildeValid = data[i].value.length >= 3;
+          console.log(kildeValid);
+          var kildeError = "Kilde er for kort";
+
+          !kildeValid ? fieldErrors.push(kildeError) : fieldErrors.push();
+
+          break;
+        case "tidsskrift":
+          var tidsskriftValid = data[i].value.length > 3;
+          var tidsskriftError = "Ingen tidsskrift valgt";
+
+          !tidsskriftValid
+            ? fieldErrors.push(tidsskriftError)
+            : fieldErrors.push();
+
+          break;
+        case "aarstall":
+          var aarstallValid =
+            data[i].value.length === 4 && data[i].value <= "2019";
+          var aarstallError = "Årstall er galt/over grensen";
+
+          !aarstallValid ? fieldErrors.push(aarstallError) : fieldErrors.push();
+
+          break;
+        case "kategori":
+          var kategoriValid = data[i].value.length > 3;
+          var kategoriError = "Kategori er for kort";
+
+          !kategoriValid ? fieldErrors.push(kategoriError) : fieldErrors.push();
+
+          break;
+        case "spraak":
+          var spraakValid = data[i].value.length === 2;
+          var spraakError = "Språkkode er i galt format";
+
+          !spraakValid ? fieldErrors.push(spraakError) : fieldErrors.push();
+
+          break;
+        default:
+          break;
+      }
+    }
+    dispatch({ type: "setFormErrors", payload: fieldErrors });
+  }
   return (
     <div>
       <div>
@@ -130,3 +233,9 @@ export default function Validation() {
     </div>
   );
 }
+
+Validation.defaultProps = {
+  publication: {
+    pubId: "1234"
+  }
+};

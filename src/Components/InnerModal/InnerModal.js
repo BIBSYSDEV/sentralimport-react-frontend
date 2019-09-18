@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import {
   TextField,
@@ -80,18 +80,6 @@ function InnerModal(props) {
   const selectStyle = {
     marginTop: "15px"
   };
-
-  useEffect(() => {
-    checkDoi();
-  }, []);
-
-  function checkDoi() {
-    dispatch({ type: "setSelectedField", payload: "doi" });
-    dispatch({
-      type: "setValidation",
-      payload: props.data.doi ? props.data.doi : "Doi ikke funnet"
-    });
-  }
 
   function handleChangeKilde(event) {
     if (event.target.value !== props.data.sourceName) {
@@ -622,7 +610,7 @@ function InnerModal(props) {
             </Form>
           </Grid>
         </ModalBody>
-        <Validation />
+        <Validation publication={props.data} />
       </Modal>
       <ClosingDialog
         open={dialogAbortOpen}
