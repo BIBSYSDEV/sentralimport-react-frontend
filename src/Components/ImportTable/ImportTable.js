@@ -185,7 +185,7 @@ export default function EnhancedTable() {
   const [modalData, setModalData] = React.useState();
   const [order, setOrder] = React.useState(state.currentSortOrder);
   const [orderBy, setOrderBy] = React.useState(state.currentSortValue);
-  const [page, setPage] = React.useState(state.currentPageNr);
+  const [page] = React.useState(state.currentPageNr);
   const [open, setOpen] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(
     state.currentPerPage.value
@@ -412,7 +412,7 @@ export default function EnhancedTable() {
             </TableBody>
           </Table>
         </div>
-        <TablePagination
+        {/*<TablePagination
           hidden={true}
           rowsPerPageOptions={[5, 10]}
           component="div"
@@ -425,7 +425,7 @@ export default function EnhancedTable() {
             "aria-label": "Next Page"
           }}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+        /> */}
       </Paper>
       <Pagination />
 

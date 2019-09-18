@@ -13,22 +13,10 @@ import {
   FormControlLabel
 } from "@material-ui/core";
 import InnerModal from "../InnerModal/InnerModal";
-import { Context } from "../../Context";
 
 export default function ResultModal(props) {
-  let { state, dispatch } = React.useContext(Context);
   const [selected, setSelected] = React.useState("0");
   const [innerModal, setInnerModal] = React.useState(false);
-  let pubValues = [
-    {
-      name: "doi",
-      value: props.data.doi ? props.data.doi : "Ingen doi funnet"
-    },
-    {
-      name: "tidsskrift",
-      value: props.data.journalName ? props.data.journalName : "x"
-    }
-  ];
 
   const divStyle = {
     fontWeight: "bold"
@@ -44,9 +32,6 @@ export default function ResultModal(props) {
 
   function handleSubmit() {
     if (selected === "1") {
-      for (var i = 0; i < pubValues.length; i++) {
-        checkValue(pubValues[i].name, pubValues[i].value);
-      }
       setInnerModal(true);
     } else if (selected === "0") {
       props.handleClose();
@@ -55,14 +40,6 @@ export default function ResultModal(props) {
 
   function handleClose() {
     setInnerModal(false);
-  }
-
-  function checkValue(fieldName, value) {
-    dispatch(() => ({ type: "setSelectedField", payload: fieldName }));
-    dispatch(() => ({
-      type: "setValidation",
-      payload: value
-    }));
   }
 
   return (

@@ -16,8 +16,6 @@ export default function ClosingDialog(props) {
 
   function emptyArr() {
     dispatch({ type: "setFormErrors", payload: emptyArray });
-    dispatch({ type: "setSelectedField", payload: "tidsskrift" });
-    dispatch({ type: "setValidation", payload: " " });
   }
 
   return (

@@ -12,9 +12,10 @@ import { Context } from "../../Context";
 export default function ConfirmationDialog(props) {
   let { dispatch } = React.useContext(Context);
 
+  var emptyArray = [];
+
   function emptyArr() {
-    dispatch({ type: "setSelectedField", payload: "tidsskrift" });
-    dispatch({ type: "setValidation", payload: " " });
+    dispatch({ type: "setFormErrors", payload: emptyArray });
   }
   return (
     <Dialog open={props.open} onClose={props.handleClose}>
