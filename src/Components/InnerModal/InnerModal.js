@@ -213,7 +213,12 @@ function InnerModal(props) {
     );
     setDoiIsEqual(true);
     dispatch({ type: "setSelectedField", payload: "doi" });
-    dispatch({ type: "setValidation", payload: props.data.doi });
+    dispatch({
+      type: "setValidation",
+      payload: props.data.doi
+        ? props.data.doi
+        : "Ingen doi funnet for publikasjon"
+    });
   }
 
   function copyJournal() {

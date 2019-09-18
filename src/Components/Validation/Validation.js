@@ -18,7 +18,6 @@ export default function Validation(props) {
 
   function updateErrors(error) {
     if (state.formErrors.includes(error)) {
-      console.log("already has error" + error);
     } else {
       var erray = [];
       erray.push(error);
@@ -177,7 +176,6 @@ export default function Validation(props) {
           break;
         case "kilde":
           var kildeValid = data[i].value.length >= 3;
-          console.log(kildeValid);
           var kildeError = "Kilde er for kort";
 
           !kildeValid ? fieldErrors.push(kildeError) : fieldErrors.push();
