@@ -3,7 +3,7 @@ import { Button, Input, Paper, Grid } from "@material-ui/core";
 import { Context } from "../../Context";
 import Select from "react-select";
 
-export default function Pagination() {
+export default function Pagination(props) {
   let { state, dispatch } = React.useContext(Context);
 
   const rowsPerPage = [
@@ -41,7 +41,7 @@ export default function Pagination() {
             <div>Publikasjoner per side: &nbsp;</div>
           </Grid>
 
-          <Grid item xs={1}>
+          <Grid item xs>
             <Select
               name="rowsPerPageSelect"
               options={rowsPerPage}
@@ -59,7 +59,10 @@ export default function Pagination() {
                 value={state.currentPageNr}
                 onChange={e => changePage(e)}
               />
-              &nbsp;
+            </div>
+          </Grid>
+          <Grid item xs={2}>
+            <div>
               <Button
                 onClick={decrementPage}
                 disabled={state.currentPageNr > 0 ? false : true}
@@ -67,7 +70,13 @@ export default function Pagination() {
                 {"< "}Forrige
               </Button>
               &nbsp;
-              <Button onClick={incrementPage}> Neste {" >"}</Button>
+              <Button
+                onClick={incrementPage}
+                disabled={props.data.length < state.currentPerPage.value}
+              >
+                {" "}
+                Neste {" >"}
+              </Button>
             </div>
           </Grid>
         </Grid>

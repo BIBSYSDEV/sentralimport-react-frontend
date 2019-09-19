@@ -302,9 +302,12 @@ function InnerModal(props) {
   function toggle() {
     setDialogOpen(false);
     props.toggle();
-    props.enqueueSnackbar("Importerte ny publikasjon.", {
-      variant: "success"
-    });
+    props.enqueueSnackbar(
+      "Importerte ny publikasjon med id: " + props.data.pubId,
+      {
+        variant: "success"
+      }
+    );
   }
 
   function abortToggle() {
@@ -662,7 +665,7 @@ function InnerModal(props) {
             </Form>
           </Grid>
         </ModalBody>
-        <Validation publication={props.data} />
+        <Validation publication={props.crispub ? props.crispub : props.data} />
       </Modal>
       <ClosingDialog
         open={dialogAbortOpen}

@@ -4,13 +4,13 @@ import { Context } from "../../Context";
 export default function Validation(props) {
   let { state, dispatch } = React.useContext(Context);
 
-  // Ved åpning av ny publikasjon sjekk alle felter for feil/mangler
-
+  // Ved oppdatering av ett felt sjekk at det er blitt fylt inn/formatert korrekt
   useEffect(() => {
     validateField();
     console.log(state.selectedField);
   }, [state.selectedField, state.validation]);
 
+  // Ved åpning av ny publikasjon sjekk alle felter for feil
   useEffect(() => {
     checkAllFields();
     console.log(props.publication.pubId);
@@ -58,14 +58,14 @@ export default function Validation(props) {
         var doiValid = state.validation.match(
           /^([0-9]{2})[.]([0-9]{4})[/]([\w-.]{1,})/i
         );
-        var doiError = "Doi har feil format";
+        var doiError = "Doi har galt format";
 
         doiValid ? removeError(doiError) : updateErrors(doiError);
 
         break;
       case "utgivelse":
         var utgivelseValid = state.validation.match(
-          /^(Volum)[ ]([0-9-]{1,})[ ]([(]([0-9]{1,4})[-]([0-9]{1,4})[)])([\w-., ]{0,})/i
+          /^(Volum)[ ]([0-9-]{1,})[ ]([(]([a-z0-9]{1,6})[-]([a-z0-9]{1,6})[)])([\w-., ]{0,})/i
         );
         var utgivelseError = "Utgivelsesdata har galt format";
 
@@ -112,7 +112,7 @@ export default function Validation(props) {
         break;
       case "spraak":
         var spraakValid = state.validation.length === 2;
-        var spraakError = "Språkkode er i galt format";
+        var spraakError = "Språkkode har galt format";
 
         spraakValid ? removeError(spraakError) : updateErrors(spraakError);
 
@@ -170,14 +170,14 @@ export default function Validation(props) {
           var doiValid = data[i].value.match(
             /^([0-9]{2})[.]([0-9]{4})[/]([\w-.]{1,})/i
           );
-          var doiError = "Doi har feil format";
+          var doiError = "Doi har galt format";
 
           !doiValid ? fieldErrors.push(doiError) : fieldErrors.push();
 
           break;
         case "utgivelse":
           var utgivelseValid = data[i].value.match(
-            /^(Volum)[ ]([0-9-]{1,})[ ]([(]([0-9]{1,4})[-]([0-9]{1,4})[)])([\w-., ]{0,})/i
+            /^(Volum)[ ]([0-9-]{1,})[ ]([(]([a-z0-9]{1,6})[-]([a-z0-9]{1,6})[)])([\w-., ]{0,})/i
           );
           var utgivelseError = "Utgivelsesdata har galt format";
 
@@ -219,7 +219,7 @@ export default function Validation(props) {
           break;
         case "spraak":
           var spraakValid = data[i].value.length === 2;
-          var spraakError = "Språkkode er i galt format";
+          var spraakError = "Språkkode har galt format";
 
           !spraakValid ? fieldErrors.push(spraakError) : fieldErrors.push();
 

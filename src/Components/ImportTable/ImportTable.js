@@ -426,7 +426,7 @@ export default function EnhancedTable() {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         /> */}
       </Paper>
-      <Pagination />
+      <Pagination data={rows} />
 
       <ResultModal
         open={open}
