@@ -142,7 +142,19 @@ export default function Validation(props) {
         )
       },
       { name: "kategori", value: props.publication.category },
-      { name: "spraak", value: props.publication.languages[0].lang }
+      { name: "spraak", value: props.publication.languages[0].lang },
+      {
+        name: "utgivelse",
+        value: props.publication.channel
+          ? "Volum " +
+            props.publication.channel.volume +
+            " (" +
+            props.publication.channel.pageFrom +
+            "-" +
+            props.publication.channel.pageTo +
+            ") "
+          : "Ingen utgivelsesdata funnet"
+      }
     ];
     for (var i = 0; i < data.length; i++) {
       console.log(data[i].value);

@@ -38,7 +38,19 @@ function InnerModal(props) {
   const [lang, setLang] = React.useState(props.data.languages[0].lang);
 
   const [doi, setDoi] = React.useState(
-    props.data.doi ? props.data.doi : "Ingen DOI funnet for publikasjon"
+    props.data.doi ? props.data.doi : "Ingen DOI funnet"
+  );
+
+  const [utgivelse, setUtgivelse] = React.useState(
+    props.data.channel
+      ? "Volum " +
+          props.data.channel.volume +
+          " (" +
+          props.data.channel.pageFrom +
+          "-" +
+          props.data.channel.pageTo +
+          ") "
+      : "Ingen utgivelsesdata funnet"
   );
 
   const [kildeIsEqual, setKildeIsEqual] = React.useState(true);
@@ -54,6 +66,8 @@ function InnerModal(props) {
   const [doiIsEqual, setDoiIsEqual] = React.useState(true);
 
   const [journalIsEqual, setJournalIsEqual] = React.useState(true);
+
+  const [utgivelseIsEqual, setUtgivelseIsEqual] = React.useState(true);
 
   const [selectedJournal, setSelectedJournal] = React.useState({
     value: " ",
@@ -153,6 +167,26 @@ function InnerModal(props) {
     dispatch({ type: "setValidation", payload: event.target.value });
   }
 
+  function handleChangeUtgivelse(event) {
+    var utgivelse = props.data.channel
+      ? "Volum " +
+        props.data.channel.volume +
+        " (" +
+        props.data.channel.pageFrom +
+        "-" +
+        props.data.channel.pageTo +
+        ") "
+      : "Ingen utgivelsesdata funnet";
+    if (event.target.value !== utgivelse) {
+      setUtgivelseIsEqual(false);
+    } else {
+      setUtgivelseIsEqual(true);
+    }
+    setUtgivelse(event.target.value);
+    dispatch({ type: "setSelectedField", payload: "utgivelse" });
+    dispatch({ type: "setValidation", payload: event.target.value });
+  }
+
   function handleSubmit() {
     setDialogOpen(true);
   }
@@ -208,16 +242,12 @@ function InnerModal(props) {
   }
 
   function copyDoi() {
-    setDoi(
-      props.data.doi ? props.data.doi : "Ingen DOI funnet for publikasjon"
-    );
+    setDoi(props.data.doi ? props.data.doi : "Ingen DOI funnet");
     setDoiIsEqual(true);
     dispatch({ type: "setSelectedField", payload: "doi" });
     dispatch({
       type: "setValidation",
-      payload: props.data.doi
-        ? props.data.doi
-        : "Ingen doi funnet for publikasjon"
+      payload: props.data.doi ? props.data.doi : "Ingen doi funnet"
     });
   }
 
@@ -235,6 +265,25 @@ function InnerModal(props) {
     dispatch({
       type: "setValidation",
       payload: { value: "x", label: "Ingen tidsskrift funnet" }
+    });
+  }
+
+  function copyUtgivelse() {
+    var utgivelse = props.data.channel
+      ? "Volum " +
+        props.data.channel.volume +
+        " (" +
+        props.data.channel.pageFrom +
+        "-" +
+        props.data.channel.pageTo +
+        ") "
+      : "Ingen utgivelsesdata funnet";
+    setUtgivelse(utgivelse);
+    setUtgivelseIsEqual(true);
+    dispatch({ type: "setSelectedField", payload: "utgivelse" });
+    dispatch({
+      type: "setValidation",
+      payload: utgivelse
     });
   }
 
@@ -361,9 +410,7 @@ function InnerModal(props) {
                     <TextField
                       id="import-doi"
                       label="Doi"
-                      value={
-                        props.data.doi || "Ingen DOI funnet for publikasjon"
-                      }
+                      value={props.data.doi || "Ingen DOI funnet"}
                       margin="normal"
                       disabled
                     />
@@ -480,6 +527,15 @@ function InnerModal(props) {
                       margin="normal"
                       disabled
                     />
+                    {utgivelseIsEqual ? (
+                      <IconButton style={buttonStyle}>
+                        <DragHandleIcon />
+                      </IconButton>
+                    ) : (
+                      <IconButton style={buttonStyle} onClick={copyUtgivelse}>
+                        <TrendingFlatIcon />
+                      </IconButton>
+                    )}
                   </Grid>
                 </FormGroup>
                 <FormGroup>
@@ -588,17 +644,8 @@ function InnerModal(props) {
                 <TextField
                   id="import-utgivelsesdata"
                   label="Utgivelsesdata"
-                  value={
-                    props.data.channel
-                      ? "Volum " +
-                        props.data.channel.volume +
-                        " (" +
-                        props.data.channel.pageFrom +
-                        "-" +
-                        props.data.channel.pageTo +
-                        ") "
-                      : "Ingen utgivelsesdata funnet"
-                  }
+                  value={utgivelse}
+                  onChange={handleChangeUtgivelse}
                   margin="normal"
                   required
                 />
