@@ -224,7 +224,7 @@ export default function EnhancedTable() {
 
   async function getRows() {
     var fetchString =
-      "http://localhost:8080/criswsint/sentralimport/publications?year_published=" +
+      "https://api.cristin-utv.uio.no/criswsinta/sentralimport/publications?year_published=" +
       state.currentImportYear.value;
 
     if (

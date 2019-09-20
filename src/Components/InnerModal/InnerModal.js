@@ -624,6 +624,7 @@ function InnerModal(props) {
                   value={tittel}
                   onChange={event => handleChangeTittel(event)}
                   margin="normal"
+                  multiline={tittel.length > 15 ? true : false}
                   required
                 />
               </FormGroup>
