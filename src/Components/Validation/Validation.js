@@ -7,13 +7,11 @@ export default function Validation(props) {
   // Ved oppdatering av ett felt sjekk at det er blitt fylt inn/formatert korrekt
   useEffect(() => {
     validateField();
-    console.log(state.selectedField);
   }, [state.selectedField, state.validation]);
 
   // Ved åpning av ny publikasjon sjekk alle felter for feil
   useEffect(() => {
     checkAllFields();
-    console.log(props.publication.pubId);
   }, [props.publication.pubId]);
 
   function updateErrors(error) {
@@ -37,7 +35,6 @@ export default function Validation(props) {
     } else if (state.formErrors.includes(error)) {
       var newErrors = state.formErrors;
       newErrors.splice(newErrors.indexOf(error), 1);
-      console.log(newErrors);
       dispatch({
         type: "setFormErrors",
         payload: newErrors
@@ -76,7 +73,6 @@ export default function Validation(props) {
         break;
       case "kilde":
         var kildeValid = state.validation.length >= 3;
-        console.log(kildeValid);
         var kildeError = "Kilde er for kort";
 
         kildeValid ? removeError(kildeError) : updateErrors(kildeError);
@@ -157,7 +153,6 @@ export default function Validation(props) {
       }
     ];
     for (var i = 0; i < data.length; i++) {
-      console.log(data[i].value);
       switch (data[i].name) {
         case "tittel":
           var tittelValid = data[i].value.length >= 6;

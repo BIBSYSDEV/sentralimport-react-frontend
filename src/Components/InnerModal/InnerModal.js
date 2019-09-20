@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import {
   TextField,
@@ -18,6 +18,7 @@ import ConfirmationDialog from "../ConfirmationDialog/ConfirmationDialog";
 import ClosingDialog from "../ClosingDialog/ClosingDialog";
 import Validation from "../Validation/Validation";
 import { Context } from "../../Context";
+import axios from "axios";
 
 function InnerModal(props) {
   let { state, dispatch } = React.useContext(Context);
@@ -74,14 +75,6 @@ function InnerModal(props) {
     label: "Ingen tidsskrift funnet"
   });
 
-  const journals = [
-    { value: " ", label: "Ingen tidsskrift funnet" },
-    {
-      value: "Journal of Clinical Oncology",
-      label: "Journal of Clinical Oncology"
-    }
-  ];
-
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
   const [dialogAbortOpen, setDialogAbortOpen] = React.useState(false);
@@ -94,6 +87,30 @@ function InnerModal(props) {
   const selectStyle = {
     marginTop: "15px"
   };
+
+  const [journals, setJournals] = React.useState();
+
+  useEffect(() => {
+    async function getJournals() {
+      await axios
+        .get("https://api.cristin-utv.uio.no/v2/results/channels?type=journal")
+        .then(response => {
+          console.log(response);
+          updateJournals(response.data);
+        });
+    }
+
+    getJournals();
+    console.log(journals);
+  }, []);
+
+  function updateJournals(data) {
+    var tempArray = [];
+    for (var i = 0; i < data.length; i++) {
+      tempArray.push({ value: data[i].id, label: data[i].title });
+    }
+    setJournals(tempArray);
+  }
 
   function handleChangeKilde(event) {
     if (event.target.value !== props.data.sourceName) {
@@ -582,7 +599,7 @@ function InnerModal(props) {
                   name="journalSelect"
                   options={journals}
                   value={selectedJournal}
-                  className="basic-multi-select"
+                  className="basic-select"
                   classNamePrefix="select"
                   onChange={onChangeJournal}
                 />

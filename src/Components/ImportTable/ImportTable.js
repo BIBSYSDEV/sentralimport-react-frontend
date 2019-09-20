@@ -359,8 +359,8 @@ export default function EnhancedTable() {
             <TableBody>
               {stableSort(rows, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const labelId = index;
+                .map(row => {
+                  const labelId = row.pubId;
 
                   return (
                     <TableRow
