@@ -29,16 +29,15 @@ export function Duplicates(props) {
                 console.log("DOI does not exist. Searching by name, year and issn");
 
                 let title = props.publication.languages[0].title.length > 20 ? props.publication.languages[0].title.substr(0, 20) : props.publication.languages[0].title;
-                searchString = "/channels?type=result&query=(" + title + " AND year_published:[" + (registered-1) + " TO " + registered + "]";
+                searchString = "?title=" + title + "&published_since=" + (registered-1) + "&published_before=" + registered;
 
                 if (props.publication.hasOwnProperty('channel')) {
-                    let issns = props.publication.channel.issns.length > 1 ? props.publication.channel.issns.join(" OR ") : props.publication.channel.issns[0];
-                    searchString += " AND (" + issns + ")";
+                    let issn = props.publication.channel.issns[0];
+                    searchString += "&issn=" + issn;
                 }
-
-                searchString += ")&per_page=5";
-                console.log(searchString);
             }
+            searchString += "&per_page=5";
+            console.log(searchString);
             await fetchDuplicates(searchString)
                 .then(response => setdata(response));
         }
@@ -80,20 +79,15 @@ export function Duplicates(props) {
 async function fetchDuplicates(searchTerms) {
     let results = [];
     console.log("fething...");
-    const searchResults = await axios.get("https://api.cristin-utv.uio.no/v2/results" + searchTerms);
+    // må sjekke ut branch CA-55 og kjøre den lokalt for at denne skal fungere inntil CA-55 er merget
+    // const searchResults = await axios.get("https://api.cristin-utv.uio.no/v2/results" + searchTerms);
+    const searchResults = await axios.get("http://localhost:8080/crisrest/results" + searchTerms);
+    console.log("Found " + searchResults.data.length + " results");
 
-    if (searchTerms.includes('doi')) {
-        for (let i = 0; i < searchResults.data.length; i++) {
-            results.push({
-                data: searchResults.data[i]
-            });
-        }
-
-    } else {
-        for (let i = 0; i < searchResults.data.length; i++) {
-            let res = await axios.get("https://api.cristin-utv.uio.no/v2/results/" + searchResults.data[i].id);
-            results.push(res);
-        }
+    for (let i = 0; i < searchResults.data.length; i++) {
+        results.push({
+            data: searchResults.data[i]
+        });
     }
 
     for (let i = 0; i < results.length; i++) {
