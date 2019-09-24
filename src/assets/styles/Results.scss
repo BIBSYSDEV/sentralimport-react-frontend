@@ -5,6 +5,10 @@
     border-color: $color-purple;
     width:100%;
   }
+
+  &.contributor {
+    border-color: $color-green;
+  }
 }
 
 .metadata {
@@ -16,6 +20,11 @@
   padding: 0;
 }
 
+.contributorModal {
+  width: 80%;
+  max-width: 80%!important;
+}
+
 .result {
   padding: 1em;
   width: 80%;
@@ -23,6 +32,10 @@
   &.result {
     color: $color-purple;
     padding: 0.2em;
+  }
+
+  &.contributor {
+    color: $color-green;
   }
 
   &:hover {
@@ -34,6 +47,10 @@
     height: 100%;
     img {
       max-width: 40px;
+    }
+
+    &.person {
+      margin-top: 20px;
     }
   }
 

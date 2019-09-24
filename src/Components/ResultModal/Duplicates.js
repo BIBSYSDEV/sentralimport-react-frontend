@@ -16,22 +16,23 @@ export function Duplicates(props) {
     const [data, setdata] = React.useState([]);
     let { state } = React.useContext(Context);
     const [selected, setSelected] = React.useState("false");
-    let searchString = "";
+    let publication = props.publication;
 
     useEffect(() => {
         async function fetch() {
-            let registered = parseInt(props.publication.registered.substr(7,10));
+            let searchString = "";
+            let registered = parseInt(publication.registered.substr(7,10));
             console.log("registered: " + registered);
-            if (props.publication.hasOwnProperty('doi')) {
+            if (publication.hasOwnProperty('doi')) {
                 console.log("DOI exists. Looking for duplicates");
-                searchString = "?doi=" + props.publication.doi;
+                searchString = "?doi=" + publication.doi;
             } else {
                 console.log("DOI does not exist. Searching by name, year and issn");
 
-                let title = props.publication.languages[0].title.length > 20 ? props.publication.languages[0].title.substr(0, 20) : props.publication.languages[0].title;
+                let title = publication.languages[0].title.length > 20 ? publication.languages[0].title.substr(0, 20) : publication.languages[0].title;
                 searchString = "?title=" + title + "&published_since=" + (registered-1) + "&published_before=" + registered;
 
-                if (props.publication.hasOwnProperty('channel')) {
+                if (publication.hasOwnProperty('channel')) {
                     let issn = props.publication.channel.issns[0];
                     searchString += "&issn=" + issn;
                 }
@@ -42,7 +43,7 @@ export function Duplicates(props) {
                 .then(response => setdata(response));
         }
         fetch();
-    }, []);
+    }, [publication]);
 
     function handleChange(event) {
         state.selectedValue = event.target.value;
