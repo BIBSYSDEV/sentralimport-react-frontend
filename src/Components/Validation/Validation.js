@@ -156,7 +156,7 @@ export default function Validation(props) {
       switch (data[i].name) {
         case "tittel":
           var tittelValid = data[i].value.length >= 6;
-          var tittelError = "Tittel er for kort/mangler";
+          var tittelError = "Tittelen er for kort/mangler";
 
           !tittelValid ? fieldErrors.push(tittelError) : fieldErrors.push();
 
