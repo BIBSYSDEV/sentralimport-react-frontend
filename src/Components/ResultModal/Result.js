@@ -13,9 +13,9 @@ export function Result(props) {
         <div>
             <li className={`card-horiz basic-background card-horiz-hover result`} key={props.data.cristin_result_id}>
                 <Radio value={props.data.cristin_result_id}></Radio>
-                <a className={`result result`} href={"https://app.cristin.no/results/show.jsf?id=" + props.data.cristin_result_id} target="_blank">
+                <a className={`result result`} href={"https://app.cristin.no/results/show.jsf?id=" + props.data.cristin_result_id} target="_blank" rel="noopener noreferrer">
                     <div className='image-wrapper'>
-                        <img src={getMainImage('result')} />
+                        <img src={getMainImage('result')} alt="result"/>
                     </div>
                     <div className='content-wrapper'>
                         <h6>{ props.data.title.hasOwnProperty('nb') ? props.data.title.nb : props.data.title.en }</h6>
