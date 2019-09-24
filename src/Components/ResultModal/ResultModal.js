@@ -9,12 +9,10 @@ import {
 import InnerModal from "../InnerModal/InnerModal";
 import { Duplicates } from "./Duplicates"
 import { Context } from "../../Context";
-import ContributorModal from "../Contributors/ContributorModal";
 import '../../assets/styles/Results.scss'
 
 export default function ResultModal(props) {
     const [innerModal, setInnerModal] = React.useState(false);
-    const [contributorModal, setContributorModal] = React.useState(false);
     let {state} = React.useContext(Context);
 
     const divStyle = {
