@@ -88,6 +88,11 @@ function InnerModal(props) {
     marginTop: "15px"
   };
 
+  const tittelButtonStyle = {
+    marginTop: tittel.length / 2,
+    marginLeft: "70px"
+  };
+
   const [journals, setJournals] = React.useState();
 
   useEffect(() => {
@@ -99,9 +104,7 @@ function InnerModal(props) {
           updateJournals(response.data);
         });
     }
-
     getJournals();
-    console.log(journals);
   }, []);
 
   function updateJournals(data) {
@@ -356,9 +359,9 @@ function InnerModal(props) {
             direction="row"
             justify="center"
             alignItems="center"
-            sm={12}
+            xs
           >
-            <Grid container item xs={12} sm={4}>
+            <Grid container item sm={4}>
               <Form>
                 <h3>Importpublikasjon</h3>
                 <FormGroup>
@@ -446,7 +449,7 @@ function InnerModal(props) {
                   </Grid>
                 </FormGroup>
                 <FormGroup>
-                  <Grid item>
+                  <Grid item container sm>
                     <TextField
                       id="import-tittel"
                       label="Tittel"
@@ -454,6 +457,7 @@ function InnerModal(props) {
                       margin="normal"
                       disabled
                     />
+
                     {tittelIsEqual ? (
                       <IconButton style={buttonStyle}>
                         <DragHandleIcon />
@@ -563,124 +567,124 @@ function InnerModal(props) {
                 </FormGroup>
               </Form>
             </Grid>
-
-            <Form>
-              <h3> Cristinpublikasjon </h3>
-              <FormGroup>
-                <TextField
-                  id="cristin-id"
-                  label="Cristinid"
-                  margin="normal"
-                  disabled
-                />
-              </FormGroup>
-              <FormGroup>
-                <TextField
-                  id="import-opprettet"
-                  label="Dato opprettet"
-                  margin="normal"
-                  disabled
-                />
-              </FormGroup>
-              <FormGroup>
-                <TextField
-                  id="import-kilde"
-                  label="Kilde"
-                  value={kilde}
-                  onChange={event => handleChangeKilde(event)}
-                  margin="normal"
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <FormLabel style={selectStyle}> Tidsskrift </FormLabel>
-                <Select
-                  placeholder="Søk på tidsskrift"
-                  name="journalSelect"
-                  options={journals}
-                  value={selectedJournal}
-                  className="basic-select"
-                  classNamePrefix="select"
-                  onChange={onChangeJournal}
-                />
-              </FormGroup>
-              <FormGroup>
-                <FormControl required>
+            <Grid container item sm={4}>
+              <Form>
+                <h3> Cristinpublikasjon </h3>
+                <FormGroup>
                   <TextField
-                    id="import-doi"
-                    label="Doi"
-                    value={doi}
-                    onChange={event => handleChangeDoi(event)}
+                    id="cristin-id"
+                    label="Cristinid"
+                    margin="normal"
+                    disabled
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <TextField
+                    id="import-opprettet"
+                    label="Dato opprettet"
+                    margin="normal"
+                    disabled
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <TextField
+                    id="import-kilde"
+                    label="Kilde"
+                    value={kilde}
+                    onChange={event => handleChangeKilde(event)}
                     margin="normal"
                     required
                   />
-                </FormControl>
-              </FormGroup>
-              <FormGroup>
-                <TextField
-                  id="import-tittel"
-                  label="Tittel"
-                  name="Tittel"
-                  value={tittel}
-                  onChange={event => handleChangeTittel(event)}
-                  margin="normal"
-                  multiline={tittel.length > 15 ? true : false}
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <TextField
-                  id="import-aarstall"
-                  label="Årstall"
-                  value={aarstall.substring(
-                    aarstall.length - 4,
-                    aarstall.length
-                  )}
-                  onChange={handleChangeAarstall}
-                  margin="normal"
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <TextField
-                  id="import-kategori"
-                  label="Kategori"
-                  value={kategori}
-                  onChange={handleChangeKategori}
-                  margin="normal"
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <TextField
-                  id="import-lang"
-                  label="Språk"
-                  value={lang}
-                  onChange={handleChangeLang}
-                  margin="normal"
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <TextField
-                  id="import-utgivelsesdata"
-                  label="Utgivelsesdata"
-                  value={utgivelse}
-                  onChange={handleChangeUtgivelse}
-                  margin="normal"
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <Button
-                  disabled={state.formErrors.length >= 1}
-                  color="primary"
-                  onClick={handleSubmit}
-                >
-                  Submit
-                </Button>
-              </FormGroup>
-            </Form>
+                </FormGroup>
+                <FormGroup>
+                  <FormLabel style={selectStyle}> Tidsskrift </FormLabel>
+                  <Select
+                    placeholder="Søk på tidsskrift"
+                    name="journalSelect"
+                    options={journals}
+                    value={selectedJournal}
+                    className="basic-select"
+                    classNamePrefix="select"
+                    onChange={onChangeJournal}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <FormControl required>
+                    <TextField
+                      id="import-doi"
+                      label="Doi"
+                      value={doi}
+                      onChange={event => handleChangeDoi(event)}
+                      margin="normal"
+                      required
+                    />
+                  </FormControl>
+                </FormGroup>
+                <FormGroup>
+                  <TextField
+                    id="import-tittel"
+                    label="Tittel"
+                    name="Tittel"
+                    value={tittel}
+                    onChange={event => handleChangeTittel(event)}
+                    margin="normal"
+                    required
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <TextField
+                    id="import-aarstall"
+                    label="Årstall"
+                    value={aarstall.substring(
+                      aarstall.length - 4,
+                      aarstall.length
+                    )}
+                    onChange={handleChangeAarstall}
+                    margin="normal"
+                    required
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <TextField
+                    id="import-kategori"
+                    label="Kategori"
+                    value={kategori}
+                    onChange={handleChangeKategori}
+                    margin="normal"
+                    required
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <TextField
+                    id="import-lang"
+                    label="Språk"
+                    value={lang}
+                    onChange={handleChangeLang}
+                    margin="normal"
+                    required
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <TextField
+                    id="import-utgivelsesdata"
+                    label="Utgivelsesdata"
+                    value={utgivelse}
+                    onChange={handleChangeUtgivelse}
+                    margin="normal"
+                    required
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Button
+                    disabled={state.formErrors.length >= 1}
+                    color="primary"
+                    onClick={handleSubmit}
+                  >
+                    Submit
+                  </Button>
+                </FormGroup>
+              </Form>
+            </Grid>
           </Grid>
         </ModalBody>
         <Validation publication={props.crispub ? props.crispub : props.data} />
