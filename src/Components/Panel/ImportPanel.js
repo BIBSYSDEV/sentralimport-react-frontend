@@ -52,7 +52,7 @@ export default function CustomizedTables() {
     if (state.currentImportYear.value !== prevYear) {
       axios
         .get(
-          "https://w3utv-jb-cris02/criswsinta/sentralimport/publicationCount/" +
+          "https://api.cristin-utv.uio.no/criswsinta/sentralimport/publicationCount/" +
             state.currentImportYear.value
         )
         .then(response => {
