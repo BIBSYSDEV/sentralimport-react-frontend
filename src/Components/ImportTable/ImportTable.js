@@ -94,11 +94,9 @@ function EnhancedTableHead(props) {
               direction={order}
               onClick={createSortHandler(row.id)}
               disabled={
-                row.id !== "Eierinstitusjon" &&
-                row.id !== "Publikasjon" &&
-                row.id !== "Forfattere"
-                  ? false
-                  : true
+                  !(row.id !== "Eierinstitusjon" &&
+                  row.id !== "Publikasjon" &&
+                  row.id !== "Forfattere")
               }
             >
               {row.label}

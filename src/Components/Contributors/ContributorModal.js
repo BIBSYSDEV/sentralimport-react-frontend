@@ -107,13 +107,13 @@ function ContributorModal(props) {
                     <div className={`metadata`}>
                         { author.toBeCreated.affiliations.map((inst, j)=> (
                                 <p className={`italic`} key={j}>
-                                    {inst.institutionName}<Button size="small" color="primary" onClick={() => removeInstitution(author.toBeCreated, j)}>Fjern tilknytning</Button>
+                                    {inst.institutionName}<Button size="small" color="primary" onClick={() => removeInstitution(author, j)}>Fjern tilknytning</Button>
                                 </p>
                                 )) }
                     </div>
                     <InstitutionSelect onChange={handleInstitutionChange} />
                     <Button
-                        onClick={() => addInstitution(author.toBeCreated)}
+                        onClick={() => addInstitution(author)}
                         disabled={
                             selectedInstitution.institutionNr === 0 ||
                             author.toBeCreated.affiliations.filter(instNr => {return selectedInstitution.institutionNr === instNr.institutionNr}).length > 0
@@ -126,25 +126,33 @@ function ContributorModal(props) {
 
     function handleInstitutionChange(institution) {
         setSetSelectedInstitution(institution);
-        console.log(selectedInstitution);
     }
 
     function removeInstitution(author, index) {
-        author.affiliations.splice(index, 1);
+        let affiliationCopy = [...author.toBeCreated.affiliations];
+        affiliationCopy.splice(index, 1);
         setData(prevObjs => (prevObjs.map((o) => {
             if (o === author) {
-                return {...author, affiliations: author.affiliations }
+                return {...author, toBeCreated:
+                        {
+                            ...author.toBeCreated, affiliations: affiliationCopy
+                        }
+                }
             }
             return o;
         })))
     }
 
     function addInstitution(author) {
-        console.log(selectedInstitution);
-        author.affiliations.push({countryCode: "test", institutionName: selectedInstitution.label, institutionNr: selectedInstitution.institutionNr, isCristinInstitution: true});
+        let affiliationCopy = [...author.toBeCreated.affiliations];
+        affiliationCopy.push({countryCode: "test", institutionName: selectedInstitution.label, institutionNr: selectedInstitution.institutionNr, isCristinInstitution: true});
         setData(prevObjs => (prevObjs.map((o) => {
             if (o === author) {
-                return {...author, affiliations: author.affiliations }
+                return {...author, toBeCreated:
+                        {
+                            ...author.toBeCreated, affiliations: affiliationCopy
+                        }
+                }
             }
             return o;
         })))
