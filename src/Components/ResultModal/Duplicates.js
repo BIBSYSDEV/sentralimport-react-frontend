@@ -33,7 +33,7 @@ export function Duplicates(props) {
                 searchString = "?title=" + title + "&published_since=" + (registered-1) + "&published_before=" + registered;
 
                 if (publication.hasOwnProperty('channel')) {
-                    let issn = props.publication.channel.issns[0];
+                    let issn = publication.channel.issns[0];
                     searchString += "&issn=" + issn;
                 }
             }

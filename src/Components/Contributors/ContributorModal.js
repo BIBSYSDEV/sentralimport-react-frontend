@@ -10,6 +10,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import PersonIcon from "../../assets/icons/person-active.svg";
+import ArrowUpIcon from "../../assets/icons/arrowhead-up3.svg";
+import ArrowDownIcon from "../../assets/icons/arrowhead-down3.svg";
 import { TextField, FormGroup, Button } from "@material-ui/core";
 import { Form } from "reactstrap";
 import InstitutionSelect from "../InstitutionSelect/InstitutionSelect";
@@ -55,7 +57,8 @@ function ContributorModal(props) {
                         toBeCreated: defaultAuthor
                     };
 
-                    contributors[i].toBeCreated = contributors[i].cristin === defaultAuthor ? contributors[i].imported : contributors[i].cristin;
+                    let copy = contributors[i].cristin === defaultAuthor ? Object.assign({}, contributors[i].imported) : Object.assign({}, contributors[i].cristin);
+                    contributors[i].toBeCreated = contributors[i].cristin === defaultAuthor ? copy : copy;
                 }
 
                 setData(contributors);
@@ -66,7 +69,7 @@ function ContributorModal(props) {
 
 
     function handleSubmit(author) {
-        console.log(author)
+        console.log(author);
     }
 
     function handleClose() {
@@ -83,45 +86,111 @@ function ContributorModal(props) {
     function displayAuthorForm(author) {
         return (
             <div>
-                <Form>
-                    <FormGroup>
-                        <TextField
-                            id="firstName"
-                            label="Fornavn"
-                            value={author.toBeCreated.first_name}
-                            margin="normal"
-                            onChange={handleChange(author, "first")}
-                            required
-                        />
-                    </FormGroup>
-                    <FormGroup>
-                        <TextField
-                            id="lastName"
-                            label="Etternavn"
-                            value={author.toBeCreated.surname}
-                            margin="normal"
-                            onChange={handleChange(author, "last")}
-                            required
-                        />
-                    </FormGroup>
-                    <div className={`metadata`}>
-                        { author.toBeCreated.affiliations.map((inst, j)=> (
-                                <p className={`italic`} key={j}>
-                                    {inst.institutionName}<Button size="small" color="primary" onClick={() => removeInstitution(author, j)}>Fjern tilknytning</Button>
-                                </p>
-                                )) }
-                    </div>
-                    <InstitutionSelect onChange={handleInstitutionChange} />
-                    <Button
-                        onClick={() => addInstitution(author)}
-                        disabled={
-                            selectedInstitution.institutionNr === 0 ||
-                            author.toBeCreated.affiliations.filter(instNr => {return selectedInstitution.institutionNr === instNr.institutionNr}).length > 0
-                        }>Add</Button>
-                    <Button color="primary" onClick={() => handleSubmit(author)}>Opprett person</Button>
-                </Form>
+                <div>
+                    <Form>
+                        <FormGroup>
+                            <TextField
+                                id="firstName"
+                                label="Fornavn"
+                                value={author.toBeCreated.first_name}
+                                margin="normal"
+                                onChange={handleChange(author, "first")}
+                                required
+                            />
+                        </FormGroup>
+                        <FormGroup>
+                            <TextField
+                                id="lastName"
+                                label="Etternavn"
+                                value={author.toBeCreated.surname}
+                                margin="normal"
+                                onChange={handleChange(author, "last")}
+                                required
+                            />
+                        </FormGroup>
+                        <FormGroup>
+                            <TextField
+                                id="authorName"
+                                label="Forfatternavn"
+                                value={author.toBeCreated.authorname}
+                                margin="normal"
+                                onChange={handleChange(author, "authorName")}
+                                required
+                            />
+                        </FormGroup>
+                        <div className={`metadata`}>
+                            { author.toBeCreated.affiliations.map((inst, j)=> (
+                                    <p className={`italic`} key={j}>
+                                        {inst.institutionName}<Button size="small" color="primary" onClick={() => removeInstitution(author, j)}>Fjern tilknytning</Button>
+                                    </p>
+                                    )) }
+                        </div>
+                        <InstitutionSelect onChange={handleInstitutionChange} />
+                        <Button
+                            onClick={() => addInstitution(author)}
+                            disabled={
+                                selectedInstitution.institutionNr === 0 ||
+                                author.toBeCreated.affiliations.filter(instNr => {return selectedInstitution.institutionNr === instNr.institutionNr}).length > 0
+                            }>Add</Button>
+                        <Button color="primary" onClick={() => handleSubmit(author)}>Opprett person</Button>
+                    </Form>
+                </div>
             </div>
         )
+    }
+
+    function handleOrder(author, up) {
+        console.log("order changed");
+        let copy = [...data];
+        let index = author.toBeCreated.order -1;
+        let movedToOrder;
+        if (up) {
+            copy[index] = copy[index - 1];
+            copy[index - 1] = author;
+
+            movedToOrder = index;
+
+            setData(prevObjs => (prevObjs.map((o, i) => {
+                if (i === index) {
+                    return {...copy[i], toBeCreated:
+                            {
+                                ...copy[i].toBeCreated, order: index + 1
+                            }
+                    };
+                }
+                if (i === (index - 1)) {
+                    return { ...copy[i], toBeCreated:
+                            {
+                                ...copy[i].toBeCreated, order: movedToOrder
+                            }
+                    }
+                }
+                return copy[i];
+            })));
+        } else {
+            copy[index] = copy[index + 1];
+            copy[index + 1] = author;
+
+            movedToOrder = index + 2;
+
+            setData(prevObjs => (prevObjs.map((o, i) => {
+                if (i === index) {
+                    return {...copy[i], toBeCreated:
+                            {
+                                ...copy[i].toBeCreated, order: index + 1
+                            }
+                    };
+                }
+                if (i === (index + 1)) {
+                    return { ...copy[i], toBeCreated:
+                            {
+                                ...copy[i].toBeCreated, order: movedToOrder
+                            }
+                    }
+                }
+                return copy[i];
+            })));
+        }
     }
 
     function handleInstitutionChange(institution) {
@@ -140,7 +209,7 @@ function ContributorModal(props) {
                 }
             }
             return o;
-        })))
+        })));
     }
 
     function addInstitution(author) {
@@ -155,7 +224,7 @@ function ContributorModal(props) {
                 }
             }
             return o;
-        })))
+        })));
 
     }
 
@@ -163,6 +232,7 @@ function ContributorModal(props) {
         return (event) => {
             const firstName = property === "first" ? event.target.value : obj.toBeCreated.first_name;
             const lastName = property === "last" ? event.target.value : obj.toBeCreated.surname;
+            const authorName = property === "authorName" ? event.target.value : obj.toBeCreated.authorname;
             setData(prevObjs => (prevObjs.map((o) => {
                 if (o === obj) {
                     return {...obj, toBeCreated:
@@ -170,18 +240,21 @@ function ContributorModal(props) {
                                 first_name: firstName,
                                 surname: lastName,
                                 cristin_person_id: obj.toBeCreated.cristin_person_id,
-                                authorname: obj.toBeCreated.authorName,
+                                authorname: authorName,
                                 order: obj.toBeCreated.order,
                                 affiliations: obj.toBeCreated.affiliations
                             }};
                 }
                 return o;
-            })))
+            })));
         };
     }
 
     const getMainImage = () => {return PersonIcon};
+    const getArrowDownImage = () => {return ArrowDownIcon};
+    const getArrowUpImage = () => {return ArrowUpIcon};
 
+    console.log(data);
     return (
         <Modal
             isOpen={props.open}
@@ -200,9 +273,9 @@ function ContributorModal(props) {
                     <TableBody>
                         {data.map((row, i) => (
                             <TableRow key={i} hover>
-                                <TableCell>{row.cristin.order === row.imported.order ?
+                                <TableCell>{row.toBeCreated.order === row.imported.order ?
                                     row.imported.order :
-                                    row.imported.order + " (" + row.cristin.order + ")"}
+                                    row.imported.order + " (" + row.toBeCreated.order + ")"}
                                 </TableCell>
                                 <TableCell>
                                     <div className={`result contributor`}>
@@ -227,6 +300,22 @@ function ContributorModal(props) {
                                     <div className={`result contributor`} >
                                         <div className='image-wrapper person'>
                                             <img src={getMainImage()} alt="person" />
+                                        </div>
+                                        <div className={`orderButtons`}>
+                                            { row.toBeCreated.order > 1  && row.toBeCreated.order < data.length ?
+                                                <div>
+                                                    <div>
+                                                        <Button onClick={() => handleOrder(row, true)}><img src={getArrowUpImage()} alt="up-arrow" /></Button>
+                                                    </div>
+                                                    <div>
+                                                        <Button onClick={() => handleOrder(row, false)}><img src={getArrowDownImage()} alt="down-arrow" /></Button>
+                                                    </div>
+                                                </div>
+                                                 :
+                                                row.toBeCreated.order === data.length ?
+                                                    <Button onClick={() => handleOrder(row, true)}><img src={getArrowUpImage()} alt="up-arrow" /></Button> :
+                                                    <Button onClick={() => handleOrder(row, false)}><img src={getArrowDownImage()} alt="down-arrow" /></Button>
+                                            }
                                         </div>
                                         <div className='content-wrapper'>
                                             { (row.cristin.surname && row.cristin.first_name)
@@ -285,6 +374,7 @@ async function searchContributors(authors) {
         } else {
             suggestedAuthors[i] = defaultAuthor;
         }
+        suggestedAuthors[i].order = i + 1;
     }
 
     return suggestedAuthors;
