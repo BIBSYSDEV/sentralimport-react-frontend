@@ -146,10 +146,6 @@ const EnhancedTableToolbar = props => {
 
   return (
     <div className={classes.title}>
-      <Typography variant="h6" id="tableTitle">
-        Importer
-      </Typography>
-
       <div className={classes.spacer} />
       <div className={classes.actions} />
     </div>
@@ -222,7 +218,7 @@ export default function EnhancedTable() {
 
   async function getRows() {
     var fetchString =
-      "https://api.cristin-utv.uio.no/criswsinta/sentralimport/publications?year_published=" +
+      "http://localhost:8080/criswsint/sentralimport/publications?year_published=" +
       state.currentImportYear.value;
 
     if (
@@ -258,10 +254,15 @@ export default function EnhancedTable() {
       "&page=" +
       (state.currentPageNr + 1);
 
-    console.log(fetchString);
-    const temp = await axios.get(fetchString);
-    console.log(temp);
-    handleRows(temp.data);
+    await axios.get(fetchString).then(response => {
+      console.log(fetchString);
+      console.log(response.headers["x-total-count"]);
+      handleRows(response.data);
+      dispatch({
+        type: "setTotalCount",
+        payload: response.headers["x-total-count"]
+      });
+    });
   }
 
   function resetPageNr() {
@@ -282,6 +283,7 @@ export default function EnhancedTable() {
 
   function handleClose() {
     setOpen(false);
+    dispatch({ type: "setSelected", payload: "false" });
   }
 
   function handleCloseList() {

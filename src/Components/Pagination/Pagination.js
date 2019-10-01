@@ -1,10 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Input, Paper, Grid } from "@material-ui/core";
 import { Context } from "../../Context";
 import Select from "react-select";
 
 export default function Pagination(props) {
   let { state, dispatch } = React.useContext(Context);
+
+  const [pageValues, setPageValues] = React.useState([]);
+
+  useEffect(() => {
+    console.log(state.totalCount);
+    var values = [];
+    for (var i = 0; i < state.totalCount / state.currentPerPage.value; i++) {
+      values.push({ value: i, label: i + 1 });
+    }
+    setPageValues(values);
+  }, [state.totalCount, state.currentPerPage]);
 
   const rowsPerPage = [
     { value: 5, label: "5" },
@@ -20,13 +31,8 @@ export default function Pagination(props) {
     dispatch({ type: "setPageNr", payload: state.currentPageNr + 1 });
   }
 
-  function changePage(event) {
-    if (event.target.value >= 1) {
-      console.log(event.target.value);
-      dispatch({ type: "setPageNr", payload: parseInt(event.target.value) });
-    } else {
-      console.log(event.target.value);
-    }
+  function changePage(option) {
+    dispatch({ type: "setPageNr", payload: option.value });
   }
 
   function onChangePerPage(option) {
@@ -51,15 +57,27 @@ export default function Pagination(props) {
               defaultValue={rowsPerPage[0]}
             />
           </Grid>
-          <Grid item xs>
-            <div>
+          <Grid container item direction="row" xs>
+            <Grid item xs>
               {state.currentPageNr * state.currentPerPage.value + 1} -{" "}
-              {(state.currentPageNr + 1) * state.currentPerPage.value}, side:{" "}
-              <Input
-                value={state.currentPageNr}
-                onChange={e => changePage(e)}
-              />
-            </div>
+              {(state.currentPageNr + 1) * state.currentPerPage.value <
+              state.totalCount
+                ? (state.currentPageNr + 1) * state.currentPerPage.value
+                : state.totalCount}
+              , side:
+            </Grid>
+            <Grid item xs>
+              <div style={{ width: "150px" }}>
+                <Select
+                  value={{
+                    label: state.currentPageNr + 1,
+                    value: state.currentPageNr
+                  }}
+                  options={pageValues}
+                  onChange={changePage}
+                />
+              </div>
+            </Grid>
           </Grid>
           <Grid item xs={2}>
             <div>

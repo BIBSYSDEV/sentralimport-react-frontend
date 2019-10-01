@@ -12,7 +12,7 @@ export default function Validation(props) {
   // Ved åpning av ny publikasjon sjekk alle felter for feil
   useEffect(() => {
     checkAllFields();
-  }, [props.publication.pubId]);
+  }, [props.publication]);
 
   function updateErrors(error) {
     if (state.formErrors.includes(error)) {
@@ -119,36 +119,76 @@ export default function Validation(props) {
   }
 
   function checkAllFields() {
+    console.log(props.publication);
     var fieldErrors = [];
+
     var data = [
-      { name: "kilde", value: props.publication.sourceName },
-      { name: "tidsskrift", value: "x" },
+      {
+        name: "kilde",
+        value: props.duplicate
+          ? props.publication.import_sources[0].source_name
+          : props.publication.sourceName
+      },
+      {
+        name: "tidsskrift",
+        value: props.duplicate ? props.publication.journal.name : "x"
+      },
       {
         name: "doi",
-        value: props.publication.doi
+        value: props.duplicate
+          ? props.publication.links[0].url.substring(
+              16,
+              props.publication.links[0].url.length + 1
+            )
+          : props.publication.doi
           ? props.publication.doi
-          : "Ingen doi funnet"
+          : "Ingen DOI funnet"
       },
-      { name: "tittel", value: props.publication.languages[0].title },
+      {
+        name: "tittel",
+        value: props.duplicate
+          ? props.publication.title.en
+          : props.publication.languages[0].title
+      },
       {
         name: "aarstall",
-        value: props.publication.registered.substring(
-          props.publication.registered.length - 4,
-          props.publication.registered.length
-        )
+        value: props.duplicate
+          ? props.publication.year_published
+          : props.publication.registered.substring(
+              props.publication.registered.length - 4,
+              props.publication.registered.length
+            )
       },
-      { name: "kategori", value: props.publication.category },
-      { name: "spraak", value: props.publication.languages[0].lang },
+      {
+        name: "kategori",
+        value: props.duplicate
+          ? props.publication.category.code
+          : props.publication.category
+      },
+      {
+        name: "spraak",
+        value: props.duplicate
+          ? props.publication.original_language
+          : props.publication.languages[0].lang
+      },
       {
         name: "utgivelse",
-        value: props.publication.channel
+        value: props.duplicate
+          ? "Volum " +
+            props.publication.volume +
+            " (" +
+            props.publication.pages.from +
+            "-" +
+            props.publication.pages.to +
+            ")"
+          : props.publication.channel
           ? "Volum " +
             props.publication.channel.volume +
             " (" +
             props.publication.channel.pageFrom +
             "-" +
             props.publication.channel.pageTo +
-            ") "
+            ")"
           : "Ingen utgivelsesdata funnet"
       }
     ];
@@ -163,7 +203,7 @@ export default function Validation(props) {
           break;
         case "doi":
           var doiValid = data[i].value.match(
-            /^([0-9]{2})[.]([0-9]{4})[/]([\a-z-.]{1,})/i
+            /^([0-9]{2})[.]([0-9]{4})[/]([\a-z0-9-.]{1,})/i
           );
           var doiError = "Doi har galt format";
 
@@ -172,7 +212,7 @@ export default function Validation(props) {
           break;
         case "utgivelse":
           var utgivelseValid = data[i].value.match(
-            /^(Volum)[ ]([0-9-]{1,})[ ]([(]([a-z0-9]{1,6})[-]([a-z0-9]{1,6})[)])([\w-., ]{0,})/i
+            /^(Volum)[ ]([0-9a-z-]{1,})[ ]([(]([0-9]{1,6})[-]([0-9]{1,6})[)])([\w-., ]{0,})/i
           );
           var utgivelseError = "Utgivelsesdata har galt format";
 
@@ -241,6 +281,12 @@ export default function Validation(props) {
 
 Validation.defaultProps = {
   publication: {
-    pubId: "1234"
+    pubId: "1234",
+    languages: [
+      {
+        title: "title",
+        lang: "en"
+      }
+    ]
   }
 };

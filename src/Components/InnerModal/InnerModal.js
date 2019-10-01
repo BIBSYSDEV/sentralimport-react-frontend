@@ -22,30 +22,43 @@ import axios from "axios";
 import '../../assets/styles/buttons.scss'
 import ContributorModal from "../Contributors/ContributorModal";
 
+//TODO: erstatt react-select med react-creatable og sett opp select for valg av kategori
+
 function InnerModal(props) {
+
     let {state, dispatch} = React.useContext(Context);
 
-    const [kilde, setKilde] = React.useState(props.data.sourceName);
-    const [contributorModal, setContributorModal] = React.useState(false);
-
-    const [tittel, setTittel] = React.useState(props.data.languages[0].title);
-
-    const [aarstall, setAarstall] = React.useState(
-        props.data.registered.substring(
-            props.data.registered.length - 4,
-            props.data.registered.length
-        )
-    );
-
-    const [kategori, setKategori] = React.useState(props.data.category);
-
-    const [lang, setLang] = React.useState(props.data.languages[0].lang);
-
-    const [doi, setDoi] = React.useState(
-        props.data.doi ? props.data.doi : "Ingen DOI funnet"
-    );
-
-    const [utgivelse, setUtgivelse] = React.useState(
+    useEffect(() => {
+        function setFields() {
+        console.log(props.duplicate);
+        setKilde(props.duplicate ? state.selectedPublication.import_sources[0].source_name : props.data.sourceName);
+        setSelectedJournal(props.duplicate ? {
+            value: state.selectedPublication.journal.name,
+            label: state.selectedPublication.journal.name
+        } : {
+            value: " ",
+            label: "Ingen tidsskrift funnet"
+        });
+        setTittel(props.duplicate ? state.selectedPublication.title.en : props.data.languages[0].title);
+        setAarstall(props.duplicate ? state.selectedPublication.year_published : 
+            props.data.registered.substring(
+                props.data.registered.length - 4,
+                props.data.registered.length
+            ));
+        setKategori(props.duplicate ? state.selectedPublication.category.code : props.data.category);
+        setLang(props.duplicate ? state.selectedPublication.original_language : props.data.languages[0].lang);
+        setDoi(props.duplicate ? state.selectedPublication.links[0].url.substring(
+            16,
+            state.selectedPublication.links[0].url.length + 1
+          ) :(
+            props.data.doi ? props.data.doi : "Ingen DOI funnet"));
+        setUtgivelse(props.duplicate ? "Volum " +
+        state.selectedPublication.volume +
+        " (" +
+        state.selectedPublication.pages.from +
+        "-" +
+        state.selectedPublication.pages.to +
+        ") " : (
         props.data.channel
             ? "Volum " +
             props.data.channel.volume +
@@ -54,8 +67,26 @@ function InnerModal(props) {
             "-" +
             props.data.channel.pageTo +
             ") "
-            : "Ingen utgivelsesdata funnet"
-    );
+            : "Ingen utgivelsesdata funnet"));
+        }
+        
+        setFields();
+    }, [props.duplicate, state.selectedPublication])
+     
+    const [kilde, setKilde] = React.useState("");
+    const [contributorModal, setContributorModal] = React.useState(false);
+
+    const [tittel, setTittel] = React.useState("");
+
+    const [aarstall, setAarstall] = React.useState("");
+
+    const [kategori, setKategori] = React.useState("");
+
+    const [lang, setLang] = React.useState("");
+
+    const [doi, setDoi] = React.useState("");
+
+    const [utgivelse, setUtgivelse] = React.useState("");
 
     const [kildeIsEqual, setKildeIsEqual] = React.useState(true);
 
@@ -73,7 +104,10 @@ function InnerModal(props) {
 
     const [utgivelseIsEqual, setUtgivelseIsEqual] = React.useState(true);
 
-    const [selectedJournal, setSelectedJournal] = React.useState({
+    const [selectedJournal, setSelectedJournal] = React.useState(props.duplicate ? {
+        value: state.selectedPublication.journal.name,
+        label: state.selectedPublication.journal.name
+    } : {
         value: " ",
         label: "Ingen tidsskrift funnet"
     });
@@ -92,8 +126,8 @@ function InnerModal(props) {
     };
 
     const tittelButtonStyle = {
-        marginTop: tittel.length / 2,
-        marginLeft: "70px"
+        marginTop: "20px",
+        marginLeft: "68px"
     };
 
     const [journals, setJournals] = React.useState();
@@ -107,7 +141,6 @@ function InnerModal(props) {
                     updateJournals(response.data);
                 });
         }
-
         getJournals();
     }, []);
 
@@ -372,12 +405,13 @@ function InnerModal(props) {
                         justify="center"
                         alignItems="center"
                         xs
+                        sm
                     >
-                        <Grid container item sm={4}>
+                        <Grid container item sm={4} xs={12} style={{ marginLeft: "150px"}}>
                             <Form>
                                 <h3>Importpublikasjon</h3>
                                 <FormGroup>
-                                    <Grid item>
+                                    <Grid item xs>
                                         <TextField
                                             id="import-id"
                                             label="Pubid"
@@ -468,14 +502,15 @@ function InnerModal(props) {
                                             value={props.data.languages[0].title}
                                             margin="normal"
                                             disabled
+                                            multiline
                                         />
 
                                         {tittelIsEqual ? (
-                                            <IconButton style={buttonStyle}>
+                                            <IconButton style={tittelButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton style={buttonStyle} onClick={copyTittel}>
+                                            <IconButton style={tittelButtonStyle} onClick={copyTittel}>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -575,7 +610,7 @@ function InnerModal(props) {
                                     </Grid>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Button disabled> Disabled </Button>
+                                    <Button disabled margin="auto"> Disabled </Button>
                                 </FormGroup>
                             </Form>
                         </Grid>
@@ -587,6 +622,7 @@ function InnerModal(props) {
                                         id="cristin-id"
                                         label="Cristinid"
                                         margin="normal"
+                                        value={props.duplicate ? props.cristinpub.cristin_result_id : ""}
                                         disabled
                                     />
                                 </FormGroup>
@@ -595,6 +631,7 @@ function InnerModal(props) {
                                         id="import-opprettet"
                                         label="Dato opprettet"
                                         margin="normal"
+                                        value={props.duplicate ? props.cristinpub.created.date.substring(0, 10) : ""}
                                         disabled
                                     />
                                 </FormGroup>
@@ -633,6 +670,7 @@ function InnerModal(props) {
                                     </FormControl>
                                 </FormGroup>
                                 <FormGroup>
+                                    <Grid item>
                                     <TextField
                                         id="import-tittel"
                                         label="Tittel"
@@ -641,16 +679,14 @@ function InnerModal(props) {
                                         onChange={event => handleChangeTittel(event)}
                                         margin="normal"
                                         required
-                                    />
+                                        multiline
+                                    /> </Grid>
                                 </FormGroup>
                                 <FormGroup>
                                     <TextField
                                         id="import-aarstall"
                                         label="Årstall"
-                                        value={aarstall.substring(
-                                            aarstall.length - 4,
-                                            aarstall.length
-                                        )}
+                                        value={aarstall}
                                         onChange={handleChangeAarstall}
                                         margin="normal"
                                         required
@@ -700,7 +736,7 @@ function InnerModal(props) {
                     </Grid>
                     <Button className={`contributorButton`} onClick={openContributorModal}>Test</Button>
                 </ModalBody>
-                <Validation publication={props.crispub ? props.crispub : props.data} />
+                <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
             </Modal>
             <ClosingDialog
                 open={dialogAbortOpen}
