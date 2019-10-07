@@ -324,13 +324,22 @@ export default function EnhancedTable() {
     }
   }
 
+  function handleAuthorPress(event, row) {
+    if (authorList !== true) {
+      if (event.keyCode === 13 || event.keyCode === 32) {
+        setAuthorList(true);
+        setAuthorData(row);
+      }
+    }
+  }
+
   function handleClick(event, row) {
     setOpen(true);
     setModalData(row.row);
   }
 
   function handleKeyPress(event, row) {
-    if (event.keyCode === 13) {
+    if (event.keyCode === 13 || event.keyCode === 32) {
       setOpen(true);
       setModalData(row.row);
     }
@@ -467,6 +476,10 @@ export default function EnhancedTable() {
                         <IconButton
                           onClick={e => {
                             handleAuthorClick(e, row);
+                            e.stopPropagation();
+                          }}
+                          onKeyDown={e => {
+                            handleAuthorPress(e, row);
                             e.stopPropagation();
                           }}
                         >

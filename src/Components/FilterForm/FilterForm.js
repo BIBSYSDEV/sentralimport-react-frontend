@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
-import { red } from "@material-ui/core/colors";
+import { red, green } from "@material-ui/core/colors";
 import InstitutionSelect from "../InstitutionSelect/InstitutionSelect";
 
 import {
@@ -52,7 +52,8 @@ export default function FilterForm() {
   let { state, dispatch } = React.useContext(Context);
 
   const imgStyle = {
-    height: "22px"
+    height: "22px",
+    fill: green
   };
 
   const importedStyle = {
