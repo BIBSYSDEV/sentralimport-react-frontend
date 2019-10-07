@@ -377,8 +377,8 @@ export default function EnhancedTable() {
     }
     return (
       <div>
-        {inst.map(ins => (
-          <div>
+        {inst.map((ins, i) => (
+          <div key={i}>
             <div>{ins}</div>
           </div>
         ))}
@@ -421,7 +421,6 @@ export default function EnhancedTable() {
                       onFocus={event => handleOnFocus(event, { row })}
                       onBlur={event => handleOnBlur(event, { row })}
                     >
-                      {console.log(row)}
                       <TableCell component="th" scope="row" padding="none" />
 
                       <TableCell>
@@ -433,17 +432,17 @@ export default function EnhancedTable() {
                             {row.languages[0].title}
                           </h6>
                           <div className={`metadata`}>
-                            <p>
+
                               {row.authors
                                 .slice(0, 5)
                                 .map(author => author.authorName + "; ")}
                               {row.authors.length > 5 ? " et al " : ""}
                               {" (" + row.authors.length + ") "}
-                              <text className={`journal-name`}>
+                              <p className={`journal-name`}>
                                 {row.hasOwnProperty("channel")
                                   ? row.channel.journal + " "
                                   : ""}
-                              </text>
+                              </p>
                               {row.registered.substring(
                                 row.registered.length - 4,
                                 row.registered.length
@@ -460,7 +459,7 @@ export default function EnhancedTable() {
                               {row.hasOwnProperty("doi")
                                 ? " doi:" + row.doi
                                 : ""}
-                            </p>
+
                           </div>
                         </div>
                       </TableCell>

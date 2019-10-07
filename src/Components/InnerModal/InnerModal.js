@@ -803,7 +803,7 @@ function InnerModal(props) {
                             </Form>
                         </Grid>
                     </Grid>
-                    <Button className={`contributorButton`} onClick={openContributorModal}>Test</Button>
+                    <Button className={`contributorButton`} onClick={openContributorModal}>Bidragsytere</Button>
                     <div>{state.formErrors.map(error => { return(
                         <div>{error + "; "}</div>
                     )})}</div>
