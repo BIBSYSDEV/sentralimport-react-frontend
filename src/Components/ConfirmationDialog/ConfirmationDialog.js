@@ -18,7 +18,12 @@ export default function ConfirmationDialog(props) {
     dispatch({ type: "setFormErrors", payload: emptyArray });
   }
   return (
-    <Dialog open={props.open} onClose={props.handleClose}>
+    <Dialog
+      open={props.open}
+      onClose={props.handleClose}
+      disableBackdropClick
+      disableEscapeKeyDown
+    >
       <DialogTitle>Bekreft import</DialogTitle>
       <DialogContent>
         <DialogContentText>

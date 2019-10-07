@@ -1,0 +1,12 @@
+.result-title {
+  color: #76559a;
+  font-weight: bold;
+}
+
+.journal-name {
+  font-style: italic;
+}
+
+.focused {
+  background-color: lightgray;
+}

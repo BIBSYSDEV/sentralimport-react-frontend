@@ -7,7 +7,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Typography from "@material-ui/core/Typography";
+import ResultIcon from "../../assets/icons/result-active.svg";
 import Paper from "@material-ui/core/Paper";
 import axios from "axios";
 import { Context } from "../../Context";
@@ -16,6 +16,8 @@ import PeopleIcon from "@material-ui/icons/People";
 import ResultModal from "../ResultModal/ResultModal";
 import AuthorListModal from "../AuthorListModal/AuthorListModal";
 import Pagination from "../Pagination/Pagination";
+import "../../assets/styles/Results.scss";
+import "../../assets/styles/Imports.css";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -94,9 +96,11 @@ function EnhancedTableHead(props) {
               direction={order}
               onClick={createSortHandler(row.id)}
               disabled={
-                  !(row.id !== "Eierinstitusjon" &&
+                !(
+                  row.id !== "Eierinstitusjon" &&
                   row.id !== "Publikasjon" &&
-                  row.id !== "Forfattere")
+                  row.id !== "Forfattere"
+                )
               }
             >
               {row.label}
@@ -187,6 +191,10 @@ export default function EnhancedTable() {
   const [authorList, setAuthorList] = React.useState(false);
   const [authorData, setAuthorData] = React.useState();
 
+  const getMainImage = () => {
+    return ResultIcon;
+  };
+
   useEffect(() => {
     resetPageNr();
   }, [
@@ -201,6 +209,7 @@ export default function EnhancedTable() {
 
   useEffect(() => {
     getRows();
+    console.log(rows);
   }, [
     state.currentImportYear,
     state.isSampublikasjon,
@@ -257,12 +266,30 @@ export default function EnhancedTable() {
     await axios.get(fetchString).then(response => {
       console.log(fetchString);
       console.log(response.headers["x-total-count"]);
-      handleRows(response.data);
+      getJournals(response.data);
+
       dispatch({
         type: "setTotalCount",
         payload: response.headers["x-total-count"]
       });
     });
+
+    async function getJournals(data) {
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].hasOwnProperty("channel")) {
+          var journal = await axios.get(
+            "https://api.cristin-utv.uio.no/v2/results/channels?type=journal&id=" +
+              data[i].channel.id
+          );
+          console.log(journal);
+          data[i].channel.journal = journal.data[0].hasOwnProperty("title")
+            ? journal.data[0].title
+            : "";
+          console.log(data[i]);
+        }
+      }
+      handleRows(data);
+    }
   }
 
   function resetPageNr() {
@@ -307,6 +334,16 @@ export default function EnhancedTable() {
       setOpen(true);
       setModalData(row.row);
     }
+  }
+
+  function handleOnFocus(event, row) {
+    event.target.className = event.target.className + " focused";
+    console.log(event.target.className);
+  }
+
+  function handleOnBlur(event, row) {
+    event.target.className = event.target.className.split(" focused")[0];
+    console.log(event.target.className);
   }
 
   function handleChangeRowsPerPage(option) {
@@ -370,18 +407,53 @@ export default function EnhancedTable() {
                       role="checkbox"
                       key={labelId}
                       onKeyDown={event => handleKeyPress(event, { row })}
+                      className={`card-horiz basic-background result`}
+                      tabIndex="0"
+                      onFocus={event => handleOnFocus(event, { row })}
+                      onBlur={event => handleOnBlur(event, { row })}
                     >
+                      {console.log(row)}
                       <TableCell component="th" scope="row" padding="none" />
 
                       <TableCell>
-                        {row.authors.slice(0, 5).map(author => (
-                          <div style={divStyle} key={author.sequenceNr}>
-                            {author.authorName};
+                        <div className="image-wrapper">
+                          <img src={getMainImage("result")} alt="result" />
+                        </div>
+                        <div className="content-wrapper">
+                          <h6 className={`result-title`}>
+                            {row.languages[0].title}
+                          </h6>
+                          <div className={`metadata`}>
+                            <p>
+                              {row.authors
+                                .slice(0, 5)
+                                .map(author => author.authorName + "; ")}
+                              {row.authors.length > 5 ? " et al " : ""}
+                              {" (" + row.authors.length + ") "}
+                              <text className={`journal-name`}>
+                                {row.hasOwnProperty("channel")
+                                  ? row.channel.journal + " "
+                                  : ""}
+                              </text>
+                              {row.registered.substring(
+                                row.registered.length - 4,
+                                row.registered.length
+                              ) + ";"}
+                              {row.hasOwnProperty("channel")
+                                ? row.channel.volume + ";"
+                                : ""}
+                              {row.hasOwnProperty("channel")
+                                ? row.channel.pageFrom + "-"
+                                : ""}
+                              {row.hasOwnProperty("channel")
+                                ? row.channel.pageTo
+                                : ""}
+                              {row.hasOwnProperty("doi")
+                                ? " doi:" + row.doi
+                                : ""}
+                            </p>
                           </div>
-                        ))}
-                        {row.authors.length > 5 ? " et al " : ""}
-                        {" (" + row.authors.length + ") "}
-                        {row.languages[0].title}
+                        </div>
                       </TableCell>
                       <TableCell align="right">
                         <div>{row.category}</div>

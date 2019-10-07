@@ -73,7 +73,7 @@ export default function Validation(props) {
         break;
       case "kilde":
         var kildeValid = state.validation.length >= 3;
-        var kildeError = "Kilde er for kort";
+        var kildeError = "Kilde mangler/ har feil";
 
         kildeValid ? removeError(kildeError) : updateErrors(kildeError);
 
@@ -126,7 +126,9 @@ export default function Validation(props) {
       {
         name: "kilde",
         value: props.duplicate
-          ? props.publication.import_sources[0].source_name
+          ? props.publication.hasOwnProperty("import_sources")
+            ? props.publication.import_sources[0].source_name
+            : "xx"
           : props.publication.sourceName
       },
       {
@@ -212,7 +214,7 @@ export default function Validation(props) {
           break;
         case "utgivelse":
           var utgivelseValid = data[i].value.match(
-            /^(Volum)[ ]([0-9a-z-]{1,})[ ]([(]([0-9]{1,6})[-]([0-9]{1,6})[)])([\w-., ]{0,})/i
+            /^(Volum)[ ]([0-9a-z-:]{1,})[ ]([(]([0-9]{1,6})[-]([0-9]{1,6})[)])([\w-., ]{0,})/i
           );
           var utgivelseError = "Utgivelsesdata har galt format";
 
@@ -223,7 +225,7 @@ export default function Validation(props) {
           break;
         case "kilde":
           var kildeValid = data[i].value.length >= 3;
-          var kildeError = "Kilde er for kort";
+          var kildeError = "Kilde mangler/har feil";
 
           !kildeValid ? fieldErrors.push(kildeError) : fieldErrors.push();
 
@@ -265,18 +267,7 @@ export default function Validation(props) {
     }
     dispatch({ type: "setFormErrors", payload: fieldErrors });
   }
-  return (
-    <div>
-      <div>
-        Feil i form:
-        {state.formErrors.length >= 1 ? (
-          <p>{state.formErrors.join(", ")}</p>
-        ) : (
-          <p>Ingen feil i form</p>
-        )}
-      </div>
-    </div>
-  );
+  return <p></p>;
 }
 
 Validation.defaultProps = {

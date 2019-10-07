@@ -1,6 +1,7 @@
 import React from "react";
 import { Navbar, Nav } from "react-bootstrap";
 import logo from "../LogoHeader/logo.svg";
+import "./logo.css";
 
 export default function LogoHeader() {
   return (
@@ -14,7 +15,7 @@ export default function LogoHeader() {
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto" />
         <Nav>
-          <Nav.Item>CRISTIN Sentralimport</Nav.Item>
+          <Nav.Item className="header-title">Sentralimport</Nav.Item>
         </Nav>
       </Navbar.Collapse>
     </Navbar>

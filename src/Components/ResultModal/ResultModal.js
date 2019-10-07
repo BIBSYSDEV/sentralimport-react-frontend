@@ -61,6 +61,25 @@ export default function ResultModal(props) {
                 ? "et al (" + props.data.authors.length + ") "
                 : ""}
               {props.data.languages[0].title}
+              <text className={`journal-name`}>
+                {props.data.hasOwnProperty("channel")
+                  ? props.data.channel.journal + " "
+                  : ""}
+              </text>
+              {props.data.registered.substring(
+                props.data.registered.length - 4,
+                props.data.registered.length
+              ) + ";"}
+              {props.data.hasOwnProperty("channel")
+                ? props.data.channel.volume + ";"
+                : ""}
+              {props.data.hasOwnProperty("channel")
+                ? props.data.channel.pageFrom + "-"
+                : ""}
+              {props.data.hasOwnProperty("channel")
+                ? props.data.channel.pageTo
+                : ""}
+              {props.data.hasOwnProperty("doi") ? " doi:" + props.data.doi : ""}
             </ListGroupItemText>
           </ListGroupItem>
           <ListGroupItem>
@@ -75,7 +94,7 @@ export default function ResultModal(props) {
       </ModalBody>
       <ModalFooter>
         <Button style={style} onClick={handleSubmit}>
-          Submit
+          OK
         </Button>
       </ModalFooter>
 

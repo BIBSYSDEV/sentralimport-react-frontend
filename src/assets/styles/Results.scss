@@ -3,7 +3,7 @@
 .card-horiz {
   &.result {
     border-color: $color-purple;
-    width:100%;
+    width: 100%;
   }
 
   &.contributor {
@@ -24,7 +24,7 @@
 }
 
 .metadata {
-  color:black;
+  color: black;
   font-size: 13px;
 }
 
@@ -34,7 +34,7 @@
 
 .contributorModal {
   width: 80%;
-  max-width: 80%!important;
+  max-width: 80% !important;
 }
 
 .result {

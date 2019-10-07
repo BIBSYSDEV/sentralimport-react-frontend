@@ -15,6 +15,10 @@ import {
   Checkbox
 } from "@material-ui/core";
 import { Context } from "../../Context";
+import DownloadIcon from "./download.svg";
+import ExportIcon from "./export.svg";
+import X2Icon from "./x2.svg";
+import NavbarCollapse from "react-bootstrap/NavbarCollapse";
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -47,6 +51,19 @@ export default function FilterForm() {
 
   let { state, dispatch } = React.useContext(Context);
 
+  const imgStyle = {
+    height: "22px"
+  };
+
+  const importedStyle = {
+    display: "flex",
+    marginTop: "16px"
+  };
+
+  const labelStyle = {
+    display: "flex"
+  };
+
   function handleCheck() {
     dispatch({ type: "setSampublikasjon", payload: !state.isSampublikasjon });
   }
@@ -76,17 +93,33 @@ export default function FilterForm() {
             <FormControlLabel
               value="false"
               control={<Radio />}
-              label="Ikke importert"
+              label={
+                <span style={labelStyle}>
+                  <img src={ExportIcon} style={imgStyle} alt="ikke importert" />{" "}
+                  &nbsp;
+                  <div>Ikke importert</div>
+                </span>
+              }
             />
             <FormControlLabel
               value="true"
               control={<Radio />}
-              label="Importert"
+              label={
+                <span style={importedStyle}>
+                  <img src={DownloadIcon} style={imgStyle} alt="importert" />{" "}
+                  &nbsp; <p>Importert</p>
+                </span>
+              }
             />
             <FormControlLabel
               value="ikke aktuelle"
               control={<Radio />}
-              label="Ikke aktuelle"
+              label={
+                <span style={labelStyle}>
+                  <img src={X2Icon} style={imgStyle} alt="ikke aktuelle" />{" "}
+                  &nbsp; <div>Ikke aktuelle</div>
+                </span>
+              }
             />
           </RadioGroup>
         </FormControl>

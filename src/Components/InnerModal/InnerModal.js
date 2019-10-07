@@ -21,8 +21,11 @@ import {Context} from "../../Context";
 import axios from "axios";
 import '../../assets/styles/buttons.scss'
 import ContributorModal from "../Contributors/ContributorModal";
+import { green, red } from "@material-ui/core/colors";
+import './style.css';
 
-//TODO: erstatt react-select med react-creatable og sett opp select for valg av kategori
+//TODO: erstatt react-select med ny funksjon for oppretting av tidsskrifter (react-creatable) og sett opp select for valg av kategori via dropdown
+//TODO: skill mellom import og cristin felter med farge/styling
 
 function InnerModal(props) {
 
@@ -31,7 +34,8 @@ function InnerModal(props) {
     useEffect(() => {
         function setFields() {
         console.log(props.duplicate);
-        setKilde(props.duplicate ? state.selectedPublication.import_sources[0].source_name : props.data.sourceName);
+        setKilde(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_name : "Ingen kilde funnet" ): props.data.sourceName);
+        setKildeId(props.duplicate ? (state.selected.publication.hasOwnProperty("externalId") ? state.publication.externalId : "Ingen kildeId funnet") : props.data.externalId)
         setSelectedJournal(props.duplicate ? {
             value: state.selectedPublication.journal.name,
             label: state.selectedPublication.journal.name
@@ -47,18 +51,18 @@ function InnerModal(props) {
             ));
         setKategori(props.duplicate ? state.selectedPublication.category.code : props.data.category);
         setLang(props.duplicate ? state.selectedPublication.original_language : props.data.languages[0].lang);
-        setDoi(props.duplicate ? state.selectedPublication.links[0].url.substring(
+        setDoi(props.duplicate ? state.selectedPublication.links[state.selectedPublication.links.length - 1].url.substring(
             16,
             state.selectedPublication.links[0].url.length + 1
           ) :(
             props.data.doi ? props.data.doi : "Ingen DOI funnet"));
-        setUtgivelse(props.duplicate ? "Volum " +
+        setUtgivelse(props.duplicate ? ( state.selectedPublication.hasOwnProperty("volume") ? "Volum " +
         state.selectedPublication.volume +
         " (" +
         state.selectedPublication.pages.from +
         "-" +
         state.selectedPublication.pages.to +
-        ") " : (
+        ") " : "Ingen utgivelsesdata funnet") : (
         props.data.channel
             ? "Volum " +
             props.data.channel.volume +
@@ -74,6 +78,9 @@ function InnerModal(props) {
     }, [props.duplicate, state.selectedPublication])
      
     const [kilde, setKilde] = React.useState("");
+
+    const [kildeId, setKildeId] = React.useState("");
+
     const [contributorModal, setContributorModal] = React.useState(false);
 
     const [tittel, setTittel] = React.useState("");
@@ -89,6 +96,8 @@ function InnerModal(props) {
     const [utgivelse, setUtgivelse] = React.useState("");
 
     const [kildeIsEqual, setKildeIsEqual] = React.useState(true);
+
+    const [kildeIdIsEqual, setKildeIdIsEqual] = React.useState(true);
 
     const [tittelIsEqual, setTittelIsEqual] = React.useState(true);
 
@@ -116,7 +125,12 @@ function InnerModal(props) {
 
     const [dialogAbortOpen, setDialogAbortOpen] = React.useState(false);
 
-    const buttonStyle = {
+    const equalButtonStyle = {
+        marginTop: "20px",
+        marginLeft: "50px"
+    };
+
+    const arrowButtonStyle = {
         marginTop: "20px",
         marginLeft: "50px"
     };
@@ -127,7 +141,14 @@ function InnerModal(props) {
 
     const tittelButtonStyle = {
         marginTop: "20px",
-        marginLeft: "68px"
+        marginLeft: "68px",
+        color: red
+    };
+
+    const tittelEqualButtonStyle = {
+        marginTop: "20px",
+        marginLeft: "68px",
+        color: green
     };
 
     const [journals, setJournals] = React.useState();
@@ -244,6 +265,14 @@ function InnerModal(props) {
         dispatch({type: "setValidation", payload: event.target.value});
     }
 
+    function handleChangeKildeId(event) {
+        if(event.target.value !== props.data.externalId) {
+            setKildeIdIsEqual(false);
+        } else {
+            setKildeIdIsEqual(true);
+        }
+    }
+
     function handleSubmit() {
         setDialogOpen(true);
     }
@@ -261,6 +290,11 @@ function InnerModal(props) {
         setKildeIsEqual(true);
         dispatch({type: "setSelectedField", payload: "kilde"});
         dispatch({type: "setValidation", payload: props.data.sourceName});
+    }
+
+    function copyKildeId() {
+        setKildeId(props.data.externalId);
+        setKildeIdIsEqual(true);
     }
 
     function copyTittel() {
@@ -407,7 +441,7 @@ function InnerModal(props) {
                         xs
                         sm
                     >
-                        <Grid container item sm={4} xs={12} style={{ marginLeft: "150px"}}>
+                        <Grid container item sm={4} xs={12} alignContent="center" alignItems="center" style={{ marginLeft: "150px"}}>
                             <Form>
                                 <h3>Importpublikasjon</h3>
                                 <FormGroup>
@@ -444,11 +478,33 @@ function InnerModal(props) {
                                             />
                                         </FormControl>
                                         {kildeIsEqual ? (
-                                            <IconButton style={buttonStyle}>
+                                            <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton style={buttonStyle} onClick={copyKilde}>
+                                            <IconButton  color="secondary" style={arrowButtonStyle} onClick={copyKilde}>
+                                                <TrendingFlatIcon />
+                                            </IconButton>
+                                        )}
+                                    </Grid>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Grid item>
+                                        <FormControl required={true}>
+                                            <TextField
+                                                id="import-kildeid"
+                                                label="KildeId"
+                                                value={props.data.externalId}
+                                                margin="normal"
+                                                disabled
+                                            />
+                                        </FormControl>
+                                        {kildeIdIsEqual ? (
+                                            <IconButton color="primary" style={equalButtonStyle}>
+                                                <DragHandleIcon />
+                                            </IconButton>
+                                        ) : (
+                                            <IconButton  color="secondary" style={arrowButtonStyle} onClick={copyKildeId}>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -464,11 +520,11 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         {journalIsEqual ? (
-                                            <IconButton style={buttonStyle}>
+                                            <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton style={buttonStyle} onClick={copyJournal}>
+                                            <IconButton color="secondary" style={arrowButtonStyle} onClick={copyJournal}>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -484,11 +540,31 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         {doiIsEqual ? (
-                                            <IconButton style={buttonStyle}>
+                                            <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton style={buttonStyle} onClick={copyDoi}>
+                                            <IconButton color="secondary" style={arrowButtonStyle} onClick={copyDoi}>
+                                                <TrendingFlatIcon />
+                                            </IconButton>
+                                        )}
+                                    </Grid>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Grid item>
+                                        <TextField
+                                            id="import-lang"
+                                            label="Språk"
+                                            value={props.data.languages[0].lang}
+                                            margin="normal"
+                                            disabled
+                                        />
+                                        {langIsEqual ? (
+                                            <IconButton color="primary" style={equalButtonStyle}>
+                                                <DragHandleIcon />
+                                            </IconButton>
+                                        ) : (
+                                            <IconButton color="secondary" style={arrowButtonStyle} onClick={copyLang}>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -506,11 +582,11 @@ function InnerModal(props) {
                                         />
 
                                         {tittelIsEqual ? (
-                                            <IconButton style={tittelButtonStyle}>
+                                            <IconButton color="primary" style={tittelEqualButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton style={tittelButtonStyle} onClick={copyTittel}>
+                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyTittel}>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -529,11 +605,11 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         {aarstallIsEqual ? (
-                                            <IconButton style={buttonStyle}>
+                                            <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton style={buttonStyle} onClick={copyAarstall}>
+                                            <IconButton color="secondary" style={arrowButtonStyle} onClick={copyAarstall}>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -549,31 +625,11 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         {kategoriIsEqual ? (
-                                            <IconButton style={buttonStyle}>
+                                            <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton style={buttonStyle} onClick={copyKategori}>
-                                                <TrendingFlatIcon />
-                                            </IconButton>
-                                        )}
-                                    </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
-                                        <TextField
-                                            id="import-lang"
-                                            label="Språk"
-                                            value={props.data.languages[0].lang}
-                                            margin="normal"
-                                            disabled
-                                        />
-                                        {langIsEqual ? (
-                                            <IconButton style={buttonStyle}>
-                                                <DragHandleIcon />
-                                            </IconButton>
-                                        ) : (
-                                            <IconButton style={buttonStyle} onClick={copyLang}>
+                                            <IconButton color="secondary" style={arrowButtonStyle} onClick={copyKategori}>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -599,18 +655,20 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         {utgivelseIsEqual ? (
-                                            <IconButton style={buttonStyle}>
+                                            <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton style={buttonStyle} onClick={copyUtgivelse}>
+                                            <IconButton color="secondary" style={arrowButtonStyle} onClick={copyUtgivelse}>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
                                     </Grid>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Button disabled margin="auto"> Disabled </Button>
+                                    <Grid item>
+                                    <Button variant="contained" disabled margin="auto"> Disabled </Button>
+                                    </Grid>
                                 </FormGroup>
                             </Form>
                         </Grid>
@@ -646,6 +704,16 @@ function InnerModal(props) {
                                     />
                                 </FormGroup>
                                 <FormGroup>
+                                    <TextField
+                                        id="import-kildeid"
+                                        label="KildeId"
+                                        value={kildeId}
+                                        onChange={event => handleChangeKildeId(event)}
+                                        margin="normal"
+                                        required
+                                    />
+                                </FormGroup>
+                                <FormGroup>
                                     <FormLabel style={selectStyle}> Tidsskrift </FormLabel>
                                     <Select
                                         placeholder="Søk på tidsskrift"
@@ -668,6 +736,16 @@ function InnerModal(props) {
                                             required
                                         />
                                     </FormControl>
+                                </FormGroup>
+                                <FormGroup>
+                                    <TextField
+                                        id="import-lang"
+                                        label="Språk"
+                                        value={lang}
+                                        onChange={handleChangeLang}
+                                        margin="normal"
+                                        required
+                                    />
                                 </FormGroup>
                                 <FormGroup>
                                     <Grid item>
@@ -704,16 +782,6 @@ function InnerModal(props) {
                                 </FormGroup>
                                 <FormGroup>
                                     <TextField
-                                        id="import-lang"
-                                        label="Språk"
-                                        value={lang}
-                                        onChange={handleChangeLang}
-                                        margin="normal"
-                                        required
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <TextField
                                         id="import-utgivelsesdata"
                                         label="Utgivelsesdata"
                                         value={utgivelse}
@@ -727,14 +795,18 @@ function InnerModal(props) {
                                         disabled={state.formErrors.length >= 1}
                                         color="primary"
                                         onClick={handleSubmit}
+                                        variant="contained"
                                     >
-                                        Submit
+                                        Importer
                                     </Button>
                                 </FormGroup>
                             </Form>
                         </Grid>
                     </Grid>
                     <Button className={`contributorButton`} onClick={openContributorModal}>Test</Button>
+                    <div>{state.formErrors.map(error => { return(
+                        <div>{error + "; "}</div>
+                    )})}</div>
                 </ModalBody>
                 <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
             </Modal>

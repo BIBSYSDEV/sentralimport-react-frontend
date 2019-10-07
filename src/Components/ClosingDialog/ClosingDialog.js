@@ -19,7 +19,12 @@ export default function ClosingDialog(props) {
   }
 
   return (
-    <Dialog open={props.open} onClose={props.handleClose}>
+    <Dialog
+      open={props.open}
+      onClose={props.handleClose}
+      disableBackdropClick
+      disableEscapeKeyDown
+    >
       <DialogTitle>Avbryt import</DialogTitle>
       <DialogContent>
         <DialogContentText>

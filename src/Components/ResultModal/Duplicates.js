@@ -77,7 +77,7 @@ export function Duplicates(props) {
             <FormControlLabel
               value="false"
               control={<Radio />}
-              label="Ikke importer"
+              label="Marker som ikke aktuell"
             />
             <FormControlLabel
               value="true"

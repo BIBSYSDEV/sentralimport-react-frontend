@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Input, Paper, Grid } from "@material-ui/core";
+import { Button, Paper, Grid } from "@material-ui/core";
 import { Context } from "../../Context";
 import Select from "react-select";
 
@@ -42,22 +42,24 @@ export default function Pagination(props) {
   return (
     <Paper>
       <div>
-        <Grid container direction="row">
-          <Grid item xs={2}>
-            <div>Publikasjoner per side: &nbsp;</div>
-          </Grid>
+        <Grid container direction="row" justify="space-between">
+          <Grid container item xs={4}>
+            <Grid item xs>
+              <div>Publikasjoner per side: &nbsp;</div>
+            </Grid>
 
-          <Grid item xs>
-            <Select
-              name="rowsPerPageSelect"
-              options={rowsPerPage}
-              className="basic-multi-select"
-              classNamePrefix="select"
-              onChange={onChangePerPage}
-              defaultValue={rowsPerPage[0]}
-            />
+            <Grid item xs>
+              <Select
+                name="rowsPerPageSelect"
+                options={rowsPerPage}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                onChange={onChangePerPage}
+                defaultValue={rowsPerPage[0]}
+              />
+            </Grid>
           </Grid>
-          <Grid container item direction="row" xs>
+          <Grid container item direction="row" xs={2}>
             <Grid item xs>
               {state.currentPageNr * state.currentPerPage.value + 1} -{" "}
               {(state.currentPageNr + 1) * state.currentPerPage.value <
@@ -79,23 +81,26 @@ export default function Pagination(props) {
               </div>
             </Grid>
           </Grid>
-          <Grid item xs={2}>
-            <div>
+          <Grid container direction="row" spacing={3} item xs={2}>
+            <Grid item>
               <Button
                 onClick={decrementPage}
                 disabled={state.currentPageNr > 0 ? false : true}
               >
                 {"< "}Forrige
               </Button>
-              &nbsp;
+            </Grid>
+            <Grid item>
               <Button
                 onClick={incrementPage}
-                disabled={props.data.length < state.currentPerPage.value}
+                disabled={
+                  (state.currentPageNr + 1) * state.currentPerPage.value >=
+                  state.totalCount
+                }
               >
-                {" "}
                 Neste {" >"}
               </Button>
-            </div>
+            </Grid>
           </Grid>
         </Grid>
       </div>

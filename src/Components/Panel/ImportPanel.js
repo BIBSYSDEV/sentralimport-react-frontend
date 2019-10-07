@@ -29,12 +29,9 @@ const StyledTableRow = withStyles(theme => ({
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: "99%",
     marginTop: theme.spacing(3),
-    overflowX: "auto"
-  },
-  table: {
-    minWidth: 700
+    overflowX: "auto",
+    marginRight: "10px"
   }
 }));
 
