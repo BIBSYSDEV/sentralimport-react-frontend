@@ -6,7 +6,7 @@ export default function AuthorListModal(props) {
   const Row = ({ data, index, style }) => {
     const items = data;
     return (
-      <div style={style}>
+      <div tabIndex="0" style={style}>
         {items[index].sequenceNr}
         &nbsp;
         {items[index].authorName}
