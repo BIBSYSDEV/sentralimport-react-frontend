@@ -281,11 +281,14 @@ export default function EnhancedTable() {
             "https://api.cristin-utv.uio.no/v2/results/channels?type=journal&id=" +
               data[i].channel.id
           );
-          console.log(journal);
-          data[i].channel.journal = journal.data[0].hasOwnProperty("title")
-            ? journal.data[0].title
-            : "";
-          console.log(data[i]);
+
+          if (journal.data.length !== 0 && journal.hasOwnProperty("data")) {
+            data[i].channel.journal = journal.data[0].hasOwnProperty("title")
+              ? journal.data[0].title
+              : "";
+          } else {
+            data[i].channel.journal = "";
+          }
         }
       }
       handleRows(data);
@@ -432,34 +435,32 @@ export default function EnhancedTable() {
                             {row.languages[0].title}
                           </h6>
                           <div className={`metadata`}>
-
-                              {row.authors
-                                .slice(0, 5)
-                                .map(author => author.authorName + "; ")}
-                              {row.authors.length > 5 ? " et al " : ""}
-                              {" (" + row.authors.length + ") "}
-                              <p className={`journal-name`}>
-                                {row.hasOwnProperty("channel")
-                                  ? row.channel.journal + " "
-                                  : ""}
-                              </p>
-                              {row.registered.substring(
-                                row.registered.length - 4,
-                                row.registered.length
-                              ) + ";"}
+                            {row.authors
+                              .slice(0, 5)
+                              .map(author => author.authorName + "; ")}
+                            {row.authors.length > 5 ? " et al " : ""}
+                            {" (" + row.authors.length + ") "}
+                            <p className={`journal-name`}>
                               {row.hasOwnProperty("channel")
-                                ? row.channel.volume + ";"
+                                ? row.channel.journal + " "
                                 : ""}
-                              {row.hasOwnProperty("channel")
-                                ? row.channel.pageFrom + "-"
-                                : ""}
-                              {row.hasOwnProperty("channel")
-                                ? row.channel.pageTo
-                                : ""}
-                              {row.hasOwnProperty("doi")
-                                ? " doi:" + row.doi
-                                : ""}
-
+                            </p>
+                            {row.registered.substring(
+                              row.registered.length - 4,
+                              row.registered.length
+                            ) + ";"}
+                            {row.hasOwnProperty("channel") &&
+                            row.channel.hasOwnProperty("volume")
+                              ? "Volum " + row.channel.volume + ";"
+                              : ""}
+                            {row.hasOwnProperty("channel") &&
+                            row.channel.hasOwnProperty("pageFrom")
+                              ? row.channel.pageFrom + "-"
+                              : ""}
+                            {row.hasOwnProperty("channel")
+                              ? row.channel.pageTo
+                              : ""}
+                            {row.hasOwnProperty("doi") ? " doi:" + row.doi : ""}
                           </div>
                         </div>
                       </TableCell>

@@ -138,9 +138,12 @@ export default function Validation(props) {
       {
         name: "doi",
         value: props.duplicate
-          ? props.publication.links[0].url.substring(
+          ? props.publication.links[
+              props.publication.links.length - 1
+            ].url.substring(
               16,
-              props.publication.links[0].url.length + 1
+              props.publication.links[props.publication.links.length - 1].url
+                .length + 1
             )
           : props.publication.doi
           ? props.publication.doi
@@ -205,8 +208,9 @@ export default function Validation(props) {
           break;
         case "doi":
           var doiValid = data[i].value.match(
-            /^([0-9]{2})[.]([0-9]{4})[/]([\a-z0-9-.]{1,})/i
+            /^([0-9]{2})[.]([0-9]{4})[/]([a-z0-9-.]{1,})/i
           );
+          console.log(data[i].value);
           var doiError = "Doi har galt format";
 
           !doiValid ? fieldErrors.push(doiError) : fieldErrors.push();

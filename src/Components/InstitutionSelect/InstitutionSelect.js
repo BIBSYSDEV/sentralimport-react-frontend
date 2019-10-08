@@ -3,11 +3,15 @@ import React from "react";
 import Select from "react-select";
 
 const institutions = [
-  { value: " ", label: "Ingen institusjon" , institutionNr: 0},
+  { value: " ", label: "Ingen institusjon valgt", institutionNr: 0 },
   { value: "UIO", label: "Universitetet i Oslo", institutionNr: 185 },
   { value: "UIB", label: "Universitetet i Bergen", institutionNr: 184 },
   { value: "UIS", label: "Universitetet i Stavanger", institutionNr: 217 },
-  { value: "OsloMet", label: "Oslo Metropolitan University", institutionNr: 215 }
+  {
+    value: "OsloMet",
+    label: "Oslo Metropolitan University",
+    institutionNr: 215
+  }
 ];
 
 export default function InstitutionSelect(props) {

@@ -35,7 +35,7 @@ function InnerModal(props) {
         function setFields() {
         console.log(props.duplicate);
         setKilde(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_name : "Ingen kilde funnet" ): props.data.sourceName);
-        setKildeId(props.duplicate ? (state.selected.publication.hasOwnProperty("externalId") ? state.publication.externalId : "Ingen kildeId funnet") : props.data.externalId)
+        setKildeId(props.duplicate ? (state.selectedPublication.hasOwnProperty("externalId") ? state.publication.externalId : "Ingen kildeId funnet") : props.data.externalId)
         setSelectedJournal(props.duplicate ? {
             value: state.selectedPublication.journal.name,
             label: state.selectedPublication.journal.name
