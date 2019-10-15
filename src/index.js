@@ -5,16 +5,20 @@ import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-table/react-table.css";
 import { SnackbarProvider } from "notistack";
-import createHistory from 'history/createBrowserHistory';
+import { createBrowserHistory } from "history";
 import { Router } from "react-router-dom";
 import Routes from "./Components/Routes/Routes";
-const history = createHistory();
+import {ContextProvider} from "./Context";
+
+const history = createBrowserHistory();
 
 ReactDOM.render(
   <SnackbarProvider maxSnack={1}>
-      <Router history={history}>
-          <Routes />
-      </Router>
+      <ContextProvider>
+          <Router history={history}>
+              <Routes />
+          </Router>
+      </ContextProvider>
   </SnackbarProvider>,
 
   document.getElementById("root")
