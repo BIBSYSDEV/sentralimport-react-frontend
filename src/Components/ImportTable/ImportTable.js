@@ -497,20 +497,6 @@ export default function EnhancedTable() {
             </TableBody>
           </Table>
         </div>
-        {/*<TablePagination
-          hidden={true}
-          rowsPerPageOptions={[5, 10]}
-          component="div"
-          rowsPerPage={rowsPerPage}
-          count={rows.length}
-          backIconButtonProps={{
-            "aria-label": "Previous Page"
-          }}
-          nextIconButtonProps={{
-            "aria-label": "Next Page"
-          }}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        /> */}
       </Paper>
       <Pagination data={rows} />
 
