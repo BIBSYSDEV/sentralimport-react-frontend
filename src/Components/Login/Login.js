@@ -88,7 +88,7 @@ export default function Login(props) {
           <Button onClick={handleLogout}>Logg ut</Button>
           <br />
           <br />
-          <button onClick={testApi}>Test api</button>
+          <Button onClick={testApi}>Test api</Button>
         </div>
       ) : (
         <Grid
@@ -97,28 +97,28 @@ export default function Login(props) {
           alignItems="center"
           justify="center"
           direction="column"
-          style={{ minHeight: "100vh" }}
+          className={"login-grid"}
         >
           <Grid item xs>
             <img
               src={logo}
-              style={{ width: "500px" }}
+              className={"cristin-logo"}
               title="CRISTIN-logo"
             ></img>
-            <h3> CRISTIN Sentralimport</h3>
+            <h1> CRISTIN Sentralimport</h1>
           </Grid>
           <Grid item xs>
-            <Card style={{ width: "300px", height: "150px" }}>
+            <Card className={"login-card"}>
               <CardContent>
                 <Typography variant="body1" component="div" gutterBottom>
                   Logg inn til Sentralimport:
                 </Typography>
-                <Button onClick={handleLogin} color="info" size="large">
+                <Button onClick={handleLogin} color="info" size="lg">
                   <Grid container alignContent="center" spacing={2}>
                     <Grid item xs={2}>
                       <img
                         src={loginIcon}
-                        style={{ height: "50px" }}
+                        className={"feide-login-icon"}
                         title="Feide Login"
                       ></img>
                     </Grid>
@@ -131,7 +131,7 @@ export default function Login(props) {
                     >
                       <div>
                         Logg inn via{" "}
-                        <span style={{ fontWeight: "bold" }}> Feide</span>
+                        <span className={"feide-login-button"}> Feide</span>
                       </div>
                     </Grid>
                   </Grid>
