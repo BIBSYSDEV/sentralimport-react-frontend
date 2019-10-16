@@ -10,7 +10,11 @@ export default function Contributor(props) {
     );
   }, [props.author]);
 
+  const [data, setData] = React.useState(props.author);
+
   const [isEditing, setIsEditing] = React.useState("");
+
+  const [selectedInstitution, setSetSelectedInstitution] = React.useState("");
 
   function updateEditing() {
     setIsEditing(false);
@@ -18,6 +22,27 @@ export default function Contributor(props) {
 
   function handleSubmit() {
     setIsEditing(true);
+  }
+
+  function handleInstitutionChange(institution) {
+    setSetSelectedInstitution(institution);
+  }
+
+  function removeInstitution(author, index) {
+    let affiliationCopy = [...author.toBeCreated.affiliations];
+    affiliationCopy.splice(index, 1);
+    setData((author.toBeCreated.affiliations = affiliationCopy));
+  }
+
+  function addInstitution(author) {
+    let affiliationCopy = [...author.toBeCreated.affiliations];
+    affiliationCopy.push({
+      countryCode: "test",
+      institutionName: selectedInstitution.label,
+      institutionNr: selectedInstitution.institutionNr,
+      isCristinInstitution: true
+    });
+    setData((author.toBeCreated.affiliations = affiliationCopy));
   }
 
   function displayAuthorForm(author) {
@@ -62,24 +87,24 @@ export default function Contributor(props) {
                   <Button
                     size="small"
                     color="primary"
-                    /* onClick={() => removeInstitution(author, j)} */
+                    onClick={() => removeInstitution(author, j)}
                   >
                     Fjern tilknytning
                   </Button>
                 </p>
               ))}
             </div>
-            <InstitutionSelect /* onChange={handleInstitutionChange} */ />
+            <InstitutionSelect onChange={handleInstitutionChange} />
             <Button
-            /* onClick={() => addInstitution(author)} */
-            /* disabled={
+              onClick={() => addInstitution(author)}
+              disabled={
                 selectedInstitution.institutionNr === 0 ||
                 author.toBeCreated.affiliations.filter(instNr => {
                   return (
                     selectedInstitution.institutionNr === instNr.institutionNr
                   );
                 }).length > 0
-              } */
+              }
             >
               Add
             </Button>
