@@ -6,7 +6,7 @@ import loginIcon from "../../assets/icons/login.png";
 import logo from "../../assets/icons/Hovedlogo-Liten-Farge.svg";
 import axios from "axios";
 import { Button } from "reactstrap";
-import { Grid, CardContent, CardMedia, Typography } from "@material-ui/core";
+import { Grid, CardContent, Typography } from "@material-ui/core";
 import { Card } from "@material-ui/core";
 
 export default function Login(props) {
@@ -92,7 +92,6 @@ export default function Login(props) {
         </div>
       ) : (
         <Grid
-          spacing={0}
           container
           alignItems="center"
           justify="center"
@@ -104,6 +103,7 @@ export default function Login(props) {
               src={logo}
               className={"cristin-logo"}
               title="CRISTIN-logo"
+              alt="CRISTIN-logo"
             ></img>
             <h1> CRISTIN Sentralimport</h1>
           </Grid>
@@ -120,6 +120,7 @@ export default function Login(props) {
                         src={loginIcon}
                         className={"feide-login-icon"}
                         title="Feide Login"
+                        alt="Feide Login"
                       ></img>
                     </Grid>
                     <Grid
