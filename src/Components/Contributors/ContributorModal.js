@@ -12,18 +12,14 @@ import TableRow from "@material-ui/core/TableRow";
 import PersonIcon from "../../assets/icons/person-active.svg";
 import ArrowUpIcon from "../../assets/icons/arrowhead-up3.svg";
 import ArrowDownIcon from "../../assets/icons/arrowhead-down3.svg";
-import { TextField, FormGroup, Button, TableFooter } from "@material-ui/core";
-import { Form } from "reactstrap";
-import InstitutionSelect from "../InstitutionSelect/InstitutionSelect";
+import { Button, TableFooter } from "@material-ui/core";
+
 import ContributorPagination from "../ContributorPagination/ContributorPagination";
 import Contributor from "./Contributor";
 
 function ContributorModal(props) {
   const [data, setData] = React.useState([]);
-  const [selectedInstitution, setSetSelectedInstitution] = React.useState(
-    defaultInstitution
-  );
-  const [isEditing, setIsEditing] = React.useState([]);
+
   let { state, dispatch } = React.useContext(Context);
 
   useEffect(() => {
@@ -90,21 +86,7 @@ function ContributorModal(props) {
       }
     }
     fetch();
-  }, [props.data, props.open, state.selectedPublication]);
-
-  async function addToEditArray(val) {
-    var edit = [...isEditing];
-    edit.push({ value: val });
-    await setIsEditing(edit);
-    console.log(isEditing);
-  }
-
-  function handleSubmit(author, i) {
-    var data = [...isEditing];
-    data[i] = { value: false };
-    console.log(isEditing);
-    setIsEditing(data);
-  }
+  }, [props.data, props.open]);
 
   function handleClose() {
     props.enqueueSnackbar("Endringer er ikke blitt lagret.", {
@@ -147,7 +129,6 @@ function ContributorModal(props) {
               }
             };
           }
-          console.log(copy);
           return copy[i];
         })
       );
@@ -177,7 +158,6 @@ function ContributorModal(props) {
               }
             };
           }
-          console.log(copy);
           return copy[i];
         })
       );
@@ -188,7 +168,6 @@ function ContributorModal(props) {
     var temp = [...data];
     temp[rowIndex] = author;
     console.log(rowIndex);
-
     setData(temp);
   };
 
@@ -313,14 +292,17 @@ function ContributorModal(props) {
                               </Button>
                             </div>
                           </div>
-                        ) : row.toBeCreated.order === data.length ? (
+                        ) : row.toBeCreated.order === data.length &&
+                          data.length > 1 ? (
                           <Button onClick={() => handleOrder(row, true)}>
                             <img src={getArrowUpImage()} alt="up-arrow" />
                           </Button>
-                        ) : (
+                        ) : row.toBeCreated.order < data.length ? (
                           <Button onClick={() => handleOrder(row, false)}>
                             <img src={getArrowDownImage()} alt="down-arrow" />
                           </Button>
+                        ) : (
+                          ""
                         )}
                       </div>
                       <Contributor
@@ -336,7 +318,7 @@ function ContributorModal(props) {
                 </TableRow>
               ))}
             <TableRow>
-              <TableCell> X </TableCell>
+              <TableCell> + </TableCell>
               <TableCell></TableCell>
               <TableCell>
                 <Button onClick={() => addContributor()}>
