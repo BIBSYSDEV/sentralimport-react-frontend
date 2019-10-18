@@ -87,27 +87,9 @@ function ContributorModal(props) {
         }
 
         setData(contributors);
-        setEditValues(contributors);
-      }
-    }
-    function setEditValues(cont) {
-      if (cont) {
-        for (var i = 0; i < cont.length; i++) {
-          var edit = isEditing;
-          var editValue = {
-            value:
-              cont[i].cristin.first_name && cont[i].cristin.surname
-                ? false
-                : true
-          };
-          edit.push(editValue);
-          setIsEditing(edit);
-          console.log(edit);
-        }
       }
     }
     fetch();
-    setEditValues();
   }, [props.data, props.open, state.selectedPublication]);
 
   async function addToEditArray(val) {
@@ -352,12 +334,13 @@ function ContributorModal(props) {
     };
   }
 
-  function updateEditing(i) {
-    var data = [...isEditing];
-    data[i] = { value: true };
-    setIsEditing(data);
-    return data;
-  }
+  const updateContributor = (author, rowIndex) => {
+    var temp = [...data];
+    temp[rowIndex] = author;
+    console.log(rowIndex);
+
+    setData(temp);
+  };
 
   const getMainImage = () => {
     return PersonIcon;
@@ -368,6 +351,32 @@ function ContributorModal(props) {
   const getArrowUpImage = () => {
     return ArrowUpIcon;
   };
+
+  function addContributor() {
+    var temp = [...data];
+    var newContributor = {
+      imported: {
+        order: temp.length + 1,
+        affiliations: [],
+        first_name: "",
+        surname: ""
+      },
+      cristin: {
+        order: temp.length + 1,
+        affiliations: [],
+        first_name: "",
+        surname: ""
+      },
+      toBeCreated: {
+        order: temp.length + 1,
+        affiliations: [],
+        first_name: "",
+        surname: ""
+      }
+    };
+    temp.push(newContributor);
+    setData(temp);
+  }
 
   return (
     <Modal isOpen={props.open} className={`contributorModal`}>
@@ -464,37 +473,28 @@ function ContributorModal(props) {
                           </Button>
                         )}
                       </div>
-                      <Contributor author={row}></Contributor>
-                      {/* <div className="content-wrapper">
-                        {isEditing[i] && isEditing[i].value !== true ? (
-                          <div>
-                            <h6>
-                              {row.cristin.surname +
-                                ", " +
-                                row.cristin.first_name}
-                            </h6>
-                            <div className={`metadata`}>
-                              {row.cristin.affiliations.map((inst, j) => (
-                                <p className={`italic`} key={j}>
-                                  {inst.institutionName}
-                                </p>
-                              ))}
-                            </div>
-                            <Button onClick={() => retrySearch(row.imported)}>
-                              Søk igjen
-                            </Button>
-
-                            <Button onClick={() => updateEditing(i)}>
-                              Rediger
-                            </Button>
-                          </div>
-                        ) : (
-                          displayAuthorForm(row, i)
-                        )} */}
+                      <Contributor
+                        author={row}
+                        index={
+                          i + state.contributorPage * state.contributorPerPage
+                        }
+                        updateData={updateContributor}
+                        isOpen={props.open}
+                      />
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
+            <TableRow>
+              <TableCell> X </TableCell>
+              <TableCell></TableCell>
+              <TableCell>
+                <Button onClick={() => addContributor()}>
+                  {" "}
+                  Legg til bidragsyter{" "}
+                </Button>
+              </TableCell>
+            </TableRow>
           </TableBody>
           <TableFooter>
             {" "}

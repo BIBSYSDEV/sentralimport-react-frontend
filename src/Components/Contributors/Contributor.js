@@ -4,48 +4,93 @@ import InstitutionSelect from "../InstitutionSelect/InstitutionSelect";
 import { Form } from "reactstrap";
 export default function Contributor(props) {
   useEffect(() => {
-    setIsEditing(
-      props.author.cristin.surname !== "" &&
-        props.author.cristin.first_name !== ""
-    );
+    setRowIndex(props.index);
+    console.log(props.index);
+    setData(props.author);
   }, [props.author]);
 
   const [data, setData] = React.useState(props.author);
 
-  const [isEditing, setIsEditing] = React.useState("");
+  const [rowIndex, setRowIndex] = React.useState(props.index);
 
-  const [selectedInstitution, setSetSelectedInstitution] = React.useState("");
+  const [selectedInstitution, setSetSelectedInstitution] = React.useState({
+    value: "",
+    institutionNr: 0
+  });
 
   function updateEditing() {
-    setIsEditing(false);
+    let temp = data;
+    temp.isEditing = true;
+
+    props.updateData(temp, rowIndex);
   }
 
   function handleSubmit() {
-    setIsEditing(true);
+    let temp = data;
+    temp.isEditing = false;
+
+    props.updateData(temp, rowIndex);
+    setSetSelectedInstitution({
+      value: "",
+      institutionNr: 0
+    });
   }
 
   function handleInstitutionChange(institution) {
     setSetSelectedInstitution(institution);
   }
 
-  function removeInstitution(author, index) {
-    let affiliationCopy = [...author.toBeCreated.affiliations];
+  function removeInstitution(index) {
+    let affiliationCopy = [...data.toBeCreated.affiliations];
     affiliationCopy.splice(index, 1);
-    setData((author.toBeCreated.affiliations = affiliationCopy));
+    let temp = data;
+    temp.toBeCreated.affiliations = affiliationCopy;
+    console.log(affiliationCopy);
+    console.log(temp);
+
+    props.updateData(temp, rowIndex);
   }
 
-  function addInstitution(author) {
-    let affiliationCopy = [...author.toBeCreated.affiliations];
+  function addInstitution() {
+    let affiliationCopy = [...data.toBeCreated.affiliations];
     affiliationCopy.push({
       countryCode: "test",
       institutionName: selectedInstitution.label,
       institutionNr: selectedInstitution.institutionNr,
       isCristinInstitution: true
     });
-    setData((author.toBeCreated.affiliations = affiliationCopy));
+    let temp = data;
+    temp.toBeCreated.affiliations = affiliationCopy;
+    console.log(affiliationCopy);
+
+    props.updateData(temp, rowIndex);
   }
 
-  function displayAuthorForm(author) {
+  function handleChange(event, obj, property) {
+    const firstName =
+      property === "first" ? event.target.value : obj.toBeCreated.first_name;
+    const lastName =
+      property === "last" ? event.target.value : obj.toBeCreated.surname;
+    const authorName =
+      property === "authorName"
+        ? event.target.value
+        : obj.toBeCreated.authorname;
+
+    if (property === "first") {
+      console.log(firstName);
+      obj.toBeCreated.first_name = firstName;
+    } else if (property === "last") {
+      console.log(lastName);
+      obj.toBeCreated.surname = lastName;
+    } else {
+      console.log(authorName);
+      obj.toBeCreated.authorName = authorName;
+    }
+
+    props.updateData(obj, rowIndex);
+  }
+
+  function displayAuthorForm() {
     return (
       <div>
         <div>
@@ -54,9 +99,9 @@ export default function Contributor(props) {
               <TextField
                 id="firstName"
                 label="Fornavn"
-                value={author.toBeCreated.first_name}
+                value={data.toBeCreated.first_name}
                 margin="normal"
-                /* onChange={handleChange(author, "first") } */
+                onChange={e => handleChange(e, data, "first")}
                 required
               />
             </FormGroup>
@@ -64,9 +109,9 @@ export default function Contributor(props) {
               <TextField
                 id="lastName"
                 label="Etternavn"
-                value={author.toBeCreated.surname}
+                value={data.toBeCreated.surname}
                 margin="normal"
-                /* onChange={ handleChange(author, "last") } */
+                onChange={e => handleChange(e, data, "last")}
                 required
               />
             </FormGroup>
@@ -74,20 +119,27 @@ export default function Contributor(props) {
               <TextField
                 id="authorName"
                 label="Forfatternavn"
-                value={author.toBeCreated.authorname}
+                value={
+                  data.toBeCreated.hasOwnProperty("authorname")
+                    ? data.toBeCreated.authorname
+                    : data.toBeCreated.surname +
+                      " " +
+                      data.toBeCreated.first_name.substr(0, 1) +
+                      "."
+                }
                 margin="normal"
-                /* onChange={  handleChange(author, "authorName") } */
+                onChange={e => handleChange(e, data, "authorName")}
                 required
               />
             </FormGroup>
             <div className={`metadata`}>
-              {author.toBeCreated.affiliations.map((inst, j) => (
+              {data.toBeCreated.affiliations.map((inst, j) => (
                 <p className={`italic`} key={j}>
                   {inst.institutionName}
                   <Button
                     size="small"
                     color="primary"
-                    onClick={() => removeInstitution(author, j)}
+                    onClick={() => removeInstitution(j)}
                   >
                     Fjern tilknytning
                   </Button>
@@ -96,10 +148,10 @@ export default function Contributor(props) {
             </div>
             <InstitutionSelect onChange={handleInstitutionChange} />
             <Button
-              onClick={() => addInstitution(author)}
+              onClick={() => addInstitution()}
               disabled={
                 selectedInstitution.institutionNr === 0 ||
-                author.toBeCreated.affiliations.filter(instNr => {
+                data.toBeCreated.affiliations.filter(instNr => {
                   return (
                     selectedInstitution.institutionNr === instNr.institutionNr
                   );
@@ -119,15 +171,13 @@ export default function Contributor(props) {
 
   return (
     <div className="content-wrapper">
-      {isEditing === true ? (
+      {data.isEditing === false ? (
         <div>
           <h6>
-            {props.author.cristin.surname +
-              ", " +
-              props.author.cristin.first_name}
+            {data.toBeCreated.surname + ", " + data.toBeCreated.first_name}
           </h6>
           <div className={`metadata`}>
-            {props.author.cristin.affiliations.map((inst, j) => (
+            {data.toBeCreated.affiliations.map((inst, j) => (
               <p className={`italic`} key={j}>
                 {inst.institutionName}
               </p>
@@ -140,7 +190,7 @@ export default function Contributor(props) {
           <Button onClick={() => updateEditing()}>Rediger</Button>
         </div>
       ) : (
-        displayAuthorForm(props.author)
+        displayAuthorForm()
       )}
     </div>
   );
