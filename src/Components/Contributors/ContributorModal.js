@@ -30,40 +30,46 @@ function ContributorModal(props) {
                 let contributors = [];
                 let cristinAuthors = [];
 
-                if (props.duplicate) {
-                    cristinAuthors = state.selectedPublication.data.authors;
+                let temp = JSON.parse(localStorage.getItem("tempPublication"));
+                if (temp !== null && temp.publication.pubId === props.data.pubId) {
+                    contributors = temp.contributors;
                 } else {
-                    cristinAuthors = await searchContributors(props.data.authors);
-                }
-
-                for (let i = 0; i < Math.max(cristinAuthors.length, imported.length); i++) {
-                    let currentAuthor = cristinAuthors.length > i ? cristinAuthors[i] : defaultAuthor;
-                    for (let j = 0; j < currentAuthor.affiliations.length; j++) {
-                        currentAuthor.affiliations[j].institutionName = await fetchInstitutionName(currentAuthor.affiliations[j].institution.cristin_institution_id);
+                    if (props.duplicate) {
+                        cristinAuthors = state.selectedPublication.data.authors;
+                    } else {
+                        cristinAuthors = await searchContributors(props.data.authors);
                     }
 
-                    contributors[i] = {
-                        imported: imported.length > i
-                            ?
-                            {
-                                cristin_person_id: 0,
-                                first_name: imported[i].hasOwnProperty('firstname') ? imported[i].firstname : imported[i].authorName.split(' ')[1],
-                                surname: imported[i].hasOwnProperty('surname') ? imported[i].surname : imported[i].authorName.split(' ')[0],
-                                authorname: imported[i].hasOwnProperty('authorName') ? imported[i].authorName : "",
-                                order: imported[i].sequenceNr,
-                                affiliations: imported[i].institutions
-                            } : defaultAuthor,
-                        cristin: cristinAuthors.length > i ? cristinAuthors[i] : defaultAuthor,
-                        toBeCreated: defaultAuthor
-                    };
+                    for (let i = 0; i < Math.max(cristinAuthors.length, imported.length); i++) {
+                        let currentAuthor = cristinAuthors.length > i ? cristinAuthors[i] : defaultAuthor;
+                        for (let j = 0; j < currentAuthor.affiliations.length; j++) {
+                            currentAuthor.affiliations[j].institutionName = await fetchInstitutionName(currentAuthor.affiliations[j].institution.cristin_institution_id);
+                        }
 
-                    let copy = contributors[i].cristin === defaultAuthor ? Object.assign({}, contributors[i].imported) : Object.assign({}, contributors[i].cristin);
-                    contributors[i].toBeCreated = contributors[i].cristin === defaultAuthor ? copy : copy;
+                        contributors[i] = {
+                            imported: imported.length > i
+                                ?
+                                {
+                                    cristin_person_id: 0,
+                                    first_name: imported[i].hasOwnProperty('firstname') ? imported[i].firstname : imported[i].authorName.split(' ')[1],
+                                    surname: imported[i].hasOwnProperty('surname') ? imported[i].surname : imported[i].authorName.split(' ')[0],
+                                    authorname: imported[i].hasOwnProperty('authorName') ? imported[i].authorName : "",
+                                    order: imported[i].sequenceNr,
+                                    affiliations: imported[i].institutions
+                                } : defaultAuthor,
+                            cristin: cristinAuthors.length > i ? cristinAuthors[i] : defaultAuthor,
+                            toBeCreated: defaultAuthor
+                        };
+
+                        let copy = contributors[i].cristin === defaultAuthor ? Object.assign({}, contributors[i].imported) : Object.assign({}, contributors[i].cristin);
+                        contributors[i].toBeCreated = contributors[i].cristin === defaultAuthor ? copy : copy;
+                    }
                 }
 
                 setData(contributors);
             }
         }
+        console.log("gtfrsegseg");
         fetch();
     }, [props, state.selectedPublication]);
 
@@ -81,6 +87,14 @@ function ContributorModal(props) {
 
     function handleChooseAuthor(event, author) {
 
+    }
+
+    function handleTempSave() {
+        let temp = {
+            publication: props.data,
+            contributors: data
+        };
+        localStorage.setItem("tempPublication", JSON.stringify(temp));
     }
 
     function displayAuthorForm(author) {
@@ -254,13 +268,13 @@ function ContributorModal(props) {
     const getArrowDownImage = () => {return ArrowDownIcon};
     const getArrowUpImage = () => {return ArrowUpIcon};
 
-    console.log(data);
     return (
         <Modal
             isOpen={props.open}
             className={`contributorModal`}
         >
             <ModalHeader toggle={handleClose}>Bidragsytere</ModalHeader>
+            <Button onClick={handleTempSave}>Test</Button>
             <ModalBody>
                 <Table>
                     <TableHead>
