@@ -20,14 +20,14 @@ export default function Contributor(props) {
 
   function updateEditing() {
     let temp = data;
-    temp.isEditing = true;
+    temp.cristin.isEditing = true;
 
     props.updateData(temp, rowIndex);
   }
 
   function handleSubmit() {
     let temp = data;
-    temp.isEditing = false;
+    temp.cristin.isEditing = false;
 
     props.updateData(temp, rowIndex);
     setSetSelectedInstitution({
@@ -171,7 +171,7 @@ export default function Contributor(props) {
 
   return (
     <div className="content-wrapper">
-      {data.isEditing === false ? (
+      {data.cristin.isEditing === false ? (
         <div>
           <h6>
             {data.toBeCreated.surname + ", " + data.toBeCreated.first_name}
@@ -183,11 +183,21 @@ export default function Contributor(props) {
               </p>
             ))}
           </div>
-          <Button /* onClick={ () => retrySearch(row.imported)} */>
-            Søk igjen
-          </Button>
-
+          {data.cristin.surname !== "" && data.cristin.first_name !== "" ? (
+            <Button onClick={() => props.searchAgain(data.imported, rowIndex)}>
+              Søk igjen
+            </Button>
+          ) : (
+            ""
+          )}
           <Button onClick={() => updateEditing()}>Rediger</Button>
+
+          <Button
+            color="secondary"
+            onClick={() => props.deleteContributor(rowIndex)}
+          >
+            Slett
+          </Button>
         </div>
       ) : (
         displayAuthorForm()

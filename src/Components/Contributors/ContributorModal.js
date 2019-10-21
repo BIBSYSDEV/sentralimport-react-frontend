@@ -162,12 +162,19 @@ function ContributorModal(props) {
         })
       );
     }
+    console.log(data);
   }
 
   const updateContributor = (author, rowIndex) => {
     var temp = [...data];
     temp[rowIndex] = author;
     console.log(rowIndex);
+    setData(temp);
+  };
+
+  const removeContributor = rowIndex => {
+    var temp = [...data];
+    temp.splice(rowIndex, 1);
     setData(temp);
   };
 
@@ -205,6 +212,90 @@ function ContributorModal(props) {
     };
     temp.push(newContributor);
     setData(temp);
+  }
+
+  async function retrySearch(author, rowIndex) {
+    console.log(author);
+    let authorName = author.hasOwnProperty("first_name")
+      ? author.first_name.substr(0, 1) + " " + author.surname
+      : author.authorName;
+    let searchedAuthors = await axios.get(
+      "https://api.cristin-utv.uio.no/v2/persons?name=" +
+        authorName +
+        "&institution=" +
+        (author.affiliations[0].hasOwnProperty("acronym")
+          ? author.affiliations[0].acronym
+          : author.affiliations[0].institutionName)
+    );
+    console.log(searchedAuthors);
+    findBestMatch(author, searchedAuthors.data, rowIndex);
+  }
+
+  async function findBestMatch(author, potentialAuthors, rowIndex) {
+    let bestMatch = "";
+    let maxCharsMatched = 0;
+    for (var i = 0; i < potentialAuthors.length; i++) {
+      let charsMatched = 0;
+
+      for (var h = 0; h < author.first_name.length; h++) {
+        if (
+          author.first_name.substr(h, h + 1) ===
+          potentialAuthors[i].first_name.substr(h, h + 1)
+        ) {
+          charsMatched++;
+        }
+      }
+      for (var h = 0; h < author.surname.length; h++) {
+        if (
+          author.surname.substr(h, h + 1) ===
+          potentialAuthors[i].surname.substr(h, h + 1)
+        ) {
+          charsMatched++;
+        }
+      }
+      if (charsMatched > maxCharsMatched) {
+        bestMatch = potentialAuthors[i];
+        maxCharsMatched = charsMatched;
+      }
+    }
+    if (bestMatch !== "") {
+      var tempAuthor = await axios.get(
+        "https://api.cristin-utv.uio.no/v2/persons/" +
+          bestMatch.cristin_person_id
+      );
+      console.log(tempAuthor.data);
+      var tempAffliations = [];
+      for (var j = 0; j < tempAuthor.data.affiliations.length; j++) {
+        var tempInstitution = [];
+        var tempdata = await axios.get(
+          "https://api.cristin-utv.uio.no/v2/institutions/" +
+            tempAuthor.data.affiliations[j].institution.cristin_institution_id
+        );
+        console.log(tempdata);
+        tempInstitution.acronym = tempdata.data.acronym;
+        tempInstitution.countryCode = tempdata.data.country;
+        tempInstitution.institutionName = tempdata.data.institution_name.hasOwnProperty(
+          "nb"
+        )
+          ? tempdata.data.institution_name.nb
+          : tempdata.data.institution_name.en;
+        tempInstitution.institutionNr = tempdata.data.cristin_institution_id;
+        tempInstitution.isCristinInstitution =
+          tempdata.data.cristin_user_institution;
+        tempAffliations.push(tempInstitution);
+      }
+      var temp = [...data];
+      bestMatch.affiliations = tempAffliations;
+
+      temp[rowIndex].cristin = bestMatch;
+      temp[rowIndex].cristin.isEditing = false;
+      temp[rowIndex].cristin.order = rowIndex + 1;
+
+      temp[rowIndex].toBeCreated = bestMatch;
+      temp[rowIndex].toBeCreated.order = rowIndex + 1;
+      console.log(temp);
+      setData(temp);
+    }
   }
 
   return (
@@ -312,25 +403,30 @@ function ContributorModal(props) {
                         }
                         updateData={updateContributor}
                         isOpen={props.open}
+                        searchAgain={retrySearch}
+                        deleteContributor={removeContributor}
                       />
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
-            <TableRow>
-              <TableCell> + </TableCell>
-              <TableCell></TableCell>
-              <TableCell>
-                <Button onClick={() => addContributor()}>
-                  {" "}
-                  Legg til bidragsyter{" "}
-                </Button>
-              </TableCell>
-            </TableRow>
+            {state.contributorPage + 1 >= data.length / 5 ? (
+              <TableRow>
+                <TableCell> + </TableCell>
+                <TableCell></TableCell>
+                <TableCell>
+                  <Button onClick={() => addContributor()}>
+                    {" "}
+                    Legg til bidragsyter{" "}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ) : (
+              ""
+            )}
           </TableBody>
           <TableFooter>
-            {" "}
-            <ContributorPagination totalCount={data.length} />{" "}
+            <ContributorPagination totalCount={data.length} />
           </TableFooter>
         </Table>
       </ModalBody>
@@ -381,7 +477,9 @@ async function searchContributors(authors) {
     console.log(searchedAuthors);
     if (searchedAuthors.data.length > 0) {
       let authorSuggestion = await axios.get(searchedAuthors.data[0].url);
+      authorSuggestion.data.isEditing = false;
       suggestedAuthors[i] = authorSuggestion.data;
+      console.log(suggestedAuthors[i]);
     } else {
       suggestedAuthors[i] = defaultAuthor;
     }
@@ -389,54 +487,6 @@ async function searchContributors(authors) {
   }
 
   return suggestedAuthors;
-}
-
-async function retrySearch(author) {
-  console.log(author);
-  let authorName = author.hasOwnProperty("first_name")
-    ? author.first_name.substr(0, 1) + " " + author.surname
-    : author.authorName;
-  let searchedAuthors = await axios.get(
-    "https://api.cristin-utv.uio.no/v2/persons?name=" +
-      authorName +
-      "&institution=" +
-      (author.affiliations[0].hasOwnProperty("acronym")
-        ? author.affiliations[0].acronym
-        : author.affiliations[0].institutionName)
-  );
-  console.log(searchedAuthors);
-  findBestMatch(author, searchedAuthors.data);
-}
-
-function findBestMatch(author, potentialAuthors) {
-  let bestMatch = "";
-  let maxCharsMatched = 0;
-  for (var i = 0; i < potentialAuthors.length; i++) {
-    let charsMatched = 0;
-
-    for (var h = 0; h < author.first_name.length; h++) {
-      if (
-        author.first_name.substr(h, h + 1) ===
-        potentialAuthors[i].first_name.substr(h, h + 1)
-      ) {
-        charsMatched++;
-      }
-    }
-    for (var h = 0; h < author.surname.length; h++) {
-      if (
-        author.surname.substr(h, h + 1) ===
-        potentialAuthors[i].surname.substr(h, h + 1)
-      ) {
-        charsMatched++;
-      }
-    }
-    if (charsMatched > maxCharsMatched) {
-      bestMatch = potentialAuthors[i];
-      maxCharsMatched = charsMatched;
-    }
-    console.log(maxCharsMatched);
-    console.log(bestMatch);
-  }
 }
 
 const defaultAuthor = {
