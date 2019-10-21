@@ -2,9 +2,10 @@ import React from "react"
 import queryString from 'query-string';
 import jwt from 'jsonwebtoken';
 import '../../assets/styles/common.scss'
-import Header from "../Header/Header";
-import Button from "react-bootstrap/Button";
 import axios from "axios";
+import { Button } from "reactstrap";
+import { Grid, CardContent, Typography } from "@material-ui/core";
+import { Card } from "@material-ui/core";
 
 export default function Login(props) {
     //privat
@@ -58,22 +59,71 @@ export default function Login(props) {
         }
     }
 
-    if (search.access_token != null)
-        validate();
+  if (search.access_token != null) validate();
 
-    return (
-        <div className={`login`} >
-            <Header />
-            <h2>Logg inn</h2>
-            <br />
-            { localStorage.getItem("authorized") ?
-                (<div>
-                    <p>Du er allerede logget inn. Ønsker du å logge ut?</p>
-                    <Button onClick={handleLogout}>Logg ut</Button><br /><br />
-                    <button onClick={testApi}>Test api</button>
-                </div>) :
-                (<Button onClick={handleLogin}>Logg inn</Button>)
-            }
+  return (
+    <div className={`login`}>
+      <br />
+      {localStorage.getItem("authorized") ? (
+        <div>
+          <p>Du er allerede logget inn. Ønsker du å logge ut?</p>
+          <Button onClick={handleLogout}>Logg ut</Button>
+          <br />
+          <br />
+          <Button onClick={testApi}>Test api</Button>
         </div>
-    )
-};
+      ) : (
+        <Grid
+          container
+          alignItems="center"
+          justify="center"
+          direction="column"
+          className={"login-grid"}
+        >
+          <Grid item xs>
+            <img
+              src={logo}
+              className={"cristin-logo"}
+              title="CRISTIN-logo"
+              alt="CRISTIN-logo"
+            ></img>
+            <h1> CRISTIN Sentralimport</h1>
+          </Grid>
+          <Grid item xs>
+            <Card className={"login-card"}>
+              <CardContent>
+                <Typography variant="body1" component="div" gutterBottom>
+                  Logg inn til Sentralimport:
+                </Typography>
+                <Button onClick={handleLogin} color="info" size="lg">
+                  <Grid container alignContent="center" spacing={2}>
+                    <Grid item xs={2}>
+                      <img
+                        src={loginIcon}
+                        className={"feide-login-icon"}
+                        title="Feide Login"
+                        alt="Feide Login"
+                      ></img>
+                    </Grid>
+                    <Grid
+                      item
+                      container
+                      xs
+                      alignItems="center"
+                      justify="center"
+                    >
+                      <div>
+                        Logg inn via{" "}
+                        <span className={"feide-login-button"}> Feide</span>
+                      </div>
+                    </Grid>
+                  </Grid>
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      )}
+    </div>
+  );
+}
