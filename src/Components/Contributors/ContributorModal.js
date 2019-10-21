@@ -74,6 +74,17 @@ function ContributorModal(props) {
             toBeCreated: defaultAuthor
           };
 
+          for (var l = 0; l < contributors.length; l++) {
+            if (
+              contributors[l].cristin.surname &&
+              contributors[l].cristin.first_name
+            ) {
+              contributors[l].isEditing = false;
+            } else {
+              contributors[l].isEditing = true;
+            }
+          }
+
           let copy =
             contributors[i].cristin === defaultAuthor
               ? Object.assign({}, contributors[i].imported)
@@ -162,19 +173,33 @@ function ContributorModal(props) {
         })
       );
     }
-    console.log(data);
   }
 
   const updateContributor = (author, rowIndex) => {
     var temp = [...data];
     temp[rowIndex] = author;
-    console.log(rowIndex);
     setData(temp);
   };
 
   const removeContributor = rowIndex => {
     var temp = [...data];
     temp.splice(rowIndex, 1);
+    for (var i = rowIndex; i < temp.length; i++) {
+      console.log(temp[i]);
+      if (temp[i].imported.order === temp[i].toBeCreated.order) {
+        temp[i].imported.order = temp[i].imported.order - 1;
+        temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
+      } else {
+        temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
+      }
+    }
+    for (var j = 0; j < rowIndex; j++) {
+      if (temp[j].imported.order === temp[j].toBeCreated.order) {
+        console.log();
+      } else {
+        temp[j].imported.order = temp[j].imported.order - 1;
+      }
+    }
     setData(temp);
   };
 
@@ -477,7 +502,6 @@ async function searchContributors(authors) {
     console.log(searchedAuthors);
     if (searchedAuthors.data.length > 0) {
       let authorSuggestion = await axios.get(searchedAuthors.data[0].url);
-      authorSuggestion.data.isEditing = false;
       suggestedAuthors[i] = authorSuggestion.data;
       console.log(suggestedAuthors[i]);
     } else {
@@ -495,7 +519,8 @@ const defaultAuthor = {
   surname: "",
   order: 0,
   affiliations: [],
-  url: null
+  url: null,
+  isEditing: true
 };
 
 const defaultInstitution = {

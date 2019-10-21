@@ -20,14 +20,14 @@ export default function Contributor(props) {
 
   function updateEditing() {
     let temp = data;
-    temp.cristin.isEditing = true;
+    temp.isEditing = true;
 
     props.updateData(temp, rowIndex);
   }
 
   function handleSubmit() {
     let temp = data;
-    temp.cristin.isEditing = false;
+    temp.isEditing = false;
 
     props.updateData(temp, rowIndex);
     setSetSelectedInstitution({
@@ -171,7 +171,7 @@ export default function Contributor(props) {
 
   return (
     <div className="content-wrapper">
-      {data.cristin.isEditing === false ? (
+      {data.isEditing === false ? (
         <div>
           <h6>
             {data.toBeCreated.surname + ", " + data.toBeCreated.first_name}
