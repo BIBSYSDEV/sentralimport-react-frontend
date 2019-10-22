@@ -185,17 +185,12 @@ function ContributorModal(props) {
     var temp = [...data];
     temp.splice(rowIndex, 1);
     for (var i = rowIndex; i < temp.length; i++) {
-      console.log(temp[i]);
-      if (temp[i].imported.order === temp[i].toBeCreated.order) {
-        temp[i].imported.order = temp[i].imported.order - 1;
-        temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
-      } else {
-        temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
-      }
+      temp[i].imported.order = temp[i].imported.order - 1;
+      temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
     }
     for (var j = 0; j < rowIndex; j++) {
-      if (temp[j].imported.order === temp[j].toBeCreated.order) {
-        console.log();
+      if (temp[j].imported.order <= rowIndex) {
+        console.log("No changes to order");
       } else {
         temp[j].imported.order = temp[j].imported.order - 1;
       }
