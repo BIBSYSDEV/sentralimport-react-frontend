@@ -18,6 +18,7 @@ import AuthorListModal from "../AuthorListModal/AuthorListModal";
 import Pagination from "../Pagination/Pagination";
 import "../../assets/styles/Results.scss";
 import "../../assets/styles/Imports.css";
+import { TableFooter } from "@material-ui/core";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -172,7 +173,7 @@ const useStyles = makeStyles(theme => ({
     minWidth: 750
   },
   tableWrapper: {
-    overflowX: "auto"
+    overflowX: "visible"
   }
 }));
 
@@ -495,10 +496,12 @@ export default function EnhancedTable() {
                 </TableRow>
               )}
             </TableBody>
+            <TableFooter align="right">
+              <Pagination data={rows} />
+            </TableFooter>
           </Table>
         </div>
       </Paper>
-      <Pagination data={rows} />
 
       <ResultModal
         open={open}

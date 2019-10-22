@@ -452,9 +452,25 @@ function ContributorModal(props) {
             ) : (
               ""
             )}
-          </TableBody>
-          <TableFooter>
             <ContributorPagination totalCount={data.length} />
+          </TableBody>
+
+          <TableFooter>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+
+              <TableCell align="right">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  //TODO: sett opp lagring av bidragsyterlisten
+                  //onClick={() => saveContributorList()}
+                >
+                  Lagre
+                </Button>
+              </TableCell>
+            </TableRow>
           </TableFooter>
         </Table>
       </ModalBody>

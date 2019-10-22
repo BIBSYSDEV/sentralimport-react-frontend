@@ -163,6 +163,13 @@ export default function Contributor(props) {
             <Button color="primary" onClick={() => handleSubmit()}>
               Opprett person
             </Button>
+
+            <Button
+              color="secondary"
+              onClick={() => props.deleteContributor(rowIndex)}
+            >
+              Slett person
+            </Button>
           </Form>
         </div>
       </div>
@@ -196,7 +203,7 @@ export default function Contributor(props) {
             color="secondary"
             onClick={() => props.deleteContributor(rowIndex)}
           >
-            Slett
+            Slett person
           </Button>
         </div>
       ) : (
