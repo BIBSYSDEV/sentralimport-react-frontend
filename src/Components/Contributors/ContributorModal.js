@@ -189,8 +189,9 @@ function ContributorModal(props) {
       if (temp[i].imported.order === temp[i].toBeCreated.order) {
         temp[i].imported.order = temp[i].imported.order - 1;
         temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
-      } else {
+      } else if (rowIndex > 0) {
         temp[i].imported.order = temp[i].imported.order - 1;
+      } else {
         temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
       }
     }
