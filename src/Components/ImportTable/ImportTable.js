@@ -5,15 +5,19 @@ import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
-import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Typography from "@material-ui/core/Typography";
+import ResultIcon from "../../assets/icons/result-active.svg";
 import Paper from "@material-ui/core/Paper";
 import axios from "axios";
 import { Context } from "../../Context";
-
+import IconButton from "@material-ui/core/IconButton";
+import PeopleIcon from "@material-ui/icons/People";
 import ResultModal from "../ResultModal/ResultModal";
+import AuthorListModal from "../AuthorListModal/AuthorListModal";
+import Pagination from "../Pagination/Pagination";
+import "../../assets/styles/Results.scss";
+import "../../assets/styles/Imports.css";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -45,22 +49,28 @@ const headRows = [
   {
     id: "Publikasjon",
     numeric: false,
-    disablePadding: true,
+    disablePadding: false,
     label: "Publikasjon"
   },
-  { id: "Kategori", numeric: true, disablePadding: false, label: "Kategori" },
-  { id: "Kilde", numeric: true, disablePadding: false, label: "Kilde" },
+  { id: "category", numeric: true, disablePadding: false, label: "Kategori" },
+  { id: "source", numeric: true, disablePadding: false, label: "Kilde" },
   {
-    id: "Dato registrert",
+    id: "date",
     numeric: true,
     disablePadding: false,
-    label: "Dato registrert"
+    label: "Dato opprettet"
   },
   {
     id: "Eierinstitusjon",
     numeric: true,
     disablePadding: false,
     label: "Eierinstitusjon"
+  },
+  {
+    id: "Forfattere",
+    numeric: true,
+    disablePadding: false,
+    label: "Forfatterliste"
   }
 ];
 
@@ -85,6 +95,13 @@ function EnhancedTableHead(props) {
               active={orderBy === row.id}
               direction={order}
               onClick={createSortHandler(row.id)}
+              disabled={
+                !(
+                  row.id !== "Eierinstitusjon" &&
+                  row.id !== "Publikasjon" &&
+                  row.id !== "Forfattere"
+                )
+              }
             >
               {row.label}
             </TableSortLabel>
@@ -133,10 +150,6 @@ const EnhancedTableToolbar = props => {
 
   return (
     <div className={classes.title}>
-      <Typography variant="h6" id="tableTitle">
-        Importer
-      </Typography>
-
       <div className={classes.spacer} />
       <div className={classes.actions} />
     </div>
@@ -165,29 +178,57 @@ const useStyles = makeStyles(theme => ({
 
 export default function EnhancedTable() {
   const classes = useStyles();
+  let { state, dispatch } = React.useContext(Context);
   const [modalData, setModalData] = React.useState();
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("Dato registrert");
-  const [page, setPage] = React.useState(0);
+  const [order, setOrder] = React.useState(state.currentSortOrder);
+  const [orderBy, setOrderBy] = React.useState(state.currentSortValue);
+  const [page] = React.useState(state.currentPageNr);
   const [open, setOpen] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(
+    state.currentPerPage.value
+  );
   const [rows, setRows] = React.useState([]);
-  let { state } = React.useContext(Context);
+  const [authorList, setAuthorList] = React.useState(false);
+  const [authorData, setAuthorData] = React.useState();
+
+  const getMainImage = () => {
+    return ResultIcon;
+  };
 
   useEffect(() => {
-    getRows();
+    resetPageNr();
   }, [
     state.currentImportYear,
     state.isSampublikasjon,
     state.currentImportStatus,
-    state.currentInstitution
+    state.currentInstitution,
+    state.currentPerPage,
+    state.currentSortOrder,
+    state.currentSortValue
   ]);
+
+  useEffect(() => {
+    getRows();
+    console.log(rows);
+  }, [
+    state.currentImportYear,
+    state.isSampublikasjon,
+    state.currentImportStatus,
+    state.currentInstitution,
+    state.currentPerPage,
+    state.currentPageNr,
+    state.currentSortOrder,
+    state.currentSortValue
+  ]);
+
+  useEffect(() => {
+    handleChangeRowsPerPage(state.currentPerPage);
+  }, [state.currentPerPage]);
 
   async function getRows() {
     var fetchString =
-      "https://w3utv-jb-cris02/criswsinta/sentralimport/publications?year_published=" +
-      state.currentImportYear.value +
-      "&per_page=5";
+      "http://localhost:8080/criswsint/sentralimport/publications?year_published=" +
+      state.currentImportYear.value;
 
     if (
       state.currentInstitution.value === null ||
@@ -211,10 +252,51 @@ export default function EnhancedTable() {
         fetchString = fetchString + "&relevant=false";
       }
     }
-    console.log(fetchString);
-    const temp = await axios.get(fetchString);
-    console.log(temp);
-    handleRows(temp.data);
+    fetchString =
+      fetchString +
+      "&sort=" +
+      state.currentSortValue +
+      " " +
+      state.currentSortOrder +
+      "&per_page=" +
+      state.currentPerPage.value +
+      "&page=" +
+      (state.currentPageNr + 1);
+
+    await axios.get(fetchString).then(response => {
+      console.log(fetchString);
+      console.log(response.headers["x-total-count"]);
+      getJournals(response.data);
+
+      dispatch({
+        type: "setTotalCount",
+        payload: response.headers["x-total-count"]
+      });
+    });
+
+    async function getJournals(data) {
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].hasOwnProperty("channel")) {
+          var journal = await axios.get(
+            "https://api.cristin-utv.uio.no/v2/results/channels?type=journal&id=" +
+              data[i].channel.id
+          );
+
+          if (journal.data.length !== 0 && journal.hasOwnProperty("data")) {
+            data[i].channel.journal = journal.data[0].hasOwnProperty("title")
+              ? journal.data[0].title
+              : "";
+          } else {
+            data[i].channel.journal = "";
+          }
+        }
+      }
+      handleRows(data);
+    }
+  }
+
+  function resetPageNr() {
+    dispatch({ type: "setPageNr", payload: 0 });
   }
 
   function handleRows(temp) {
@@ -224,11 +306,34 @@ export default function EnhancedTable() {
   function handleRequestSort(event, property) {
     const isDesc = orderBy === property && order === "desc";
     setOrder(isDesc ? "asc" : "desc");
+    dispatch({ type: "setSortOrder", payload: isDesc ? "asc" : "desc" });
     setOrderBy(property);
+    dispatch({ type: "setSortValue", payload: property });
   }
 
   function handleClose() {
     setOpen(false);
+    dispatch({ type: "setSelected", payload: "false" });
+  }
+
+  function handleCloseList() {
+    setAuthorList(false);
+  }
+
+  function handleAuthorClick(event, row) {
+    if (authorList !== true) {
+      setAuthorList(true);
+      setAuthorData(row);
+    }
+  }
+
+  function handleAuthorPress(event, row) {
+    if (authorList !== true) {
+      if (event.keyCode === 13 || event.keyCode === 32) {
+        setAuthorList(true);
+        setAuthorData(row);
+      }
+    }
   }
 
   function handleClick(event, row) {
@@ -237,23 +342,51 @@ export default function EnhancedTable() {
   }
 
   function handleKeyPress(event, row) {
-    if (event.keyCode === 13) {
+    if (event.keyCode === 13 || event.keyCode === 32) {
       setOpen(true);
       setModalData(row.row);
     }
   }
 
-  function handleChangePage(event, newPage) {
-    setPage(newPage);
+  function handleOnFocus(event, row) {
+    event.target.className = event.target.className + " focused";
+    console.log(event.target.className);
   }
 
-  function handleChangeRowsPerPage(event) {
-    setRowsPerPage(event.target.value);
-    setPage(0);
+  function handleOnBlur(event, row) {
+    event.target.className = event.target.className.split(" focused")[0];
+    console.log(event.target.className);
   }
 
-  function handleFocus(event) {
-    event.target.focus();
+  function handleChangeRowsPerPage(option) {
+    setRowsPerPage(option.value);
+  }
+
+  function handleOwnerInstitutions(row) {
+    var inst = [];
+    var authorList = row.authors;
+    for (var h = 0; h < authorList.length; h++) {
+      var check = 0;
+      for (var i = 0; i < inst.length; i++) {
+        if (inst[i] === authorList[h].institutions[0].acronym) {
+          check++;
+        }
+      }
+      if (check === 0) {
+        if (authorList[h].institutions[0].acronym !== "") {
+          inst.push(authorList[h].institutions[0].acronym);
+        }
+      }
+    }
+    return (
+      <div>
+        {inst.map((ins, i) => (
+          <div key={i}>
+            <div>{ins}</div>
+          </div>
+        ))}
+      </div>
+    );
   }
 
   const emptyRows =
@@ -275,8 +408,8 @@ export default function EnhancedTable() {
             <TableBody>
               {stableSort(rows, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const labelId = index;
+                .map(row => {
+                  const labelId = row.pubId;
 
                   return (
                     <TableRow
@@ -284,20 +417,52 @@ export default function EnhancedTable() {
                       id={labelId}
                       onClick={event => handleClick(event, { row })}
                       role="checkbox"
-                      tabIndex={0}
                       key={labelId}
                       onKeyDown={event => handleKeyPress(event, { row })}
-                      onChange={event => handleFocus(event)}
+                      className={`card-horiz basic-background result`}
+                      tabIndex="0"
+                      onFocus={event => handleOnFocus(event, { row })}
+                      onBlur={event => handleOnBlur(event, { row })}
                     >
                       <TableCell component="th" scope="row" padding="none" />
 
                       <TableCell>
-                        {row.authors.slice(0, 5).map(author => (
-                          <div style={divStyle} key={author.sequenceNr}>
-                            {author.authorName};
+                        <div className="image-wrapper">
+                          <img src={getMainImage("result")} alt="result" />
+                        </div>
+                        <div className="content-wrapper">
+                          <h6 className={`result-title`}>
+                            {row.languages[0].title}
+                          </h6>
+                          <div className={`metadata`}>
+                            {row.authors
+                              .slice(0, 5)
+                              .map(author => author.authorName + "; ")}
+                            {row.authors.length > 5 ? " et al " : ""}
+                            {" (" + row.authors.length + ") "}
+                            <p className={`journal-name`}>
+                              {row.hasOwnProperty("channel")
+                                ? row.channel.journal + " "
+                                : ""}
+                            </p>
+                            {row.registered.substring(
+                              row.registered.length - 4,
+                              row.registered.length
+                            ) + ";"}
+                            {row.hasOwnProperty("channel") &&
+                            row.channel.hasOwnProperty("volume")
+                              ? "Volum " + row.channel.volume + ";"
+                              : ""}
+                            {row.hasOwnProperty("channel") &&
+                            row.channel.hasOwnProperty("pageFrom")
+                              ? row.channel.pageFrom + "-"
+                              : ""}
+                            {row.hasOwnProperty("channel")
+                              ? row.channel.pageTo
+                              : ""}
+                            {row.hasOwnProperty("doi") ? " doi:" + row.doi : ""}
                           </div>
-                        ))}
-                        {row.languages[0].title}
+                        </div>
                       </TableCell>
                       <TableCell align="right">
                         <div>{row.category}</div>
@@ -305,14 +470,21 @@ export default function EnhancedTable() {
                       <TableCell align="right">{row.sourceName}</TableCell>
                       <TableCell align="right">{row.registered}</TableCell>
                       <TableCell align="right">
-                        {row.authors[0].institutions &&
-                        row.authors[0].institutions[0].institutionName ? (
-                          <p>
-                            {row.authors[0].institutions[0].institutionName}
-                          </p>
-                        ) : (
-                          <p>{}</p>
-                        )}
+                        {handleOwnerInstitutions(row)}
+                      </TableCell>
+                      <TableCell align="right">
+                        <IconButton
+                          onClick={e => {
+                            handleAuthorClick(e, row);
+                            e.stopPropagation();
+                          }}
+                          onKeyDown={e => {
+                            handleAuthorPress(e, row);
+                            e.stopPropagation();
+                          }}
+                        >
+                          <PeopleIcon />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   );
@@ -325,27 +497,32 @@ export default function EnhancedTable() {
             </TableBody>
           </Table>
         </div>
-        <TablePagination
+        {/*<TablePagination
+          hidden={true}
           rowsPerPageOptions={[5, 10]}
           component="div"
-          count={rows.length}
           rowsPerPage={rowsPerPage}
-          page={page}
+          count={rows.length}
           backIconButtonProps={{
             "aria-label": "Previous Page"
           }}
           nextIconButtonProps={{
             "aria-label": "Next Page"
           }}
-          onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+        /> */}
       </Paper>
+      <Pagination data={rows} />
 
       <ResultModal
         open={open}
         data={modalData}
         handleClose={handleClose.bind(this)}
+      />
+      <AuthorListModal
+        open={authorList}
+        data={authorData}
+        handleClose={handleCloseList}
       />
     </div>
   );

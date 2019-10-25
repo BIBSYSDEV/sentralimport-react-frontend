@@ -18,18 +18,18 @@ export default function App() {
           </Grid>
         </Grid>
         <Grid container spacing={3}>
-          <Grid item xs>
+          <Grid item xs={3}>
             <DropdownPanel />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={9}>
             <Panel />
           </Grid>
         </Grid>
         <Grid container spacing={3}>
-          <Grid item xs>
+          <Grid item xs={3}>
             <FilterForm />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={9}>
             <ImportTable />
           </Grid>
         </Grid>

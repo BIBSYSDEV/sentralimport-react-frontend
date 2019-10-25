@@ -11,6 +11,7 @@ ReactDOM.render(
   <SnackbarProvider maxSnack={1}>
     <App />
   </SnackbarProvider>,
+
   document.getElementById("root")
 );
 

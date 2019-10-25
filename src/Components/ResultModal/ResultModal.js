@@ -6,17 +6,15 @@ import {
   ListGroupItemHeading,
   ListGroupItemText
 } from "reactstrap";
-import {
-  Radio,
-  RadioGroup,
-  FormControl,
-  FormControlLabel
-} from "@material-ui/core";
 import InnerModal from "../InnerModal/InnerModal";
+import { Duplicates } from "./Duplicates";
+import { Context } from "../../Context";
+import "../../assets/styles/Results.scss";
 
 export default function ResultModal(props) {
-  const [selected, setSelected] = React.useState("0");
   const [innerModal, setInnerModal] = React.useState(false);
+  const [isDuplicate, setDuplicate] = React.useState(false);
+  let { state } = React.useContext(Context);
 
   const divStyle = {
     fontWeight: "bold"
@@ -26,15 +24,17 @@ export default function ResultModal(props) {
     background: "green"
   };
 
-  function handleChange(event) {
-    setSelected(event.target.value);
-  }
-
   function handleSubmit() {
-    if (selected === "1") {
+    if (state.selected === "true") {
+      setDuplicate(false);
+      console.log(isDuplicate);
       setInnerModal(true);
-    } else if (selected === "0") {
+    } else if (state.selected === "false") {
       props.handleClose();
+    } else {
+      setDuplicate(true);
+      console.log(isDuplicate);
+      setInnerModal(true);
     }
   }
 
@@ -52,46 +52,49 @@ export default function ResultModal(props) {
           <ListGroupItem>
             <ListGroupItemHeading>Importpublikasjon:</ListGroupItemHeading>
             <ListGroupItemText>
-              {props.data.authors.map(author => (
+              {props.data.authors.slice(0, 5).map(author => (
                 <span style={divStyle} key={author.sequenceNr}>
                   {author.authorName};{" "}
                 </span>
               ))}
+              {props.data.authors.length > 5
+                ? "et al (" + props.data.authors.length + ") "
+                : ""}
               {props.data.languages[0].title}
+              <text className={`journal-name`}>
+                {props.data.hasOwnProperty("channel")
+                  ? props.data.channel.journal + " "
+                  : ""}
+              </text>
+              {props.data.registered.substring(
+                props.data.registered.length - 4,
+                props.data.registered.length
+              ) + ";"}
+              {props.data.hasOwnProperty("channel")
+                ? props.data.channel.volume + ";"
+                : ""}
+              {props.data.hasOwnProperty("channel")
+                ? props.data.channel.pageFrom + "-"
+                : ""}
+              {props.data.hasOwnProperty("channel")
+                ? props.data.channel.pageTo
+                : ""}
+              {props.data.hasOwnProperty("doi") ? " doi:" + props.data.doi : ""}
             </ListGroupItemText>
           </ListGroupItem>
           <ListGroupItem>
             <ListGroupItemHeading>
               Cristinpublikasjoner (Velg korrekt publikasjon fra Cristin):
             </ListGroupItemHeading>
-            <ListGroupItemText>
-              Det finnes ingen Cristinpublikasjoner som matcher
-              importpublikasjonen
-            </ListGroupItemText>
-          </ListGroupItem>
-          <ListGroupItem>
             <div>
-              <FormControl>
-                <RadioGroup onChange={handleChange} value={selected} row>
-                  <FormControlLabel
-                    value="0"
-                    control={<Radio />}
-                    label="Ikke importer"
-                  />
-                  <FormControlLabel
-                    value="1"
-                    control={<Radio />}
-                    label="Opprett ny cristin-publikasjon basert på importpublikasjon"
-                  />
-                </RadioGroup>
-              </FormControl>
+              <Duplicates publication={props.data} />
             </div>
           </ListGroupItem>
         </ListGroup>
       </ModalBody>
       <ModalFooter>
         <Button style={style} onClick={handleSubmit}>
-          Submit
+          OK
         </Button>
       </ModalFooter>
 
@@ -99,6 +102,8 @@ export default function ResultModal(props) {
         open={innerModal}
         toggle={handleClose.bind(this)}
         data={props.data}
+        cristinpub={state.selectedPublication}
+        duplicate={isDuplicate}
       />
     </Modal>
   );
