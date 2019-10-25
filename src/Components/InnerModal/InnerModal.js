@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {Modal, ModalBody, ModalHeader} from "reactstrap";
+import {Modal, ModalBody, ModalHeader, ModalFooter} from "reactstrap";
 import {
     TextField,
     FormGroup,
@@ -803,12 +803,14 @@ function InnerModal(props) {
                             </Form>
                         </Grid>
                     </Grid>
-                    <Button className={`contributorButton`} onClick={openContributorModal}>Bidragsytere</Button>
                     <div>{state.formErrors.map(error => { return(
                         <div>{error + "; "}</div>
                     )})}</div>
                 </ModalBody>
                 <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
+                <ModalFooter>
+                <Button className={`contributorButton`} onClick={openContributorModal}>Bidragsytere</Button>
+                </ModalFooter>
             </Modal>
             <ClosingDialog
                 open={dialogAbortOpen}

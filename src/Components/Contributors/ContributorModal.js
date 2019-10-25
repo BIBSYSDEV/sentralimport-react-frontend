@@ -185,35 +185,38 @@ function ContributorModal(props) {
     var temp = [...data];
     temp.splice(rowIndex, 1);
     for (var i = rowIndex; i < temp.length; i++) {
-      console.log(temp[i]);
-      if (temp[i].imported.order === temp[i].toBeCreated.order) {
-        console.log("loop 1");
+      if (
+        temp[i].imported.order === temp[i].toBeCreated.order &&
+        temp[i].imported.order >= rowIndex
+      ) {
         temp[i].imported.order = temp[i].imported.order - 1;
         temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
-      } else if (temp[i].imported.order > rowIndex) {
-        console.log("loop 2");
-        temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
       } else {
-        if (
-          temp[i].imported.order > 1 &&
-          temp[i].imported.order === temp[i].toBeCreated.order
-        ) {
-          temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
-        } else {
-          temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
+        console.log(rowIndex);
+        if (temp[i].imported.order === rowIndex) {
+        } else if (temp[i].imported.order > rowIndex) {
+          console.log("løøp");
+          if (temp[i].imported.order > 0) {
+            if (temp[i].imported.order < temp[i].toBeCreated.order) {
+              temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
+            }
+          } else {
+            console.log("elseloop");
+            temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
+          }
         }
       }
     }
     for (var j = 0; j < rowIndex; j++) {
       console.log("rowIndex: " + rowIndex);
-      if (temp[j].imported.order <= rowIndex) {
-        console.log("here");
+      if (
+        temp[j].imported.order === rowIndex &&
+        temp[j].imported.order !== temp[j].toBeCreated.order
+      ) {
+        temp[j].imported.order = temp[j].imported.order - 1;
       } else if (temp[j].imported.order > rowIndex) {
         temp[j].imported.order = temp[j].imported.order - 1;
         console.log("there");
-      } else if (temp[j].imported.order === temp[j].toBeCreated.order) {
-        temp[j].imported.order = temp[j].imported.order - 1;
-        console.log("where");
       }
     }
     setData(temp);
