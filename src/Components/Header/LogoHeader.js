@@ -1,6 +1,6 @@
 import React from "react";
 import { Navbar, Nav } from "react-bootstrap";
-import logo from "../LogoHeader/logo.svg";
+import logo from "./logo.svg";
 import "./logo.css";
 
 export default function LogoHeader() {
