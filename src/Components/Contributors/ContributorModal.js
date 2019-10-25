@@ -107,7 +107,11 @@ function ContributorModal(props) {
     dispatch({ type: "setContributorPage", payload: 0 });
   }
 
-  function handleChooseAuthor(event, author) {}
+  function handleChooseAuthor(author, index) {
+    var temp = [...data];
+    temp[index].toBeCreated = author;
+    setData(temp);
+  }
 
   function handleOrder(author, up) {
     console.log("order changed");
@@ -394,9 +398,7 @@ function ContributorModal(props) {
                     {row.imported.surname && row.imported.first_name ? (
                       <Button
                         color="primary"
-                        onClick={event =>
-                          handleChooseAuthor(event, row.imported)
-                        }
+                        onClick={() => handleChooseAuthor(row.imported, i)}
                       >
                         Velg denne
                       </Button>
@@ -556,12 +558,6 @@ const defaultAuthor = {
   affiliations: [],
   url: null,
   isEditing: true
-};
-
-const defaultInstitution = {
-  value: " ",
-  label: "Ingen institusjon",
-  institutionNr: 0
 };
 
 export default withSnackbar(ContributorModal);
