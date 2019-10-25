@@ -209,7 +209,6 @@ export default function EnhancedTable() {
 
   useEffect(() => {
     getRows();
-    console.log(rows);
   }, [
     state.currentImportYear,
     state.isSampublikasjon,

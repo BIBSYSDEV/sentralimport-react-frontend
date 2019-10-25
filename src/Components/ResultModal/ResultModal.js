@@ -27,13 +27,12 @@ export default function ResultModal(props) {
   function handleSubmit() {
     if (state.selected === "true") {
       setDuplicate(false);
-      console.log(isDuplicate);
+
       setInnerModal(true);
     } else if (state.selected === "false") {
       props.handleClose();
     } else {
       setDuplicate(true);
-      console.log(isDuplicate);
       setInnerModal(true);
     }
   }

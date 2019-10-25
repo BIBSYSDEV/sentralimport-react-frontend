@@ -2,6 +2,8 @@ import React from "react"
 import queryString from 'query-string';
 import jwt from 'jsonwebtoken';
 import '../../assets/styles/common.scss'
+import loginIcon from "../../assets/icons/login.png";
+import logo from "../../assets/icons/Hovedlogo-Liten-Farge.svg";
 import axios from "axios";
 import { Button } from "reactstrap";
 import { Grid, CardContent, Typography } from "@material-ui/core";
@@ -14,11 +16,12 @@ export default function Login(props) {
     // const client_id = "ab940329-87f9-40dc-a129-bf9d4ae07917";
     const search = queryString.parse(props.location.hash);
     const authState = "bra";
+    const gateway_scope = "gk_testing";
 
     function handleLogin(){
         localStorage.setItem("nonce", generateNonce());
         window.location.href = "https://auth.dataporten.no/oauth/authorization?client_id=" + client_id + "&redirect_uri=http://localhost:3000/login" +
-            "&scope=openid userid email userid-feide profile gk_testing&response_type=id_token token&state=" + authState + "&nonce=" + localStorage.getItem("nonce");
+            "&scope=openid userid email userid-feide profile " + gateway_scope +"&response_type=id_token token&state=" + authState + "&nonce=" + localStorage.getItem("nonce");
     }
 
     function handleLogout(){
@@ -55,7 +58,7 @@ export default function Login(props) {
             localStorage.setItem("authorized", "true");
             localStorage.setItem("access_token", search.access_token.toString());
             localStorage.setItem("expires", jsonToken.exp);
-            // window.location.href = "/";
+            window.location.href = "/";
         }
     }
 
@@ -64,7 +67,7 @@ export default function Login(props) {
   return (
     <div className={`login`}>
       <br />
-      {localStorage.getItem("authorized") ? (
+      {localStorage.getItem("authorized") && localStorage.getItem("authorized") === "true" ? (
         <div>
           <p>Du er allerede logget inn. Ønsker du å logge ut?</p>
           <Button onClick={handleLogout}>Logg ut</Button>

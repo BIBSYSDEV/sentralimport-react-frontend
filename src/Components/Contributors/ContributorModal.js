@@ -18,9 +18,21 @@ import InstitutionSelect from "../InstitutionSelect/InstitutionSelect";
 
 function ContributorModal(props) {
 
+    const { useRef, useLayoutEffect } = React;
     const [data, setData] = React.useState([]);
     const [selectedInstitution, setSetSelectedInstitution] = React.useState(defaultInstitution);
     let {state} = React.useContext(Context);
+
+    const firstUpdate = useRef(true);
+    useLayoutEffect(() => {
+        console.log("layoutEffect");
+        console.log(firstUpdate);
+        if (firstUpdate.current) {
+            firstUpdate.current = false;
+            return;
+        }
+        handleTempSave();
+    }, [data]);
 
     useEffect(() => {
         async function fetch() {
@@ -30,7 +42,7 @@ function ContributorModal(props) {
                 let contributors = [];
                 let cristinAuthors = [];
 
-                let temp = JSON.parse(localStorage.getItem("tempPublication"));
+                let temp = JSON.parse(localStorage.getItem("tempContributors"));
                 if (temp !== null && temp.publication.pubId === props.data.pubId) {
                     contributors = temp.contributors;
                 } else {
@@ -69,7 +81,6 @@ function ContributorModal(props) {
                 setData(contributors);
             }
         }
-        console.log("gtfrsegseg");
         fetch();
     }, [props, state.selectedPublication]);
 
@@ -94,7 +105,7 @@ function ContributorModal(props) {
             publication: props.data,
             contributors: data
         };
-        localStorage.setItem("tempPublication", JSON.stringify(temp));
+        localStorage.setItem("tempContributors", JSON.stringify(temp));
     }
 
     function displayAuthorForm(author) {
@@ -274,7 +285,7 @@ function ContributorModal(props) {
             className={`contributorModal`}
         >
             <ModalHeader toggle={handleClose}>Bidragsytere</ModalHeader>
-            <Button onClick={handleTempSave}>Test</Button>
+            {/*<Button onClick={handleTempSave}>Test</Button>*/}
             <ModalBody>
                 <Table>
                     <TableHead>

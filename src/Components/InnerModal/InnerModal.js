@@ -29,53 +29,68 @@ import './style.css';
 
 function InnerModal(props) {
 
+    const { useRef, useLayoutEffect } = React;
     let {state, dispatch} = React.useContext(Context);
 
     useEffect(() => {
         function setFields() {
-        console.log(props.duplicate);
-        setKilde(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_name : "Ingen kilde funnet" ): props.data.sourceName);
-        setKildeId(props.duplicate ? (state.selected.publication.hasOwnProperty("externalId") ? state.publication.externalId : "Ingen kildeId funnet") : props.data.externalId)
-        setSelectedJournal(props.duplicate ? {
-            value: state.selectedPublication.journal.name,
-            label: state.selectedPublication.journal.name
-        } : {
-            value: " ",
-            label: "Ingen tidsskrift funnet"
-        });
-        setTittel(props.duplicate ? state.selectedPublication.title.en : props.data.languages[0].title);
-        setAarstall(props.duplicate ? state.selectedPublication.year_published : 
-            props.data.registered.substring(
-                props.data.registered.length - 4,
-                props.data.registered.length
-            ));
-        setKategori(props.duplicate ? state.selectedPublication.category.code : props.data.category);
-        setLang(props.duplicate ? state.selectedPublication.original_language : props.data.languages[0].lang);
-        setDoi(props.duplicate ? state.selectedPublication.links[state.selectedPublication.links.length - 1].url.substring(
-            16,
-            state.selectedPublication.links[0].url.length + 1
-          ) :(
-            props.data.doi ? props.data.doi : "Ingen DOI funnet"));
-        setUtgivelse(props.duplicate ? ( state.selectedPublication.hasOwnProperty("volume") ? "Volum " +
-        state.selectedPublication.volume +
-        " (" +
-        state.selectedPublication.pages.from +
-        "-" +
-        state.selectedPublication.pages.to +
-        ") " : "Ingen utgivelsesdata funnet") : (
-        props.data.channel
-            ? "Volum " +
-            props.data.channel.volume +
-            " (" +
-            props.data.channel.pageFrom +
-            "-" +
-            props.data.channel.pageTo +
-            ") "
-            : "Ingen utgivelsesdata funnet"));
+            let temp = JSON.parse(localStorage.getItem("tempPublication"));
+            let workedOn = false;
+            if (temp !== null && temp.publication.pubId === props.data.pubId)
+                workedOn = true;
+
+            setKilde(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_name : "Ingen kilde funnet") : props.data.sourceName);
+            setKildeId(props.duplicate ? (state.selectedPublication.hasOwnProperty("externalId") ? state.publication.externalId : "Ingen kildeId funnet") : props.data.externalId);
+
+            setSelectedJournal(workedOn ?
+                {
+                    value: temp.publication.channel.id,
+                    label: temp.publication.channel.journal
+                } :
+                (props.duplicate ? state.selectedPublication.journal :
+                        {
+                            value: props.data.channel.id,
+                            label: props.data.channel.journal
+                        }
+                )
+            );
+
+            setTittel(workedOn ? temp.publication.languages[0].title :
+                (props.duplicate ? state.selectedPublication.title.en : props.data.languages[0].title));
+            setAarstall(workedOn ? temp.publication.registered :
+                (props.duplicate ? state.selectedPublication.year_published :
+                    props.data.registered.substring(
+                        props.data.registered.length - 4,
+                        props.data.registered.length
+                    )));
+            setKategori(workedOn ? temp.publication.category :
+                (props.duplicate ? state.selectedPublication.category.code : props.data.category));
+            setLang(workedOn ? temp.publication.languages[0].lang :
+                (props.duplicate ? state.selectedPublication.original_language : props.data.languages[0].lang));
+            setDoi(workedOn ? temp.publication.doi :
+                (props.duplicate ? state.selectedPublication.links[state.selectedPublication.links.length - 1].url.substring(16, state.selectedPublication.links[0].url.length + 1) :
+                    (props.data.doi ? props.data.doi : "Ingen DOI funnet")));
+            setUtgivelse(props.duplicate ? (state.selectedPublication.hasOwnProperty("volume") ? "Volum " +
+                state.selectedPublication.volume +
+                " (" +
+                state.selectedPublication.pages.from +
+                "-" +
+                state.selectedPublication.pages.to +
+                ") " : "Ingen utgivelsesdata funnet") : (
+                props.data.channel
+                    ? "Volum " +
+                    props.data.channel.volume +
+                    " (" +
+                    props.data.channel.pageFrom +
+                    "-" +
+                    props.data.channel.pageTo +
+                    ") "
+                    : "Ingen utgivelsesdata funnet"));
+
         }
         
         setFields();
-    }, [props.duplicate, state.selectedPublication])
+    }, [props.duplicate, state.selectedPublication]);
      
     const [kilde, setKilde] = React.useState("");
 
@@ -95,10 +110,6 @@ function InnerModal(props) {
 
     const [utgivelse, setUtgivelse] = React.useState("");
 
-    const [kildeIsEqual, setKildeIsEqual] = React.useState(true);
-
-    const [kildeIdIsEqual, setKildeIdIsEqual] = React.useState(true);
-
     const [tittelIsEqual, setTittelIsEqual] = React.useState(true);
 
     const [aarstallIsEqual, setAarstallIsEqual] = React.useState(true);
@@ -108,8 +119,6 @@ function InnerModal(props) {
     const [langIsEqual, setLangIsEqual] = React.useState(true);
 
     const [doiIsEqual, setDoiIsEqual] = React.useState(true);
-
-    const [journalIsEqual, setJournalIsEqual] = React.useState(true);
 
     const [utgivelseIsEqual, setUtgivelseIsEqual] = React.useState(true);
 
@@ -153,35 +162,52 @@ function InnerModal(props) {
 
     const [journals, setJournals] = React.useState();
 
-    useEffect(() => {
-        async function getJournals() {
-            await axios
-                .get("https://api.cristin-utv.uio.no/v2/results/channels?type=journal")
-                .then(response => {
-                    console.log(response);
-                    updateJournals(response.data);
-                });
+    const firstUpdate = useRef(true);
+    useLayoutEffect(() => {
+        if (firstUpdate.current) {
+            firstUpdate.current = false;
+            return;
         }
-        getJournals();
+        handleTempSave();
+    }, [kategori, selectedJournal, doi, lang, aarstall, tittel]);
+
+    useEffect(() => {
+        async function fetchJournals() {
+            await getJournals(null);
+        }
+        fetchJournals();
     }, []);
 
+    function handleTempSave() {
+        let temp = {
+            publication: {
+                category: kategori,
+                channel: {
+                    id: selectedJournal.value,
+                    journal: selectedJournal.label
+                },
+                doi: doi,
+                externalId: kildeId,
+                languages: [{
+                    lang: lang,
+                    original: true,
+                    summary: "",
+                    title: tittel
+                }],
+                pubId: props.data.pubId,
+                registered: aarstall,
+                sourceName: kilde
+            }
+        };
+        localStorage.setItem("tempPublication", JSON.stringify(temp));
+    }
+
     function updateJournals(data) {
-        var tempArray = [];
-        for (var i = 0; i < data.length; i++) {
+        let tempArray = [];
+        for (let i = 0; i < data.length; i++) {
             tempArray.push({value: data[i].id, label: data[i].title});
         }
         setJournals(tempArray);
-    }
-
-    function handleChangeKilde(event) {
-        if (event.target.value !== props.data.sourceName) {
-            setKildeIsEqual(false);
-        } else {
-            setKildeIsEqual(true);
-        }
-        setKilde(event.target.value);
-        dispatch({type: "setSelectedField", payload: "kilde"});
-        dispatch({type: "setValidation", payload: event.target.value});
     }
 
     function handleChangeTittel(event) {
@@ -265,14 +291,6 @@ function InnerModal(props) {
         dispatch({type: "setValidation", payload: event.target.value});
     }
 
-    function handleChangeKildeId(event) {
-        if(event.target.value !== props.data.externalId) {
-            setKildeIdIsEqual(false);
-        } else {
-            setKildeIdIsEqual(true);
-        }
-    }
-
     function handleSubmit() {
         setDialogOpen(true);
     }
@@ -283,18 +301,6 @@ function InnerModal(props) {
 
     function handleContributorClose() {
         setContributorModal(false);
-    }
-
-    function copyKilde() {
-        setKilde(props.data.sourceName);
-        setKildeIsEqual(true);
-        dispatch({type: "setSelectedField", payload: "kilde"});
-        dispatch({type: "setValidation", payload: props.data.sourceName});
-    }
-
-    function copyKildeId() {
-        setKildeId(props.data.externalId);
-        setKildeIdIsEqual(true);
     }
 
     function copyTittel() {
@@ -350,12 +356,11 @@ function InnerModal(props) {
         setSelectedJournal(
             props.data.channel
                 ? {
-                    value: "x",
-                    label: "Ingen tidsskrift funnet"
+                    value: props.data.channel.id,
+                    label: props.data.channel.journal
                 }
                 : {value: "x", label: "Ingen tidsskrift funnet"}
         );
-        setJournalIsEqual(true);
         dispatch({type: "setSelectedField", payload: "tidsskrift"});
         dispatch({
             type: "setValidation",
@@ -383,13 +388,7 @@ function InnerModal(props) {
     }
 
     function onChangeJournal(option) {
-        if (option.value !== " ") {
-            setJournalIsEqual(false);
-        } else {
-            setJournalIsEqual(true);
-        }
         setSelectedJournal(option);
-        console.log(option.label);
         dispatch({type: "setSelectedField", payload: "tidsskrift"});
         dispatch({type: "setValidation", payload: option.value});
     }
@@ -426,6 +425,20 @@ function InnerModal(props) {
 
     function openContributorModal() {
         setContributorModal(true);
+    }
+
+    function searchJournals(searchString) {
+        getJournals(searchString);
+    }
+
+    async function getJournals(name) {
+        if (name === null || name === "")
+            name = "*";
+        await axios
+            .get("https://api.cristin-utv.uio.no/v2/results/channels?type=journal&query=title_general:" + name)
+            .then(response => {
+                updateJournals(response.data);
+            });
     }
 
     return (
@@ -477,15 +490,6 @@ function InnerModal(props) {
                                                 disabled
                                             />
                                         </FormControl>
-                                        {kildeIsEqual ? (
-                                            <IconButton color="primary" style={equalButtonStyle}>
-                                                <DragHandleIcon />
-                                            </IconButton>
-                                        ) : (
-                                            <IconButton  color="secondary" style={arrowButtonStyle} onClick={copyKilde}>
-                                                <TrendingFlatIcon />
-                                            </IconButton>
-                                        )}
                                     </Grid>
                                 </FormGroup>
                                 <FormGroup>
@@ -499,15 +503,6 @@ function InnerModal(props) {
                                                 disabled
                                             />
                                         </FormControl>
-                                        {kildeIdIsEqual ? (
-                                            <IconButton color="primary" style={equalButtonStyle}>
-                                                <DragHandleIcon />
-                                            </IconButton>
-                                        ) : (
-                                            <IconButton  color="secondary" style={arrowButtonStyle} onClick={copyKildeId}>
-                                                <TrendingFlatIcon />
-                                            </IconButton>
-                                        )}
                                     </Grid>
                                 </FormGroup>
                                 <FormGroup>
@@ -515,11 +510,11 @@ function InnerModal(props) {
                                         <TextField
                                             id="import-tidsskrift"
                                             label="Tidsskrift"
-                                            value={"Ingen tidsskrift funnet"}
+                                            value={props.data.channel.journal}
                                             margin="normal"
                                             disabled
                                         />
-                                        {journalIsEqual ? (
+                                        {selectedJournal.value === props.data.channel.id ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -698,9 +693,9 @@ function InnerModal(props) {
                                         id="import-kilde"
                                         label="Kilde"
                                         value={kilde}
-                                        onChange={event => handleChangeKilde(event)}
                                         margin="normal"
                                         required
+                                        disabled
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -708,9 +703,9 @@ function InnerModal(props) {
                                         id="import-kildeid"
                                         label="KildeId"
                                         value={kildeId}
-                                        onChange={event => handleChangeKildeId(event)}
                                         margin="normal"
                                         required
+                                        disabled
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -723,6 +718,7 @@ function InnerModal(props) {
                                         className="basic-select"
                                         classNamePrefix="select"
                                         onChange={onChangeJournal}
+                                        onInputChange={searchJournals}
                                     />
                                 </FormGroup>
                                 <FormGroup>
