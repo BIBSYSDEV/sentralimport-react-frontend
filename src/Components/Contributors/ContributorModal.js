@@ -107,8 +107,17 @@ function ContributorModal(props) {
     dispatch({ type: "setContributorPage", payload: 0 });
   }
 
+  function handleSave() {
+    props.enqueueSnackbar("Bidragsyterliste har blitt oppdatert.", {
+      variant: "success"
+    });
+    props.toggle();
+  }
+
   function handleChooseAuthor(author, index) {
     var temp = [...data];
+    console.log(index);
+    temp[index].isEditing = false;
     temp[index].toBeCreated = author;
     setData(temp);
   }
@@ -398,7 +407,12 @@ function ContributorModal(props) {
                     {row.imported.surname && row.imported.first_name ? (
                       <Button
                         color="primary"
-                        onClick={() => handleChooseAuthor(row.imported, i)}
+                        onClick={() =>
+                          handleChooseAuthor(
+                            row.imported,
+                            row.toBeCreated.order - 1
+                          )
+                        }
                       >
                         Velg denne
                       </Button>
@@ -482,8 +496,7 @@ function ContributorModal(props) {
                 <Button
                   variant="contained"
                   color="primary"
-                  //TODO: sett opp lagring av bidragsyterlisten
-                  //onClick={() => saveContributorList()}
+                  onClick={() => handleSave()}
                 >
                   Lagre
                 </Button>
