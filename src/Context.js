@@ -1,9 +1,9 @@
 import React from "react";
 
 let Context = React.createContext();
-
+let currentYear = new Date().getFullYear();
 let initialState = {
-  currentImportYear: { value: 2018, label: "2018" },
+  currentImportYear: { value: currentYear, label: currentYear.toString() },
   currentImportStatus: "false",
   currentInstitution: { value: null, label: "Ingen filtrering" },
   isSampublikasjon: false,

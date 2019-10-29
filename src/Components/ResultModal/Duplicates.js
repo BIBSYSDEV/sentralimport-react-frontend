@@ -96,7 +96,7 @@ async function fetchDuplicates(searchTerms) {
     let results = [];
     console.log("fething...");
     const searchResults = await axios.get(
-        "https://api.cristin-utv.uio.no/v2/results" + searchTerms + "&fields=all"
+        "https://api.cristin-utv.uio.no/v2/results" + searchTerms + "&fields=all&lang=nb"
     );
     console.log("Found " + searchResults.data.length + " results");
     console.log(searchResults);

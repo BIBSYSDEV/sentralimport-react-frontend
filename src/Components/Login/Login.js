@@ -27,6 +27,7 @@ export default function Login(props) {
     function handleLogout(){
         localStorage.clear();
         window.location.href = "/login";
+        // window.location.href = "https://auth.dataporten.no/logout";
     }
 
     function generateNonce() {

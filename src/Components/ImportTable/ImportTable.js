@@ -226,7 +226,7 @@ export default function EnhancedTable() {
 
   async function getRows() {
     var fetchString =
-      "http://localhost:8080/criswsint/sentralimport/publications?year_published=" +
+      "https://api.cristin-utv.uio.no/criswsinta/sentralimport/publications?year_published=" +
       state.currentImportYear.value;
 
     if (
@@ -276,15 +276,13 @@ export default function EnhancedTable() {
     async function getJournals(data) {
       for (var i = 0; i < data.length; i++) {
         if (data[i].hasOwnProperty("channel")) {
-          var journal = await axios.get(
-            "https://api.cristin-utv.uio.no/v2/results/channels?type=journal&id=" +
+          let journal = await axios.get(
+            "http://localhost:8080/crisrest/results/channels?type=journal&id=" +
               data[i].channel.id
           );
-          console.log(journal);
           data[i].channel.journal = journal.data[0].hasOwnProperty("title")
             ? journal.data[0].title
             : "";
-          console.log(data[i]);
         }
       }
       handleRows(data);
@@ -428,7 +426,7 @@ export default function EnhancedTable() {
                         </div>
                         <div className="content-wrapper">
                           <h6 className={`result-title`}>
-                            {row.languages[0].title}
+                            {row.languages.filter(l => l.original)[0].title}
                           </h6>
                           <div className={`metadata`}>
 
@@ -463,7 +461,7 @@ export default function EnhancedTable() {
                         </div>
                       </TableCell>
                       <TableCell align="right">
-                        <div>{row.category}</div>
+                        <div>{row.categoryName}</div>
                       </TableCell>
                       <TableCell align="right">{row.sourceName}</TableCell>
                       <TableCell align="right">{row.registered}</TableCell>
