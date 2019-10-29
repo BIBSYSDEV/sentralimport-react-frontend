@@ -112,6 +112,7 @@ function ContributorModal(props) {
       variant: "success"
     });
     props.toggle();
+    dispatch({ type: "setContributorPage", payload: 0 });
   }
 
   function handleChooseAuthor(author) {
