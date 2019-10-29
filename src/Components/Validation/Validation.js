@@ -71,13 +71,7 @@ export default function Validation(props) {
           : updateErrors(utgivelseError);
 
         break;
-      case "kilde":
-        var kildeValid = state.validation.length >= 3;
-        var kildeError = "Kilde mangler/ har feil";
 
-        kildeValid ? removeError(kildeError) : updateErrors(kildeError);
-
-        break;
       case "tidsskrift":
         var tidsskriftValid = state.validation.length > 3;
         var tidsskriftError = "Ingen tidsskrift valgt";
@@ -123,14 +117,6 @@ export default function Validation(props) {
     var fieldErrors = [];
 
     var data = [
-      {
-        name: "kilde",
-        value: props.duplicate
-          ? props.publication.hasOwnProperty("import_sources")
-            ? props.publication.import_sources[0].source_name
-            : "xx"
-          : props.publication.sourceName
-      },
       {
         name: "tidsskrift",
         value: props.duplicate ? props.publication.journal.name : "x"
@@ -225,13 +211,6 @@ export default function Validation(props) {
           !utgivelseValid
             ? fieldErrors.push(utgivelseError)
             : fieldErrors.push();
-
-          break;
-        case "kilde":
-          var kildeValid = data[i].value.length >= 3;
-          var kildeError = "Kilde mangler/har feil";
-
-          !kildeValid ? fieldErrors.push(kildeError) : fieldErrors.push();
 
           break;
         case "tidsskrift":

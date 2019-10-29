@@ -115,26 +115,19 @@ function ContributorModal(props) {
   }
 
   function handleChooseAuthor(author) {
-    console.log(author.imported.order);
-    console.log(author.toBeCreated.order);
-    console.log(author);
     const toBeCreatedOrder = author.toBeCreated.order;
-    const importedOrder = author.imported.order;
 
-    console.log(toBeCreatedOrder);
-    console.log(importedOrder);
     let temp = [...data];
     temp[toBeCreatedOrder - 1].toBeCreated.affiliations =
       author.imported.affiliations;
     temp[toBeCreatedOrder - 1].toBeCreated.first_name =
       author.imported.first_name;
     temp[toBeCreatedOrder - 1].toBeCreated.surname = author.imported.surname;
-
     temp[toBeCreatedOrder - 1].toBeCreated.authorname =
       author.imported.authorname;
-
     temp[toBeCreatedOrder - 1].toBeCreated.cristin_person_id =
       author.imported.cristin_person_id;
+    temp[toBeCreatedOrder - 1].isEditing = false;
 
     setData(temp);
   }
