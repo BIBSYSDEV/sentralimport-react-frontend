@@ -130,6 +130,12 @@ function ContributorModal(props) {
       author.imported.first_name;
     temp[toBeCreatedOrder - 1].toBeCreated.surname = author.imported.surname;
 
+    temp[toBeCreatedOrder - 1].toBeCreated.authorname =
+      author.imported.authorname;
+
+    temp[toBeCreatedOrder - 1].toBeCreated.cristin_person_id =
+      author.imported.cristin_person_id;
+
     setData(temp);
   }
 
