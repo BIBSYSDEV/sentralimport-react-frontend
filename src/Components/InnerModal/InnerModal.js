@@ -700,7 +700,7 @@ function InnerModal(props) {
                                         value={kilde}
                                         onChange={event => handleChangeKilde(event)}
                                         margin="normal"
-                                        required
+                                        disabled
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -710,7 +710,7 @@ function InnerModal(props) {
                                         value={kildeId}
                                         onChange={event => handleChangeKildeId(event)}
                                         margin="normal"
-                                        required
+                                        disabled
                                     />
                                 </FormGroup>
                                 <FormGroup>

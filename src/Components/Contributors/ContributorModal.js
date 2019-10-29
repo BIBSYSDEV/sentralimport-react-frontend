@@ -114,11 +114,22 @@ function ContributorModal(props) {
     props.toggle();
   }
 
-  function handleChooseAuthor(author, index) {
-    var temp = [...data];
-    console.log(index);
-    temp[index].isEditing = false;
-    temp[index].toBeCreated = author;
+  function handleChooseAuthor(author) {
+    console.log(author.imported.order);
+    console.log(author.toBeCreated.order);
+    console.log(author);
+    const toBeCreatedOrder = author.toBeCreated.order;
+    const importedOrder = author.imported.order;
+
+    console.log(toBeCreatedOrder);
+    console.log(importedOrder);
+    let temp = [...data];
+    temp[toBeCreatedOrder - 1].toBeCreated.affiliations =
+      author.imported.affiliations;
+    temp[toBeCreatedOrder - 1].toBeCreated.first_name =
+      author.imported.first_name;
+    temp[toBeCreatedOrder - 1].toBeCreated.surname = author.imported.surname;
+
     setData(temp);
   }
 
@@ -407,12 +418,7 @@ function ContributorModal(props) {
                     {row.imported.surname && row.imported.first_name ? (
                       <Button
                         color="primary"
-                        onClick={() =>
-                          handleChooseAuthor(
-                            row.imported,
-                            row.toBeCreated.order - 1
-                          )
-                        }
+                        onClick={() => handleChooseAuthor(row)}
                       >
                         Velg denne
                       </Button>
