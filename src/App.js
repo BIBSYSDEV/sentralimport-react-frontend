@@ -1,22 +1,16 @@
 import React from "react";
 import "./App.css";
 import Panel from "./Components/Panel/ImportPanel";
-import LogoHeader from "./Components/LogoHeader/LogoHeader";
 import ImportTable from "./Components/ImportTable/ImportTable";
 import Grid from "@material-ui/core/Grid/Grid";
 import FilterForm from "./Components/FilterForm/FilterForm";
 import DropdownPanel from "./Components/DropdownPanel/DropdownPanel";
-import { ContextProvider } from "./Context";
+import Header from "./Components/Header/Header";
 
 export default function App() {
   return (
-    <ContextProvider>
       <div className="App">
-        <Grid container spacing={3}>
-          <Grid item xs>
-            <LogoHeader />
-          </Grid>
-        </Grid>
+        <Header />
         <Grid container spacing={3}>
           <Grid item xs={3}>
             <DropdownPanel />
@@ -34,6 +28,5 @@ export default function App() {
           </Grid>
         </Grid>
       </div>
-    </ContextProvider>
   );
 }
