@@ -52,7 +52,7 @@ function InnerModal(props) {
             setSelectedJournal(workedOn ?
                 {
                     value: temp.publication.channel.id,
-                    label: temp.publication.channel.journal
+                    label: temp.publication.channel.title
                 } :
                 (props.duplicate ?
                     {
@@ -62,7 +62,7 @@ function InnerModal(props) {
                     :
                     {
                         value: props.data.channel.id,
-                        label: props.data.channel.journal
+                        label: props.data.channel.title
                     }
                 )
             );
@@ -208,7 +208,7 @@ function InnerModal(props) {
                 channel: {
                     ...publishingDetails,
                     id: selectedJournal.value,
-                    journal: selectedJournal.label
+                    title: selectedJournal.label
                 },
                 doi: doi,
                 externalId: kildeId,
@@ -324,7 +324,7 @@ function InnerModal(props) {
             props.data.channel
                 ? {
                     value: props.data.channel.id,
-                    label: props.data.channel.journal
+                    label: props.data.channel.title
                 }
                 : {value: "x", label: "Ingen tidsskrift funnet"}
         );
@@ -385,7 +385,7 @@ function InnerModal(props) {
         if (name === null || name === "")
             name = "*";
         await axios
-            .get("https://api.cristin-utv.uio.no/v2/results/channels?type=journal&query=title_general:" + name)
+            .get("http://localhost:8080/crisrest-2.5-SNAPSHOT/results/channels?type=journal&query=title_general:" + name)
             .then(response => {
                 updateJournals(response.data);
             });
@@ -435,9 +435,15 @@ function InnerModal(props) {
         margin: "3px"
     };
 
+    const modalContent = {
+        justifyContent: 'center',
+            alignItems: 'center',
+            padding: 0
+    };
+
     return (
         <div>
-            <Modal isOpen={props.open} size="xl">
+            <Modal isOpen={props.open} size="lg" style={modalContent}>
                 <ModalHeader toggle={handleClose}>Import av publikasjon</ModalHeader>
                 <ModalBody>
                     <Grid item
@@ -448,7 +454,7 @@ function InnerModal(props) {
                         xs
                         sm
                     >
-                        <Grid container item sm={4} xs={12} alignContent="center" alignItems="center" style={{ marginLeft: "150px"}}>
+                        <Grid container item sm={5} xs={12} alignContent="center" alignItems="center">
                             <Form>
                                 <h3>Importpublikasjon</h3>
                                 <FormGroup>
@@ -504,7 +510,7 @@ function InnerModal(props) {
                                         <TextField
                                             id="import-tidsskrift"
                                             label="Tidsskrift"
-                                            value={props.data.channel.journal}
+                                            value={props.data.channel.title}
                                             margin="normal"
                                             disabled
                                         />
@@ -668,11 +674,11 @@ function InnerModal(props) {
                                         )}
                                     </Grid>
                                 </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
-                                    <Button variant="contained" disabled margin="auto"> Disabled </Button>
-                                    </Grid>
-                                </FormGroup>
+                                {/*<FormGroup>*/}
+                                    {/*<Grid item>*/}
+                                    {/*<Button variant="contained" disabled margin="auto"> Disabled </Button>*/}
+                                    {/*</Grid>*/}
+                                {/*</FormGroup>*/}
                             </Form>
                         </Grid>
                         <Grid container item sm={4}>
