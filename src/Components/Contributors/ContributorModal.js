@@ -205,6 +205,9 @@ function ContributorModal(props) {
     setData(temp);
   };
 
+  // Ved sletting av en bidragsyter, sjekk om indeksering skal bli beholdt / oppdatert for alle andre elementer i bidragsyterlisten
+  //TODO skriv om funksjonen slik at den blir enklere å lese
+  //TODO Sjekk om alle edge-cases blir håndtert korrekt med tanke på rekkefølge i toBeCreated og imported (Sørg for at rekkefølgenummer på en gitt bidragsyter aldri blir mindre enn 1)
   const removeContributor = rowIndex => {
     var temp = [...data];
     temp.splice(rowIndex, 1);
@@ -219,13 +222,11 @@ function ContributorModal(props) {
         console.log(rowIndex);
         if (temp[i].imported.order === rowIndex) {
         } else if (temp[i].imported.order > rowIndex) {
-          console.log("løøp");
           if (temp[i].imported.order > 0) {
             if (temp[i].imported.order < temp[i].toBeCreated.order) {
               temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
             }
           } else {
-            console.log("elseloop");
             temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
           }
         }
@@ -240,7 +241,6 @@ function ContributorModal(props) {
         temp[j].imported.order = temp[j].imported.order - 1;
       } else if (temp[j].imported.order > rowIndex) {
         temp[j].imported.order = temp[j].imported.order - 1;
-        console.log("there");
       }
     }
     setData(temp);
