@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {Modal, ModalBody, ModalHeader} from "reactstrap";
+import {Modal, ModalBody, ModalHeader, ModalFooter} from "reactstrap";
 import {
     TextField,
     FormGroup,
@@ -445,7 +445,7 @@ function InnerModal(props) {
                             <Form>
                                 <h3>Importpublikasjon</h3>
                                 <FormGroup>
-                                    <Grid item xs>
+                                    <Grid item>
                                         <TextField
                                             id="import-id"
                                             label="Pubid"
@@ -571,7 +571,7 @@ function InnerModal(props) {
                                     </Grid>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Grid item container sm>
+                                    <Grid item>
                                         <TextField
                                             id="import-tittel"
                                             label="Tittel"
@@ -700,7 +700,7 @@ function InnerModal(props) {
                                         value={kilde}
                                         onChange={event => handleChangeKilde(event)}
                                         margin="normal"
-                                        required
+                                        disabled
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -710,7 +710,7 @@ function InnerModal(props) {
                                         value={kildeId}
                                         onChange={event => handleChangeKildeId(event)}
                                         margin="normal"
-                                        required
+                                        disabled
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -803,12 +803,14 @@ function InnerModal(props) {
                             </Form>
                         </Grid>
                     </Grid>
-                    <Button className={`contributorButton`} onClick={openContributorModal}>Bidragsytere</Button>
                     <div>{state.formErrors.map(error => { return(
                         <div>{error + "; "}</div>
                     )})}</div>
                 </ModalBody>
                 <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
+                <ModalFooter>
+                <Button className={`contributorButton`} onClick={openContributorModal}>Bidragsytere</Button>
+                </ModalFooter>
             </Modal>
             <ClosingDialog
                 open={dialogAbortOpen}

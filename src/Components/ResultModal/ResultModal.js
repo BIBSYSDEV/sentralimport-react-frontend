@@ -64,7 +64,7 @@ export default function ResultModal(props) {
               <text className={`journal-name`}>
                 {props.data.hasOwnProperty("channel")
                   ? props.data.channel.journal + " "
-                  : ""}
+                  : " "}
               </text>
               {props.data.registered.substring(
                 props.data.registered.length - 4,
