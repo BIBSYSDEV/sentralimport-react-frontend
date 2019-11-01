@@ -15,7 +15,7 @@ export default function Validation(props) {
   }, [props.publication]);
 
   function updateErrors(error) {
-    if (state.formErrors.includes(error)) {
+    if (state.formErrors.indexOf(error) > -1) {
     } else {
       var erray = [];
       erray.push(error);
@@ -32,7 +32,7 @@ export default function Validation(props) {
       var emptyArr = state.formErrors;
       emptyArr.pop();
       dispatch({ type: "setFormErrors", payload: emptyArr });
-    } else if (state.formErrors.includes(error)) {
+    } else if (state.formErrors.indexOf(error) > -1) {
       var newErrors = state.formErrors;
       newErrors.splice(newErrors.indexOf(error), 1);
       dispatch({
