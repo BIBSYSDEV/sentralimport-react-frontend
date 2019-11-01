@@ -131,13 +131,13 @@ function InnerModal(props) {
                         ...state.selectedPublication.journal,
                         volume: state.selectedPublication.journal.hasOwnProperty("volume") ? state.selectedPublication.journal.volume : "",
                         pageFrom: state.selectedPublication.journal.hasOwnProperty("pageFrom") ? state.selectedPublication.journal.pageFrom : "",
-                        pageTo: state.selectedPublication.journal.hasOwnProperty("pageTo") ? state.selectedPublication.journal.pageTo : ""
+                        pageTo: state.selectedPublication.journal.hasOwnProperty("pageTo") ? state.selectedPublication.journal.pageTo : "",
+                        issue: state.selectedPublication.journal.hasOwnProperty("issue") ? state.selectedPublication.journal.issue : ""
                     }
                     :
                         props.data.channel
                 )
             );
-
         }
         
         setFields();
@@ -259,6 +259,10 @@ function InnerModal(props) {
         setPublishingDetails({...publishingDetails, volume: event.target.value})
     }
 
+    function handleChangeIssue(event) {
+        setPublishingDetails({...publishingDetails, issue: event.target.value})
+    }
+
     function handleChangePageFrom(event) {
         setPublishingDetails({...publishingDetails, pageFrom: event.target.value})
     }
@@ -341,6 +345,10 @@ function InnerModal(props) {
 
     function copyVolume() {
         setPublishingDetails({...publishingDetails, volume: props.data.channel.volume})
+    }
+
+    function copyIssue() {
+        setPublishingDetails({...publishingDetails, issue: props.data.channel.issue})
     }
 
     function toggle() {
@@ -647,9 +655,30 @@ function InnerModal(props) {
                                         )}
                                     </Grid>
                                     <Grid item>
+                                        <TextField
+                                            id="import-hefte"
+                                            label="Hefte"
+                                            value={
+                                                props.data.channel.issue ? props.data.channel.issue
+                                                    : ""
+                                            }
+                                            margin="normal"
+                                            disabled
+                                        />
+                                        {props.data.channel.issue === publishingDetails.issue ? (
+                                            <IconButton color="primary" style={equalButtonStyle}>
+                                                <DragHandleIcon />
+                                            </IconButton>
+                                        ) : (
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyIssue}>
+                                                <TrendingFlatIcon />
+                                            </IconButton>
+                                        )}
+                                    </Grid>
+                                    <Grid item>
                                         <label style={labelStyle} htmlFor="pageFrom">Side fra</label>
                                         <label style={labelStyle} htmlFor="pageTo">Side til</label>
-                                        <div style={{maxWidth: "213px", float:"left"}}>
+                                        <div>
                                             <input
                                                 id="pageFrom"
                                                 value={props.data.channel.pageFrom ? props.data.channel.pageFrom : ""}
@@ -662,7 +691,7 @@ function InnerModal(props) {
                                                 style={pageStyle}
                                                 disabled
                                             />
-                                        </div>
+
                                         {props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
@@ -672,13 +701,9 @@ function InnerModal(props) {
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
+                                        </div>
                                     </Grid>
                                 </FormGroup>
-                                {/*<FormGroup>*/}
-                                    {/*<Grid item>*/}
-                                    {/*<Button variant="contained" disabled margin="auto"> Disabled </Button>*/}
-                                    {/*</Grid>*/}
-                                {/*</FormGroup>*/}
                             </Form>
                         </Grid>
                         <Grid container item sm={4}>
@@ -798,6 +823,15 @@ function InnerModal(props) {
                                             value={publishingDetails.volume}
                                             margin="normal"
                                             onChange={handleChangeVolume}
+                                        />
+                                    </Grid>
+                                    <Grid item>
+                                        <TextField
+                                            id="import-hefte"
+                                            label="Hefte"
+                                            value={publishingDetails.issue}
+                                            margin="normal"
+                                            onChange={handleChangeIssue}
                                         />
                                     </Grid>
                                     <Grid item>
