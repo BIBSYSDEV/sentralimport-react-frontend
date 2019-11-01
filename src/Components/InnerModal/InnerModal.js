@@ -445,7 +445,7 @@ function InnerModal(props) {
                             <Form>
                                 <h3>Importpublikasjon</h3>
                                 <FormGroup>
-                                    <Grid item xs>
+                                    <Grid item>
                                         <TextField
                                             id="import-id"
                                             label="Pubid"
@@ -571,7 +571,7 @@ function InnerModal(props) {
                                     </Grid>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Grid item container sm>
+                                    <Grid item>
                                         <TextField
                                             id="import-tittel"
                                             label="Tittel"
