@@ -26,6 +26,7 @@ import './style.css';
 import '../../assets/styles/buttons.scss'
 import ButtonGroup from "@material-ui/core/ButtonGroup/ButtonGroup";
 import cloneDeep from 'lodash/cloneDeep';
+import CreateJournalPanel from "../CreateJournalPanel/CreateJournalPanel";
 
 //TODO: erstatt react-select med ny funksjon for oppretting av tidsskrifter (react-creatable) og sett opp select for valg av kategori via dropdown
 //TODO: skill mellom import og cristin felter med farge/styling
@@ -391,7 +392,7 @@ function InnerModal(props) {
         if (name === null || name === "")
             name = "*";
         await axios
-            .get("http://localhost:8080/crisrest-2.5-SNAPSHOT/results/channels?type=journal&query=title_general:" + name)
+            .get("http://localhost:8090/crisrest-2.5-SNAPSHOT/results/channels?type=journal&query=title_general:" + name)
             .then(response => {
                 updateJournals(response.data);
             });
@@ -864,16 +865,11 @@ function InnerModal(props) {
                             </Form>
                         </Grid>
                     </Grid>
-<<<<<<< HEAD
-                    <div>{state.formErrors.map((error, i) => { return(
-                        <div key={i}>{error + "; "}</div>
-=======
                     <div className={"createJournalPanel"}>
                     <CreateJournalPanel />
                     </div>
                     <div>{state.formErrors.map(error => { return(
                         <div>{error + "; "}</div>
->>>>>>> 304af5d... komponent for oppretting av nye tidsskrifter og feilmelding ved login
                     )})}</div>
                 </ModalBody>
                 <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />

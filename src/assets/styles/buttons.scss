@@ -9,10 +9,9 @@
   margin-top: auto;
 }
 
-<<<<<<< HEAD
 .buttonGroup {
   max-width: 0;
-=======
+}
 .createJournalPanel {
   position: absolute;
   top: 385px;
@@ -20,14 +19,15 @@
 }
 
 .createJournalButton {
-  width: 150px;
+  width: 130px;
   position: absolute;
-  right: 35px;
+  right: -30px;
+  top: -1px;
 }
 
 .createJournalCard {
   position: relative;
-  left: 65px;
+  left: 150px;
   top: 40px;
   width: 250px;
 }
@@ -35,9 +35,8 @@
 .errorLogoutButton {
   position: relative;
   left: 450px;
->>>>>>> 304af5d... komponent for oppretting av nye tidsskrifter og feilmelding ved login
 }
 
 .selected {
-  color:cornflowerblue !important;
+  color: cornflowerblue !important;
 }

@@ -75,7 +75,7 @@ function CreateJournalPanel(props) {
   return (
     <div>
       <Button className={"createJournalButton"} onClick={() => handleOpen()}>
-        Opprett tidsskrift
+        Nytt tidsskrift
       </Button>
       <Collapse in={open}>
         <div className={"createJournalCard"}>
