@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {Modal, ModalBody, ModalHeader} from "reactstrap";
+import {Modal, ModalBody, ModalHeader, ModalFooter} from "reactstrap";
 import {
     TextField,
     FormGroup,
@@ -21,12 +21,12 @@ import {Context} from "../../Context";
 import axios from "axios";
 import '../../assets/styles/buttons.scss'
 import ContributorModal from "../Contributors/ContributorModal";
-import { red } from "@material-ui/core/colors";
+import { green, red } from "@material-ui/core/colors";
 import './style.css';
 import '../../assets/styles/buttons.scss'
 import ButtonGroup from "@material-ui/core/ButtonGroup/ButtonGroup";
 
-//TODO: erstatt react-select med ny funksjon for oppretting av tidsskrifter (react-creatable)
+//TODO: erstatt react-select med ny funksjon for oppretting av tidsskrifter (react-creatable) og sett opp select for valg av kategori via dropdown
 //TODO: skill mellom import og cristin felter med farge/styling
 //TODO: tidsskrift id er ikke med i duplikat. må derfor matche på issn i stedet?
 
@@ -866,12 +866,14 @@ function InnerModal(props) {
                             </Form>
                         </Grid>
                     </Grid>
-                    <Button className={`contributorButton`} onClick={openContributorModal}>Bidragsytere</Button>
                     <div>{state.formErrors.map((error, i) => { return(
                         <div key={i}>{error + "; "}</div>
                     )})}</div>
                 </ModalBody>
                 <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
+                <ModalFooter>
+                <Button className={`contributorButton`} onClick={openContributorModal}>Bidragsytere</Button>
+                </ModalFooter>
             </Modal>
             <ClosingDialog
                 open={dialogAbortOpen}

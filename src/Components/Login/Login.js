@@ -77,10 +77,10 @@ export default function Login(props) {
           container
           alignItems="center"
           justify="center"
-          direction="column"
+          direction="row"
           className={"login-grid"}
         >
-          <Grid item xs>
+          <Grid item xs={12}>
             <img
               src={logo}
               className={"cristin-logo"}
@@ -89,13 +89,17 @@ export default function Login(props) {
             ></img>
             <h1> CRISTIN Sentralimport</h1>
           </Grid>
-          <Grid item xs>
+          <Grid container item xs={12} justify="center">
             <Card className={"login-card"}>
               <CardContent>
                 <Typography variant="body1" component="div" gutterBottom>
                   Logg inn til Sentralimport:
                 </Typography>
-                <Button onClick={handleLogin} color="info" size="lg">
+                <Button
+                  onClick={handleLogin}
+                  color="primary"
+                  variant="contained"
+                >
                   <Grid container alignContent="center" spacing={2}>
                     <Grid item xs={2}>
                       <img
@@ -108,7 +112,7 @@ export default function Login(props) {
                     <Grid
                       item
                       container
-                      xs
+                      xs={10}
                       alignItems="center"
                       justify="center"
                     >

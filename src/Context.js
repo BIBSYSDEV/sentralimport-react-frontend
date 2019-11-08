@@ -22,7 +22,9 @@ let initialState = {
   },
   validation: " ",
   formErrors: ["Ingen tidsskrift valgt"],
-  totalCount: 0
+  totalCount: 0,
+  contributorPage: 0,
+  contributorPerPage: 5
 };
 
 let reducer = (state, action) => {
@@ -57,6 +59,10 @@ let reducer = (state, action) => {
       return { ...state, formErrors: action.payload };
     case "setTotalCount":
       return { ...state, totalCount: action.payload };
+    case "setContributorPage":
+      return { ...state, contributorPage: action.payload };
+    case "setContributorPerPage":
+      return { ...state, contributorPerPage: action.payload };
     default:
       return state;
   }

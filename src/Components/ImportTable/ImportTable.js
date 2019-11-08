@@ -1,6 +1,6 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import {lighten, makeStyles} from "@material-ui/core/styles";
+import { lighten, makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -10,7 +10,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import ResultIcon from "../../assets/icons/result-active.svg";
 import Paper from "@material-ui/core/Paper";
 import axios from "axios";
-import {Context} from "../../Context";
+import { Context } from "../../Context";
 import IconButton from "@material-ui/core/IconButton";
 import PeopleIcon from "@material-ui/icons/People";
 import ResultModal from "../ResultModal/ResultModal";
@@ -18,6 +18,7 @@ import AuthorListModal from "../AuthorListModal/AuthorListModal";
 import Pagination from "../Pagination/Pagination";
 import "../../assets/styles/Results.scss";
 import "../../assets/styles/Imports.css";
+import { TableFooter } from "@material-ui/core";
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -293,11 +294,9 @@ export default function EnhancedTable() {
         dispatch({type: "setPageNr", payload: 0});
     }
 
-    function handleRows(temp) {
-        console.log("test");
-        console.log(temp);
-        setRows(temp);
-    }
+  function handleRows(temp) {
+    setRows(temp);
+  }
 
     function handleRequestSort(event, property) {
         const isDesc = orderBy === property && order === "desc";

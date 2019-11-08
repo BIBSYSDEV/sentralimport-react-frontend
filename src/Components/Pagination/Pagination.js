@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Paper, Grid } from "@material-ui/core";
+import { Button, Paper, Grid, TableRow, TableCell } from "@material-ui/core";
 import { Context } from "../../Context";
 import Select from "react-select";
 
@@ -39,70 +39,58 @@ export default function Pagination(props) {
   }
 
   return (
-    <Paper>
-      <div>
-        <Grid container direction="row" justify="space-between">
-          <Grid container item xs={4}>
-            <Grid item xs>
-              <div>Publikasjoner per side: &nbsp;</div>
-            </Grid>
+    <TableRow overflow="visible">
+      <TableCell></TableCell>
+      <TableCell align="left" overflow="visible">
+        <div>Publikasjoner per side: &nbsp;</div>
 
-            <Grid item xs>
-              <Select
-                name="rowsPerPageSelect"
-                options={rowsPerPage}
-                className="basic-multi-select"
-                classNamePrefix="select"
-                onChange={onChangePerPage}
-                defaultValue={rowsPerPage[0]}
-              />
-            </Grid>
-          </Grid>
-          <Grid container item direction="row" xs={2}>
-            <Grid item xs>
-              {state.currentPageNr * state.currentPerPage.value + 1} -{" "}
-              {(state.currentPageNr + 1) * state.currentPerPage.value <
-              state.totalCount
-                ? (state.currentPageNr + 1) * state.currentPerPage.value
-                : state.totalCount}
-              , side:
-            </Grid>
-            <Grid item xs>
-              <div style={{ width: "150px" }}>
-                <Select
-                  value={{
-                    label: state.currentPageNr + 1,
-                    value: state.currentPageNr
-                  }}
-                  options={pageValues}
-                  onChange={changePage}
-                />
-              </div>
-            </Grid>
-          </Grid>
-          <Grid container direction="row" spacing={3} item xs={2}>
-            <Grid item>
-              <Button
-                onClick={decrementPage}
-                disabled={state.currentPageNr > 0 ? false : true}
-              >
-                {"< "}Forrige
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                onClick={incrementPage}
-                disabled={
-                  (state.currentPageNr + 1) * state.currentPerPage.value >=
-                  state.totalCount
-                }
-              >
-                Neste {" >"}
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
-      </div>
-    </Paper>
+        <Select
+          name="rowsPerPageSelect"
+          options={rowsPerPage}
+          className="basic-multi-select"
+          classNamePrefix="select"
+          onChange={onChangePerPage}
+          defaultValue={rowsPerPage[0]}
+        />
+      </TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell align="right" overflow="visible">
+        {state.currentPageNr * state.currentPerPage.value + 1} -{" "}
+        {(state.currentPageNr + 1) * state.currentPerPage.value <
+        state.totalCount
+          ? (state.currentPageNr + 1) * state.currentPerPage.value
+          : state.totalCount}
+        , side:
+        <Select
+          value={{
+            label: state.currentPageNr + 1,
+            value: state.currentPageNr
+          }}
+          options={pageValues}
+          onChange={changePage}
+        />
+      </TableCell>
+
+      <TableCell align="right">
+        <Button
+          onClick={decrementPage}
+          disabled={state.currentPageNr > 0 ? false : true}
+        >
+          {"< Forrige"}
+        </Button>
+      </TableCell>
+      <TableCell align="right">
+        <Button
+          onClick={incrementPage}
+          disabled={
+            (state.currentPageNr + 1) * state.currentPerPage.value >=
+            state.totalCount
+          }
+        >
+          {"Neste >"}
+        </Button>
+      </TableCell>
+    </TableRow>
   );
 }

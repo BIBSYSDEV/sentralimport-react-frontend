@@ -15,7 +15,7 @@ export default function Validation(props) {
   }, [props.publication]);
 
   function updateErrors(error) {
-    if (state.formErrors.includes(error)) {
+    if (state.formErrors.indexOf(error) > -1) {
     } else {
       var erray = [];
       erray.push(error);
@@ -32,7 +32,7 @@ export default function Validation(props) {
       var emptyArr = state.formErrors;
       emptyArr.pop();
       dispatch({ type: "setFormErrors", payload: emptyArr });
-    } else if (state.formErrors.includes(error)) {
+    } else if (state.formErrors.indexOf(error) > -1) {
       var newErrors = state.formErrors;
       newErrors.splice(newErrors.indexOf(error), 1);
       dispatch({
@@ -124,23 +124,18 @@ export default function Validation(props) {
 
     var data = [
       {
-        name: "kilde",
-        value: props.duplicate
-          ? props.publication.hasOwnProperty("import_sources")
-            ? props.publication.import_sources[0].source_name
-            : "xx"
-          : props.publication.sourceName
-      },
-      {
         name: "tidsskrift",
         value: props.duplicate ? props.publication.journal.name : "x"
       },
       {
         name: "doi",
         value: props.duplicate
-          ? props.publication.links[0].url.substring(
+          ? props.publication.links[
+              props.publication.links.length - 1
+            ].url.substring(
               16,
-              props.publication.links[0].url.length + 1
+              props.publication.links[props.publication.links.length - 1].url
+                .length + 1
             )
           : props.publication.doi
           ? props.publication.doi
@@ -173,27 +168,6 @@ export default function Validation(props) {
           ? props.publication.original_language
           : props.publication.languages[0].lang
       }
-      // ,
-      // {
-      //   name: "utgivelse",
-      //   value: props.duplicate
-      //     ? "Volum " +
-      //       props.publication.volume +
-      //       " (" +
-      //       props.publication.pages.from +
-      //       "-" +
-      //       props.publication.pages.to +
-      //       ")"
-      //     : props.publication.channel
-      //     ? "Volum " +
-      //       props.publication.channel.volume +
-      //       " (" +
-      //       props.publication.channel.pageFrom +
-      //       "-" +
-      //       props.publication.channel.pageTo +
-      //       ")"
-      //     : "Ingen utgivelsesdata funnet"
-      // }
     ];
     for (var i = 0; i < data.length; i++) {
       switch (data[i].name) {
@@ -206,7 +180,7 @@ export default function Validation(props) {
           break;
         case "doi":
           var doiValid = data[i].value.match(
-            /^([0-9]{2})[.]([0-9]{4})[/]([\a-z0-9-.]{1,})/i
+            /^([0-9]{2})[.]([0-9]{4})[/]([a-z0-9-.]{1,})/i
           );
           var doiError = "Doi har galt format";
 
@@ -222,13 +196,6 @@ export default function Validation(props) {
           !utgivelseValid
             ? fieldErrors.push(utgivelseError)
             : fieldErrors.push();
-
-          break;
-        case "kilde":
-          var kildeValid = data[i].value.length >= 3;
-          var kildeError = "Kilde mangler/har feil";
-
-          !kildeValid ? fieldErrors.push(kildeError) : fieldErrors.push();
 
           break;
         case "tidsskrift":
