@@ -25,6 +25,7 @@ import { green, red } from "@material-ui/core/colors";
 import './style.css';
 import '../../assets/styles/buttons.scss'
 import ButtonGroup from "@material-ui/core/ButtonGroup/ButtonGroup";
+import cloneDeep from 'lodash/cloneDeep';
 
 //TODO: erstatt react-select med ny funksjon for oppretting av tidsskrifter (react-creatable) og sett opp select for valg av kategori via dropdown
 //TODO: skill mellom import og cristin felter med farge/styling
@@ -34,10 +35,7 @@ function InnerModal(props) {
 
     const { useRef, useLayoutEffect } = React;
     let {state, dispatch} = React.useContext(Context);
-    useEffect(() => {
-        props.data.languages.sort((a, b) => a.original - b.original).reverse();
-    }, [props.data.languages]);
-    let languageCopy = [...props.data.languages];
+    const languageCopy = cloneDeep(props.data.languages.sort((a, b) => a.original - b.original).reverse());
 
     useEffect(() => {
         function setFields() {
@@ -97,7 +95,7 @@ function InnerModal(props) {
                         }
                     ]
                     :
-                        props.data.languages
+                        languageCopy
                 )
             );
 
@@ -110,7 +108,7 @@ function InnerModal(props) {
                         langName: state.selectedPublication.title.hasOwnProperty("nb") ? "Norsk, bokmål" : "Engelsk",
                         original: true
                     } :
-                    props.data.languages.filter(l => l.original)[0]
+                        props.data.languages.filter(l => l.original)[0]
                 )
             );
 
@@ -569,13 +567,13 @@ function InnerModal(props) {
                                         <TextField
                                             id="import-tittel"
                                             label="Tittel"
-                                            value={props.data.languages.filter(lang => lang.lang === selectedLang.lang)[0].title}
+                                            value={languageCopy.filter(lang => lang.lang === selectedLang.lang)[0].title}
                                             margin="normal"
                                             disabled
                                             multiline
                                         />
 
-                                        {props.data.languages.filter(lang => lang.lang === selectedLang.lang)[0].title === selectedLang.title ? (
+                                        {languageCopy.filter(lang => lang.lang === selectedLang.lang)[0].title === selectedLang.title ? (
                                             <IconButton color="primary" style={tittelButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>

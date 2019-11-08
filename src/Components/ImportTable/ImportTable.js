@@ -227,7 +227,7 @@ export default function EnhancedTable() {
 
     async function getRows() {
         var fetchString =
-            "https://api.cristin-utv.uio.no/criswsinta/sentralimport/publications?year_published=" +
+            "http://localhost:8090/piarest/sentralimport/publications?year_published=" +
             state.currentImportYear.value;
 
         if (
@@ -266,28 +266,14 @@ export default function EnhancedTable() {
         await axios.get(fetchString).then(response => {
             console.log(fetchString);
             console.log(response.headers["x-total-count"]);
-            getJournals(response.data);
+            console.log(response.data);
+            handleRows(response.data);
 
             dispatch({
                 type: "setTotalCount",
                 payload: response.headers["x-total-count"]
             });
         });
-
-        async function getJournals(data) {
-            for (var i = 0; i < data.length; i++) {
-                if (data[i].hasOwnProperty("channel")) {
-                    let journal = await axios.get(
-                        "http://localhost:8080/crisrest-2.5-SNAPSHOT/results/channels?type=journal&id=" +
-                        data[i].channel.id
-                    );
-                    data[i].channel.title = journal.data[0].hasOwnProperty("title")
-                        ? journal.data[0].title
-                        : "";
-                }
-            }
-            handleRows(data);
-        }
     }
 
     function resetPageNr() {
@@ -437,7 +423,7 @@ export default function EnhancedTable() {
                                                         {row.authors.length > 5 ? " et al " : ""}
                                                         {" (" + row.authors.length + ") "}
                                                         <p className={`journal-name`}>
-                                                            {row.hasOwnProperty("channel")
+                                                            {row.hasOwnProperty("channel") && row.channel.hasOwnProperty("title")
                                                                 ? row.channel.title + " "
                                                                 : ""}
                                                         </p>
@@ -494,20 +480,6 @@ export default function EnhancedTable() {
                         </TableBody>
                     </Table>
                 </div>
-                {/*<TablePagination
-          hidden={true}
-          rowsPerPageOptions={[5, 10]}
-          component="div"
-          rowsPerPage={rowsPerPage}
-          count={rows.length}
-          backIconButtonProps={{
-            "aria-label": "Previous Page"
-          }}
-          nextIconButtonProps={{
-            "aria-label": "Next Page"
-          }}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        /> */}
             </Paper>
             <Pagination data={rows} />
 

@@ -17,7 +17,7 @@ export default function Login(props) {
 
     function handleLogin(){
         localStorage.setItem("nonce", generateNonce());
-        window.location.href = "https://auth.dataporten.no/oauth/authorization?client_id=" + client_id + "&redirect_uri=http://localhost:3000" +
+        window.location.href = "https://auth.dataporten.no/oauth/authorization?client_id=" + client_id + "&redirect_uri=http://localhost:3000/login" +
             "&scope=openid userid email userid-feide userid-nin profile " + gateway_scope +"&response_type=id_token token&state=" + authState + "&nonce=" + localStorage.getItem("nonce");
     }
 
