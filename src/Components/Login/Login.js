@@ -10,24 +10,21 @@ import { Grid, CardContent, Typography } from "@material-ui/core";
 import { Card } from "@material-ui/core";
 
 export default function Login(props) {
-    //privat
-    const client_id = "7848abba-1ae4-47c9-b928-f8e4a285a945";
-    //unit
-    // const client_id = "ab940329-87f9-40dc-a129-bf9d4ae07917";
+    const client_id = "ab940329-87f9-40dc-a129-bf9d4ae07917";
     const search = queryString.parse(props.location.hash);
     const authState = "bra";
-    const gateway_scope = "gk_testing";
+    const gateway_scope = "gk_piarest-utv";
 
     function handleLogin(){
         localStorage.setItem("nonce", generateNonce());
-        window.location.href = "https://auth.dataporten.no/oauth/authorization?client_id=" + client_id + "&redirect_uri=http://localhost:3000/login" +
-            "&scope=openid userid email userid-feide profile " + gateway_scope +"&response_type=id_token token&state=" + authState + "&nonce=" + localStorage.getItem("nonce");
+        window.location.href = "https://auth.dataporten.no/oauth/authorization?client_id=" + client_id + "&redirect_uri=http://localhost:3000" +
+            "&scope=openid userid email userid-feide userid-nin profile " + gateway_scope +"&response_type=id_token token&state=" + authState + "&nonce=" + localStorage.getItem("nonce");
     }
 
     function handleLogout(){
         localStorage.clear();
         window.location.href = "/login";
-        // window.location.href = "https://auth.dataporten.no/logout";
+        window.location.href = "https://auth.dataporten.no/logout";
     }
 
     function generateNonce() {
@@ -41,7 +38,7 @@ export default function Login(props) {
                     Authorization: "Bearer " + localStorage.getItem("access_token")
                 }
             };
-            let test = await axios.get("https://testing.dataporten-api.no", config);
+            let test = await axios.get("https://piarest-utv.dataporten-api.no", config);
             console.log(test);
         } else {
             console.log("access-token no good")
@@ -59,7 +56,6 @@ export default function Login(props) {
             localStorage.setItem("authorized", "true");
             localStorage.setItem("access_token", search.access_token.toString());
             localStorage.setItem("expires", jsonToken.exp);
-            window.location.href = "/";
         }
     }
 
