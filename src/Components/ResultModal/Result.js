@@ -5,29 +5,40 @@ import {
     Radio
 } from "@material-ui/core";
 
-export function Result(props) {
+export function Result({data}) {
 
     const getMainImage = () => {return ResultIcon};
 
+    const titleStyle = {
+        display: 'block',
+        fontSize: '1rem',
+        marginTop: '0',
+        marginBottom: '.5rem',
+        marginLeft: '0',
+        marginRight: 0,
+        fontWeight: '500',
+        lineHeight: '1.2'
+    };
+
     return (
         <div>
-            <li className={`card-horiz basic-background card-horiz-hover result`} key={props.data.cristin_result_id}>
-                <Radio value={props.data.cristin_result_id}></Radio>
-                <a className={`result result`} href={"https://app.cristin.no/results/show.jsf?id=" + props.data.cristin_result_id} target="_blank" rel="noopener noreferrer">
+            <li className={`card-horiz basic-background card-horiz-hover result`} key={data.cristin_result_id}>
+                <Radio value={data.cristin_result_id}></Radio>
+                <a className={`result result`} href={"https://app.cristin.no/results/show.jsf?id=" + data.cristin_result_id} target="_blank" rel="noopener noreferrer">
                     <div className='image-wrapper'>
                         <img src={getMainImage('result')} alt="result"/>
                     </div>
                     <div className='content-wrapper'>
-                        <h6>{ props.data.title.hasOwnProperty('nb') ? props.data.title.nb : props.data.title.en }</h6>
+                        <p style={titleStyle}>{ data.title.hasOwnProperty('nb') ? data.title.nb : data.title.en }</p>
                         <div className={`metadata`}>
-                            <p>{props.data.authors.map((author) => author.surname + ", "  + author.first_name + "; ")}</p>
-                            <p className={`active`} >{props.data.category.name.en}</p>
+                            <p>{data.authors.map((author) => author.surname + ", "  + author.first_name + "; ")}</p>
+                            <p className={`active`} >{data.category.name.en}</p>
                             <p className={`italic`} >
-                                {props.data.hasOwnProperty('international_standard_numbers') ?
-                                    props.data.international_standard_numbers.map((issn) => "ISSN " + issn.type + ": " + issn.value + "; ") :
+                                {data.hasOwnProperty('international_standard_numbers') ?
+                                    data.international_standard_numbers.map((issn) => "ISSN " + issn.type + ": " + issn.value + "; ") :
                                 ""}
                             </p>
-                            <p>{ props.data.year_published }{ props.data.hasOwnProperty('publisher') ? ', ' + props.data.publisher.name : '' }</p>
+                            <p>{ data.year_published }{ data.hasOwnProperty('publisher') ? ', ' + data.publisher.name : '' }</p>
                         </div>
                     </div>
                 </a>

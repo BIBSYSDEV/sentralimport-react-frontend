@@ -27,13 +27,12 @@ export default function ResultModal(props) {
   function handleSubmit() {
     if (state.selected === "true") {
       setDuplicate(false);
-      console.log(isDuplicate);
+
       setInnerModal(true);
     } else if (state.selected === "false") {
       props.handleClose();
     } else {
       setDuplicate(true);
-      console.log(isDuplicate);
       setInnerModal(true);
     }
   }
@@ -63,8 +62,8 @@ export default function ResultModal(props) {
               {props.data.languages[0].title}
               <text className={`journal-name`}>
                 {props.data.hasOwnProperty("channel")
-                  ? props.data.channel.journal + " "
-                  : " "}
+                  ? props.data.channel.title + " "
+                  : ""}
               </text>
               {props.data.registered.substring(
                 props.data.registered.length - 4,
@@ -73,10 +72,10 @@ export default function ResultModal(props) {
               {props.data.hasOwnProperty("channel")
                 ? props.data.channel.volume + ";"
                 : ""}
-              {props.data.hasOwnProperty("channel")
+              {props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pageFrom")
                 ? props.data.channel.pageFrom + "-"
                 : ""}
-              {props.data.hasOwnProperty("channel")
+              {props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pageTo")
                 ? props.data.channel.pageTo
                 : ""}
               {props.data.hasOwnProperty("doi") ? " doi:" + props.data.doi : ""}

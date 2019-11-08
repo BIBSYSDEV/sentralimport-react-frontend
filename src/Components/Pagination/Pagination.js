@@ -9,7 +9,6 @@ export default function Pagination(props) {
   const [pageValues, setPageValues] = React.useState([]);
 
   useEffect(() => {
-    console.log(state.totalCount);
     var values = [];
     for (var i = 0; i < state.totalCount / state.currentPerPage.value; i++) {
       values.push({ value: i, label: i + 1 });

@@ -23,95 +23,141 @@ import '../../assets/styles/buttons.scss'
 import ContributorModal from "../Contributors/ContributorModal";
 import { green, red } from "@material-ui/core/colors";
 import './style.css';
+import '../../assets/styles/buttons.scss'
+import ButtonGroup from "@material-ui/core/ButtonGroup/ButtonGroup";
+import cloneDeep from 'lodash/cloneDeep';
 
 //TODO: erstatt react-select med ny funksjon for oppretting av tidsskrifter (react-creatable) og sett opp select for valg av kategori via dropdown
 //TODO: skill mellom import og cristin felter med farge/styling
+//TODO: tidsskrift id er ikke med i duplikat. må derfor matche på issn i stedet?
 
 function InnerModal(props) {
 
+    const { useRef, useLayoutEffect } = React;
     let {state, dispatch} = React.useContext(Context);
+    const languageCopy = cloneDeep(props.data.languages.sort((a, b) => a.original - b.original).reverse());
 
     useEffect(() => {
         function setFields() {
-        console.log(props.duplicate);
-        setKilde(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_name : "Ingen kilde funnet" ): props.data.sourceName);
-        setKildeId(props.duplicate ? (state.selectedPublication.hasOwnProperty("externalId") ? state.publication.externalId : "Ingen kildeId funnet") : props.data.externalId)
-        setSelectedJournal(props.duplicate ? {
-            value: state.selectedPublication.journal.name,
-            label: state.selectedPublication.journal.name
-        } : {
-            value: " ",
-            label: "Ingen tidsskrift funnet"
-        });
-        setTittel(props.duplicate ? state.selectedPublication.title.en : props.data.languages[0].title);
-        setAarstall(props.duplicate ? state.selectedPublication.year_published : 
-            props.data.registered.substring(
-                props.data.registered.length - 4,
-                props.data.registered.length
-            ));
-        setKategori(props.duplicate ? state.selectedPublication.category.code : props.data.category);
-        setLang(props.duplicate ? state.selectedPublication.original_language : props.data.languages[0].lang);
-        setDoi(props.duplicate ? state.selectedPublication.links[state.selectedPublication.links.length - 1].url.substring(
-            16,
-            state.selectedPublication.links[0].url.length + 1
-          ) :(
-            props.data.doi ? props.data.doi : "Ingen DOI funnet"));
-        setUtgivelse(props.duplicate ? ( state.selectedPublication.hasOwnProperty("volume") ? "Volum " +
-        state.selectedPublication.volume +
-        " (" +
-        state.selectedPublication.pages.from +
-        "-" +
-        state.selectedPublication.pages.to +
-        ") " : "Ingen utgivelsesdata funnet") : (
-        props.data.channel
-            ? "Volum " +
-            props.data.channel.volume +
-            " (" +
-            props.data.channel.pageFrom +
-            "-" +
-            props.data.channel.pageTo +
-            ") "
-            : "Ingen utgivelsesdata funnet"));
+            let temp = JSON.parse(localStorage.getItem("tempPublication"));
+            let workedOn = false;
+            if (temp !== null && temp.publication.pubId === props.data.pubId && !props.duplicate && temp.publication.duplicate === props.duplicate)
+                workedOn = true;
+
+            setKilde(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_name : "Ingen kilde funnet") : props.data.sourceName);
+            setKildeId(props.duplicate ? (state.selectedPublication.hasOwnProperty("externalId") ? state.publication.externalId : "Ingen kildeId funnet") : props.data.externalId);
+
+            setSelectedJournal(workedOn ?
+                {
+                    value: temp.publication.channel.id,
+                    label: temp.publication.channel.title
+                } :
+                (props.duplicate ?
+                    {
+                        value: state.selectedPublication.journal.international_standard_numbers[0].value,
+                        label: state.selectedPublication.journal.name
+                    }
+                    :
+                    {
+                        value: props.data.channel.id,
+                        label: props.data.channel.title
+                    }
+                )
+            );
+
+            setSelectedCategory(workedOn ?
+                {
+                    value: temp.publication.category,
+                    label: temp.publication.categoryName
+                } :
+                (props.duplicate ?
+                    {
+                        value: state.selectedPublication.category.code,
+                        label: state.selectedPublication.category.name.nb
+                    }
+                    :
+                    {
+                        value: props.data.category,
+                        label: props.data.categoryName
+                    }
+                )
+            );
+
+            setLanguages(workedOn ?
+                temp.publication.languages :
+                (props.duplicate ?
+                    [
+                        {
+                            title: state.selectedPublication.title.hasOwnProperty("nb") ? state.selectedPublication.title.nb : state.selectedPublication.title.en,
+                            lang: state.selectedPublication.title.hasOwnProperty("nb") ? "NB" : "EN",
+                            langName: state.selectedPublication.title.hasOwnProperty("nb") ? "Norsk, bokmål" : "Engelsk",
+                            original: true
+                        }
+                    ]
+                    :
+                        languageCopy
+                )
+            );
+
+            setSelectedLang(workedOn ?
+                temp.publication.languages.filter(l => l.original)[0] :
+                (props.duplicate ?
+                    {
+                        title: state.selectedPublication.title.hasOwnProperty("nb") ? state.selectedPublication.title.nb : state.selectedPublication.title.en,
+                        lang: state.selectedPublication.title.hasOwnProperty("nb") ? "NB" : "EN",
+                        langName: state.selectedPublication.title.hasOwnProperty("nb") ? "Norsk, bokmål" : "Engelsk",
+                        original: true
+                    } :
+                        props.data.languages.filter(l => l.original)[0]
+                )
+            );
+
+            setAarstall(workedOn ? temp.publication.registered :
+                (props.duplicate ? state.selectedPublication.year_published :
+                    props.data.registered.substring(
+                        props.data.registered.length - 4,
+                        props.data.registered.length
+                    )));
+
+            setDoi(workedOn ? temp.publication.doi :
+                (props.duplicate ? state.selectedPublication.links[state.selectedPublication.links.length - 1].url.substring(16, state.selectedPublication.links[0].url.length + 1) :
+                    (props.data.doi ? props.data.doi : "Ingen DOI funnet")));
+
+            setPublishingDetails(workedOn ? temp.publication.channel :
+                (props.duplicate ?
+                    {
+                        ...state.selectedPublication.journal,
+                        volume: state.selectedPublication.journal.hasOwnProperty("volume") ? state.selectedPublication.journal.volume : "",
+                        pageFrom: state.selectedPublication.journal.hasOwnProperty("pageFrom") ? state.selectedPublication.journal.pageFrom : "",
+                        pageTo: state.selectedPublication.journal.hasOwnProperty("pageTo") ? state.selectedPublication.journal.pageTo : "",
+                        issue: state.selectedPublication.journal.hasOwnProperty("issue") ? state.selectedPublication.journal.issue : ""
+                    }
+                    :
+                        props.data.channel
+                )
+            );
         }
         
         setFields();
-    }, [props.duplicate, state.selectedPublication])
-     
+    }, [props.duplicate, state.selectedPublication]);
+
     const [kilde, setKilde] = React.useState("");
 
     const [kildeId, setKildeId] = React.useState("");
 
     const [contributorModal, setContributorModal] = React.useState(false);
 
-    const [tittel, setTittel] = React.useState("");
-
     const [aarstall, setAarstall] = React.useState("");
 
-    const [kategori, setKategori] = React.useState("");
+    const [categories, setCategories] = React.useState();
 
-    const [lang, setLang] = React.useState("");
+    const [languages, setLanguages] = React.useState(languageCopy);
+
+    const [selectedLang, setSelectedLang] = React.useState(props.data.languages.filter(l => l.original)[0]);
 
     const [doi, setDoi] = React.useState("");
 
-    const [utgivelse, setUtgivelse] = React.useState("");
-
-    const [kildeIsEqual, setKildeIsEqual] = React.useState(true);
-
-    const [kildeIdIsEqual, setKildeIdIsEqual] = React.useState(true);
-
-    const [tittelIsEqual, setTittelIsEqual] = React.useState(true);
-
-    const [aarstallIsEqual, setAarstallIsEqual] = React.useState(true);
-
-    const [kategoriIsEqual, setKategoriIsEqual] = React.useState(true);
-
-    const [langIsEqual, setLangIsEqual] = React.useState(true);
-
-    const [doiIsEqual, setDoiIsEqual] = React.useState(true);
-
-    const [journalIsEqual, setJournalIsEqual] = React.useState(true);
-
-    const [utgivelseIsEqual, setUtgivelseIsEqual] = React.useState(true);
+    const [publishingDetails, setPublishingDetails] = React.useState(props.data.channel);
 
     const [selectedJournal, setSelectedJournal] = React.useState(props.duplicate ? {
         value: state.selectedPublication.journal.name,
@@ -121,156 +167,106 @@ function InnerModal(props) {
         label: "Ingen tidsskrift funnet"
     });
 
+    const [selectedCategory, setSelectedCategory] = React.useState(props.duplicate ? {
+        value: state.selectedPublication.category,
+        label: state.selectedPublication.categoryName
+    } : {
+        value: " ",
+        label: "Ingen kategori funnet"
+    });
+
     const [dialogOpen, setDialogOpen] = React.useState(false);
 
     const [dialogAbortOpen, setDialogAbortOpen] = React.useState(false);
 
-    const equalButtonStyle = {
-        marginTop: "20px",
-        marginLeft: "50px"
-    };
-
-    const arrowButtonStyle = {
-        marginTop: "20px",
-        marginLeft: "50px"
-    };
-
-    const selectStyle = {
-        marginTop: "15px"
-    };
-
-    const tittelButtonStyle = {
-        marginTop: "20px",
-        marginLeft: "68px",
-        color: red
-    };
-
-    const tittelEqualButtonStyle = {
-        marginTop: "20px",
-        marginLeft: "68px",
-        color: green
-    };
-
     const [journals, setJournals] = React.useState();
 
-    useEffect(() => {
-        async function getJournals() {
-            await axios
-                .get("https://api.cristin-utv.uio.no/v2/results/channels?type=journal")
-                .then(response => {
-                    console.log(response);
-                    updateJournals(response.data);
-                });
+    const firstUpdate = useRef(true);
+    useLayoutEffect(() => {
+        if (firstUpdate.current) {
+            firstUpdate.current = false;
+            return;
         }
-        getJournals();
+        handleTempSave();
+    }, [selectedCategory, selectedJournal, doi, aarstall, selectedLang, publishingDetails]);
+
+    useEffect(() => {
+        async function fetch() {
+            await getJournals(null);
+            await getCategories();
+        }
+        fetch();
     }, []);
 
-    function updateJournals(data) {
-        var tempArray = [];
-        for (var i = 0; i < data.length; i++) {
-            tempArray.push({value: data[i].id, label: data[i].title});
-        }
-        setJournals(tempArray);
+    function handleTempSave() {
+        let temp = {
+            publication: {
+                category: selectedCategory.value,
+                categoryName: selectedCategory.label,
+                channel: {
+                    ...publishingDetails,
+                    id: selectedJournal.value,
+                    title: selectedJournal.label
+                },
+                doi: doi,
+                externalId: kildeId,
+                languages: languages,
+                pubId: props.data.pubId,
+                registered: aarstall,
+                sourceName: kilde,
+                duplicate: props.duplicate
+            }
+        };
+        localStorage.setItem("tempPublication", JSON.stringify(temp));
     }
 
-    function handleChangeKilde(event) {
-        if (event.target.value !== props.data.sourceName) {
-            setKildeIsEqual(false);
-        } else {
-            setKildeIsEqual(true);
-        }
-        setKilde(event.target.value);
-        dispatch({type: "setSelectedField", payload: "kilde"});
-        dispatch({type: "setValidation", payload: event.target.value});
+    function handleChangeJournal(option) {
+        setSelectedJournal(option);
+        dispatch({type: "setSelectedField", payload: "tidsskrift"});
+        dispatch({type: "setValidation", payload: option.value});
     }
 
     function handleChangeTittel(event) {
-        if (event.target.value !== props.data.languages[0].title) {
-            setTittelIsEqual(false);
-        } else {
-            setTittelIsEqual(true);
-        }
-        setTittel(event.target.value);
-        dispatch({type: "setSelectedField", payload: "tittel"});
-        dispatch({type: "setValidation", payload: event.target.value});
+        let index = languages.map(l => l.lang).indexOf(selectedLang.lang);
+        setSelectedLang({...selectedLang, title: event.target.value});
+        languages[index].title = event.target.value;
+        setLanguages(languages);
     }
 
     function handleChangeAarstall(event) {
-        if (
-            event.target.value !==
-            props.data.registered.substring(
-                props.data.registered.length - 4,
-                props.data.registered.length
-            )
-        ) {
-            setAarstallIsEqual(false);
-        } else {
-            setAarstallIsEqual(true);
-        }
         setAarstall(event.target.value);
         dispatch({type: "setSelectedField", payload: "aarstall"});
         dispatch({type: "setValidation", payload: event.target.value});
     }
 
-    function handleChangeKategori(event) {
-        if (event.target.value !== props.data.category) {
-            setKategoriIsEqual(false);
-        } else {
-            setKategoriIsEqual(true);
-        }
-        setKategori(event.target.value);
-        dispatch({type: "setSelectedField", payload: "kategori"});
-        dispatch({type: "setValidation", payload: event.target.value});
+    function handleChangeCategory(option) {
+        setSelectedCategory(option);
     }
 
-    function handleChangeLang(event) {
-        if (event.target.value !== props.data.languages[0].lang) {
-            setLangIsEqual(false);
-        } else {
-            setLangIsEqual(true);
-        }
-        setLang(event.target.value);
-        dispatch({type: "setSelectedField", payload: "spraak"});
-        dispatch({type: "setValidation", payload: event.target.value});
+    function handleSelectedLang(lang) {
+        setSelectedLang(lang);
     }
 
     function handleChangeDoi(event) {
-        if (event.target.value !== props.data.doi) {
-            setDoiIsEqual(false);
-        } else {
-            setDoiIsEqual(true);
-        }
         setDoi(event.target.value);
         dispatch({type: "setSelectedField", payload: "doi"});
         dispatch({type: "setValidation", payload: event.target.value});
     }
 
-    function handleChangeUtgivelse(event) {
-        var utgivelse = props.data.channel
-            ? "Volum " +
-            props.data.channel.volume +
-            " (" +
-            props.data.channel.pageFrom +
-            "-" +
-            props.data.channel.pageTo +
-            ") "
-            : "Ingen utgivelsesdata funnet";
-        if (event.target.value !== utgivelse) {
-            setUtgivelseIsEqual(false);
-        } else {
-            setUtgivelseIsEqual(true);
-        }
-        setUtgivelse(event.target.value);
-        dispatch({type: "setSelectedField", payload: "utgivelse"});
-        dispatch({type: "setValidation", payload: event.target.value});
+    function handleChangeVolume(event) {
+        setPublishingDetails({...publishingDetails, volume: event.target.value})
     }
 
-    function handleChangeKildeId(event) {
-        if(event.target.value !== props.data.externalId) {
-            setKildeIdIsEqual(false);
-        } else {
-            setKildeIdIsEqual(true);
-        }
+    function handleChangeIssue(event) {
+        setPublishingDetails({...publishingDetails, issue: event.target.value})
+    }
+
+    function handleChangePageFrom(event) {
+        setPublishingDetails({...publishingDetails, pageFrom: event.target.value})
+    }
+
+    function handleChangePageTo(event) {
+        setPublishingDetails({...publishingDetails, pageTo: event.target.value})
     }
 
     function handleSubmit() {
@@ -285,21 +281,12 @@ function InnerModal(props) {
         setContributorModal(false);
     }
 
-    function copyKilde() {
-        setKilde(props.data.sourceName);
-        setKildeIsEqual(true);
-        dispatch({type: "setSelectedField", payload: "kilde"});
-        dispatch({type: "setValidation", payload: props.data.sourceName});
-    }
-
-    function copyKildeId() {
-        setKildeId(props.data.externalId);
-        setKildeIdIsEqual(true);
-    }
-
     function copyTittel() {
-        setTittel(props.data.languages[0].title);
-        setTittelIsEqual(true);
+        let originalTitle = props.data.languages.filter(lang => lang.lang === selectedLang.lang)[0].title;
+        setSelectedLang({...selectedLang, title: originalTitle});
+        let index = languages.map(l => l.lang).indexOf(selectedLang.lang);
+        languages[index].title = props.data.languages.filter(lang => lang.lang === selectedLang.lang)[0].title;
+        setLanguages(languages);
         dispatch({type: "setSelectedField", payload: "tittel"});
         dispatch({type: "setValidation", payload: props.data.languages[0].title});
     }
@@ -311,7 +298,6 @@ function InnerModal(props) {
                 props.data.registered.length
             )
         );
-        setAarstallIsEqual(true);
         dispatch({type: "setSelectedField", payload: "aarstall"});
         dispatch({
             type: "setValidation",
@@ -322,23 +308,12 @@ function InnerModal(props) {
         });
     }
 
-    function copyKategori() {
-        setKategori(props.data.category);
-        setKategoriIsEqual(true);
-        dispatch({type: "setSelectedField", payload: "kategori"});
-        dispatch({type: "setValidation", payload: props.data.category});
-    }
-
-    function copyLang() {
-        setLang(props.data.languages[0].lang);
-        setLangIsEqual(true);
-        dispatch({type: "setSelectedField", payload: "spraak"});
-        dispatch({type: "setValidation", payload: props.data.languages[0].lang});
+    function copyCategory() {
+        setSelectedCategory({value: props.data.category, label: props.data.categoryName});
     }
 
     function copyDoi() {
         setDoi(props.data.doi ? props.data.doi : "Ingen DOI funnet");
-        setDoiIsEqual(true);
         dispatch({type: "setSelectedField", payload: "doi"});
         dispatch({
             type: "setValidation",
@@ -350,12 +325,11 @@ function InnerModal(props) {
         setSelectedJournal(
             props.data.channel
                 ? {
-                    value: "x",
-                    label: "Ingen tidsskrift funnet"
+                    value: props.data.channel.id,
+                    label: props.data.channel.title
                 }
                 : {value: "x", label: "Ingen tidsskrift funnet"}
         );
-        setJournalIsEqual(true);
         dispatch({type: "setSelectedField", payload: "tidsskrift"});
         dispatch({
             type: "setValidation",
@@ -363,35 +337,16 @@ function InnerModal(props) {
         });
     }
 
-    function copyUtgivelse() {
-        var utgivelse = props.data.channel
-            ? "Volum " +
-            props.data.channel.volume +
-            " (" +
-            props.data.channel.pageFrom +
-            "-" +
-            props.data.channel.pageTo +
-            ") "
-            : "Ingen utgivelsesdata funnet";
-        setUtgivelse(utgivelse);
-        setUtgivelseIsEqual(true);
-        dispatch({type: "setSelectedField", payload: "utgivelse"});
-        dispatch({
-            type: "setValidation",
-            payload: utgivelse
-        });
+    function copyPages() {
+        setPublishingDetails({...publishingDetails, pageFrom: props.data.channel.pageFrom, pageTo: props.data.channel.pageTo})
     }
 
-    function onChangeJournal(option) {
-        if (option.value !== " ") {
-            setJournalIsEqual(false);
-        } else {
-            setJournalIsEqual(true);
-        }
-        setSelectedJournal(option);
-        console.log(option.label);
-        dispatch({type: "setSelectedField", payload: "tidsskrift"});
-        dispatch({type: "setValidation", payload: option.value});
+    function copyVolume() {
+        setPublishingDetails({...publishingDetails, volume: props.data.channel.volume})
+    }
+
+    function copyIssue() {
+        setPublishingDetails({...publishingDetails, issue: props.data.channel.issue})
     }
 
     function toggle() {
@@ -428,12 +383,76 @@ function InnerModal(props) {
         setContributorModal(true);
     }
 
+    function searchJournals(searchString) {
+        getJournals(searchString);
+    }
+
+    async function getJournals(name) {
+        if (name === null || name === "")
+            name = "*";
+        await axios
+            .get("http://localhost:8080/crisrest-2.5-SNAPSHOT/results/channels?type=journal&query=title_general:" + name)
+            .then(response => {
+                updateJournals(response.data);
+            });
+    }
+
+    async function getCategories() {
+        let fetchedCategories = await axios.get("https://api.cristin-utv.uio.no/v2/results/categories?lang=nb");
+
+        let tempArray = [];
+        for (let i = 0; i < fetchedCategories.data.length; i++) {
+            tempArray.push({value: fetchedCategories.data[i].code, label: fetchedCategories.data[i].name.nb});
+        }
+        setCategories(tempArray);
+    }
+
+    function updateJournals(data) {
+        let tempArray = [];
+        for (let i = 0; i < data.length; i++) {
+            tempArray.push({value: data[i].id, label: data[i].title});
+        }
+        setJournals(tempArray);
+    }
+
+    const equalButtonStyle = {
+        marginTop: "20px",
+        marginLeft: "50px"
+    };
+
+    const selectStyle = {
+        marginTop: "15px"
+    };
+
+    const labelStyle = {
+        fontSize: "1rem",
+        color: "rgba(0, 0, 0, 0.38)",
+        paddingRight: "60px"
+    };
+
+    const tittelButtonStyle = {
+        marginTop: "20px",
+        marginLeft: "68px",
+        color: red
+    };
+
+    const pageStyle = {
+        maxWidth: "90px",
+        margin: "3px"
+    };
+
+    const modalContent = {
+        justifyContent: 'center',
+            alignItems: 'center',
+            padding: 0
+    };
+
     return (
         <div>
-            <Modal isOpen={props.open} size="xl">
+            <Modal isOpen={props.open} size="lg" style={modalContent}>
                 <ModalHeader toggle={handleClose}>Import av publikasjon</ModalHeader>
                 <ModalBody>
-                    <Grid
+                    <Grid item
                         container
                         direction="row"
                         justify="center"
@@ -441,11 +460,11 @@ function InnerModal(props) {
                         xs
                         sm
                     >
-                        <Grid container item sm={4} xs={12} alignContent="center" alignItems="center" style={{ marginLeft: "150px"}}>
+                        <Grid container item sm={5} xs={12} alignContent="center" alignItems="center">
                             <Form>
                                 <h3>Importpublikasjon</h3>
                                 <FormGroup>
-                                    <Grid item>
+                                    <Grid item xs>
                                         <TextField
                                             id="import-id"
                                             label="Pubid"
@@ -477,15 +496,6 @@ function InnerModal(props) {
                                                 disabled
                                             />
                                         </FormControl>
-                                        {kildeIsEqual ? (
-                                            <IconButton color="primary" style={equalButtonStyle}>
-                                                <DragHandleIcon />
-                                            </IconButton>
-                                        ) : (
-                                            <IconButton  color="secondary" style={arrowButtonStyle} onClick={copyKilde}>
-                                                <TrendingFlatIcon />
-                                            </IconButton>
-                                        )}
                                     </Grid>
                                 </FormGroup>
                                 <FormGroup>
@@ -499,15 +509,6 @@ function InnerModal(props) {
                                                 disabled
                                             />
                                         </FormControl>
-                                        {kildeIdIsEqual ? (
-                                            <IconButton color="primary" style={equalButtonStyle}>
-                                                <DragHandleIcon />
-                                            </IconButton>
-                                        ) : (
-                                            <IconButton  color="secondary" style={arrowButtonStyle} onClick={copyKildeId}>
-                                                <TrendingFlatIcon />
-                                            </IconButton>
-                                        )}
                                     </Grid>
                                 </FormGroup>
                                 <FormGroup>
@@ -515,16 +516,16 @@ function InnerModal(props) {
                                         <TextField
                                             id="import-tidsskrift"
                                             label="Tidsskrift"
-                                            value={"Ingen tidsskrift funnet"}
+                                            value={props.data.channel.title}
                                             margin="normal"
                                             disabled
                                         />
-                                        {journalIsEqual ? (
+                                        {selectedJournal.value === props.data.channel.id ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={arrowButtonStyle} onClick={copyJournal}>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyJournal}>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -539,12 +540,12 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {doiIsEqual ? (
+                                        {doi === props.data.doi ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={arrowButtonStyle} onClick={copyDoi}>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyDoi}>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -555,34 +556,25 @@ function InnerModal(props) {
                                         <TextField
                                             id="import-lang"
                                             label="Språk"
-                                            value={props.data.languages[0].lang}
+                                            value={selectedLang.lang}
                                             margin="normal"
                                             disabled
                                         />
-                                        {langIsEqual ? (
-                                            <IconButton color="primary" style={equalButtonStyle}>
-                                                <DragHandleIcon />
-                                            </IconButton>
-                                        ) : (
-                                            <IconButton color="secondary" style={arrowButtonStyle} onClick={copyLang}>
-                                                <TrendingFlatIcon />
-                                            </IconButton>
-                                        )}
                                     </Grid>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Grid item>
+                                    <Grid item container sm>
                                         <TextField
                                             id="import-tittel"
                                             label="Tittel"
-                                            value={props.data.languages[0].title}
+                                            value={languageCopy.filter(lang => lang.lang === selectedLang.lang)[0].title}
                                             margin="normal"
                                             disabled
                                             multiline
                                         />
 
-                                        {tittelIsEqual ? (
-                                            <IconButton color="primary" style={tittelEqualButtonStyle}>
+                                        {languageCopy.filter(lang => lang.lang === selectedLang.lang)[0].title === selectedLang.title ? (
+                                            <IconButton color="primary" style={tittelButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
@@ -604,12 +596,15 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {aarstallIsEqual ? (
+                                        {aarstall === props.data.registered.substring(
+                                            props.data.registered.length - 4,
+                                            props.data.registered.length
+                                        ) ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={arrowButtonStyle} onClick={copyAarstall}>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyAarstall}>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -620,16 +615,16 @@ function InnerModal(props) {
                                         <TextField
                                             id="import-kategori"
                                             label="Kategori"
-                                            value={props.data.category}
+                                            value={props.data.categoryName}
                                             margin="normal"
                                             disabled
                                         />
-                                        {kategoriIsEqual ? (
+                                        {selectedCategory.value === props.data.category ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={arrowButtonStyle} onClick={copyKategori}>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyCategory}>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -639,35 +634,72 @@ function InnerModal(props) {
                                     <Grid item>
                                         <TextField
                                             id="import-utgivelsesdata"
-                                            label="Utgivelsesdata"
+                                            label="Volum"
                                             value={
-                                                props.data.channel
-                                                    ? "Volum " +
-                                                    props.data.channel.volume +
-                                                    " (" +
-                                                    props.data.channel.pageFrom +
-                                                    "-" +
-                                                    props.data.channel.pageTo +
-                                                    ") "
+                                                props.data.channel.volume ? props.data.channel.volume
                                                     : "Ingen utgivelsesdata funnet"
                                             }
                                             margin="normal"
                                             disabled
                                         />
-                                        {utgivelseIsEqual ? (
+                                        {props.data.channel.volume === publishingDetails.volume ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={arrowButtonStyle} onClick={copyUtgivelse}>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyVolume}>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
                                     <Grid item>
-                                    <Button variant="contained" disabled margin="auto"> Disabled </Button>
+                                        <TextField
+                                            id="import-hefte"
+                                            label="Hefte"
+                                            value={
+                                                props.data.channel.issue ? props.data.channel.issue
+                                                    : ""
+                                            }
+                                            margin="normal"
+                                            disabled
+                                        />
+                                        {props.data.channel.issue === publishingDetails.issue ? (
+                                            <IconButton color="primary" style={equalButtonStyle}>
+                                                <DragHandleIcon />
+                                            </IconButton>
+                                        ) : (
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyIssue}>
+                                                <TrendingFlatIcon />
+                                            </IconButton>
+                                        )}
+                                    </Grid>
+                                    <Grid item>
+                                        <label style={labelStyle} htmlFor="pageFrom">Side fra</label>
+                                        <label style={labelStyle} htmlFor="pageTo">Side til</label>
+                                        <div>
+                                            <input
+                                                id="pageFrom"
+                                                value={props.data.channel.pageFrom ? props.data.channel.pageFrom : ""}
+                                                style={pageStyle}
+                                                disabled
+                                            />
+                                            <input
+                                                id="pageTo"
+                                                value={props.data.channel.pageTo ? props.data.channel.pageTo : ""}
+                                                style={pageStyle}
+                                                disabled
+                                            />
+
+                                        {props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
+                                            <IconButton color="primary" style={equalButtonStyle}>
+                                                <DragHandleIcon />
+                                            </IconButton>
+                                        ) : (
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyPages}>
+                                                <TrendingFlatIcon />
+                                            </IconButton>
+                                        )}
+                                        </div>
                                     </Grid>
                                 </FormGroup>
                             </Form>
@@ -698,8 +730,8 @@ function InnerModal(props) {
                                         id="import-kilde"
                                         label="Kilde"
                                         value={kilde}
-                                        onChange={event => handleChangeKilde(event)}
                                         margin="normal"
+                                        required
                                         disabled
                                     />
                                 </FormGroup>
@@ -708,8 +740,8 @@ function InnerModal(props) {
                                         id="import-kildeid"
                                         label="KildeId"
                                         value={kildeId}
-                                        onChange={event => handleChangeKildeId(event)}
                                         margin="normal"
+                                        required
                                         disabled
                                     />
                                 </FormGroup>
@@ -722,7 +754,8 @@ function InnerModal(props) {
                                         value={selectedJournal}
                                         className="basic-select"
                                         classNamePrefix="select"
-                                        onChange={onChangeJournal}
+                                        onChange={handleChangeJournal}
+                                        onInputChange={searchJournals}
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -738,14 +771,12 @@ function InnerModal(props) {
                                     </FormControl>
                                 </FormGroup>
                                 <FormGroup>
-                                    <TextField
-                                        id="import-lang"
-                                        label="Språk"
-                                        value={lang}
-                                        onChange={handleChangeLang}
-                                        margin="normal"
-                                        required
-                                    />
+                                    <label style={labelStyle}>Språk</label>
+                                    <ButtonGroup className={`buttonGroup`} variant="contained" size="small" aria-label="small contained button group">
+                                    {languages.map((lang, i) =>
+                                        <Button key={i} className={selectedLang === lang ? `selected` : ``} onClick={() => handleSelectedLang(lang)}>{lang.lang}</Button>
+                                    )}
+                                    </ButtonGroup>
                                 </FormGroup>
                                 <FormGroup>
                                     <Grid item>
@@ -753,7 +784,7 @@ function InnerModal(props) {
                                         id="import-tittel"
                                         label="Tittel"
                                         name="Tittel"
-                                        value={tittel}
+                                        value={selectedLang.title}
                                         onChange={event => handleChangeTittel(event)}
                                         margin="normal"
                                         required
@@ -771,24 +802,54 @@ function InnerModal(props) {
                                     />
                                 </FormGroup>
                                 <FormGroup>
-                                    <TextField
-                                        id="import-kategori"
-                                        label="Kategori"
-                                        value={kategori}
-                                        onChange={handleChangeKategori}
-                                        margin="normal"
-                                        required
+                                    <FormLabel style={selectStyle}> Kategori </FormLabel>
+                                    <Select
+                                        placeholder="Søk på kategori"
+                                        name="categorySelect"
+                                        options={categories}
+                                        value={selectedCategory}
+                                        className="basic-select"
+                                        classNamePrefix="select"
+                                        onChange={handleChangeCategory}
                                     />
                                 </FormGroup>
                                 <FormGroup>
-                                    <TextField
-                                        id="import-utgivelsesdata"
-                                        label="Utgivelsesdata"
-                                        value={utgivelse}
-                                        onChange={handleChangeUtgivelse}
-                                        margin="normal"
-                                        required
-                                    />
+                                    <Grid item>
+                                        <TextField
+                                            id="import-utgivelsesdata"
+                                            label="Volum"
+                                            value={publishingDetails.volume}
+                                            margin="normal"
+                                            onChange={handleChangeVolume}
+                                        />
+                                    </Grid>
+                                    <Grid item>
+                                        <TextField
+                                            id="import-hefte"
+                                            label="Hefte"
+                                            value={publishingDetails.issue}
+                                            margin="normal"
+                                            onChange={handleChangeIssue}
+                                        />
+                                    </Grid>
+                                    <Grid item>
+                                        <label style={labelStyle} htmlFor="pageFrom">Side fra</label>
+                                        <label style={labelStyle} htmlFor="pageTo">Side til</label>
+                                        <div>
+                                            <input
+                                                id="pageFrom"
+                                                value={publishingDetails.pageFrom ? publishingDetails.pageFrom : ""}
+                                                style={pageStyle}
+                                                onChange={handleChangePageFrom}
+                                            />
+                                            <input
+                                                id="pageTo"
+                                                value={publishingDetails.pageTo ? publishingDetails.pageTo : ""}
+                                                style={pageStyle}
+                                                onChange={handleChangePageTo}
+                                            />
+                                        </div>
+                                    </Grid>
                                 </FormGroup>
                                 <FormGroup>
                                     <Button
@@ -803,8 +864,8 @@ function InnerModal(props) {
                             </Form>
                         </Grid>
                     </Grid>
-                    <div>{state.formErrors.map(error => { return(
-                        <div>{error + "; "}</div>
+                    <div>{state.formErrors.map((error, i) => { return(
+                        <div key={i}>{error + "; "}</div>
                     )})}</div>
                 </ModalBody>
                 <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />

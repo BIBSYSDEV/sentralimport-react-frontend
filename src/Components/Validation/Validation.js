@@ -60,18 +60,24 @@ export default function Validation(props) {
         doiValid ? removeError(doiError) : updateErrors(doiError);
 
         break;
-      case "utgivelse":
-        var utgivelseValid = state.validation.match(
-          /^(Volum)[ ]([0-9-]{1,})[ ]([(]([a-z0-9]{1,6})[-]([a-z0-9]{1,6})[)])([\w-., ]{0,})/i
-        );
-        var utgivelseError = "Utgivelsesdata har galt format";
+      // case "utgivelse":
+      //   var utgivelseValid = state.validation.match(
+      //     /^(Volum)[ ]([0-9-]{1,})[ ]([(]([a-z0-9]{1,6})[-]([a-z0-9]{1,6})[)])([\w-., ]{0,})/i
+      //   );
+      //   var utgivelseError = "Utgivelsesdata har galt format";
+      //
+      //   utgivelseValid
+      //     ? removeError(utgivelseError)
+      //     : updateErrors(utgivelseError);
+      //
+      //   break;
+      case "kilde":
+        var kildeValid = state.validation.length >= 3;
+        var kildeError = "Kilde mangler/ har feil";
 
-        utgivelseValid
-          ? removeError(utgivelseError)
-          : updateErrors(utgivelseError);
+        kildeValid ? removeError(kildeError) : updateErrors(kildeError);
 
         break;
-
       case "tidsskrift":
         var tidsskriftValid = state.validation.length > 3;
         var tidsskriftError = "Ingen tidsskrift valgt";
@@ -161,26 +167,6 @@ export default function Validation(props) {
         value: props.duplicate
           ? props.publication.original_language
           : props.publication.languages[0].lang
-      },
-      {
-        name: "utgivelse",
-        value: props.duplicate
-          ? "Volum " +
-            props.publication.volume +
-            " (" +
-            props.publication.pages.from +
-            "-" +
-            props.publication.pages.to +
-            ")"
-          : props.publication.channel
-          ? "Volum " +
-            props.publication.channel.volume +
-            " (" +
-            props.publication.channel.pageFrom +
-            "-" +
-            props.publication.channel.pageTo +
-            ")"
-          : "Ingen utgivelsesdata funnet"
       }
     ];
     for (var i = 0; i < data.length; i++) {
@@ -196,7 +182,6 @@ export default function Validation(props) {
           var doiValid = data[i].value.match(
             /^([0-9]{2})[.]([0-9]{4})[/]([a-z0-9-.]{1,})/i
           );
-          console.log(data[i].value);
           var doiError = "Doi har galt format";
 
           !doiValid ? fieldErrors.push(doiError) : fieldErrors.push();
