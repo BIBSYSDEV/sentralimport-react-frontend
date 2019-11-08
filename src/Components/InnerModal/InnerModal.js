@@ -864,8 +864,16 @@ function InnerModal(props) {
                             </Form>
                         </Grid>
                     </Grid>
+<<<<<<< HEAD
                     <div>{state.formErrors.map((error, i) => { return(
                         <div key={i}>{error + "; "}</div>
+=======
+                    <div className={"createJournalPanel"}>
+                    <CreateJournalPanel />
+                    </div>
+                    <div>{state.formErrors.map(error => { return(
+                        <div>{error + "; "}</div>
+>>>>>>> 304af5d... komponent for oppretting av nye tidsskrifter og feilmelding ved login
                     )})}</div>
                 </ModalBody>
                 <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />

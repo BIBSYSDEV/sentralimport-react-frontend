@@ -9,8 +9,33 @@
   margin-top: auto;
 }
 
+<<<<<<< HEAD
 .buttonGroup {
   max-width: 0;
+=======
+.createJournalPanel {
+  position: absolute;
+  top: 385px;
+  right: 35px;
+}
+
+.createJournalButton {
+  width: 150px;
+  position: absolute;
+  right: 35px;
+}
+
+.createJournalCard {
+  position: relative;
+  left: 65px;
+  top: 40px;
+  width: 250px;
+}
+
+.errorLogoutButton {
+  position: relative;
+  left: 450px;
+>>>>>>> 304af5d... komponent for oppretting av nye tidsskrifter og feilmelding ved login
 }
 
 .selected {
