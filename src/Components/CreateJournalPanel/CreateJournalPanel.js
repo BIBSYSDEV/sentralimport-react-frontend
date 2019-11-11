@@ -18,7 +18,15 @@ function CreateJournalPanel(props) {
   const [url, setUrl] = React.useState("");
   const [publisher, setPublisher] = React.useState("");
 
-  const [formHasErrors, setFormHasErrors] = React.useState(true);
+  const [formHasErrors, setFormHasErrors] = React.useState([
+    { value: 1 },
+    { value: 1 },
+    { value: 1 },
+    { value: 1 },
+    { value: 1 }
+  ]);
+
+  const [totalFormErrors, setTotalFormErrors] = React.useState(5);
 
   function emptyAllFields() {
     setTitle("");
@@ -39,36 +47,74 @@ function CreateJournalPanel(props) {
     setOpen(false);
   }
 
+  function checkFormErrors() {
+    var errorsFound = 0;
+    for (var i = 0; i < formHasErrors.length; i++) {
+      if (formHasErrors[i].value === 1) {
+        errorsFound++;
+      }
+    }
+    setTotalFormErrors(errorsFound);
+  }
+
   function handleSubmit() {
     setOpen(false);
-    var newJournal;
+    var newJournal = new Object();
     newJournal.title = title;
     newJournal.issn = issn;
     newJournal.eissn = eissn;
     newJournal.url = url;
     newJournal.countryCode = publisher;
+    newJournal.id = 0;
 
-    // props.handleNewJournal(newJournal)
-    // Send den nyopprettede journalen til InnerModal og sett den til aktiv via hooks
-  }
+    console.log(newJournal);
 
-  function checkFields() {
-    // Sjekk at felter har blitt fylt ut korrekt
+    props.handleCreateJournal(newJournal);
   }
 
   function handleChangeTitle(event) {
+    if (event.target.value.length < 6) {
+      formHasErrors[0].value = 1;
+    } else {
+      formHasErrors[0].value = 0;
+    }
+    checkFormErrors();
     setTitle(event.target.value);
   }
   function handleChangeIssn(event) {
+    if (!event.target.value.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)) {
+      formHasErrors[1].value = 1;
+    } else {
+      formHasErrors[1].value = 0;
+    }
+    checkFormErrors();
     setIssn(event.target.value);
   }
   function handleChangeEissn(event) {
+    if (!event.target.value.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)) {
+      formHasErrors[2].value = 1;
+    } else {
+      formHasErrors[2].value = 0;
+    }
+    checkFormErrors();
     setEissn(event.target.value);
   }
   function handleChangeUrl(event) {
+    if (event.target.value.length < 10) {
+      formHasErrors[3].value = 1;
+    } else {
+      formHasErrors[3].value = 0;
+    }
+    checkFormErrors();
     setUrl(event.target.value);
   }
   function handleChangePublisher(event) {
+    if (event.target.value.length < 2) {
+      formHasErrors[4].value = 1;
+    } else {
+      formHasErrors[4].value = 0;
+    }
+    checkFormErrors();
     setPublisher(event.target.value);
   }
 
@@ -83,26 +129,37 @@ function CreateJournalPanel(props) {
             <CardContent>
               <FormGroup>
                 <TextField
+                  error={title.length > 0 && title.length <= 6}
                   label={"Tittel"}
                   value={title}
                   onChange={e => handleChangeTitle(e)}
                 ></TextField>
                 <TextField
+                  error={
+                    issn.length > 0 &&
+                    !issn.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)
+                  }
                   label={"ISSN"}
                   value={issn}
                   onChange={e => handleChangeIssn(e)}
                 ></TextField>
                 <TextField
+                  error={
+                    eissn.length > 0 &&
+                    !eissn.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)
+                  }
                   label={"EISSN"}
                   value={eissn}
                   onChange={e => handleChangeEissn(e)}
                 ></TextField>
                 <TextField
+                  error={url.length > 0 && url.length < 10}
                   label={"URL"}
                   value={url}
                   onChange={e => handleChangeUrl(e)}
                 ></TextField>
                 <TextField
+                  error={publisher.length > 0 && publisher.length < 2}
                   label={"Utgiver (Landkode)"}
                   value={publisher}
                   onChange={e => handleChangePublisher(e)}
@@ -114,7 +171,7 @@ function CreateJournalPanel(props) {
                   <Button
                     variant="success"
                     onClick={() => handleSubmit()}
-                    disabled={formHasErrors}
+                    disabled={totalFormErrors > 0 && totalFormErrors !== null}
                   >
                     Opprett
                   </Button>

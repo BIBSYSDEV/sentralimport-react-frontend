@@ -42,6 +42,7 @@ function InnerModal(props) {
         function setFields() {
             let temp = JSON.parse(localStorage.getItem("tempPublication"));
             let workedOn = false;
+            console.log(temp);
             if (temp !== null && temp.publication.pubId === props.data.pubId && !props.duplicate && temp.publication.duplicate === props.duplicate)
                 workedOn = true;
 
@@ -386,6 +387,11 @@ function InnerModal(props) {
 
     function searchJournals(searchString) {
         getJournals(searchString);
+    }
+
+    const handleNewJournal = (newJournal) => {
+        console.log(newJournal);
+        setSelectedJournal({label: newJournal.title, value: newJournal.id });
     }
 
     async function getJournals(name) {
@@ -866,7 +872,7 @@ function InnerModal(props) {
                         </Grid>
                     </Grid>
                     <div className={"createJournalPanel"}>
-                    <CreateJournalPanel />
+                    <CreateJournalPanel handleCreateJournal={handleNewJournal}/>
                     </div>
                     <div>{state.formErrors.map(error => { return(
                         <div>{error + "; "}</div>
