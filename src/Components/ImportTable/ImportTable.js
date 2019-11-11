@@ -157,9 +157,6 @@ const EnhancedTableToolbar = props => {
     );
 };
 
-const divStyle = {
-    fontWeight: "bold"
-};
 const useStyles = makeStyles(theme => ({
     root: {
         width: "99%",
@@ -264,9 +261,6 @@ export default function EnhancedTable() {
             (state.currentPageNr + 1);
 
         await axios.get(fetchString).then(response => {
-            console.log(fetchString);
-            console.log(response.headers["x-total-count"]);
-            console.log(response.data);
             handleRows(response.data);
 
             dispatch({
@@ -331,12 +325,10 @@ export default function EnhancedTable() {
 
     function handleOnFocus(event, row) {
         event.target.className = event.target.className + " focused";
-        console.log(event.target.className);
     }
 
     function handleOnBlur(event, row) {
         event.target.className = event.target.className.split(" focused")[0];
-        console.log(event.target.className);
     }
 
     function handleChangeRowsPerPage(option) {
@@ -368,6 +360,13 @@ export default function EnhancedTable() {
                 ))}
             </div>
         );
+    }
+
+    function removeFromList() {
+        setTimeout(function() {
+            getRows();
+        }, 200);
+
     }
 
     const emptyRows =
@@ -487,6 +486,7 @@ export default function EnhancedTable() {
                 open={open}
                 data={modalData}
                 handleClose={handleClose.bind(this)}
+                removeFromList={removeFromList.bind(this)}
             />
             <AuthorListModal
                 open={authorList}

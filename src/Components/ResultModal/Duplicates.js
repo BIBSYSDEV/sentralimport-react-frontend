@@ -10,6 +10,7 @@ export function Duplicates(props) {
     let {state, dispatch} = React.useContext(Context);
     // const [selected, setSelected] = React.useState("false");
     let publication = props.publication;
+    const relevantStatus = state.currentImportStatus !== "ikke aktuelle";
 
     useEffect(() => {
         async function fetch() {
@@ -78,7 +79,7 @@ export function Duplicates(props) {
                         <FormControlLabel
                             value="false"
                             control={<Radio />}
-                            label="Marker som ikke aktuell"
+                            label={relevantStatus ? "Marker som ikke aktuell" : "Marker som aktuell"}
                         />
                         <FormControlLabel
                             value="true"
@@ -99,7 +100,6 @@ async function fetchDuplicates(searchTerms) {
         "https://api.cristin-utv.uio.no/v2/results" + searchTerms + "&fields=all&lang=nb"
     );
     console.log("Found " + searchResults.data.length + " results");
-    console.log(searchResults);
     for (let i = 0; i < searchResults.data.length; i++) {
         results.push({
             data: searchResults.data[i]
