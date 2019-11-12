@@ -207,8 +207,10 @@ function InnerModal(props) {
                 categoryName: selectedCategory.label,
                 channel: {
                     ...publishingDetails,
-                    id: selectedJournal.value,
-                    title: selectedJournal.label
+                    cristinTidsskriftNr: selectedJournal.value,
+                    title: selectedJournal.label,
+                    issn: selectedJournal.issn,
+                    eissn: selectedJournal.eissn
                 },
                 doi: doi,
                 externalId: kildeId,
@@ -220,10 +222,13 @@ function InnerModal(props) {
             }
         };
         localStorage.setItem("tempPublication", JSON.stringify(temp));
+        console.log(temp);
+        console.log("Publikasjon oppdatert");
     }
 
     function handleChangeJournal(option) {
         setSelectedJournal(option);
+        console.log(option);
         dispatch({type: "setSelectedField", payload: "tidsskrift"});
         dispatch({type: "setValidation", payload: option.value});
     }
@@ -328,7 +333,9 @@ function InnerModal(props) {
             props.data.channel
                 ? {
                     value: props.data.channel.id,
-                    label: props.data.channel.title
+                    label: props.data.channel.title,
+                    issn: props.data.channel.issn,
+                    eissn: props.data.channel.eissn
                 }
                 : {value: "x", label: "Ingen tidsskrift funnet"}
         );
@@ -391,7 +398,8 @@ function InnerModal(props) {
 
     const handleNewJournal = (newJournal) => {
         console.log(newJournal);
-        setSelectedJournal({label: newJournal.title, value: newJournal.id });
+        setSelectedJournal({label: newJournal.title, value: newJournal.id, issn: newJournal.issn, eissn: newJournal.eissn });
+       
     }
 
     async function getJournals(name) {
@@ -417,7 +425,7 @@ function InnerModal(props) {
     function updateJournals(data) {
         let tempArray = [];
         for (let i = 0; i < data.length; i++) {
-            tempArray.push({value: data[i].id, label: data[i].title});
+            tempArray.push({value: data[i].id, label: data[i].title, issn: data[i].issn, eissn: data[i].eissn});
         }
         setJournals(tempArray);
     }

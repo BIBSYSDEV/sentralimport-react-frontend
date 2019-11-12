@@ -59,6 +59,7 @@ function CreateJournalPanel(props) {
 
   function handleSubmit() {
     setOpen(false);
+
     var newJournal = new Object();
     newJournal.title = title;
     newJournal.issn = issn;
