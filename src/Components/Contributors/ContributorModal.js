@@ -430,7 +430,7 @@ function ContributorModal(props) {
                               row.imported.first_name
                             : row.imported.authorName
                             ? row.imported.authorName
-                            : ""}
+                            : null}
                         </h6>
                         <div className={`metadata`}>
                           {row.imported.affiliations.map((inst, j) => (
@@ -448,9 +448,7 @@ function ContributorModal(props) {
                       >
                         Velg denne
                       </Button>
-                    ) : (
-                      ""
-                    )}
+                    ) : null}
                   </TableCell>
                   <TableCell>
                     <div className={`result contributor`}>
@@ -484,9 +482,7 @@ function ContributorModal(props) {
                           <Button onClick={() => handleOrder(row, false)}>
                             <img src={getArrowDownImage()} alt="down-arrow" />
                           </Button>
-                        ) : (
-                          ""
-                        )}
+                        ) : null}
                       </div>
                       <Contributor
                         author={row}
@@ -508,14 +504,11 @@ function ContributorModal(props) {
                 <TableCell></TableCell>
                 <TableCell>
                   <Button onClick={() => addContributor()}>
-                    {" "}
-                    Legg til bidragsyter{" "}
+                    Legg til bidragsyter
                   </Button>
                 </TableCell>
               </TableRow>
-            ) : (
-              ""
-            )}
+            ) : null}
             <ContributorPagination totalCount={data.length} />
           </TableBody>
 
