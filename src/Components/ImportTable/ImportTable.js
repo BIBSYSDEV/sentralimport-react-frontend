@@ -227,7 +227,7 @@ export default function EnhancedTable() {
 
   async function getRows() {
     var fetchString =
-      "http://localhost:8080/piarest/sentralimport/publications?year_published=" +
+      "http://localhost:8090/piarest-1.0-SNAPSHOT/sentralimport/publications?year_published=" +
       state.currentImportYear.value;
 
     if (

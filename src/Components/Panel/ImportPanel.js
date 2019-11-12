@@ -49,7 +49,7 @@ export default function CustomizedTables() {
     if (state.currentImportYear.value !== prevYear) {
       axios
         .get(
-          "http://localhost:8080/piarest/sentralimport/publicationCount/" +
+          "http://localhost:8090/piarest-1.0-SNAPSHOT/sentralimport/publicationCount/" +
             state.currentImportYear.value
         )
         .then(response => {

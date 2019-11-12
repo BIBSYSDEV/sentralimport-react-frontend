@@ -406,7 +406,7 @@ function InnerModal(props) {
         if (name === null || name === "")
             name = "*";
         await axios
-            .get("http://localhost:8090/crisrest-2.5-SNAPSHOT/results/channels?type=journal&query=title_general:" + name)
+            .get("http://localhost:8080/crisrest-2.5-SNAPSHOT/results/channels?type=journal&query=title_general:" + name)
             .then(response => {
                 updateJournals(response.data);
             });
@@ -634,7 +634,7 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {selectedCategory.value === props.data.category ? (
+                                        {selectedCategory.label === props.data.categoryName ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -882,8 +882,8 @@ function InnerModal(props) {
                     <div className={"createJournalPanel"}>
                     <CreateJournalPanel handleCreateJournal={handleNewJournal}/>
                     </div>
-                    <div>{state.formErrors.map(error => { return(
-                        <div>{error + "; "}</div>
+                    <div>{state.formErrors.map((error, i) => { return(
+                        <div key={i}>{error + "; "}</div>
                     )})}</div>
                 </ModalBody>
                 <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
