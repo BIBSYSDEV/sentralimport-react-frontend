@@ -406,7 +406,7 @@ function InnerModal(props) {
         if (name === null || name === "")
             name = "*";
         await axios
-            .get("http://localhost:8080/crisrest-2.5-SNAPSHOT/results/channels?type=journal&query=title_general:" + name)
+            .get("http://localhost:8090/crisrest-2.5-SNAPSHOT/results/channels?type=journal&query=title_general:" + name)
             .then(response => {
                 updateJournals(response.data);
             });

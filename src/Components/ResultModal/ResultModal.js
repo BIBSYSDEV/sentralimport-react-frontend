@@ -60,11 +60,11 @@ export default function ResultModal(props) {
                 ? "et al (" + props.data.authors.length + ") "
                 : ""}
               {props.data.languages[0].title}
-              <text className={`journal-name`}>
+              <i>
                 {props.data.hasOwnProperty("channel")
-                  ? props.data.channel.title + " "
+                  ? " " + props.data.channel.title + " "
                   : ""}
-              </text>
+              </i>
               {props.data.registered.substring(
                 props.data.registered.length - 4,
                 props.data.registered.length
@@ -72,10 +72,12 @@ export default function ResultModal(props) {
               {props.data.hasOwnProperty("channel")
                 ? props.data.channel.volume + ";"
                 : ""}
-              {props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pageFrom")
+              {props.data.hasOwnProperty("channel") &&
+              props.data.channel.hasOwnProperty("pageFrom")
                 ? props.data.channel.pageFrom + "-"
                 : ""}
-              {props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pageTo")
+              {props.data.hasOwnProperty("channel") &&
+              props.data.channel.hasOwnProperty("pageTo")
                 ? props.data.channel.pageTo
                 : ""}
               {props.data.hasOwnProperty("doi") ? " doi:" + props.data.doi : ""}
