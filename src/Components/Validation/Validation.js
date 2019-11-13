@@ -4,12 +4,10 @@ import { Context } from "../../Context";
 export default function Validation(props) {
   let { state, dispatch } = React.useContext(Context);
 
-  // Ved oppdatering av ett felt sjekk at det er blitt fylt inn/formatert korrekt
   useEffect(() => {
     validateField();
   }, [state.selectedField, state.validation]);
 
-  // Ved åpning av ny publikasjon sjekk alle felter for feil
   useEffect(() => {
     checkAllFields();
   }, [props.publication]);

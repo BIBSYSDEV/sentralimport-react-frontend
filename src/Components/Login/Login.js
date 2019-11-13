@@ -97,7 +97,6 @@ export default function Login(props) {
       ) : (
         <Grid
           container
-          alignItems="center"
           justify="center"
           direction="row"
           className={"login-grid"}
@@ -109,6 +108,8 @@ export default function Login(props) {
               title="CRISTIN-logo"
               alt="CRISTIN-logo"
             ></img>
+          </Grid>
+          <Grid item xs={12}>
             <h1> CRISTIN Sentralimport</h1>
           </Grid>
           <Grid container item xs={12} justify="center">

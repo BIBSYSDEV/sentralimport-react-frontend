@@ -18,7 +18,6 @@ import { Context } from "../../Context";
 import DownloadIcon from "./download-green.png";
 import ExportIcon from "./export-purple.png";
 import X2Icon from "./x2-red.png";
-import NavbarCollapse from "react-bootstrap/NavbarCollapse";
 
 const useStyles = makeStyles(theme => ({
   card: {

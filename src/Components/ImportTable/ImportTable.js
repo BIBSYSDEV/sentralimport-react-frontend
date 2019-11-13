@@ -157,9 +157,6 @@ const EnhancedTableToolbar = props => {
   );
 };
 
-const divStyle = {
-  fontWeight: "bold"
-};
 const useStyles = makeStyles(theme => ({
   root: {
     width: "99%",

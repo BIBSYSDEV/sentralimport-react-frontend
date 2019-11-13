@@ -21,8 +21,8 @@ export default function App() {
     window.location.href = "/login";
   }
 
-  return localStorage.getItem("authorized") &&
-    localStorage.getItem("authorized") === "true" ? (
+  return !localStorage.getItem("authorized") &&
+    !localStorage.getItem("authorized") === "true" ? (
     <div className="App">
       <Header />
       <Grid container spacing={3}>
@@ -48,7 +48,7 @@ export default function App() {
 
       <Grid container direction="column" justify="center" alignItems="center">
         <Grid item>
-          <img src={getMainImage()} />
+          <img src={getMainImage()} alt="warning icon" />
         </Grid>
         <br></br>
         <Grid item>
@@ -59,12 +59,15 @@ export default function App() {
               </Typography>
               <hr />
               <Typography variant="body1">
+                <div>Dette kan være fordi:</div>
                 <div>
-                  Dette kan være fordi: tilgangsstyring, feil med Feide, etc.
+                  1. Du ikke har blitt gitt tilgang til Sentralimport av
+                  administrator
                 </div>
-                <div>Forklarende tekst om feilretting</div>
-                <div>Ta kontakt ---- dersom dette er feil </div>
-                <div> 3. linje </div> <div> 4. linje </div>
+                <div>2. Det har skjedd noe galt ved innlogging </div>
+                <div> --- </div>
+                <div>Dersom problemet vedvarer, kontakt administrator</div>
+                <div> --- </div> <div> --- </div>
               </Typography>
               <hr />
 

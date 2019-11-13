@@ -12,7 +12,7 @@ import TableRow from "@material-ui/core/TableRow";
 import PersonIcon from "../../assets/icons/person-active.svg";
 import ArrowUpIcon from "../../assets/icons/arrowhead-up3.svg";
 import ArrowDownIcon from "../../assets/icons/arrowhead-down3.svg";
-import { FormGroup, Button, TableFooter } from "@material-ui/core";
+import { Button, TableFooter } from "@material-ui/core";
 
 import ContributorPagination from "../ContributorPagination/ContributorPagination";
 import Contributor from "./Contributor";
@@ -20,9 +20,7 @@ import Contributor from "./Contributor";
 function ContributorModal(props) {
   const { useRef, useLayoutEffect } = React;
   const [data, setData] = React.useState([]);
-  const [selectedInstitution, setSetSelectedInstitution] = React.useState(
-    defaultInstitution
-  );
+
   let { state, dispatch } = React.useContext(Context);
 
   const firstUpdate = useRef(true);
@@ -226,10 +224,6 @@ function ContributorModal(props) {
     temp[rowIndex] = author;
     setData(temp);
   };
-
-  function handleInstitutionChange(institution) {
-    setSetSelectedInstitution(institution);
-  }
 
   // Ved sletting av en bidragsyter, sjekk om indeksering skal bli beholdt / oppdatert for alle andre elementer i bidragsyterlisten
   //TODO skriv om funksjonen slik at den blir enklere å lese
