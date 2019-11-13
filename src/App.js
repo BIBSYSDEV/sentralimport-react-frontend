@@ -21,8 +21,8 @@ export default function App() {
     window.location.href = "/login";
   }
 
-  return !localStorage.getItem("authorized") &&
-    !localStorage.getItem("authorized") === "true" ? (
+  return localStorage.getItem("authorized") &&
+    localStorage.getItem("authorized") === "true" ? (
     <div className="App">
       <Header />
       <Grid container spacing={3}>
