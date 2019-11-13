@@ -165,8 +165,8 @@ function InnerModal(props) {
         value: state.selectedPublication.journal.name,
         label: state.selectedPublication.journal.name
     } : {
-        value: " ",
-        label: "Ingen tidsskrift funnet"
+        value: props.data.channel.id,
+        label: props.data.channel.title
     });
 
     const [selectedCategory, setSelectedCategory] = React.useState(props.duplicate ? {
@@ -230,7 +230,7 @@ function InnerModal(props) {
         setSelectedJournal(option);
         console.log(option);
         dispatch({type: "setSelectedField", payload: "tidsskrift"});
-        dispatch({type: "setValidation", payload: option.value});
+        dispatch({type: "setValidation", payload: option.label});
     }
 
     function handleChangeTittel(event) {
@@ -342,7 +342,7 @@ function InnerModal(props) {
         dispatch({type: "setSelectedField", payload: "tidsskrift"});
         dispatch({
             type: "setValidation",
-            payload: {value: "x", label: "Ingen tidsskrift funnet"}
+            payload: props.data.channel.title
         });
     }
 

@@ -6,13 +6,7 @@ import Grid from "@material-ui/core/Grid/Grid";
 import FilterForm from "./Components/FilterForm/FilterForm";
 import DropdownPanel from "./Components/DropdownPanel/DropdownPanel";
 import Header from "./Components/Header/Header";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  Typography,
-  CardActions
-} from "@material-ui/core";
+import { Card, CardContent, Typography } from "@material-ui/core";
 import ErrorIcon from "./assets/icons/alert-triangle.svg";
 import { Button } from "react-bootstrap";
 import "./assets/styles/buttons.scss";

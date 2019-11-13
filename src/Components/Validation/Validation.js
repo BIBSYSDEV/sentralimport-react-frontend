@@ -60,17 +60,6 @@ export default function Validation(props) {
         doiValid ? removeError(doiError) : updateErrors(doiError);
 
         break;
-      // case "utgivelse":
-      //   var utgivelseValid = state.validation.match(
-      //     /^(Volum)[ ]([0-9-]{1,})[ ]([(]([a-z0-9]{1,6})[-]([a-z0-9]{1,6})[)])([\w-., ]{0,})/i
-      //   );
-      //   var utgivelseError = "Utgivelsesdata har galt format";
-      //
-      //   utgivelseValid
-      //     ? removeError(utgivelseError)
-      //     : updateErrors(utgivelseError);
-      //
-      //   break;
       case "kilde":
         var kildeValid = state.validation.length >= 3;
         var kildeError = "Kilde mangler/ har feil";
@@ -125,7 +114,9 @@ export default function Validation(props) {
     var data = [
       {
         name: "tidsskrift",
-        value: props.duplicate ? props.publication.journal.name : "x"
+        value: props.duplicate
+          ? props.publication.journal.name
+          : props.publication.channel.title
       },
       {
         name: "doi",
