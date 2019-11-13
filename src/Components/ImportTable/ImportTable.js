@@ -328,12 +328,10 @@ export default function EnhancedTable() {
 
   function handleOnFocus(event, row) {
     event.target.className = event.target.className + " focused";
-    console.log(event.target.className);
   }
 
   function handleOnBlur(event, row) {
     event.target.className = event.target.className.split(" focused")[0];
-    console.log(event.target.className);
   }
 
   function handleChangeRowsPerPage(option) {
@@ -356,15 +354,12 @@ export default function EnhancedTable() {
         }
       }
     }
-    return (
-      <div>
-        {inst.map((ins, i) => (
-          <div key={i}>
-            <div>{ins}</div>
-          </div>
-        ))}
-      </div>
-    );
+  }
+
+  function removeFromList() {
+    setTimeout(function() {
+      getRows();
+    }, 200);
   }
 
   const emptyRows =
@@ -477,17 +472,16 @@ export default function EnhancedTable() {
                 </TableRow>
               )}
             </TableBody>
-            <TableFooter>
-              <Pagination data={rows} />
-            </TableFooter>
           </Table>
         </div>
       </Paper>
+      <Pagination data={rows} />
 
       <ResultModal
         open={open}
         data={modalData}
         handleClose={handleClose.bind(this)}
+        removeFromList={removeFromList.bind(this)}
       />
       <AuthorListModal
         open={authorList}

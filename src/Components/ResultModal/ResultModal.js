@@ -10,6 +10,7 @@ import InnerModal from "../InnerModal/InnerModal";
 import { Duplicates } from "./Duplicates";
 import { Context } from "../../Context";
 import "../../assets/styles/Results.scss";
+import axios from "axios";
 
 export default function ResultModal(props) {
   const [innerModal, setInnerModal] = React.useState(false);
@@ -27,10 +28,11 @@ export default function ResultModal(props) {
   function handleSubmit() {
     if (state.selected === "true") {
       setDuplicate(false);
-
       setInnerModal(true);
     } else if (state.selected === "false") {
+      setNotRelevant();
       props.handleClose();
+      props.removeFromList();
     } else {
       setDuplicate(true);
       setInnerModal(true);
@@ -39,6 +41,19 @@ export default function ResultModal(props) {
 
   function handleClose() {
     setInnerModal(false);
+  }
+
+  async function setNotRelevant() {
+    let relevantStatus = state.currentImportStatus !== "ikke aktuelle";
+    try {
+      await axios.patch(
+        "http://localhost:8090/piarest/sentralimport/publication/" +
+          props.data.pubId,
+        JSON.stringify({ not_relevant: relevantStatus })
+      );
+    } catch (e) {
+      console.log("Patch request failed:", e);
+    }
   }
 
   return (

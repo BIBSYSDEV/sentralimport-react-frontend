@@ -67,7 +67,7 @@ export default function App() {
                 <div>2. Det har skjedd noe galt ved innlogging </div>
                 <div> --- </div>
                 <div>Dersom problemet vedvarer, kontakt administrator</div>
-                <div> --- </div> <div> --- </div>
+                <div> --- </div>
               </Typography>
               <hr />
 

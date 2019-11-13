@@ -13,7 +13,6 @@ export default function DropdownSelect() {
     }
 
     function handleChange(option) {
-        console.log(option);
         dispatch({type: "setImportYear", payload: option});
     }
 

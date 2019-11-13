@@ -40,22 +40,27 @@ export default function CustomizedTables() {
   const [prevYear, setPrevYear] = React.useState(0);
   const [data, setData] = React.useState([]);
   let { state } = React.useContext(Context);
+  const [prevCount, setPrevCount] = React.useState(state.totalCount);
 
   useEffect(() => {
     getNumbers();
-  }, [state.currentImportYear]);
+  }, [state.currentImportYear, state.totalCount]);
 
   function getNumbers() {
-    if (state.currentImportYear.value !== prevYear) {
+    if (
+      state.currentImportYear.value !== prevYear ||
+      state.totalCount !== prevCount
+    ) {
       axios
         .get(
-          "http://localhost:8080/piarest/sentralimport/publicationCount/" +
+          "http://localhost:8080/criswsint/sentralimport/publicationCount/" +
             state.currentImportYear.value
         )
         .then(response => {
           setData(response.data);
         });
       setPrevYear(state.currentImportYear.value);
+      setPrevCount(state.totalCount);
     }
   }
 
