@@ -472,10 +472,12 @@ export default function EnhancedTable() {
                 </TableRow>
               )}
             </TableBody>
+            <TableFooter>
+              <Pagination data={rows} />
+            </TableFooter>
           </Table>
         </div>
       </Paper>
-      <Pagination data={rows} />
 
       <ResultModal
         open={open}
