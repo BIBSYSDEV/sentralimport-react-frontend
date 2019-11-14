@@ -6,7 +6,7 @@ import Grid from "@material-ui/core/Grid/Grid";
 import FilterForm from "./Components/FilterForm/FilterForm";
 import DropdownPanel from "./Components/DropdownPanel/DropdownPanel";
 import Header from "./Components/Header/Header";
-import { Card, CardContent, Typography } from "@material-ui/core";
+import { Card, CardContent, Typography, Box } from "@material-ui/core";
 import ErrorIcon from "./assets/icons/alert-triangle.svg";
 import { Button } from "react-bootstrap";
 import "./assets/styles/buttons.scss";
@@ -26,12 +26,16 @@ export default function App() {
     <div className="App">
       <Header />
       <Grid container spacing={3}>
-        <Grid item xs={12} md={3}>
-          <DropdownPanel />
-        </Grid>
-        <Grid item xs={12} md={9}>
-          <Panel />
-        </Grid>
+        <Box clone order={{ xs: 2, md: 1 }}>
+          <Grid item xs={12} md={3}>
+            <DropdownPanel />
+          </Grid>
+        </Box>
+        <Box clone order={{ xs: 1, md: 2 }}>
+          <Grid item xs={12} md={9}>
+            <Panel />
+          </Grid>
+        </Box>
       </Grid>
       <Grid container spacing={3}>
         <Grid item xs={12} md={3}>
