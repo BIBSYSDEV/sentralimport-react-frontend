@@ -20,8 +20,8 @@ function CreateJournalPanel(props) {
 
   const [formHasErrors, setFormHasErrors] = React.useState([
     { value: 1 },
-    { value: 1 },
-    { value: 1 },
+    { value: 0 },
+    { value: 0 },
     { value: 1 },
     { value: 1 }
   ]);
@@ -83,7 +83,10 @@ function CreateJournalPanel(props) {
     setTitle(event.target.value);
   }
   function handleChangeIssn(event) {
-    if (!event.target.value.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)) {
+    if (
+      event.target.value.length > 0 &&
+      !event.target.value.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)
+    ) {
       formHasErrors[1].value = 1;
     } else {
       formHasErrors[1].value = 0;
@@ -92,7 +95,10 @@ function CreateJournalPanel(props) {
     setIssn(event.target.value);
   }
   function handleChangeEissn(event) {
-    if (!event.target.value.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)) {
+    if (
+      event.target.value.length > 0 &&
+      !event.target.value.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)
+    ) {
       formHasErrors[2].value = 1;
     } else {
       formHasErrors[2].value = 0;

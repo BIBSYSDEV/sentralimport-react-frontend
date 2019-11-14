@@ -106,8 +106,7 @@ function ContributorModal(props) {
 
               for (let l = 0; l < contributors.length; l++) {
                 contributors[l].isEditing =
-                  contributors[l].cristin.surname &&
-                  contributors[l].cristin.first_name;
+                  contributors[l].cristin.cristin_person_id === null;
               }
 
               let copy =
