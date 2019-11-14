@@ -170,7 +170,7 @@ const useStyles = makeStyles(theme => ({
     minWidth: 750
   },
   tableWrapper: {
-    overflowX: "auto"
+    overflow: "visible"
   }
 }));
 
