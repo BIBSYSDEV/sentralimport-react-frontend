@@ -26,18 +26,18 @@ export default function App() {
     <div className="App">
       <Header />
       <Grid container spacing={3}>
-        <Grid item xs={3}>
+        <Grid item xs={12} md={3}>
           <DropdownPanel />
         </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={12} md={9}>
           <Panel />
         </Grid>
       </Grid>
       <Grid container spacing={3}>
-        <Grid item xs={3}>
+        <Grid item xs={12} md={3}>
           <FilterForm />
         </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={12} md={9}>
           <ImportTable />
         </Grid>
       </Grid>

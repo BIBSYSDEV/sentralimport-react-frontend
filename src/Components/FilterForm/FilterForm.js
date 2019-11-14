@@ -20,11 +20,14 @@ import ExportIcon from "./export-purple.png";
 import X2Icon from "./x2-red.png";
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    overflowX: "auto",
+    overflowY: "visible"
+  },
   card: {
     maxWidth: 650,
     marginTop: 25,
-    marginLeft: 10,
-    overflow: "visible"
+    marginLeft: 10
   },
   media: {
     height: 0,

@@ -3,7 +3,6 @@
 .card-horiz {
   &.result {
     border-color: $color-purple;
-    width: 100%;
   }
 
   &.contributor {
@@ -13,6 +12,7 @@
 
 .card-horiz {
   display: flex;
+  width: 100%;
   border-left: 6px solid #424242;
   margin-bottom: 15px;
   padding: 0;
@@ -39,7 +39,6 @@
 
 .result {
   padding: 1em;
-  width: 80%;
 
   &.result {
     color: $color-purple;

@@ -6,8 +6,8 @@ import { Typography } from "@material-ui/core";
 
 export default function DropdownPanel() {
   const useStyles = {
-    minWidth: 275,
-    overflow: "visible",
+    overflowX: "auto",
+    overflowY: "visible",
     marginTop: 25,
     height: 148,
     marginLeft: 10

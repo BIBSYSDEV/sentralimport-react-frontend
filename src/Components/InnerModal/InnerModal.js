@@ -475,7 +475,7 @@ function InnerModal(props) {
                         xs
                         sm
                     >
-                        <Grid container item sm={5} xs={12} alignContent="center" alignItems="center">
+                        <Grid container item md={5} xs={12} alignContent="center" alignItems="center">
                             <Form>
                                 <h3>Importpublikasjon</h3>
                                 <FormGroup>
@@ -719,7 +719,7 @@ function InnerModal(props) {
                                 </FormGroup>
                             </Form>
                         </Grid>
-                        <Grid container item sm={4}>
+                        <Grid container item md={4} sm={12}>
                             <Form>
                                 <h3> Cristinpublikasjon </h3>
                                 <FormGroup>

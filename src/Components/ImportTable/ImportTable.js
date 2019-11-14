@@ -159,18 +159,17 @@ const EnhancedTableToolbar = props => {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: "99%",
+    display: "block",
+    width: "100%",
     marginTop: theme.spacing(3)
   },
   paper: {
     width: "100%",
     marginBottom: theme.spacing(2)
   },
-  table: {
-    minWidth: 750
-  },
   tableWrapper: {
-    overflow: "visible"
+    overflowX: "auto",
+    overflowY: "visible"
   }
 }));
 
