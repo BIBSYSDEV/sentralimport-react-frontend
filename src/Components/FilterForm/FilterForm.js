@@ -25,9 +25,11 @@ const useStyles = makeStyles(theme => ({
     overflowY: "visible"
   },
   card: {
-    maxWidth: 650,
     marginTop: 25,
-    marginLeft: 10
+    marginLeft: 10,
+    [theme.breakpoints.down("md")]: {
+      marginLeft: 0
+    }
   },
   media: {
     height: 0,
