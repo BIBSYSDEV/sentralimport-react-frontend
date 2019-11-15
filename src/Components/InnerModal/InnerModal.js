@@ -26,6 +26,7 @@ import './style.css';
 import '../../assets/styles/buttons.scss'
 import ButtonGroup from "@material-ui/core/ButtonGroup/ButtonGroup";
 import cloneDeep from 'lodash/cloneDeep';
+import CreateJournalPanel from "../CreateJournalPanel/CreateJournalPanel";
 
 //TODO: erstatt react-select med ny funksjon for oppretting av tidsskrifter (react-creatable) og sett opp select for valg av kategori via dropdown
 //TODO: skill mellom import og cristin felter med farge/styling
@@ -41,6 +42,7 @@ function InnerModal(props) {
         function setFields() {
             let temp = JSON.parse(localStorage.getItem("tempPublication"));
             let workedOn = false;
+            console.log(temp);
             if (temp !== null && temp.publication.pubId === props.data.pubId && !props.duplicate && temp.publication.duplicate === props.duplicate)
                 workedOn = true;
 
@@ -163,8 +165,8 @@ function InnerModal(props) {
         value: state.selectedPublication.journal.name,
         label: state.selectedPublication.journal.name
     } : {
-        value: " ",
-        label: "Ingen tidsskrift funnet"
+        value: props.data.channel.id,
+        label: props.data.channel.title
     });
 
     const [selectedCategory, setSelectedCategory] = React.useState(props.duplicate ? {
@@ -205,8 +207,10 @@ function InnerModal(props) {
                 categoryName: selectedCategory.label,
                 channel: {
                     ...publishingDetails,
-                    id: selectedJournal.value,
-                    title: selectedJournal.label
+                    cristinTidsskriftNr: selectedJournal.value,
+                    title: selectedJournal.label,
+                    issn: selectedJournal.issn,
+                    eissn: selectedJournal.eissn
                 },
                 doi: doi,
                 externalId: kildeId,
@@ -218,12 +222,15 @@ function InnerModal(props) {
             }
         };
         localStorage.setItem("tempPublication", JSON.stringify(temp));
+        console.log(temp);
+        console.log("Publikasjon oppdatert");
     }
 
     function handleChangeJournal(option) {
         setSelectedJournal(option);
+        console.log(option);
         dispatch({type: "setSelectedField", payload: "tidsskrift"});
-        dispatch({type: "setValidation", payload: option.value});
+        dispatch({type: "setValidation", payload: option.label});
     }
 
     function handleChangeTittel(event) {
@@ -326,14 +333,16 @@ function InnerModal(props) {
             props.data.channel
                 ? {
                     value: props.data.channel.id,
-                    label: props.data.channel.title
+                    label: props.data.channel.title,
+                    issn: props.data.channel.issn,
+                    eissn: props.data.channel.eissn
                 }
                 : {value: "x", label: "Ingen tidsskrift funnet"}
         );
         dispatch({type: "setSelectedField", payload: "tidsskrift"});
         dispatch({
             type: "setValidation",
-            payload: {value: "x", label: "Ingen tidsskrift funnet"}
+            payload: props.data.channel.title
         });
     }
 
@@ -387,11 +396,17 @@ function InnerModal(props) {
         getJournals(searchString);
     }
 
+    const handleNewJournal = (newJournal) => {
+        console.log(newJournal);
+        setSelectedJournal({label: newJournal.title, value: newJournal.id, issn: newJournal.issn, eissn: newJournal.eissn });
+       
+    }
+
     async function getJournals(name) {
         if (name === null || name === "")
             name = "*";
         await axios
-            .get("http://localhost:8080/crisrest-2.5-SNAPSHOT/results/channels?type=journal&query=title_general:" + name)
+            .get("http://localhost:8090/crisrest-2.5-SNAPSHOT/results/channels?type=journal&query=title_general:" + name)
             .then(response => {
                 updateJournals(response.data);
             });
@@ -410,7 +425,7 @@ function InnerModal(props) {
     function updateJournals(data) {
         let tempArray = [];
         for (let i = 0; i < data.length; i++) {
-            tempArray.push({value: data[i].id, label: data[i].title});
+            tempArray.push({value: data[i].id, label: data[i].title, issn: data[i].issn, eissn: data[i].eissn});
         }
         setJournals(tempArray);
     }
@@ -460,7 +475,7 @@ function InnerModal(props) {
                         xs
                         sm
                     >
-                        <Grid container item sm={5} xs={12} alignContent="center" alignItems="center">
+                        <Grid container item md={5} xs={12} alignContent="center" alignItems="center">
                             <Form>
                                 <h3>Importpublikasjon</h3>
                                 <FormGroup>
@@ -619,7 +634,7 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {selectedCategory.value === props.data.category ? (
+                                        {selectedCategory.label === props.data.categoryName ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -704,7 +719,7 @@ function InnerModal(props) {
                                 </FormGroup>
                             </Form>
                         </Grid>
-                        <Grid container item sm={4}>
+                        <Grid container item md={4} sm={12}>
                             <Form>
                                 <h3> Cristinpublikasjon </h3>
                                 <FormGroup>
@@ -864,6 +879,9 @@ function InnerModal(props) {
                             </Form>
                         </Grid>
                     </Grid>
+                    <div className={"createJournalPanel"}>
+                    <CreateJournalPanel handleCreateJournal={handleNewJournal}/>
+                    </div>
                     <div>{state.formErrors.map((error, i) => { return(
                         <div key={i}>{error + "; "}</div>
                     )})}</div>

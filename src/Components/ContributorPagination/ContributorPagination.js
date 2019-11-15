@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { TableRow, TableCell, Button } from "@material-ui/core";
 import { Context } from "../../Context";
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 function ContributorPagination(props) {
   let { state, dispatch } = React.useContext(Context);
@@ -13,9 +14,14 @@ function ContributorPagination(props) {
       values.push({ value: i, label: i + 1 });
     }
     setPageValues(values);
-  }, [props.totalCount]);
+  }, [props.totalCount, state.contributorPerPage]);
 
   const [pageValues, setPageValues] = React.useState([]);
+  const perPage = [
+    { value: 5, label: "5" },
+    { value: 10, label: "10" },
+    { value: 15, label: "15" }
+  ];
 
   function incrementPage() {
     dispatch({
@@ -35,11 +41,20 @@ function ContributorPagination(props) {
     dispatch({ type: "setContributorPage", payload: option.value });
   }
 
+  function handleChangePerPage(option) {
+    dispatch({ type: "setContributorPerPage", payload: option.value });
+  }
+
   return (
     <TableRow>
       <TableCell align="right">
         {" "}
-        Antall per side: {state.contributorPerPage}
+        Antall per side:
+        <CreatableSelect
+          options={perPage}
+          onChange={handleChangePerPage}
+          defaultValue={perPage[0]}
+        />
       </TableCell>
       <TableCell align="justify">
         Bidragsytere{" "}

@@ -18,14 +18,18 @@ import { Context } from "../../Context";
 import DownloadIcon from "./download-green.png";
 import ExportIcon from "./export-purple.png";
 import X2Icon from "./x2-red.png";
-import NavbarCollapse from "react-bootstrap/NavbarCollapse";
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    overflowX: "auto",
+    overflowY: "visible"
+  },
   card: {
-    maxWidth: 650,
     marginTop: 25,
     marginLeft: 10,
-    overflow: "visible"
+    [theme.breakpoints.down("md")]: {
+      marginLeft: 0
+    }
   },
   media: {
     height: 0,

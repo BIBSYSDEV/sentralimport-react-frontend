@@ -1,7 +1,6 @@
 .contributorButton {
-  background-color: #61dafb !important;
-  color: #282c34 !important;
-  margin-left: 500px !important;
+  background-color: #61dafb;
+  color: #282c34;
 }
 
 .orderButtons {
@@ -12,7 +11,31 @@
 .buttonGroup {
   max-width: 0;
 }
+.createJournalPanel {
+  position: absolute;
+  top: 385px;
+  right: 35px;
+}
+
+.createJournalButton {
+  width: 130px;
+  position: absolute;
+  right: -30px;
+  top: -1px;
+}
+
+.createJournalCard {
+  position: relative;
+  left: 150px;
+  top: 40px;
+  width: 250px;
+}
+
+.errorLogoutButton {
+  position: relative;
+  left: 450px;
+}
 
 .selected {
-  color:cornflowerblue !important;
+  color: cornflowerblue;
 }
