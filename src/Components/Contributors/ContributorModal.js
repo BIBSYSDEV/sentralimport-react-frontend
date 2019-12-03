@@ -37,7 +37,6 @@ function ContributorModal(props) {
   useEffect(() => {
     async function fetch() {
       if (props.open) {
-        const imported = await fetchContributors(props.data);
 
         let contributors = [];
         let cristinAuthors = [];
@@ -52,18 +51,7 @@ function ContributorModal(props) {
             cristinAuthors = await searchContributors(props.data.authors);
           }
 
-          let contributors = [];
-          let cristinAuthors = [];
-
-          let temp = JSON.parse(localStorage.getItem("tempContributors"));
-          if (temp !== null && temp.publication.pubId === props.data.pubId) {
-            contributors = temp.contributors;
-          } else {
-            if (props.duplicate) {
-              cristinAuthors = state.selectedPublication.data.authors;
-            } else {
-              cristinAuthors = await searchContributors(props.data.authors);
-            }
+            const imported = await fetchContributors(props.data);
 
             for (
               let i = 0;
@@ -115,14 +103,14 @@ function ContributorModal(props) {
                   : Object.assign({}, contributors[i].cristin);
               contributors[i].toBeCreated =
                 contributors[i].cristin === defaultAuthor ? copy : copy;
-            }
           }
-          setData(contributors);
         }
+          setData(contributors);
       }
     }
 
     fetch();
+    handleTempSave();
   }, [props.data, props.open, state.selectedPublication]);
 
   function handleClose() {
@@ -139,6 +127,7 @@ function ContributorModal(props) {
     });
     props.toggle();
     dispatch({ type: "setContributorPage", payload: 0 });
+    dispatch({type: "contributors", payload: data});
   }
 
   function handleChooseAuthor(author) {
@@ -547,9 +536,9 @@ async function fetchContributors(result) {
 
   if (result.authors.length > 10 && result.authors[10].sequenceNr !== 11) {
     authors = await axios.get(
-      "http://localhost:8080/piarest/sentralimport/publication/" +
+      "https://piarest-utv.dataporten-api.no/sentralimport/publication/" +
         result.pubId +
-        "/contributors"
+        "/contributors", JSON.parse(localStorage.getItem("config"))
     );
     authors = authors.data;
   }
@@ -575,12 +564,12 @@ async function searchContributors(authors) {
       ? authors[i].firstname.substr(0, 1) + " " + authors[i].surname
       : authors[i].authorName;
     let searchedAuthors = await axios.get(
-      "https://api.cristin-utv.uio.no/v2/persons?name=" +
+      "http://localhost:8080/crisrest-2.5-SNAPSHOT/persons?name=" +
         authorName +
         "&institution=" +
         (authors[i].institutions[0].hasOwnProperty("acronym")
           ? authors[i].institutions[0].acronym
-          : authors[i].institutions[0].institutionName)
+          : authors[i].institutions[0].institutionName.replace("&", ""))
     );
 
     if (searchedAuthors.data.length > 0) {

@@ -8,6 +8,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import axios from "axios";
 import { Context } from "../../Context";
+import {useHistory} from "react-router-dom";
 
 const StyledTableCell = withStyles(theme => ({
   head: {
@@ -41,26 +42,32 @@ export default function CustomizedTables() {
   const [data, setData] = React.useState([]);
   let { state } = React.useContext(Context);
   const [prevCount, setPrevCount] = React.useState(state.totalCount);
+    let history = useHistory();
 
   useEffect(() => {
     getNumbers();
   }, [state.currentImportYear, state.totalCount]);
 
-  function getNumbers() {
+  async function getNumbers() {
     if (
       state.currentImportYear.value !== prevYear ||
-      state.totalCount !== prevCount
+      state.totalCount !== prevCount && localStorage.getItem("config")
     ) {
-      axios
-        .get(
-          "http://localhost:8080/criswsint/sentralimport/publicationCount/" +
-            state.currentImportYear.value
-        )
-        .then(response => {
-          setData(response.data);
-        });
-      setPrevYear(state.currentImportYear.value);
-      setPrevCount(state.totalCount);
+      try {
+          await axios
+              .get(
+                  "https://piarest-utv.dataporten-api.no/sentralimport/publicationCount/" +
+                  state.currentImportYear.value, JSON.parse(localStorage.getItem("config"))
+              )
+              .then(response => {
+                  setData(response.data);
+              });
+          setPrevYear(state.currentImportYear.value);
+          setPrevCount(state.totalCount);
+      } catch (e) {
+          localStorage.setItem("authorized", "false");
+          history.push("/notAuthorized");
+      }
     }
   }
 

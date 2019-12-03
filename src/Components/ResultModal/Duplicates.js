@@ -95,7 +95,7 @@ export function Duplicates(props) {
 
 async function fetchDuplicates(searchTerms) {
     let results = [];
-    console.log("fething...");
+    console.log("fetching...");
     const searchResults = await axios.get(
         "https://api.cristin-utv.uio.no/v2/results" + searchTerms + "&fields=all&lang=nb"
     );

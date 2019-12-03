@@ -42,7 +42,6 @@ function InnerModal(props) {
         function setFields() {
             let temp = JSON.parse(localStorage.getItem("tempPublication"));
             let workedOn = false;
-            console.log(temp);
             if (temp !== null && temp.publication.pubId === props.data.pubId && !props.duplicate && temp.publication.duplicate === props.duplicate)
                 workedOn = true;
 
@@ -51,7 +50,7 @@ function InnerModal(props) {
 
             setSelectedJournal(workedOn ?
                 {
-                    value: temp.publication.channel.id,
+                    value: temp.publication.channel.cristinTidsskriftNr.toString(),
                     label: temp.publication.channel.title
                 } :
                 (props.duplicate ?
@@ -61,7 +60,7 @@ function InnerModal(props) {
                     }
                     :
                     {
-                        value: props.data.channel.id,
+                        value: props.data.channel.cristinTidsskriftNr.toString(),
                         label: props.data.channel.title
                     }
                 )
@@ -149,6 +148,8 @@ function InnerModal(props) {
 
     const [contributorModal, setContributorModal] = React.useState(false);
 
+    const [contributors] = React.useState(props.duplicate ? state.selectedPublication.data.authors : props.data.authors);
+
     const [aarstall, setAarstall] = React.useState("");
 
     const [categories, setCategories] = React.useState();
@@ -165,7 +166,7 @@ function InnerModal(props) {
         value: state.selectedPublication.journal.name,
         label: state.selectedPublication.journal.name
     } : {
-        value: props.data.channel.id,
+        value: props.data.channel.cristinTidsskriftNr.toString(),
         label: props.data.channel.title
     });
 
@@ -194,8 +195,8 @@ function InnerModal(props) {
 
     useEffect(() => {
         async function fetch() {
-            await getJournals(null);
             await getCategories();
+            await getJournals(null);
         }
         fetch();
     }, []);
@@ -213,22 +214,25 @@ function InnerModal(props) {
                     eissn: selectedJournal.eissn
                 },
                 doi: doi,
-                externalId: kildeId,
                 languages: languages,
                 pubId: props.data.pubId,
                 registered: aarstall,
-                sourceName: kilde,
-                duplicate: props.duplicate
+                duplicate: props.duplicate,
+                import_sources: [
+                    {
+                        source_name: props.data.sourceCode,
+                        source_reference_id: kildeId
+                    }
+                ],
+                authors: props.data.authors
             }
         };
         localStorage.setItem("tempPublication", JSON.stringify(temp));
-        console.log(temp);
         console.log("Publikasjon oppdatert");
     }
 
     function handleChangeJournal(option) {
         setSelectedJournal(option);
-        console.log(option);
         dispatch({type: "setSelectedField", payload: "tidsskrift"});
         dispatch({type: "setValidation", payload: option.label});
     }
@@ -277,6 +281,9 @@ function InnerModal(props) {
     }
 
     function handleSubmit() {
+        if (state.contributors === null) {
+            dispatch({type: "contributors", payload: contributors});
+        }
         setDialogOpen(true);
     }
 
@@ -332,7 +339,7 @@ function InnerModal(props) {
         setSelectedJournal(
             props.data.channel
                 ? {
-                    value: props.data.channel.id,
+                    value: props.data.channel.cristinTidsskriftNr.toString(),
                     label: props.data.channel.title,
                     issn: props.data.channel.issn,
                     eissn: props.data.channel.eissn
@@ -398,15 +405,15 @@ function InnerModal(props) {
 
     const handleNewJournal = (newJournal) => {
         console.log(newJournal);
-        setSelectedJournal({label: newJournal.title, value: newJournal.id, issn: newJournal.issn, eissn: newJournal.eissn });
+        setSelectedJournal({label: newJournal.title, value: 0, issn: newJournal.issn, eissn: newJournal.eissn });
        
-    }
+    };
 
     async function getJournals(name) {
         if (name === null || name === "")
             name = "*";
         await axios
-            .get("http://localhost:8090/crisrest-2.5-SNAPSHOT/results/channels?type=journal&query=title_general:" + name)
+            .get("http://localhost:8080/crisrest-2.5-SNAPSHOT/results/channels?type=journal&query=title_general:" + name)
             .then(response => {
                 updateJournals(response.data);
             });
@@ -535,7 +542,7 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {selectedJournal.value === props.data.channel.id ? (
+                                        {selectedJournal.value === props.data.channel.cristinTidsskriftNr.toString() ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -900,6 +907,7 @@ function InnerModal(props) {
                 open={dialogOpen}
                 handleClose={toggle}
                 handleCloseDialog={toggleDialog}
+                data={props.data}
             />
             <ContributorModal
                 open={contributorModal}

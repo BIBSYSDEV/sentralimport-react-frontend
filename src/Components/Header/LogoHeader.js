@@ -1,36 +1,44 @@
 import React from "react";
-import { Navbar, Nav } from "react-bootstrap";
+import {Navbar, Nav} from "react-bootstrap";
 import logo from "./logo.svg";
 import "./logo.css";
-import { Button } from "reactstrap";
+import {Button} from "reactstrap";
+import {useHistory} from "react-router-dom";
 
 export default function LogoHeader() {
-  function handleLogout() {
-    localStorage.clear();
-    window.location.href = "/login";
-  }
+    let history = useHistory();
 
-  const style = {
-    marginRight: 20
-  };
+    function handleLogout() {
+        localStorage.clear();
+        window.location.href = "https://auth.dataporten.no/logout";
+    }
 
-  return (
-    <Navbar expand="sm" bg="light" variant="dark">
-      <Nav>
-        <img
-          src={logo}
-          alt="CRISTIN - Current Research Information System In Norway"
-        />
-      </Nav>
-      <Navbar.Collapse>
-        <Nav className="mr-auto" />
-        <Nav style={style}>
-          <Button onClick={handleLogout}>Logg ut</Button>
-        </Nav>
-        <Nav>
-          <Nav.Item className="header-title">Sentralimport</Nav.Item>
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
-  );
+    const style = {
+        marginRight: 20
+    };
+
+    function login() {
+        history.push("/login");
+    }
+
+    return (
+        <Navbar expand="sm" bg="light" variant="dark">
+            <Nav>
+                <img
+                    src={logo}
+                    alt="CRISTIN - Current Research Information System In Norway"
+                />
+            </Nav>
+            <Navbar.Collapse>
+                <Nav className="mr-auto" />
+                <Nav style={style}>
+                    {(localStorage.getItem("authorized") && localStorage.getItem("authorized") === "true") ? <Button onClick={handleLogout}>Logg ut</Button> :
+                        <Button onClick={login}>Logg inn</Button>}
+                </Nav>
+                <Nav>
+                    <Nav.Item className="header-title">Sentralimport</Nav.Item>
+                </Nav>
+            </Navbar.Collapse>
+        </Navbar>
+    );
 }
