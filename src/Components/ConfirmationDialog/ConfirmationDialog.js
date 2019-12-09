@@ -16,31 +16,49 @@ export default function ConfirmationDialog(props) {
     let emptyArray = [];
 
     async function post() {
-        // let id = await postPublication();
-        let id = 1605973;
-        await putContributors(id);
+        let publication = await postPublication();
+        // let publication = {
+        //     cristin_result_id: 1605973,
+        //     pubId: 20882
+        // };
+        await putContributors(publication.cristin_result_id);
+        await patchPiaPublication(publication);
         dispatch({type: "setFormErrors", payload: emptyArray});
     }
 
     async function postPublication() {
-        let publication = createPublication();
+        let publication = createPublicationObject();
         console.log(publication);
         try {
-            let response = await axios.post("http://localhost:8080/crisrest-2.5-SNAPSHOT/results", publication,
+            let response = await axios.post("https://crisrest-utv.dataporten-api.no/results", publication,
                 JSON.parse(localStorage.getItem("config")));
-            return response.data.cristin_result_id;
+            return response.data;
         } catch (e) {
             console.log("There was an error while posting publication:", e);
         }
     }
 
     async function putContributors(id) {
-        let a = localStorage.getItem("tempContributors");
-        console.log(JSON.parse(a));
-        // let response = await axios.put("http://localhost:8080/crisrest-2.5-SNAPSHOT/results/" + id + "/contributors");
+        let contributors = createContributorObject();
+        try {
+            let response = await axios.put("https://crisrest-utv.dataporten-api.no/results/" + id + "/contributors", contributors,
+                JSON.parse(localStorage.getItem("config")));
+        } catch (e) {
+            console.log("There was an error while putting contributors:", e);
+        }
     }
 
-    function createPublication() {
+    async function patchPiaPublication(publication) {
+        try {
+            await axios.patch(
+                "https://piarest-utv.dataporten-api.no/sentralimport/publication/" + publication.pubId,
+                JSON.stringify({ cristin_id: publication.cristin_result_id }), JSON.parse(localStorage.getItem("config")));
+        } catch (e) {
+            console.log("There was an error while patching piaPublication:", e);
+        }
+    }
+
+    function createPublicationObject() {
         const temp = JSON.parse(localStorage.getItem("tempPublication"));
 
         let title = {};
@@ -87,6 +105,32 @@ export default function ConfirmationDialog(props) {
                 count: temp.publication.channel.pageTo - temp.publication.channel.pageFrom
             }
         };
+    }
+
+    function createContributorObject() {
+        let temp = JSON.parse(localStorage.getItem("tempContributors"));
+        let contributors = [];
+        for (let i = 0; i < temp.contributors.length; i++) {
+            let affiliations = [];
+            for (let j = 0; j < temp.contributors[i].toBeCreated.affiliations.length; j++) {
+                affiliations[j] = {
+                    role_code: temp.contributors[i].imported.role_code,
+                    institution: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("institution") ?
+                        {...temp.contributors[i].toBeCreated.affiliations[j].institution, role_code: temp.contributors[i].imported.role_code}
+                        :
+                        {
+                            cristin_institution_id: temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString(),
+                        }
+                }
+            }
+            contributors[i] = {
+                ...temp.contributors[i].toBeCreated,
+                affiliations: affiliations,
+                cristin_person_id: temp.contributors[i].toBeCreated.cristin_person_id.toString()
+            };
+        }
+        console.log(contributors);
+        return contributors;
     }
 
     return (

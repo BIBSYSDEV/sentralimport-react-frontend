@@ -36,7 +36,6 @@ function ContributorModal(props) {
 
   useEffect(() => {
     async function fetch() {
-      if (props.open) {
 
         let contributors = [];
         let cristinAuthors = [];
@@ -84,7 +83,8 @@ function ContributorModal(props) {
                           ? imported[i].authorName
                           : "",
                         order: imported[i].sequenceNr,
-                        affiliations: imported[i].institutions
+                        affiliations: imported[i].institutions,
+                      role_code: imported[i].hasOwnProperty("roleCode") ? imported[i].roleCode : "FORFATTER"
                       }
                     : defaultAuthor,
                 cristin:
@@ -107,7 +107,6 @@ function ContributorModal(props) {
         }
           setData(contributors);
       }
-    }
 
     fetch();
     handleTempSave();
@@ -311,13 +310,13 @@ function ContributorModal(props) {
       ? author.first_name.substr(0, 1) + " " + author.surname
       : author.authorName;
     let searchedAuthors = await axios.get(
-      "https://api.cristin-utv.uio.no/v2/persons?name=" +
+      "https://crisrest-utv.dataporten-api.no/persons?name=" +
         authorName +
         "&institution=" +
         (author.affiliations[0].hasOwnProperty("acronym")
           ? author.affiliations[0].acronym
           : author.affiliations[0].institutionName)
-    );
+    , JSON.parse(localStorage.getItem("config")));
     console.log(searchedAuthors);
     findBestMatch(author, searchedAuthors.data, rowIndex);
   }
@@ -351,17 +350,17 @@ function ContributorModal(props) {
     }
     if (bestMatch !== "") {
       var tempAuthor = await axios.get(
-        "https://api.cristin-utv.uio.no/v2/persons/" +
+        "https://crisrest-utv.dataporten-api.no/persons/" +
           bestMatch.cristin_person_id
-      );
+      , JSON.parse(localStorage.getItem("config")));
       console.log(tempAuthor.data);
       var tempAffliations = [];
       for (var j = 0; j < tempAuthor.data.affiliations.length; j++) {
         var tempInstitution = [];
         var tempdata = await axios.get(
-          "https://api.cristin-utv.uio.no/v2/institutions/" +
+          "https://crisrest-utv.dataporten-api.no/institutions/" +
             tempAuthor.data.affiliations[j].institution.cristin_institution_id
-        );
+        , JSON.parse(localStorage.getItem("config")));
         console.log(tempdata);
         tempInstitution.acronym = tempdata.data.acronym;
         tempInstitution.countryCode = tempdata.data.country;
@@ -548,7 +547,7 @@ async function fetchContributors(result) {
 async function fetchInstitutionName(institutionId) {
   if (institutionId === "0") return " ";
   let institution = await axios.get(
-    "https://api.cristin-utv.uio.no/v2/institutions/" + institutionId
+    "https://crisrest-utv.dataporten-api.no/institutions/" + institutionId, JSON.parse(localStorage.getItem("config"))
   );
   return institution.data.institution_name.hasOwnProperty("nb")
     ? institution.data.institution_name.nb
@@ -564,13 +563,13 @@ async function searchContributors(authors) {
       ? authors[i].firstname.substr(0, 1) + " " + authors[i].surname
       : authors[i].authorName;
     let searchedAuthors = await axios.get(
-      "http://localhost:8080/crisrest-2.5-SNAPSHOT/persons?name=" +
+      "https://crisrest-utv.dataporten-api.no/persons?name=" +
         authorName +
         "&institution=" +
         (authors[i].institutions[0].hasOwnProperty("acronym")
           ? authors[i].institutions[0].acronym
           : authors[i].institutions[0].institutionName.replace("&", ""))
-    );
+    , JSON.parse(localStorage.getItem("config")));
 
     if (searchedAuthors.data.length > 0) {
       let authorSuggestion = await axios.get(searchedAuthors.data[0].url);

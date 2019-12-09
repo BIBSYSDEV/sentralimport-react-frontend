@@ -9,8 +9,10 @@ export default function LogoHeader() {
     let history = useHistory();
 
     function handleLogout() {
+        let id = localStorage.getItem("id_token");
         localStorage.clear();
-        window.location.href = "https://auth.dataporten.no/logout";
+        window.location.href = "https://auth.dataporten.no/openid/endsession?post_logout_redirect_uri=http://localhost:3000/login" +
+            "&id_token_hint=" + id;
     }
 
     const style = {

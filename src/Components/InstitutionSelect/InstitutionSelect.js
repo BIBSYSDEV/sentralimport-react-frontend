@@ -19,7 +19,7 @@ export default function InstitutionSelect(props) {
     async function getInstitutions() {
         if (state.institutions === null) {
             let temp = await axios.get(
-                "http://localhost:8080/crisrest-2.5-SNAPSHOT/institutions?cristin_institution=true&lang=nb&per_page=300", JSON.parse(localStorage.getItem("config"))
+                "https://crisrest-utv.dataporten-api.no/institutions?cristin_institution=true&lang=nb&per_page=300", JSON.parse(localStorage.getItem("config"))
             );
 
             temp = temp.data.filter(i => i.cristin_user_institution);

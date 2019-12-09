@@ -14,7 +14,8 @@ export default function Login(props) {
     const client_id = "ab940329-87f9-40dc-a129-bf9d4ae07917";
     const search = queryString.parse(props.location.hash);
     const authState = "bra";
-    const gateway_scope = "gk_piarest-utv";
+    const piarest_gateway_scope = "gk_piarest-utv";
+    const crisrest_gateway_scope = "gk_crisrest-utv";
     let history = useHistory();
 
 
@@ -25,7 +26,8 @@ export default function Login(props) {
             client_id +
             "&redirect_uri=http://localhost:3000/login" +
             "&scope=openid userid email userid-feide userid-nin profile " +
-            gateway_scope +
+            piarest_gateway_scope +
+            " " + crisrest_gateway_scope +
             "&response_type=id_token token&state=" +
             authState +
             "&nonce=" +
@@ -33,8 +35,10 @@ export default function Login(props) {
     }
 
     function handleLogout() {
+        let id = localStorage.getItem("id_token");
         localStorage.clear();
-        window.location.href = "https://auth.dataporten.no/logout";
+        window.location.href = "https://auth.dataporten.no/openid/endsession?post_logout_redirect_uri=http://localhost:3000/login" +
+            "&id_token_hint=" + id;
     }
 
     function generateNonce() {
@@ -56,8 +60,9 @@ export default function Login(props) {
                     Authorization: "Bearer " + localStorage.getItem("access_token")
                 }
             };
+            console.log(config);
             let test = await axios.get(
-                "https://piarest-utv.dataporten-api.no",
+                "https://crisrest-utv.dataporten-api.no",
                 config
             );
             console.log(test);
@@ -80,6 +85,7 @@ export default function Login(props) {
             localStorage.setItem("authorized", "true");
             localStorage.setItem("access_token", search.access_token.toString());
             localStorage.setItem("expires", jsonToken.exp);
+            localStorage.setItem("id_token", search.id_token.toString());
             let config = {
                 headers: {
                     Authorization: "Bearer " + search.access_token.toString()
@@ -100,9 +106,9 @@ export default function Login(props) {
                 <div>
                     <p>Du er allerede logget inn. Ønsker du å logge ut?</p>
                     <Button onClick={handleLogout}>Logg ut</Button>
-                    {/*<br />*/}
-                    {/*<br />*/}
-                    {/*<Button onClick={testApi}>Test api</Button>*/}
+                    <br />
+                    <br />
+                    <Button onClick={testApi}>Test api</Button>
                 </div>
             ) : (
                 <Grid

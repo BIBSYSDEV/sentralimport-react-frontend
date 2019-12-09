@@ -413,14 +413,14 @@ function InnerModal(props) {
         if (name === null || name === "")
             name = "*";
         await axios
-            .get("http://localhost:8080/crisrest-2.5-SNAPSHOT/results/channels?type=journal&query=title_general:" + name)
+            .get("https://crisrest-utv.dataporten-api.no/results/channels?type=journal&query=title_general:" + name, JSON.parse(localStorage.getItem("config")))
             .then(response => {
                 updateJournals(response.data);
             });
     }
 
     async function getCategories() {
-        let fetchedCategories = await axios.get("https://api.cristin-utv.uio.no/v2/results/categories?lang=nb");
+        let fetchedCategories = await axios.get("https://crisrest-utv.dataporten-api.no/results/categories?lang=nb", JSON.parse(localStorage.getItem("config")));
 
         let tempArray = [];
         for (let i = 0; i < fetchedCategories.data.length; i++) {

@@ -97,7 +97,7 @@ async function fetchDuplicates(searchTerms) {
     let results = [];
     console.log("fetching...");
     const searchResults = await axios.get(
-        "https://api.cristin-utv.uio.no/v2/results" + searchTerms + "&fields=all&lang=nb"
+        "https://crisrest-utv.dataporten-api.no/results" + searchTerms + "&fields=all&lang=nb", JSON.parse(localStorage.getItem("config"))
     );
     console.log("Found " + searchResults.data.length + " results");
     for (let i = 0; i < searchResults.data.length; i++) {
@@ -108,10 +108,10 @@ async function fetchDuplicates(searchTerms) {
 
     for (let i = 0; i < results.length; i++) {
         let authors = await axios.get(
-            "https://api.cristin-utv.uio.no/v2/results/" +
+            "https://crisrest-utv.dataporten-api.no/results/" +
             results[i].data.cristin_result_id +
             "/contributors"
-        );
+        , JSON.parse(localStorage.getItem("config")));
         results[i].data.authors = authors.data;
     }
 
