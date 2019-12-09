@@ -24,7 +24,7 @@ export default function Login(props) {
         window.location.href =
             "https://auth.dataporten.no/oauth/authorization?client_id=" +
             client_id +
-            "&redirect_uri=https://d3m6lae8lxzp62.cloudfront.net//login" +
+            "&redirect_uri=https://d3m6lae8lxzp62.cloudfront.net/login" +
             "&scope=openid userid email userid-feide userid-nin profile " +
             piarest_gateway_scope +
             " " + crisrest_gateway_scope +
@@ -37,7 +37,7 @@ export default function Login(props) {
     function handleLogout() {
         let id = localStorage.getItem("id_token");
         localStorage.clear();
-        window.location.href = "https://auth.dataporten.no/openid/endsession?post_logout_redirect_uri=https://d3m6lae8lxzp62.cloudfront.net//login" +
+        window.location.href = "https://auth.dataporten.no/openid/endsession?post_logout_redirect_uri=https://d3m6lae8lxzp62.cloudfront.net/login" +
             "&id_token_hint=" + id;
     }
 
