@@ -9,18 +9,22 @@ import {
 } from "@material-ui/core";
 import {Context} from "../../Context";
 import axios from "axios";
+import {useHistory} from "react-router-dom";
 
 export default function ConfirmationDialog(props) {
     let {dispatch} = React.useContext(Context);
+    let history = useHistory();
 
     let emptyArray = [];
+    // let url = "https://crisrest-utv.dataporten-api.no";
+    let url = "http://localhost:8080/crisrest-2.5-SNAPSHOT";
 
     async function post() {
-        let publication = await postPublication();
-        // let publication = {
-        //     cristin_result_id: 1605973,
-        //     pubId: 20882
-        // };
+        // let publication = await postPublication();
+        let publication = {
+            cristin_result_id: 1605975,
+            pubId: 19088
+        };
         await putContributors(publication.cristin_result_id);
         await patchPiaPublication(publication);
         dispatch({type: "setFormErrors", payload: emptyArray});
@@ -30,7 +34,7 @@ export default function ConfirmationDialog(props) {
         let publication = createPublicationObject();
         console.log(publication);
         try {
-            let response = await axios.post("https://crisrest-utv.dataporten-api.no/results", publication,
+            let response = await axios.post(url + "/results", publication,
                 JSON.parse(localStorage.getItem("config")));
             return response.data;
         } catch (e) {
@@ -41,7 +45,7 @@ export default function ConfirmationDialog(props) {
     async function putContributors(id) {
         let contributors = createContributorObject();
         try {
-            let response = await axios.put("https://crisrest-utv.dataporten-api.no/results/" + id + "/contributors", contributors,
+            let response = await axios.put(url + "/results/" + id + "/contributors", contributors,
                 JSON.parse(localStorage.getItem("config")));
         } catch (e) {
             console.log("There was an error while putting contributors:", e);
@@ -129,7 +133,7 @@ export default function ConfirmationDialog(props) {
                 cristin_person_id: temp.contributors[i].toBeCreated.cristin_person_id.toString()
             };
         }
-        console.log(contributors);
+
         return contributors;
     }
 

@@ -875,8 +875,8 @@ function InnerModal(props) {
                                 </FormGroup>
                                 <FormGroup>
                                     <Button
-                                        // disabled={state.formErrors.length >= 1}
-                                        disabled={true}
+                                        disabled={state.formErrors.length >= 1}
+                                        // disabled={true}
                                         color="primary"
                                         onClick={handleSubmit}
                                         variant="contained"

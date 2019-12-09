@@ -24,7 +24,8 @@ export default function Login(props) {
         window.location.href =
             "https://auth.dataporten.no/oauth/authorization?client_id=" +
             client_id +
-            "&redirect_uri=https://d3m6lae8lxzp62.cloudfront.net/login" +
+            // "&redirect_uri=https://d3m6lae8lxzp62.cloudfront.net/login" +
+            "&redirect_uri=http://localhost:3000/login" +
             "&scope=openid userid email userid-feide userid-nin profile " +
             piarest_gateway_scope +
             " " + crisrest_gateway_scope +
@@ -105,10 +106,10 @@ export default function Login(props) {
             localStorage.getItem("authorized") === "true" ? (
                 <div>
                     <p>Du er allerede logget inn. Ønsker du å logge ut?</p>
-                    <Button onClick={handleLogout}>Logg ut</Button>
-                    <br />
-                    <br />
-                    <Button onClick={testApi}>Test api</Button>
+                    {/*<Button onClick={handleLogout}>Logg ut</Button>*/}
+                    {/*<br />*/}
+                    {/*<br />*/}
+                    {/*<Button onClick={testApi}>Test api</Button>*/}
                 </div>
             ) : (
                 <Grid
