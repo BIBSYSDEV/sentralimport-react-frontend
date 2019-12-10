@@ -52,6 +52,7 @@ export default function ConfirmationDialog(props) {
         }
     }
 
+    //tester commit
     async function patchPiaPublication(publication) {
         try {
             await axios.patch(
