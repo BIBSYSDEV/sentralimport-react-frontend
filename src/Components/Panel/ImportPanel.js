@@ -9,6 +9,7 @@ import Paper from "@material-ui/core/Paper";
 import axios from "axios";
 import { Context } from "../../Context";
 import {useHistory} from "react-router-dom";
+import {properties} from "../../properties";
 
 const StyledTableCell = withStyles(theme => ({
   head: {
@@ -56,7 +57,7 @@ export default function CustomizedTables() {
       try {
           await axios
               .get(
-                  "https://piarest-utv.dataporten-api.no/sentralimport/publicationCount/" +
+                  properties.piarest_gatekeeper_url + "/sentralimport/publicationCount/" +
                   state.currentImportYear.value, JSON.parse(localStorage.getItem("config"))
               )
               .then(response => {

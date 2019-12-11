@@ -12,6 +12,7 @@ import { Context } from "../../Context";
 import "../../assets/styles/Results.scss";
 import axios from "axios";
 import {useHistory} from "react-router-dom";
+import {properties} from "../../properties";
 
 export default function ResultModal(props) {
   const [innerModal, setInnerModal] = React.useState(false);
@@ -49,7 +50,7 @@ export default function ResultModal(props) {
     let relevantStatus = state.currentImportStatus !== "ikke aktuelle";
     try {
       await axios.patch(
-        "https://piarest-utv.dataporten-api.no/sentralimport/publication/" +
+        properties.piarest_gatekeeper_url + "/sentralimport/publication/" +
           props.data.pubId,
         JSON.stringify({ not_relevant: relevantStatus }), JSON.parse(localStorage.getItem("config"))
       );

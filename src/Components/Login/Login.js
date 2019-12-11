@@ -9,13 +9,11 @@ import {Button} from "reactstrap";
 import {Grid, CardContent, Typography} from "@material-ui/core";
 import {Card} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
+import {properties} from "../../properties";
 
 export default function Login(props) {
-    const client_id = "ab940329-87f9-40dc-a129-bf9d4ae07917";
     const search = queryString.parse(props.location.hash);
     const authState = "bra";
-    const piarest_gateway_scope = "gk_piarest-utv";
-    const crisrest_gateway_scope = "gk_crisrest-utv";
     let history = useHistory();
 
 
@@ -23,12 +21,11 @@ export default function Login(props) {
         localStorage.setItem("nonce", generateNonce());
         window.location.href =
             "https://auth.dataporten.no/oauth/authorization?client_id=" +
-            client_id +
-            // "&redirect_uri=https://d3m6lae8lxzp62.cloudfront.net/login" +
-            "&redirect_uri=http://localhost:3000/login" +
+            properties.client_id +
+            "&redirect_uri=" + properties.redirect_url +
             "&scope=openid userid email userid-feide userid-nin profile " +
-            piarest_gateway_scope +
-            " " + crisrest_gateway_scope +
+            properties.piarest_gateway_scope +
+            " " + properties.crisrest_gateway_scope +
             "&response_type=id_token token&state=" +
             authState +
             "&nonce=" +
@@ -38,7 +35,7 @@ export default function Login(props) {
     function handleLogout() {
         let id = localStorage.getItem("id_token");
         localStorage.clear();
-        window.location.href = "https://auth.dataporten.no/openid/endsession?post_logout_redirect_uri=https://d3m6lae8lxzp62.cloudfront.net/login" +
+        window.location.href = "https://auth.dataporten.no/openid/endsession?post_logout_redirect_uri=" + properties.redirect_url +
             "&id_token_hint=" + id;
     }
 
@@ -76,7 +73,7 @@ export default function Login(props) {
         let jsonToken = jwt.decode(search.id_token);
 
         if (
-            jsonToken.aud !== client_id ||
+            jsonToken.aud !== properties.client_id ||
             jsonToken.nonce !== localStorage.getItem("nonce") ||
             search.state !== authState
         )
@@ -106,7 +103,7 @@ export default function Login(props) {
             localStorage.getItem("authorized") === "true" ? (
                 <div>
                     <p>Du er allerede logget inn. Ønsker du å logge ut?</p>
-                    {/*<Button onClick={handleLogout}>Logg ut</Button>*/}
+                    <Button onClick={handleLogout}>Logg ut</Button>
                     {/*<br />*/}
                     {/*<br />*/}
                     {/*<Button onClick={testApi}>Test api</Button>*/}
