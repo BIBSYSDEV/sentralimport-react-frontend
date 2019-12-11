@@ -21,7 +21,7 @@ import X2Icon from "./x2-red.png";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    overflowX: "auto",
+    overflowX: "visible",
     overflowY: "visible"
   },
   card: {

@@ -148,7 +148,7 @@ function InnerModal(props) {
 
     const [contributorModal, setContributorModal] = React.useState(false);
 
-    const [contributors] = React.useState(props.duplicate ? state.selectedPublication.data.authors : props.data.authors);
+    const [contributors] = React.useState(props.duplicate ? state.selectedPublication.authors : props.data.authors);
 
     const [aarstall, setAarstall] = React.useState("");
 
@@ -935,7 +935,12 @@ InnerModal.defaultProps = {
             volume: "100",
             pageFrom: "1",
             pageTo: "10"
-        }
+        },
+        authors: [
+            {
+                name: "test"
+            }
+        ]
     }
 };
 

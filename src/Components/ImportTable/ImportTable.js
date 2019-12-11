@@ -169,7 +169,7 @@ const useStyles = makeStyles(theme => ({
         marginBottom: theme.spacing(2)
     },
     tableWrapper: {
-        overflowX: "auto",
+        overflowX: "visible",
         overflowY: "visible"
     }
 }));
