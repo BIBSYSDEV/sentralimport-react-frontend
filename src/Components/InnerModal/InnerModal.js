@@ -27,6 +27,7 @@ import '../../assets/styles/buttons.scss'
 import ButtonGroup from "@material-ui/core/ButtonGroup/ButtonGroup";
 import cloneDeep from 'lodash/cloneDeep';
 import CreateJournalPanel from "../CreateJournalPanel/CreateJournalPanel";
+import {properties} from "../../properties";
 
 //TODO: erstatt react-select med ny funksjon for oppretting av tidsskrifter (react-creatable) og sett opp select for valg av kategori via dropdown
 //TODO: skill mellom import og cristin felter med farge/styling
@@ -413,14 +414,14 @@ function InnerModal(props) {
         if (name === null || name === "")
             name = "*";
         await axios
-            .get("https://crisrest-utv.dataporten-api.no/results/channels?type=journal&query=title_general:" + name, JSON.parse(localStorage.getItem("config")))
+            .get(properties.crisrest_gatekeeper_url + "/results/channels?type=journal&query=title_general:" + name, JSON.parse(localStorage.getItem("config")))
             .then(response => {
                 updateJournals(response.data);
             });
     }
 
     async function getCategories() {
-        let fetchedCategories = await axios.get("https://crisrest-utv.dataporten-api.no/results/categories?lang=nb", JSON.parse(localStorage.getItem("config")));
+        let fetchedCategories = await axios.get(properties.crisrest_gatekeeper_url + "/results/categories?lang=nb", JSON.parse(localStorage.getItem("config")));
 
         let tempArray = [];
         for (let i = 0; i < fetchedCategories.data.length; i++) {
@@ -875,8 +876,7 @@ function InnerModal(props) {
                                 </FormGroup>
                                 <FormGroup>
                                     <Button
-                                        disabled={state.formErrors.length >= 1}
-                                        // disabled={true}
+                                        disabled={state.formErrors.length >= 1 || props.duplicate}
                                         color="primary"
                                         onClick={handleSubmit}
                                         variant="contained"

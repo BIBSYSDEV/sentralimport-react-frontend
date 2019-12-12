@@ -10,33 +10,27 @@ import {
 import {Context} from "../../Context";
 import axios from "axios";
 import {useHistory} from "react-router-dom";
+import {properties} from "../../properties.js"
 
 export default function ConfirmationDialog(props) {
     let {dispatch} = React.useContext(Context);
     let history = useHistory();
 
     let emptyArray = [];
-    // let url = "https://crisrest-utv.dataporten-api.no";
-    let url = "http://localhost:8080/crisrest-2.5-SNAPSHOT";
 
     async function post() {
-        // let publication = await postPublication();
-        let publication = {
-            cristin_result_id: 1605975,
-            pubId: 19088
-        };
-        await putContributors(publication.cristin_result_id);
+        let publication = createPublicationObject();
+        let id = await postPublication(publication);
+        await putContributors(id);
         await patchPiaPublication(publication);
         dispatch({type: "setFormErrors", payload: emptyArray});
     }
 
-    async function postPublication() {
-        let publication = createPublicationObject();
-        console.log(publication);
+    async function postPublication(publication) {
         try {
-            let response = await axios.post(url + "/results", publication,
+            let response = await axios.post(properties.crisrest_gatekeeper_url + "/results", publication,
                 JSON.parse(localStorage.getItem("config")));
-            return response.data;
+            return response.data.cristin_result_id;
         } catch (e) {
             console.log("There was an error while posting publication:", e);
         }
@@ -45,18 +39,17 @@ export default function ConfirmationDialog(props) {
     async function putContributors(id) {
         let contributors = createContributorObject();
         try {
-            let response = await axios.put(url + "/results/" + id + "/contributors", contributors,
+            let response = await axios.put(properties.crisrest_gatekeeper_url + "/results/" + id + "/contributors", contributors,
                 JSON.parse(localStorage.getItem("config")));
         } catch (e) {
             console.log("There was an error while putting contributors:", e);
         }
     }
 
-    //tester commit
     async function patchPiaPublication(publication) {
         try {
             await axios.patch(
-                "https://piarest-utv.dataporten-api.no/sentralimport/publication/" + publication.pubId,
+                properties.piarest_gatekeeper_url + "/sentralimport/publication/" + publication.pubId,
                 JSON.stringify({ cristin_id: publication.cristin_result_id }), JSON.parse(localStorage.getItem("config")));
         } catch (e) {
             console.log("There was an error while patching piaPublication:", e);

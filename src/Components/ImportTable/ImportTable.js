@@ -20,6 +20,7 @@ import "../../assets/styles/Results.scss";
 import "../../assets/styles/Imports.css";
 import {TableFooter} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
+import {properties} from "../../properties";
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -225,7 +226,7 @@ export default function EnhancedTable() {
 
     async function getRows() {
         let fetchString =
-            "http://localhost:8080/piarest-1.0.1-SNAPSHOT/sentralimport/publications?year_published=" +
+            properties.piarest_gatekeeper_url + "/sentralimport/publications?year_published=" +
             state.currentImportYear.value;
 
         if (

@@ -4,6 +4,7 @@ import axios from "axios";
 import {Context} from "../../Context";
 import {Radio, RadioGroup, FormControlLabel} from "@material-ui/core";
 import {ListGroupItem} from "reactstrap";
+import {properties} from "../../properties";
 
 export function Duplicates(props) {
     const [duplicate, setDuplicate] = React.useState([]);
@@ -97,7 +98,7 @@ async function fetchDuplicates(searchTerms) {
     let results = [];
     console.log("fetching...");
     const searchResults = await axios.get(
-        "https://crisrest-utv.dataporten-api.no/results" + searchTerms + "&fields=all&lang=nb", JSON.parse(localStorage.getItem("config"))
+        properties.crisrest_gatekeeper_url + "/results" + searchTerms + "&fields=all&lang=nb", JSON.parse(localStorage.getItem("config"))
     );
     console.log("Found " + searchResults.data.length + " results");
     for (let i = 0; i < searchResults.data.length; i++) {
@@ -108,7 +109,7 @@ async function fetchDuplicates(searchTerms) {
 
     for (let i = 0; i < results.length; i++) {
         let authors = await axios.get(
-            "https://crisrest-utv.dataporten-api.no/results/" +
+            properties.crisrest_gatekeeper_url + "/results/" +
             results[i].data.cristin_result_id +
             "/contributors"
         , JSON.parse(localStorage.getItem("config")));

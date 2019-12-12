@@ -13,6 +13,7 @@ import PersonIcon from "../../assets/icons/person-active.svg";
 import ArrowUpIcon from "../../assets/icons/arrowhead-up3.svg";
 import ArrowDownIcon from "../../assets/icons/arrowhead-down3.svg";
 import { Button, TableFooter } from "@material-ui/core";
+import {properties} from "../../properties.js"
 
 import ContributorPagination from "../ContributorPagination/ContributorPagination";
 import Contributor from "./Contributor";
@@ -312,7 +313,7 @@ function ContributorModal(props) {
       ? author.first_name.substr(0, 1) + " " + author.surname
       : author.authorName;
     let searchedAuthors = await axios.get(
-      "https://crisrest-utv.dataporten-api.no/persons?name=" +
+      properties.crisrest_gatekeeper_url + "/persons?name=" +
         authorName +
         "&institution=" +
         (author.affiliations[0].hasOwnProperty("acronym")
@@ -352,7 +353,7 @@ function ContributorModal(props) {
     }
     if (bestMatch !== "") {
       var tempAuthor = await axios.get(
-        "https://crisrest-utv.dataporten-api.no/persons/" +
+        properties.crisrest_gatekeeper_url + "/persons/" +
           bestMatch.cristin_person_id
       , JSON.parse(localStorage.getItem("config")));
       console.log(tempAuthor.data);
@@ -360,7 +361,7 @@ function ContributorModal(props) {
       for (var j = 0; j < tempAuthor.data.affiliations.length; j++) {
         var tempInstitution = [];
         var tempdata = await axios.get(
-          "https://crisrest-utv.dataporten-api.no/institutions/" +
+          properties.crisrest_gatekeeper_url + "/institutions/" +
             tempAuthor.data.affiliations[j].institution.cristin_institution_id
         , JSON.parse(localStorage.getItem("config")));
         console.log(tempdata);
@@ -537,7 +538,7 @@ async function fetchContributors(result) {
 
   if (result.authors.length > 10 && result.authors[10].sequenceNr !== 11) {
     authors = await axios.get(
-      "http://localhost:8080/piarest-1.0.1-SNAPSHOT/sentralimport/publication/" +
+      properties.piarest_gatekeeper_url + "/sentralimport/publication/" +
         result.pubId +
         "/contributors", JSON.parse(localStorage.getItem("config"))
     );
@@ -549,7 +550,7 @@ async function fetchContributors(result) {
 async function fetchInstitutionName(institutionId) {
   if (institutionId === "0") return " ";
   let institution = await axios.get(
-    "https://crisrest-utv.dataporten-api.no/institutions/" + institutionId, JSON.parse(localStorage.getItem("config"))
+    properties.crisrest_gatekeeper_url + "/institutions/" + institutionId, JSON.parse(localStorage.getItem("config"))
   );
   return institution.data.institution_name.hasOwnProperty("nb")
     ? institution.data.institution_name.nb
@@ -565,12 +566,12 @@ async function searchContributors(authors) {
       ? authors[i].firstname.substr(0, 1) + " " + authors[i].surname
       : authors[i].authorName;
     let searchedAuthors = await axios.get(
-      "https://crisrest-utv.dataporten-api.no/persons?name=" +
+      properties.crisrest_gatekeeper_url + "/persons?name=" +
         authorName +
         "&institution=" +
         (authors[i].institutions[0].hasOwnProperty("acronym")
           ? authors[i].institutions[0].acronym
-          : authors[i].institutions[0].institutionName.replace("&", ""))
+          : (authors[i].institutions[0].hasOwnProperty("institutionName") ? authors[i].institutions[0].institutionName.replace("&", "") : ""))
     , JSON.parse(localStorage.getItem("config")));
 
     if (searchedAuthors.data.length > 0) {
