@@ -56,7 +56,7 @@ export default function CustomizedTables() {
       try {
           await axios
               .get(
-                  "https://piarest-utv.dataporten-api.no/sentralimport/publicationCount/" +
+                  "http://localhost:8080/piarest-1.0.1-SNAPSHOT/sentralimport/publicationCount/" +
                   state.currentImportYear.value, JSON.parse(localStorage.getItem("config"))
               )
               .then(response => {

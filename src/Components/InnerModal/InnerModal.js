@@ -127,11 +127,11 @@ function InnerModal(props) {
             setPublishingDetails(workedOn ? temp.publication.channel :
                 (props.duplicate ?
                     {
-                        ...state.selectedPublication.journal,
-                        volume: state.selectedPublication.journal.hasOwnProperty("volume") ? state.selectedPublication.journal.volume : "",
-                        pageFrom: state.selectedPublication.journal.hasOwnProperty("pageFrom") ? state.selectedPublication.journal.pageFrom : "",
-                        pageTo: state.selectedPublication.journal.hasOwnProperty("pageTo") ? state.selectedPublication.journal.pageTo : "",
-                        issue: state.selectedPublication.journal.hasOwnProperty("issue") ? state.selectedPublication.journal.issue : ""
+                        ...state.selectedPublication,
+                        volume: state.selectedPublication.hasOwnProperty("volume") ? state.selectedPublication.volume : "",
+                        pageFrom: state.selectedPublication.hasOwnProperty("pages") ? state.selectedPublication.pages.from : "",
+                        pageTo: state.selectedPublication.hasOwnProperty("pages") ? state.selectedPublication.pages.to : "",
+                        issue: state.selectedPublication.hasOwnProperty("issue") ? state.selectedPublication.issue : ""
                     }
                     :
                         props.data.channel
@@ -542,7 +542,7 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {selectedJournal.value === props.data.channel.cristinTidsskriftNr.toString() ? (
+                                        {selectedJournal.value === props.data.channel.cristinTidsskriftNr /* .toString() */ ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>

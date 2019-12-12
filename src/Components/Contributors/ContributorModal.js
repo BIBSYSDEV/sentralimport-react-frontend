@@ -118,6 +118,7 @@ function ContributorModal(props) {
     });
     props.toggle();
     dispatch({ type: "setContributorPage", payload: 0 });
+    dispatch({ type: "setContributorPerPage", payload: 5 });
   }
 
   function handleSave() {
@@ -126,7 +127,8 @@ function ContributorModal(props) {
     });
     props.toggle();
     dispatch({ type: "setContributorPage", payload: 0 });
-    dispatch({type: "contributors", payload: data});
+    dispatch({ type: "setContributorPerPage", payload: 5 });
+    dispatch({ type: "contributors", payload: data });
   }
 
   function handleChooseAuthor(author) {
@@ -535,7 +537,7 @@ async function fetchContributors(result) {
 
   if (result.authors.length > 10 && result.authors[10].sequenceNr !== 11) {
     authors = await axios.get(
-      "https://piarest-utv.dataporten-api.no/sentralimport/publication/" +
+      "http://localhost:8080/piarest-1.0.1-SNAPSHOT/sentralimport/publication/" +
         result.pubId +
         "/contributors", JSON.parse(localStorage.getItem("config"))
     );
