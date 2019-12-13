@@ -5,7 +5,6 @@ import { Form } from "reactstrap";
 export default function Contributor(props) {
   useEffect(() => {
     setRowIndex(props.index);
-    console.log(props.index);
     setData(props.author);
   }, [props.author]);
 
@@ -61,7 +60,6 @@ export default function Contributor(props) {
     });
     let temp = data;
     temp.toBeCreated.affiliations = affiliationCopy;
-    console.log(affiliationCopy);
 
     props.updateData(temp, rowIndex);
   }
@@ -77,13 +75,10 @@ export default function Contributor(props) {
         : obj.toBeCreated.authorname;
 
     if (property === "first") {
-      console.log(firstName);
       obj.toBeCreated.first_name = firstName;
     } else if (property === "last") {
-      console.log(lastName);
       obj.toBeCreated.surname = lastName;
     } else {
-      console.log(authorName);
       obj.toBeCreated.authorName = authorName;
     }
 

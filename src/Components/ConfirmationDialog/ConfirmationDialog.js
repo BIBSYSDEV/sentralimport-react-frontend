@@ -20,40 +20,52 @@ export default function ConfirmationDialog(props) {
 
     async function post() {
         let publication = createPublicationObject();
-        let id = await postPublication(publication);
-        await putContributors(id);
-        await patchPiaPublication(publication);
-        dispatch({type: "setFormErrors", payload: emptyArray});
+        try {
+            let id = await postPublication(publication);
+            await putContributors(id);
+            await patchPiaPublication(id, publication.pubId);
+            dispatch({type: "setFormErrors", payload: emptyArray});
+        } catch (e) {
+            console.log("There was an error while importing the publication", e);
+            alert("There was an error while importing the publication. Please try again");
+            history.push("/notAuthorized");
+        }
+    }
+
+    async function patch() {
+        let publication = createPublicationObject();
+        try {
+            await patchPublication(publication);
+            await putContributors(publication.cristinResultId);
+            await patchPiaPublication(publication.cristinResultId, publication.pubId);
+        } catch (e) {
+            console.log("There was an error while updating the publication", e);
+            alert("Something went wrong while trying to update the publication. Please try again");
+            history.push("/notAuthorized");
+        }
     }
 
     async function postPublication(publication) {
-        try {
-            let response = await axios.post(properties.crisrest_gatekeeper_url + "/results", publication,
-                JSON.parse(localStorage.getItem("config")));
-            return response.data.cristin_result_id;
-        } catch (e) {
-            console.log("There was an error while posting publication:", e);
-        }
+        let response = await axios.post(properties.crisrest_gatekeeper_url + "/results", publication,
+            JSON.parse(localStorage.getItem("config")));
+        return response.data.cristin_result_id;
+    }
+
+    async function patchPublication(publication) {
+        await axios.patch(properties.crisrest_gatekeeper_url + "/results/" + publication.cristinResultId, publication,
+            JSON.parse(localStorage.getItem("config")));
     }
 
     async function putContributors(id) {
         let contributors = createContributorObject();
-        try {
-            let response = await axios.put(properties.crisrest_gatekeeper_url + "/results/" + id + "/contributors", contributors,
-                JSON.parse(localStorage.getItem("config")));
-        } catch (e) {
-            console.log("There was an error while putting contributors:", e);
-        }
+        await axios.put(properties.crisrest_gatekeeper_url + "/results/" + id + "/contributors", contributors,
+            JSON.parse(localStorage.getItem("config")));
     }
 
-    async function patchPiaPublication(publication) {
-        try {
-            await axios.patch(
-                properties.piarest_gatekeeper_url + "/sentralimport/publication/" + publication.pubId,
-                JSON.stringify({ cristin_id: publication.cristin_result_id }), JSON.parse(localStorage.getItem("config")));
-        } catch (e) {
-            console.log("There was an error while patching piaPublication:", e);
-        }
+    async function patchPiaPublication(id, pubId) {
+        await axios.patch(
+            properties.piarest_gatekeeper_url + "/sentralimport/publication/" + pubId,
+            JSON.stringify({ cristin_id: id }), JSON.parse(localStorage.getItem("config")));
     }
 
     function createPublicationObject() {
@@ -80,6 +92,7 @@ export default function ConfirmationDialog(props) {
             pia_journal_number: temp.publication.channel.cristinTidsskriftNr
         };
         return {
+            cristinResultId: props.duplicate ? temp.publication.cristinResultId : "",
             category: {
                 code: temp.publication.category
             },
@@ -128,6 +141,13 @@ export default function ConfirmationDialog(props) {
             };
         }
 
+        // filtrerer vekk institusjoner om samme institusjon kommer flere ganger på samme person. f.eks ANDREINST
+        contributors = contributors.map(item => ({
+            ...item,
+            affiliations: item.affiliations.filter((v, i, a) => a.findIndex(t => (t.institution.cristin_institution_id === v.institution.cristin_institution_id)) === i)
+        }));
+        console.log(contributors);
+
         return contributors;
     }
 
@@ -152,7 +172,7 @@ export default function ConfirmationDialog(props) {
                     color="primary"
                     onClick={() => {
                         props.handleClose();
-                        post();
+                        props.duplicate ? patch() : post();
                     }}
                 >
                     Importer

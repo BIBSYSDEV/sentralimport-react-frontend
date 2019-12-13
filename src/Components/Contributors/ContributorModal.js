@@ -26,8 +26,6 @@ function ContributorModal(props) {
 
   const firstUpdate = useRef(true);
   useLayoutEffect(() => {
-    console.log("layoutEffect");
-    console.log(firstUpdate);
     if (firstUpdate.current) {
       firstUpdate.current = false;
       return;

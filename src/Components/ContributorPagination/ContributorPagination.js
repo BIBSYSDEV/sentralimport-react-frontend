@@ -8,9 +8,8 @@ function ContributorPagination(props) {
   let { state, dispatch } = React.useContext(Context);
 
   useEffect(() => {
-    console.log(props.totalCount);
-    var values = [];
-    for (var i = 0; i < props.totalCount / state.contributorPerPage; i++) {
+    let values = [];
+    for (let i = 0; i < props.totalCount / state.contributorPerPage; i++) {
       values.push({ value: i, label: i + 1 });
     }
     setPageValues(values);

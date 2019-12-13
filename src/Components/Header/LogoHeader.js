@@ -4,6 +4,7 @@ import logo from "./logo.svg";
 import "./logo.css";
 import {Button} from "reactstrap";
 import {useHistory} from "react-router-dom";
+import {properties} from "../../properties";
 
 export default function LogoHeader() {
     let history = useHistory();
@@ -11,7 +12,7 @@ export default function LogoHeader() {
     function handleLogout() {
         let id = localStorage.getItem("id_token");
         localStorage.clear();
-        window.location.href = "https://auth.dataporten.no/openid/endsession?post_logout_redirect_uri=https://d3m6lae8lxzp62.cloudfront.net/login" +
+        window.location.href = "https://auth.dataporten.no/openid/endsession?post_logout_redirect_uri=" + properties.redirect_url +
             "&id_token_hint=" + id;
     }
 

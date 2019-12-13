@@ -52,7 +52,7 @@ export default function CustomizedTables() {
   async function getNumbers() {
     if (
       state.currentImportYear.value !== prevYear ||
-      state.totalCount !== prevCount && localStorage.getItem("config")
+        (state.totalCount !== prevCount && localStorage.getItem("config"))
     ) {
       try {
           await axios

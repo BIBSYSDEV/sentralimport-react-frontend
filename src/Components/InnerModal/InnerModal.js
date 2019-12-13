@@ -40,14 +40,14 @@ function InnerModal(props) {
     const languageCopy = cloneDeep(props.data.languages.sort((a, b) => a.original - b.original).reverse());
 
     useEffect(() => {
-        function setFields() {
+        async function setFields() {
             let temp = JSON.parse(localStorage.getItem("tempPublication"));
             let workedOn = false;
             if (temp !== null && temp.publication.pubId === props.data.pubId && !props.duplicate && temp.publication.duplicate === props.duplicate)
                 workedOn = true;
 
             setKilde(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_name : "Ingen kilde funnet") : props.data.sourceName);
-            setKildeId(props.duplicate ? (state.selectedPublication.hasOwnProperty("externalId") ? state.publication.externalId : "Ingen kildeId funnet") : props.data.externalId);
+            setKildeId(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_reference_id : "Ingen kildeId funnet") : props.data.externalId);
 
             setSelectedJournal(workedOn ?
                 {
@@ -56,7 +56,7 @@ function InnerModal(props) {
                 } :
                 (props.duplicate ?
                     {
-                        value: state.selectedPublication.journal.international_standard_numbers[0].value,
+                        value: await getJournalId(state.selectedPublication.journal.international_standard_numbers),
                         label: state.selectedPublication.journal.name
                     }
                     :
@@ -129,10 +129,10 @@ function InnerModal(props) {
                 (props.duplicate ?
                     {
                         ...state.selectedPublication.journal,
-                        volume: state.selectedPublication.journal.hasOwnProperty("volume") ? state.selectedPublication.journal.volume : "",
-                        pageFrom: state.selectedPublication.journal.hasOwnProperty("pageFrom") ? state.selectedPublication.journal.pageFrom : "",
-                        pageTo: state.selectedPublication.journal.hasOwnProperty("pageTo") ? state.selectedPublication.journal.pageTo : "",
-                        issue: state.selectedPublication.journal.hasOwnProperty("issue") ? state.selectedPublication.journal.issue : ""
+                        volume: state.selectedPublication.hasOwnProperty("volume") ? state.selectedPublication.volume : "",
+                        pageFrom: state.selectedPublication.hasOwnProperty("pages") ? state.selectedPublication.pages.from : "",
+                        pageTo: state.selectedPublication.hasOwnProperty("pages") ? state.selectedPublication.pages.to : "",
+                        issue: state.selectedPublication.hasOwnProperty("issue") ? state.selectedPublication.issue : ""
                     }
                     :
                         props.data.channel
@@ -205,6 +205,7 @@ function InnerModal(props) {
     function handleTempSave() {
         let temp = {
             publication: {
+                cristinResultId: props.duplicate ? props.cristinpub.cristin_result_id : "",
                 category: selectedCategory.value,
                 categoryName: selectedCategory.label,
                 channel: {
@@ -229,7 +230,6 @@ function InnerModal(props) {
             }
         };
         localStorage.setItem("tempPublication", JSON.stringify(temp));
-        console.log("Publikasjon oppdatert");
     }
 
     function handleChangeJournal(option) {
@@ -405,7 +405,6 @@ function InnerModal(props) {
     }
 
     const handleNewJournal = (newJournal) => {
-        console.log(newJournal);
         setSelectedJournal({label: newJournal.title, value: 0, issn: newJournal.issn, eissn: newJournal.eissn });
        
     };
@@ -418,6 +417,13 @@ function InnerModal(props) {
             .then(response => {
                 updateJournals(response.data);
             });
+    }
+
+    async function getJournalId(issn) {
+        if (issn === null || issn === "")
+            return null;
+        let journal = await axios.get(properties.crisrest_gatekeeper_url + "/results/channels?type=journal&query=issn:" + issn[0].value, JSON.parse(localStorage.getItem("config")));
+        return journal.data[0].id;
     }
 
     async function getCategories() {
@@ -876,7 +882,7 @@ function InnerModal(props) {
                                 </FormGroup>
                                 <FormGroup>
                                     <Button
-                                        disabled={state.formErrors.length >= 1 || props.duplicate}
+                                        disabled={state.formErrors.length >= 1}
                                         color="primary"
                                         onClick={handleSubmit}
                                         variant="contained"
@@ -909,6 +915,7 @@ function InnerModal(props) {
                 handleClose={toggle}
                 handleCloseDialog={toggleDialog}
                 data={props.data}
+                duplicate={props.duplicate}
             />
             <ContributorModal
                 open={contributorModal}
