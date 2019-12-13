@@ -28,6 +28,13 @@ import ButtonGroup from "@material-ui/core/ButtonGroup/ButtonGroup";
 import cloneDeep from 'lodash/cloneDeep';
 import CreateJournalPanel from "../CreateJournalPanel/CreateJournalPanel";
 import {properties} from "../../properties";
+import {makeStyles} from "@material-ui/styles";
+
+const useStyles = makeStyles({
+    doi: {
+        cursor: 'pointer'
+    }
+});
 
 //TODO: erstatt react-select med ny funksjon for oppretting av tidsskrifter (react-creatable) og sett opp select for valg av kategori via dropdown
 //TODO: skill mellom import og cristin felter med farge/styling
@@ -35,6 +42,7 @@ import {properties} from "../../properties";
 
 function InnerModal(props) {
 
+    const classes = useStyles();
     const { useRef, useLayoutEffect } = React;
     let {state, dispatch} = React.useContext(Context);
     const languageCopy = cloneDeep(props.data.languages.sort((a, b) => a.original - b.original).reverse());
@@ -549,7 +557,7 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {selectedJournal.value === props.data.channel.cristinTidsskriftNr /* .toString() */ ? (
+                                        {selectedJournal.value === (props.data.hasOwnProperty("channel") ? props.data.channel.cristinTidsskriftNr.toString() : "") ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -562,13 +570,16 @@ function InnerModal(props) {
                                 </FormGroup>
                                 <FormGroup>
                                     <Grid item>
-                                        <TextField
-                                            id="import-doi"
-                                            label="Doi"
-                                            value={props.data.doi || "Ingen DOI funnet"}
-                                            margin="normal"
-                                            disabled
-                                        />
+                                        <a href={"https://doi.org/" + props.data.doi} target="_blank">
+                                            <TextField
+                                                id="import-doi"
+                                                label="Doi"
+                                                value={props.data.doi || "Ingen DOI funnet"}
+                                                margin="normal"
+                                                InputProps={{classes: { input: classes.doi} }}
+                                                disabled
+                                            />
+                                        </a>
                                         {doi === props.data.doi ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />

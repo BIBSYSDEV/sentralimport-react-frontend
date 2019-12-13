@@ -15,6 +15,7 @@ export function Duplicates(props) {
 
     useEffect(() => {
         async function fetch() {
+            state.selected = "true";
             let searchString = "";
             let registered = parseInt(publication.registered.substr(7, 10));
             console.log("registered: " + registered);
