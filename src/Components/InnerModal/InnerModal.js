@@ -445,7 +445,7 @@ function InnerModal(props) {
     }
 
     const equalButtonStyle = {
-        marginTop: "20px",
+        marginTop: "10px",
         marginLeft: "50px"
     };
 
@@ -880,16 +880,6 @@ function InnerModal(props) {
                                         </div>
                                     </Grid>
                                 </FormGroup>
-                                <FormGroup>
-                                    <Button
-                                        disabled={state.formErrors.length >= 1}
-                                        color="primary"
-                                        onClick={handleSubmit}
-                                        variant="contained"
-                                    >
-                                        Importer
-                                    </Button>
-                                </FormGroup>
                             </Form>
                         </Grid>
                     </Grid>
@@ -899,10 +889,19 @@ function InnerModal(props) {
                     <div>{state.formErrors.map((error, i) => { return(
                         <div key={i}>{error + "; "}</div>
                     )})}</div>
+                     <Button className={`contributorButton`} onClick={openContributorModal} variant="contained">Bidragsytere</Button>
                 </ModalBody>
                 <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
                 <ModalFooter>
-                <Button className={`contributorButton`} onClick={openContributorModal}>Bidragsytere</Button>
+                <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
+                <Button
+                    disabled={state.formErrors.length >= 1 || props.duplicate}
+                    color="primary"
+                    onClick={handleSubmit}
+                    variant="contained"
+                >
+                Importer
+                </Button>
                 </ModalFooter>
             </Modal>
             <ClosingDialog
@@ -923,7 +922,7 @@ function InnerModal(props) {
                 data={props.data}
                 duplicate={props.data.duplicate}
             />
-        </div>
+        </div> // Flytt bidragsytere opp og endre farge. Legg til avbryt-knapp i footer og flytt importerknapp inn.
     );
 }
 
