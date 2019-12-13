@@ -9,9 +9,13 @@ function ContributorPagination(props) {
 
   useEffect(() => {
     let values = [];
+    if(state.contributorPerPage > 0){ // Dersom bruker skulle velge å vise 0 bidragsytere per side, unngå å kjøre en uendelig loop
     for (let i = 0; i < props.totalCount / state.contributorPerPage; i++) {
       values.push({ value: i, label: i + 1 });
     }
+  } else {
+    values.push({ value: 0, label: 1 });
+  }
     setPageValues(values);
   }, [props.totalCount, state.contributorPerPage]);
 
@@ -42,6 +46,7 @@ function ContributorPagination(props) {
 
   function handleChangePerPage(option) {
     dispatch({ type: "setContributorPerPage", payload: option.value });
+    dispatch({ type: "setContributorPage", payload: 0 });
   }
 
   return (
@@ -74,7 +79,7 @@ function ContributorPagination(props) {
       </TableCell>
       <TableCell align="right">
         <Button
-          disabled={state.contributorPage > 0 ? false : true}
+          disabled={state.contributorPage <= 0}
           onClick={decrementPage}
         >
           {"< Forrige"}

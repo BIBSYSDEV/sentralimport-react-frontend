@@ -117,6 +117,7 @@ function ContributorModal(props) {
     });
     props.toggle();
     dispatch({ type: "setContributorPage", payload: 0 });
+    dispatch({ type: "setContributorPerPage", payload: 5 });
   }
 
   function handleSave() {
@@ -125,7 +126,8 @@ function ContributorModal(props) {
     });
     props.toggle();
     dispatch({ type: "setContributorPage", payload: 0 });
-    dispatch({type: "contributors", payload: data});
+    dispatch({ type: "setContributorPerPage", payload: 5 });
+    dispatch({ type: "contributors", payload: data });
   }
 
   function handleChooseAuthor(author) {
