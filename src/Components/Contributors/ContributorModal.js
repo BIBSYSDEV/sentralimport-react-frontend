@@ -18,8 +18,6 @@ import {properties} from "../../properties.js"
 import ContributorPagination from "../ContributorPagination/ContributorPagination";
 import Contributor from "./Contributor";
 
-// Ha med loading ikon dersom man laster inn mange bidragsytere?
-
 function ContributorModal(props) {
   const { useRef, useLayoutEffect } = React;
   const [data, setData] = React.useState([]);

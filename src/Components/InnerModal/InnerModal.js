@@ -445,16 +445,17 @@ function InnerModal(props) {
     }
 
     const equalButtonStyle = {
-        marginTop: "10px",
+        marginTop: "20px",
         marginLeft: "50px"
     };
 
     const selectStyle = {
-        marginTop: "15px"
+        marginTop: "10px",
+        fontSize: 12
     };
 
     const labelStyle = {
-        fontSize: "1rem",
+        fontSize: 12,
         color: "rgba(0, 0, 0, 0.38)",
         paddingRight: "60px"
     };
@@ -467,7 +468,8 @@ function InnerModal(props) {
 
     const pageStyle = {
         maxWidth: "90px",
-        margin: "3px"
+        margin: "3px",
+        marginTop: "0px"
     };
 
     const modalContent = {
@@ -549,7 +551,7 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {selectedJournal.value === props.data.channel.cristinTidsskriftNr /* .toString() */ ? (
+                                        {selectedJournal.value === props.data.channel.cristinTidsskriftNr.toString() ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -702,7 +704,8 @@ function InnerModal(props) {
                                             </IconButton>
                                         )}
                                     </Grid>
-                                    <Grid item>
+                                    <Grid item container sm>
+                                        <div>
                                         <label style={labelStyle} htmlFor="pageFrom">Side fra</label>
                                         <label style={labelStyle} htmlFor="pageTo">Side til</label>
                                         <div>
@@ -718,7 +721,7 @@ function InnerModal(props) {
                                                 style={pageStyle}
                                                 disabled
                                             />
-
+ </div>  </div>
                                         {props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
@@ -728,7 +731,7 @@ function InnerModal(props) {
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
-                                        </div>
+                                       
                                     </Grid>
                                 </FormGroup>
                             </Form>
@@ -879,7 +882,7 @@ function InnerModal(props) {
                                             />
                                         </div>
                                     </Grid>
-                                </FormGroup>
+                                </FormGroup>                             
                             </Form>
                         </Grid>
                     </Grid>
@@ -922,7 +925,7 @@ function InnerModal(props) {
                 data={props.data}
                 duplicate={props.data.duplicate}
             />
-        </div> // Flytt bidragsytere opp og endre farge. Legg til avbryt-knapp i footer og flytt importerknapp inn.
+        </div>
     );
 }
 
