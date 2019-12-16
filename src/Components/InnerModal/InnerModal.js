@@ -551,7 +551,7 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {selectedJournal.value === props.data.channel.cristinTidsskriftNr.toString() ? (
+                                        {selectedJournal.value === (props.data.hasOwnProperty("channel") ? props.data.channel.cristinTidsskriftNr.toString() : "") ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
                                             </IconButton>
