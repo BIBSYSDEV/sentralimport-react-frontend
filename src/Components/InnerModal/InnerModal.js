@@ -560,11 +560,11 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         {selectedJournal.value === (props.data.hasOwnProperty("channel") ? props.data.channel.cristinTidsskriftNr.toString() : "") ? (
-                                            <IconButton color="primary" style={equalButtonStyle}>
+                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyJournal}>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyJournal}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -583,11 +583,11 @@ function InnerModal(props) {
                                             />
                                         </a>
                                         {doi === props.data.doi ? (
-                                            <IconButton color="primary" style={equalButtonStyle}>
+                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyDoi}>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyDoi}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -616,11 +616,11 @@ function InnerModal(props) {
                                         />
 
                                         {languageCopy.filter(lang => lang.lang === selectedLang.lang)[0].title === selectedLang.title ? (
-                                            <IconButton color="primary" style={tittelButtonStyle}>
+                                            <IconButton color="primary" style={tittelButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyTittel}>
+                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyTittel}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -642,11 +642,11 @@ function InnerModal(props) {
                                             props.data.registered.length - 4,
                                             props.data.registered.length
                                         ) ? (
-                                            <IconButton color="primary" style={equalButtonStyle}>
+                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyAarstall}>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyAarstall}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -662,11 +662,11 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         {selectedCategory.label === props.data.categoryName ? (
-                                            <IconButton color="primary" style={equalButtonStyle}>
+                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyCategory}>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyCategory}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -685,11 +685,11 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         {props.data.channel.volume === publishingDetails.volume ? (
-                                            <IconButton color="primary" style={equalButtonStyle}>
+                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyVolume}>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyVolume}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -706,11 +706,11 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         {props.data.channel.issue === publishingDetails.issue ? (
-                                            <IconButton color="primary" style={equalButtonStyle}>
+                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyIssue}>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyIssue}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -734,11 +734,11 @@ function InnerModal(props) {
                                             />
  </div>  </div>
                                         {props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
-                                            <IconButton color="primary" style={equalButtonStyle}>
+                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyPages}>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyPages}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -752,7 +752,7 @@ function InnerModal(props) {
                                 <h3> Cristinpublikasjon </h3>
                                 <FormGroup>
                                     <TextField
-                                        id="cristin-id"
+                                        id="Cristin-id"
                                         label="Cristinid"
                                         margin="normal"
                                         value={props.duplicate ? props.cristinpub.cristin_result_id : ""}
@@ -761,7 +761,7 @@ function InnerModal(props) {
                                 </FormGroup>
                                 <FormGroup>
                                     <TextField
-                                        id="import-opprettet"
+                                        id="Cristin-opprettet"
                                         label="Dato opprettet"
                                         margin="normal"
                                         value={props.duplicate ? props.cristinpub.created.date.substring(0, 10) : ""}
@@ -770,7 +770,7 @@ function InnerModal(props) {
                                 </FormGroup>
                                 <FormGroup>
                                     <TextField
-                                        id="import-kilde"
+                                        id="Cristin-kilde"
                                         label="Kilde"
                                         value={kilde}
                                         margin="normal"
@@ -780,7 +780,7 @@ function InnerModal(props) {
                                 </FormGroup>
                                 <FormGroup>
                                     <TextField
-                                        id="import-kildeid"
+                                        id="Cristin-kildeid"
                                         label="KildeId"
                                         value={kildeId}
                                         margin="normal"
@@ -804,7 +804,7 @@ function InnerModal(props) {
                                 <FormGroup>
                                     <FormControl required>
                                         <TextField
-                                            id="import-doi"
+                                            id="Cristin-doi"
                                             label="Doi"
                                             value={doi}
                                             onChange={event => handleChangeDoi(event)}
@@ -824,7 +824,7 @@ function InnerModal(props) {
                                 <FormGroup>
                                     <Grid item>
                                     <TextField
-                                        id="import-tittel"
+                                        id="Cristin-tittel"
                                         label="Tittel"
                                         name="Tittel"
                                         value={selectedLang.title}
@@ -836,7 +836,7 @@ function InnerModal(props) {
                                 </FormGroup>
                                 <FormGroup>
                                     <TextField
-                                        id="import-aarstall"
+                                        id="Cristin-aarstall"
                                         label="Årstall"
                                         value={aarstall}
                                         onChange={handleChangeAarstall}
@@ -859,7 +859,7 @@ function InnerModal(props) {
                                 <FormGroup>
                                     <Grid item>
                                         <TextField
-                                            id="import-utgivelsesdata"
+                                            id="Cristin-utgivelsesdata"
                                             label="Volum"
                                             value={publishingDetails.volume}
                                             margin="normal"
@@ -868,7 +868,7 @@ function InnerModal(props) {
                                     </Grid>
                                     <Grid item>
                                         <TextField
-                                            id="import-hefte"
+                                            id="Cristin-hefte"
                                             label="Hefte"
                                             value={publishingDetails.issue}
                                             margin="normal"
@@ -876,17 +876,17 @@ function InnerModal(props) {
                                         />
                                     </Grid>
                                     <Grid item>
-                                        <label style={labelStyle} htmlFor="pageFrom">Side fra</label>
-                                        <label style={labelStyle} htmlFor="pageTo">Side til</label>
+                                        <label style={labelStyle} htmlFor="pageFromCristin">Side fra</label>
+                                        <label style={labelStyle} htmlFor="pageToCristin">Side til</label>
                                         <div>
                                             <input
-                                                id="pageFrom"
+                                                id="pageFromCristin"
                                                 value={publishingDetails.pageFrom ? publishingDetails.pageFrom : ""}
                                                 style={pageStyle}
                                                 onChange={handleChangePageFrom}
                                             />
                                             <input
-                                                id="pageTo"
+                                                id="pageToCristin"
                                                 value={publishingDetails.pageTo ? publishingDetails.pageTo : ""}
                                                 style={pageStyle}
                                                 onChange={handleChangePageTo}
@@ -896,8 +896,8 @@ function InnerModal(props) {
                                 </FormGroup>                             
                             </Form>
                         </Grid>
-                    </Grid>
-                    <div className={"createJournalPanel"}>
+                    </Grid> 
+                    <div className={"createJournalPanel"}> {/* TODO: Flytt CreateJournalPanel opp til tidsskrift. Overflow-y i forhold til grid/form? */}
                     <CreateJournalPanel handleCreateJournal={handleNewJournal}/>
                     </div>
                     <div>{state.formErrors.map((error, i) => { return(
@@ -909,7 +909,7 @@ function InnerModal(props) {
                 <ModalFooter>
                 <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
                 <Button
-                    disabled={state.formErrors.length >= 1 || props.duplicate}
+                    disabled={state.formErrors.length >= 1}
                     color="primary"
                     onClick={handleSubmit}
                     variant="contained"
