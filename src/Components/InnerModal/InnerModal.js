@@ -458,11 +458,12 @@ function InnerModal(props) {
     };
 
     const selectStyle = {
-        marginTop: "15px"
+        marginTop: "10px",
+        fontSize: 12
     };
 
     const labelStyle = {
-        fontSize: "1rem",
+        fontSize: 12,
         color: "rgba(0, 0, 0, 0.38)",
         paddingRight: "60px"
     };
@@ -475,7 +476,8 @@ function InnerModal(props) {
 
     const pageStyle = {
         maxWidth: "90px",
-        margin: "3px"
+        margin: "3px",
+        marginTop: "0px"
     };
 
     const modalContent = {
@@ -713,7 +715,8 @@ function InnerModal(props) {
                                             </IconButton>
                                         )}
                                     </Grid>
-                                    <Grid item>
+                                    <Grid item container sm>
+                                        <div>
                                         <label style={labelStyle} htmlFor="pageFrom">Side fra</label>
                                         <label style={labelStyle} htmlFor="pageTo">Side til</label>
                                         <div>
@@ -729,7 +732,7 @@ function InnerModal(props) {
                                                 style={pageStyle}
                                                 disabled
                                             />
-
+ </div>  </div>
                                         {props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
                                             <IconButton color="primary" style={equalButtonStyle}>
                                                 <DragHandleIcon />
@@ -739,7 +742,7 @@ function InnerModal(props) {
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
-                                        </div>
+                                       
                                     </Grid>
                                 </FormGroup>
                             </Form>
@@ -890,17 +893,7 @@ function InnerModal(props) {
                                             />
                                         </div>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Button
-                                        disabled={state.formErrors.length >= 1}
-                                        color="primary"
-                                        onClick={handleSubmit}
-                                        variant="contained"
-                                    >
-                                        Importer
-                                    </Button>
-                                </FormGroup>
+                                </FormGroup>                             
                             </Form>
                         </Grid>
                     </Grid>
@@ -910,10 +903,19 @@ function InnerModal(props) {
                     <div>{state.formErrors.map((error, i) => { return(
                         <div key={i}>{error + "; "}</div>
                     )})}</div>
+                     <Button className={`contributorButton`} onClick={openContributorModal} variant="contained">Bidragsytere</Button>
                 </ModalBody>
                 <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
                 <ModalFooter>
-                <Button className={`contributorButton`} onClick={openContributorModal}>Bidragsytere</Button>
+                <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
+                <Button
+                    disabled={state.formErrors.length >= 1 || props.duplicate}
+                    color="primary"
+                    onClick={handleSubmit}
+                    variant="contained"
+                >
+                Importer
+                </Button>
                 </ModalFooter>
             </Modal>
             <ClosingDialog

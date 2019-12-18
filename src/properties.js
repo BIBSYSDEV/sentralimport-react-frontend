@@ -1,9 +1,9 @@
 export const properties = {
     client_id: "ab940329-87f9-40dc-a129-bf9d4ae07917",
     //localhost
-    // crisrest_gatekeeper_url: "http://localhost:8080/crisrest-2.5-SNAPSHOT",
-    // piarest_gatekeeper_url: "http://localhost:8090/piarest-1.0.1",
-    // redirect_url: "http://localhost:3000/login",
+    //crisrest_gatekeeper_url: "http://localhost:8090/crisrest-2.5-SNAPSHOT", 
+    //piarest_gatekeeper_url: "http://localhost:8080/piarest-1.0.1-SNAPSHOT",
+    //redirect_url: "http://localhost:3000/login",
 
     //test
     piarest_gatekeeper_url: "https://piarest-utv.dataporten-api.no",
