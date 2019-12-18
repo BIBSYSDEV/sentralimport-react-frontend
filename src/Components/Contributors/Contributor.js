@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Button, FormGroup, TextField } from "@material-ui/core";
-import InstitutionSelect from "../InstitutionSelect/InstitutionSelect";
+import InstitutionCountrySelect from "../InstitutionSelect/InstitutionCountrySelect";
 import { Form } from "reactstrap";
 export default function Contributor(props) {
   useEffect(() => {
@@ -93,6 +93,7 @@ export default function Contributor(props) {
             <FormGroup>
               <TextField
                 id="firstName"
+                aria-labeledby="id"
                 label="Fornavn"
                 value={data.toBeCreated.first_name}
                 margin="normal"
@@ -141,7 +142,7 @@ export default function Contributor(props) {
                 </p>
               ))}
             </div>
-            <InstitutionSelect onChange={handleInstitutionChange} />
+            <InstitutionCountrySelect onChange={handleInstitutionChange} />
             <Button
               onClick={() => addInstitution()}
               disabled={

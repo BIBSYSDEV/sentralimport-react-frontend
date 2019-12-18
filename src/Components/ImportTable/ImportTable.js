@@ -86,7 +86,7 @@ function EnhancedTableHead(props) {
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox" />
+            <TableCell component="td" scope="row" padding="checkbox" />
                 {headRows.map(row => (
                     <TableCell
                         key={row.id}
@@ -377,7 +377,7 @@ export default function EnhancedTable() {
             <Paper className={classes.paper}>
                 <EnhancedTableToolbar />
                 <div className={classes.tableWrapper}>
-                    <Table className={classes.table} aria-labelledby="tableTitle">
+                    <Table className={classes.table}>
                         <EnhancedTableHead
                             order={order}
                             orderBy={orderBy}
@@ -403,7 +403,7 @@ export default function EnhancedTable() {
                                             onFocus={event => handleOnFocus(event, {row})}
                                             onBlur={event => handleOnBlur(event, {row})}
                                         >
-                                            <TableCell component="th" scope="row" padding="none" />
+                                            <TableCell component="td" scope="row" padding="none" />
 
                                             <TableCell>
                                                 <div className="image-wrapper">
@@ -465,7 +465,9 @@ export default function EnhancedTable() {
                                                         handleAuthorPress(e, row);
                                                         e.stopPropagation();
                                                     }}
-                                                >
+                                                    alt="Forfatterliste"
+                                                    
+                                                > <div hidden={true}> Forfatterliste </div>
                                                     <PeopleIcon />
                                                 </IconButton>
                                             </TableCell>
