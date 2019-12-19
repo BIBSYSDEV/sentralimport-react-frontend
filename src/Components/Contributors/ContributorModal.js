@@ -40,11 +40,11 @@ function ContributorModal(props) {
             let cristinAuthors = [];
 
             let temp = JSON.parse(localStorage.getItem("tempContributors"));
-            if (temp !== null && temp.publication.pubId === props.data.pubId) {
+            if (temp !== null && temp.publication.pubId === props.data.pubId && !props.duplicate) {
                 contributors = temp.contributors;
             } else {
                 if (props.duplicate) {
-                    cristinAuthors = state.selectedPublication.data.authors;
+                    cristinAuthors = state.selectedPublication.authors;
                 } else {
                     cristinAuthors = await searchContributors(props.data.authors);
                 }
@@ -85,10 +85,7 @@ function ContributorModal(props) {
                         toBeCreated: defaultAuthor
                     };
 
-                    for (let l = 0; l < contributors.length; l++) {
-                        contributors[l].isEditing =
-                            contributors[l].cristin.cristin_person_id === null;
-                    }
+                    contributors[i].isEditing = contributors[i].cristin.cristin_person_id === null;
 
                     let copy =
                         contributors[i].cristin === defaultAuthor
@@ -555,10 +552,9 @@ async function fetchInstitutions(affiliations) {
     let arr = [];
     for (let i = 0; i < affiliations.length; i++) {
         let inst = affiliations[i];
-        if (inst.cristinInstitutionNr === 9127 || inst.cristinInstitutionNr === 0) {
+        if ((inst.cristinInstitutionNr === 9127 || inst.cristinInstitutionNr === 0) && inst.hasOwnProperty("countryCode")) {
             let response = await axios.get(properties.crisrest_gatekeeper_url + "/institutions/country/" + inst.countryCode + "?lang=nb",
                 JSON.parse(localStorage.getItem("config")));
-            console.log(response.data);
             if (response.data.length > 0) {
                 inst = {
                     cristinInstitutionNr: response.data[0].cristin_institution_id,

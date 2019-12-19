@@ -21,7 +21,7 @@ import {Context} from "../../Context";
 import axios from "axios";
 import '../../assets/styles/buttons.scss'
 import ContributorModal from "../Contributors/ContributorModal";
-import { green, red } from "@material-ui/core/colors";
+import { red } from "@material-ui/core/colors";
 import './style.css';
 import '../../assets/styles/buttons.scss'
 import ButtonGroup from "@material-ui/core/ButtonGroup/ButtonGroup";
@@ -230,7 +230,7 @@ function InnerModal(props) {
                 duplicate: props.duplicate,
                 import_sources: [
                     {
-                        source_name: props.data.sourceCode,
+                        source_name: kilde,
                         source_reference_id: kildeId
                     }
                 ],
@@ -934,7 +934,7 @@ function InnerModal(props) {
                 open={contributorModal}
                 toggle={handleContributorClose.bind(this)}
                 data={props.data}
-                duplicate={props.data.duplicate}
+                duplicate={props.duplicate}
             />
         </div>
     );

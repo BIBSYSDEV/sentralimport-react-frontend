@@ -58,7 +58,6 @@ export default function Login(props) {
                     Authorization: "Bearer " + localStorage.getItem("access_token")
                 }
             };
-            console.log(config);
             let test = await axios.get(
                 "https://crisrest-utv.dataporten-api.no",
                 config
