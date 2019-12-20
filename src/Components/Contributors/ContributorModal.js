@@ -218,7 +218,7 @@ function ContributorModal(props) {
     }
 
     const updateContributor = (author, rowIndex) => {
-        var temp = [...data];
+        let temp = [...data];
         temp[rowIndex] = author;
         setData(temp);
     };
@@ -227,9 +227,9 @@ function ContributorModal(props) {
     //TODO skriv om funksjonen slik at den blir enklere å lese
     //TODO Sjekk om alle edge-cases blir håndtert korrekt med tanke på rekkefølge i toBeCreated og imported (Sørg for at rekkefølgenummer på en gitt bidragsyter aldri blir mindre enn 1)
     const removeContributor = rowIndex => {
-        var temp = [...data];
+        let temp = [...data];
         temp.splice(rowIndex, 1);
-        for (var i = rowIndex; i < temp.length; i++) {
+        for (let i = rowIndex; i < temp.length; i++) {
             if (
                 temp[i].imported.order === temp[i].toBeCreated.order &&
                 temp[i].imported.order >= rowIndex
@@ -250,7 +250,7 @@ function ContributorModal(props) {
                 }
             }
         }
-        for (var j = 0; j < rowIndex; j++) {
+        for (let j = 0; j < rowIndex; j++) {
             console.log("rowIndex: " + rowIndex);
             if (
                 temp[j].imported.order === rowIndex &&
@@ -314,7 +314,7 @@ function ContributorModal(props) {
                 : author.affiliations[0].institutionName)
             , JSON.parse(localStorage.getItem("config")));
         console.log(searchedAuthors);
-        findBestMatch(author, searchedAuthors.data, rowIndex);
+        await findBestMatch(author, searchedAuthors.data, rowIndex);
     }
 
     async function findBestMatch(author, potentialAuthors, rowIndex) {
@@ -331,7 +331,7 @@ function ContributorModal(props) {
                     charsMatched++;
                 }
             }
-            for (var h = 0; h < author.surname.length; h++) {
+            for (let h = 0; h < author.surname.length; h++) {
                 if (
                     author.surname.substr(h, h + 1) ===
                     potentialAuthors[i].surname.substr(h, h + 1)
@@ -345,32 +345,29 @@ function ContributorModal(props) {
             }
         }
         if (bestMatch !== "") {
-            var tempAuthor = await axios.get(
+            let tempAuthor = await axios.get(
                 properties.crisrest_gatekeeper_url + "/persons/" +
                 bestMatch.cristin_person_id
                 , JSON.parse(localStorage.getItem("config")));
             console.log(tempAuthor.data);
-            var tempAffliations = [];
-            for (var j = 0; j < tempAuthor.data.affiliations.length; j++) {
-                var tempInstitution = [];
-                var tempdata = await axios.get(
+            let tempAffliations = [];
+            for (let j = 0; j < tempAuthor.data.affiliations.length; j++) {
+                let tempdata = await axios.get(
                     properties.crisrest_gatekeeper_url + "/institutions/" +
                     tempAuthor.data.affiliations[j].institution.cristin_institution_id
                     , JSON.parse(localStorage.getItem("config")));
-                console.log(tempdata);
-                tempInstitution.acronym = tempdata.data.acronym;
-                tempInstitution.countryCode = tempdata.data.country;
-                tempInstitution.institutionName = tempdata.data.institution_name.hasOwnProperty(
-                    "nb"
-                )
-                    ? tempdata.data.institution_name.nb
-                    : tempdata.data.institution_name.en;
-                tempInstitution.institutionNr = tempdata.data.cristin_institution_id;
-                tempInstitution.isCristinInstitution =
-                    tempdata.data.cristin_user_institution;
+                let tempInstitution = {
+                    acronym: tempdata.data.acronym,
+                    countryCode: tempdata.data.country,
+                    institutionName: tempdata.data.institution_name.hasOwnProperty("nb") ?
+                        tempdata.data.institution_name.nb :
+                        tempdata.data.institution_name.en,
+                    institutionNr: tempdata.data.cristin_institution_id,
+                    isCristinInstitution: tempdata.data.cristin_user_institution
+                };
                 tempAffliations.push(tempInstitution);
             }
-            var temp = [...data];
+            let temp = [...data];
             bestMatch.affiliations = tempAffliations;
 
             temp[rowIndex].cristin = bestMatch;
@@ -612,12 +609,6 @@ const defaultAuthor = {
     affiliations: [],
     url: null,
     isEditing: true
-};
-
-const defaultInstitution = {
-    value: " ",
-    label: "Ingen institusjon",
-    institutionNr: 0
 };
 
 export default withSnackbar(ContributorModal);

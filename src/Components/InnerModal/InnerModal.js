@@ -573,7 +573,7 @@ function InnerModal(props) {
                                 </FormGroup>
                                 <FormGroup>
                                     <Grid item>
-                                        <a href={"https://doi.org/" + props.data.doi} target="_blank">
+                                        <a href={"https://doi.org/" + props.data.doi} target="_blank" rel="noopener noreferrer">
                                             <TextField
                                                 id="import-doi"
                                                 label="Doi"

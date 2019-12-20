@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Paper, Grid, TableRow, TableCell } from "@material-ui/core";
+import { Button, TableRow, TableCell } from "@material-ui/core";
 import { Context } from "../../Context";
 import Select from "react-select";
 
