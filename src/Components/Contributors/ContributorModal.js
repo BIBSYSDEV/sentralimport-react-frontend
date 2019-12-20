@@ -40,7 +40,7 @@ function ContributorModal(props) {
             let cristinAuthors = [];
 
             let temp = JSON.parse(localStorage.getItem("tempContributors"));
-            if (temp !== null && temp.publication.pubId === props.data.pubId && !props.duplicate) {
+            if (temp !== null && temp.pubId === props.data.pubId && temp.duplicate === props.duplicate) {
                 contributors = temp.contributors;
             } else {
                 if (props.duplicate) {
@@ -142,10 +142,13 @@ function ContributorModal(props) {
 
     function handleTempSave() {
         let temp = {
-            publication: props.data,
-            contributors: data
+            pubId: props.data.pubId,
+            contributors: data,
+            duplicate: props.duplicate
         };
-        localStorage.setItem("tempContributors", JSON.stringify(temp));
+        if (state.doSave) {
+            localStorage.setItem("tempContributors", JSON.stringify(temp));
+        }
     }
 
     function handleOrder(author, up) {

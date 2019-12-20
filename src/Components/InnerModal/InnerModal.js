@@ -51,7 +51,7 @@ function InnerModal(props) {
         async function setFields() {
             let temp = JSON.parse(localStorage.getItem("tempPublication"));
             let workedOn = false;
-            if (temp !== null && temp.publication.pubId === props.data.pubId && !props.duplicate && temp.publication.duplicate === props.duplicate)
+            if (temp !== null && temp.publication.pubId === props.data.pubId && temp.publication.duplicate === props.duplicate)
                 workedOn = true;
 
             setKilde(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_name : "Ingen kilde funnet") : props.data.sourceName);
@@ -234,10 +234,11 @@ function InnerModal(props) {
                         source_reference_id: kildeId
                     }
                 ],
-                authors: props.data.authors
+                // authors: props.data.authors
             }
         };
-        localStorage.setItem("tempPublication", JSON.stringify(temp));
+        if (state.doSave)
+            localStorage.setItem("tempPublication", JSON.stringify(temp));
     }
 
     function handleChangeJournal(option) {

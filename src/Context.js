@@ -26,7 +26,8 @@ let initialState = {
     contributors: null,
     contributorPage: 0,
     contributorPerPage: 5,
-    institutions: null
+    institutions: null,
+    doSave: false
 };
 
 let reducer = (state, action) => {
@@ -69,6 +70,8 @@ let reducer = (state, action) => {
             return {...state, contributorPerPage: action.payload};
         case "institutions":
             return {...state, institutions: action.payload};
+        case "doSave":
+            return {...state, doSave: action.payload};
         default:
             return state;
     }
