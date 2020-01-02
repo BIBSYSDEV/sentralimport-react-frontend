@@ -106,7 +106,6 @@ export default function Validation(props) {
   }
 
   function checkAllFields() {
-    console.log(props.publication);
     var fieldErrors = [];
 
     var data = [

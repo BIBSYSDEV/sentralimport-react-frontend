@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Button, FormGroup, TextField } from "@material-ui/core";
-import InstitutionSelect from "../InstitutionSelect/InstitutionSelect";
+import InstitutionCountrySelect from "../InstitutionSelect/InstitutionCountrySelect";
 import { Form } from "reactstrap";
 export default function Contributor(props) {
   useEffect(() => {

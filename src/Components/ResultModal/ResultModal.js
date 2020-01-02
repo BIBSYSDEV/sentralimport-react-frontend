@@ -17,7 +17,7 @@ import {properties} from "../../properties";
 export default function ResultModal(props) {
   const [innerModal, setInnerModal] = React.useState(false);
   const [isDuplicate, setDuplicate] = React.useState(false);
-  let { state } = React.useContext(Context);
+  let { state, dispatch } = React.useContext(Context);
   let history = useHistory();
 
   const divStyle = {
@@ -30,6 +30,7 @@ export default function ResultModal(props) {
 
   function handleSubmit() {
     if (state.selected === "true") {
+      dispatch({type: "doSave", payload: true});
       setDuplicate(false);
       setInnerModal(true);
     } else if (state.selected === "false") {
@@ -37,6 +38,7 @@ export default function ResultModal(props) {
       props.handleClose();
       props.removeFromList();
     } else {
+      dispatch({type: "doSave", payload: true});
       setDuplicate(true);
       setInnerModal(true);
     }

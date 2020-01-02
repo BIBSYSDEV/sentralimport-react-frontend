@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Paper, Grid, TableRow, TableCell } from "@material-ui/core";
+import { Button, TableRow, TableCell } from "@material-ui/core";
 import { Context } from "../../Context";
 import Select from "react-select";
 
@@ -51,6 +51,7 @@ export default function Pagination(props) {
           classNamePrefix="select"
           onChange={onChangePerPage}
           defaultValue={rowsPerPage[0]}
+          aria-label="Publikasjoner per side"
         />
       </TableCell>
       <TableCell></TableCell>
@@ -69,6 +70,7 @@ export default function Pagination(props) {
           }}
           options={pageValues}
           onChange={changePage}
+          aria-label="Sidetall"
         />
       </TableCell>
 

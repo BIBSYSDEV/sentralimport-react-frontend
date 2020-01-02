@@ -8,6 +8,7 @@ import {properties} from "../../properties.js"
 export default function InstitutionSelect(props) {
     const [institutions, setInstitutions] = React.useState("");
     let {state, dispatch} = React.useContext(Context);
+    
 
     useEffect(() => {
         async function fetch() {
@@ -47,6 +48,7 @@ export default function InstitutionSelect(props) {
             className="basic-multi-select"
             classNamePrefix="select"
             onChange={props.onChange}
+            aria-label="Velg institusjon"  
         />
     );
 }

@@ -18,7 +18,7 @@ function CreateJournalPanel(props) {
   const [url, setUrl] = React.useState("");
   const [publisher, setPublisher] = React.useState("");
 
-  const [formHasErrors, setFormHasErrors] = React.useState([
+  const [formHasErrors] = React.useState([
     { value: 1 },
     { value: 0 },
     { value: 0 },

@@ -9,12 +9,12 @@ import {properties} from "../../properties";
 export function Duplicates(props) {
     const [duplicate, setDuplicate] = React.useState([]);
     let {state, dispatch} = React.useContext(Context);
-    // const [selected, setSelected] = React.useState("false");
     let publication = props.publication;
     const relevantStatus = state.currentImportStatus !== "ikke aktuelle";
 
     useEffect(() => {
         async function fetch() {
+            state.selected = "true";
             let searchString = "";
             let registered = parseInt(publication.registered.substr(7, 10));
             console.log("registered: " + registered);
