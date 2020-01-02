@@ -58,9 +58,10 @@ function ContributorPagination(props) {
           options={perPage}
           onChange={handleChangePerPage}
           defaultValue={perPage[0]}
+          aria-label="Bidragsytere per side"
         />
       </TableCell>
-      <TableCell align="justify">
+      <TableCell>
         Bidragsytere{" "}
         {state.contributorPage * state.contributorPerPage + 1 + " - "}
         {(state.contributorPage + 1) * state.contributorPerPage <=
@@ -75,6 +76,7 @@ function ContributorPagination(props) {
           }}
           options={pageValues}
           onChange={handleChangePage}
+          aria-label="Sidetall - Bidragsyterliste"
         />
       </TableCell>
       <TableCell align="right">

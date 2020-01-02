@@ -92,7 +92,7 @@ export default function Contributor(props) {
           <Form>
             <FormGroup>
               <TextField
-                id="firstName"
+                id={"firstName" + props.index}
                 label="Fornavn"
                 value={data.toBeCreated.first_name}
                 margin="normal"
@@ -102,7 +102,7 @@ export default function Contributor(props) {
             </FormGroup>
             <FormGroup>
               <TextField
-                id="lastName"
+                id={"lastName" + props.index}
                 label="Etternavn"
                 value={data.toBeCreated.surname}
                 margin="normal"
@@ -112,7 +112,7 @@ export default function Contributor(props) {
             </FormGroup>
             <FormGroup>
               <TextField
-                id="authorName"
+                id={"authorName" + props.index}
                 label="Forfatternavn"
                 value={
                   data.toBeCreated.hasOwnProperty("authorname")
@@ -141,7 +141,7 @@ export default function Contributor(props) {
                 </p>
               ))}
             </div>
-            <InstitutionSelect onChange={handleInstitutionChange} />
+            <InstitutionCountrySelect onChange={handleInstitutionChange} aria-label={"Institusjonsvelger " + props.index}/>
             <Button
               onClick={() => addInstitution()}
               disabled={

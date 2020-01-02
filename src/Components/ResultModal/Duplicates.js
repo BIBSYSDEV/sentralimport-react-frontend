@@ -67,9 +67,14 @@ export function Duplicates(props) {
     return (
         <div>
             <ul className={`no-padding`}>
-                <RadioGroup onChange={handleChange} value={state.selected}>
+                <RadioGroup onChange={handleChange} value={state.selected}> 
+                {/* Ved bruk av egendefinerte radiobuttons i en radiogroup, husk FormControlLabels slik at aria fungerer korrekt */}
                     {duplicate.length > 0 ? (
-                        duplicate.map((item, i) => <Result data={item.data} key={i} />)
+                        duplicate.map((item, i) => 
+                            <FormControlLabel
+                                control={<Result data={item.data} key={i} />}
+                            />
+                        )
                     ) : (
                         <p>
                             Det finnes ingen Cristinpublikasjoner som matcher

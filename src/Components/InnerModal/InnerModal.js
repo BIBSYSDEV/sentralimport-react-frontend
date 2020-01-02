@@ -549,8 +549,8 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {selectedJournal.value === props.data.channel.cristinTidsskriftNr /* .toString() */ ? (
-                                            <IconButton color="primary" style={equalButtonStyle}>
+                                        {selectedJournal.value === (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "") ? (
+                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
@@ -594,12 +594,15 @@ function InnerModal(props) {
                                 <FormGroup>
                                     <Grid item container sm>
                                         <TextField
-                                            id="import-tittel"
+                                            aria-label="Import-tittel"
+                                            id="Import-tittel"
                                             label="Tittel"
                                             value={languageCopy.filter(lang => lang.lang === selectedLang.lang)[0].title}
                                             margin="normal"
                                             disabled
                                             multiline
+                                            aria-multiline="true"
+                                            rowsMax="10"
                                         />
 
                                         {languageCopy.filter(lang => lang.lang === selectedLang.lang)[0].title === selectedLang.title ? (
@@ -777,6 +780,7 @@ function InnerModal(props) {
                                 <FormGroup>
                                     <FormLabel style={selectStyle}> Tidsskrift </FormLabel>
                                     <Select
+                                    aria-label="Tidsskrift-select"
                                         placeholder="Søk på tidsskrift"
                                         name="journalSelect"
                                         options={journals}
@@ -801,7 +805,7 @@ function InnerModal(props) {
                                 </FormGroup>
                                 <FormGroup>
                                     <label style={labelStyle}>Språk</label>
-                                    <ButtonGroup className={`buttonGroup`} variant="contained" size="small" aria-label="small contained button group">
+                                    <ButtonGroup className={`buttonGroup`} variant="contained" size="sm all" aria-label="small contained button group">
                                     {languages.map((lang, i) =>
                                         <Button key={i} className={selectedLang === lang ? `selected` : ``} onClick={() => handleSelectedLang(lang)}>{lang.lang}</Button>
                                     )}
@@ -818,6 +822,7 @@ function InnerModal(props) {
                                         margin="normal"
                                         required
                                         multiline
+                                        defaultValue=""
                                     /> </Grid>
                                 </FormGroup>
                                 <FormGroup>
@@ -833,6 +838,7 @@ function InnerModal(props) {
                                 <FormGroup>
                                     <FormLabel style={selectStyle}> Kategori </FormLabel>
                                     <Select
+                                        aria-label="Kategori"
                                         placeholder="Søk på kategori"
                                         name="categorySelect"
                                         options={categories}
