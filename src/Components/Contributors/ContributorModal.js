@@ -85,7 +85,7 @@ function ContributorModal(props) {
                         toBeCreated: defaultAuthor
                     };
 
-                    contributors[i].isEditing = contributors[i].cristin.cristin_person_id === null;
+                    contributors[i].isEditing = (contributors[i].cristin.cristin_person_id === null);
 
                     let copy =
                         contributors[i].cristin === defaultAuthor

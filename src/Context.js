@@ -2,8 +2,9 @@ import React from "react";
 
 let Context = React.createContext();
 let currentYear = new Date().getFullYear();
+let currentDate = new Date();
 let initialState = {
-    currentImportYear: {value: currentYear, label: currentYear.toString()},
+    currentImportYear: ((currentDate.getMonth() < 3) ? {value: (currentYear.valueOf() - 1), label: (currentYear - 1).toString()} : { value: currentYear, label: currentYear.toString()}),
     currentImportStatus: "false",
     currentInstitution: {value: null, label: "Ingen filtrering"},
     isSampublikasjon: false,

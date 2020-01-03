@@ -7,10 +7,16 @@ export default function DropdownSelect() {
 
     let years = [];
     let currentYear = new Date().getFullYear();
+    let currentDate = new Date();
+    if(currentDate.getMonth() < 3) {
+        currentYear = currentYear - 1;
+    }
 
     for (let i = currentYear - 10; i <= currentYear; i++) {
         years.push({value: i, label: i.toString()})
     }
+
+    years.reverse();
 
     function handleChange(option) {
         dispatch({type: "setImportYear", payload: option});
@@ -21,7 +27,7 @@ export default function DropdownSelect() {
             options={years}
             value={state.currentImportYear}
             onChange={handleChange}
-            aria-label="Velg importår"
+            aria-label="Velg publiseringsår"
         />
     );
 }
