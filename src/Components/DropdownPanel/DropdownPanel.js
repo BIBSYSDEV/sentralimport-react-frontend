@@ -3,12 +3,10 @@ import DropdownSelect from "../DropdownSelect/DropdownSelect";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import { Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
 
 export default function DropdownPanel() {
   const useStyles = {
-    overflowX: "auto",
-    overflowY: "visible",
+    overflow: "visible",
     marginTop: 25,
     height: 148,
     marginLeft: 10

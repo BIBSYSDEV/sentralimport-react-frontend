@@ -21,6 +21,7 @@ export default function DropdownSelect() {
             options={years}
             value={state.currentImportYear}
             onChange={handleChange}
+            aria-label="Velg importår"
         />
     );
 }

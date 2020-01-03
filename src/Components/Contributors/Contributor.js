@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
 import { Button, FormGroup, TextField } from "@material-ui/core";
-import InstitutionSelect from "../InstitutionSelect/InstitutionSelect";
+import InstitutionCountrySelect from "../InstitutionSelect/InstitutionCountrySelect";
 import { Form } from "reactstrap";
 export default function Contributor(props) {
   useEffect(() => {
     setRowIndex(props.index);
-    console.log(props.index);
     setData(props.author);
   }, [props.author]);
 
@@ -61,7 +60,6 @@ export default function Contributor(props) {
     });
     let temp = data;
     temp.toBeCreated.affiliations = affiliationCopy;
-    console.log(affiliationCopy);
 
     props.updateData(temp, rowIndex);
   }
@@ -77,13 +75,10 @@ export default function Contributor(props) {
         : obj.toBeCreated.authorname;
 
     if (property === "first") {
-      console.log(firstName);
       obj.toBeCreated.first_name = firstName;
     } else if (property === "last") {
-      console.log(lastName);
       obj.toBeCreated.surname = lastName;
     } else {
-      console.log(authorName);
       obj.toBeCreated.authorName = authorName;
     }
 
@@ -97,7 +92,7 @@ export default function Contributor(props) {
           <Form>
             <FormGroup>
               <TextField
-                id="firstName"
+                id={"firstName" + props.index}
                 label="Fornavn"
                 value={data.toBeCreated.first_name}
                 margin="normal"
@@ -107,7 +102,7 @@ export default function Contributor(props) {
             </FormGroup>
             <FormGroup>
               <TextField
-                id="lastName"
+                id={"lastName" + props.index}
                 label="Etternavn"
                 value={data.toBeCreated.surname}
                 margin="normal"
@@ -117,7 +112,7 @@ export default function Contributor(props) {
             </FormGroup>
             <FormGroup>
               <TextField
-                id="authorName"
+                id={"authorName" + props.index}
                 label="Forfatternavn"
                 value={
                   data.toBeCreated.hasOwnProperty("authorname")
@@ -146,7 +141,7 @@ export default function Contributor(props) {
                 </p>
               ))}
             </div>
-            <InstitutionSelect onChange={handleInstitutionChange} />
+            <InstitutionCountrySelect onChange={handleInstitutionChange} aria-label={"Institusjonsvelger " + props.index}/>
             <Button
               onClick={() => addInstitution()}
               disabled={

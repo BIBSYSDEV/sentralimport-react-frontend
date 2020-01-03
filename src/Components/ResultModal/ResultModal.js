@@ -11,11 +11,14 @@ import { Duplicates } from "./Duplicates";
 import { Context } from "../../Context";
 import "../../assets/styles/Results.scss";
 import axios from "axios";
+import {useHistory} from "react-router-dom";
+import {properties} from "../../properties";
 
 export default function ResultModal(props) {
   const [innerModal, setInnerModal] = React.useState(false);
   const [isDuplicate, setDuplicate] = React.useState(false);
-  let { state } = React.useContext(Context);
+  let { state, dispatch } = React.useContext(Context);
+  let history = useHistory();
 
   const divStyle = {
     fontWeight: "bold"
@@ -27,6 +30,7 @@ export default function ResultModal(props) {
 
   function handleSubmit() {
     if (state.selected === "true") {
+      dispatch({type: "doSave", payload: true});
       setDuplicate(false);
       setInnerModal(true);
     } else if (state.selected === "false") {
@@ -34,6 +38,7 @@ export default function ResultModal(props) {
       props.handleClose();
       props.removeFromList();
     } else {
+      dispatch({type: "doSave", payload: true});
       setDuplicate(true);
       setInnerModal(true);
     }
@@ -47,12 +52,13 @@ export default function ResultModal(props) {
     let relevantStatus = state.currentImportStatus !== "ikke aktuelle";
     try {
       await axios.patch(
-        "http://localhost:8090/piarest/sentralimport/publication/" +
+        properties.piarest_gatekeeper_url + "/sentralimport/publication/" +
           props.data.pubId,
-        JSON.stringify({ not_relevant: relevantStatus })
+        JSON.stringify({ not_relevant: relevantStatus }), JSON.parse(localStorage.getItem("config"))
       );
     } catch (e) {
       console.log("Patch request failed:", e);
+      history.push("/notAuthorized");
     }
   }
 

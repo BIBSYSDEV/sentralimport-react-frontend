@@ -4,16 +4,17 @@ import axios from "axios";
 import {Context} from "../../Context";
 import {Radio, RadioGroup, FormControlLabel} from "@material-ui/core";
 import {ListGroupItem} from "reactstrap";
+import {properties} from "../../properties";
 
 export function Duplicates(props) {
     const [duplicate, setDuplicate] = React.useState([]);
     let {state, dispatch} = React.useContext(Context);
-    // const [selected, setSelected] = React.useState("false");
     let publication = props.publication;
     const relevantStatus = state.currentImportStatus !== "ikke aktuelle";
 
     useEffect(() => {
         async function fetch() {
+            state.selected = "true";
             let searchString = "";
             let registered = parseInt(publication.registered.substr(7, 10));
             console.log("registered: " + registered);
@@ -66,9 +67,14 @@ export function Duplicates(props) {
     return (
         <div>
             <ul className={`no-padding`}>
-                <RadioGroup onChange={handleChange} value={state.selected}>
+                <RadioGroup onChange={handleChange} value={state.selected}> 
+                {/* Ved bruk av egendefinerte radiobuttons i en radiogroup, husk FormControlLabels slik at aria fungerer korrekt */}
                     {duplicate.length > 0 ? (
-                        duplicate.map((item, i) => <Result data={item.data} key={i} />)
+                        duplicate.map((item, i) => 
+                            <FormControlLabel
+                                control={<Result data={item.data} key={i} />}
+                            />
+                        )
                     ) : (
                         <p>
                             Det finnes ingen Cristinpublikasjoner som matcher
@@ -95,9 +101,9 @@ export function Duplicates(props) {
 
 async function fetchDuplicates(searchTerms) {
     let results = [];
-    console.log("fething...");
+    console.log("fetching...");
     const searchResults = await axios.get(
-        "https://api.cristin-utv.uio.no/v2/results" + searchTerms + "&fields=all&lang=nb"
+        properties.crisrest_gatekeeper_url + "/results" + searchTerms + "&fields=all&lang=nb", JSON.parse(localStorage.getItem("config"))
     );
     console.log("Found " + searchResults.data.length + " results");
     for (let i = 0; i < searchResults.data.length; i++) {
@@ -108,10 +114,10 @@ async function fetchDuplicates(searchTerms) {
 
     for (let i = 0; i < results.length; i++) {
         let authors = await axios.get(
-            "https://api.cristin-utv.uio.no/v2/results/" +
+            properties.crisrest_gatekeeper_url + "/results/" +
             results[i].data.cristin_result_id +
             "/contributors"
-        );
+        , JSON.parse(localStorage.getItem("config")));
         results[i].data.authors = authors.data;
     }
 

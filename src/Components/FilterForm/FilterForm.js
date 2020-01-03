@@ -21,7 +21,7 @@ import X2Icon from "./x2-red.png";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    overflowX: "auto",
+    overflowX: "visible",
     overflowY: "visible"
   },
   card: {
@@ -100,7 +100,7 @@ export default function FilterForm() {
               control={<Radio />}
               label={
                 <span style={labelStyle}>
-                  <img src={ExportIcon} style={imgStyle} alt="ikke importert" />{" "}
+                  <img src={ExportIcon} style={imgStyle} alt="Not imported" />{" "}
                   &nbsp;
                   <div>Ikke importert</div>
                 </span>
@@ -111,7 +111,7 @@ export default function FilterForm() {
               control={<Radio />}
               label={
                 <span style={importedStyle}>
-                  <img src={DownloadIcon} style={imgStyle} alt="importert" />{" "}
+                  <img src={DownloadIcon} style={imgStyle} alt="Imported" />{" "}
                   &nbsp; <p>Importert</p>
                 </span>
               }
@@ -121,7 +121,7 @@ export default function FilterForm() {
               control={<Radio />}
               label={
                 <span style={labelStyle}>
-                  <img src={X2Icon} style={imgStyle} alt="ikke aktuelle" />{" "}
+                  <img src={X2Icon} style={imgStyle} alt="Not relevant" />{" "}
                   &nbsp; <div>Ikke aktuelle</div>
                 </span>
               }
