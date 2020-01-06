@@ -8,6 +8,8 @@ export default function DropdownSelect() {
     let years = [];
     let currentYear = new Date().getFullYear();
     let currentDate = new Date();
+
+    // Sjekk om dato er før/etter 1. april. Dersom dato er før, sett importår til årstall - 1 ellers bruk eksisterende årstall
     if(currentDate.getMonth() < 3) {
         currentYear = currentYear - 1;
     }
