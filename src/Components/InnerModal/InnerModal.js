@@ -69,7 +69,7 @@ function InnerModal(props) {
                     }
                     :
                     {
-                        value: props.data.channel.cristinTidsskriftNr.toString(),
+                        value: props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "0",
                         label: props.data.channel.title
                     }
                 )
@@ -174,10 +174,14 @@ function InnerModal(props) {
     const [selectedJournal, setSelectedJournal] = React.useState(props.duplicate ? {
         value: state.selectedPublication.journal.name,
         label: state.selectedPublication.journal.name
-    } : {
+    } : (props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? {
         value: props.data.channel.cristinTidsskriftNr.toString(),
+        label: props.data.channel.title 
+        } : {
+        value: "0",
         label: props.data.channel.title
-    });
+        })
+    );
 
     const [selectedCategory, setSelectedCategory] = React.useState(props.duplicate ? {
         value: state.selectedPublication.category,
@@ -606,7 +610,7 @@ function InnerModal(props) {
                                     </Grid>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Grid item container sm>
+                                    <Grid item container>
                                         <TextField
                                             aria-label="Import-tittel"
                                             id="Import-tittel"
