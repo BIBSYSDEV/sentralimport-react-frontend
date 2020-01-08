@@ -432,15 +432,11 @@ export default function EnhancedTable() {
                                                         {row.hasOwnProperty("channel")
                                                             ? row.channel.volume + ";"
                                                             : ""}
-                                                        {row.hasOwnProperty(
-                                                            "channel" &&
+                                                        {row.hasOwnProperty("channel") &&
                                                             row.channel.hasOwnProperty("pageFrom")
-                                                        )
                                                             ? row.channel.pageFrom + "-"
                                                             : ""}
-                                                        {row.hasOwnProperty(
-                                                            "channel" && row.channel.hasOwnProperty("pageTo")
-                                                        )
+                                                        {row.hasOwnProperty("channel") && row.channel.hasOwnProperty("pageTo")
                                                             ? row.channel.pageTo
                                                             : ""}
                                                         {row.hasOwnProperty("doi") ? " doi:" + row.doi : ""}
