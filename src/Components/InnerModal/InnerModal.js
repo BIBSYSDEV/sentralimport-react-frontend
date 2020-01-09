@@ -174,12 +174,12 @@ function InnerModal(props) {
     const [selectedJournal, setSelectedJournal] = React.useState(props.duplicate ? {
         value: state.selectedPublication.journal.name,
         label: state.selectedPublication.journal.name
-    } : (props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? {
+    } : (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? {
         value: props.data.channel.cristinTidsskriftNr.toString(),
         label: props.data.channel.title 
         } : {
         value: "0",
-        label: props.data.channel.title
+        label: "Ingen tidsskrift/journal funnet"
         })
     );
 
@@ -435,6 +435,7 @@ function InnerModal(props) {
     async function getJournalId(issn) {
         if (issn === null || issn === "")
             return null;
+        
         let journal = await axios.get(properties.crisrest_gatekeeper_url + "/results/channels?type=journal&query=issn:" + issn[0].value, JSON.parse(localStorage.getItem("config")));
         return journal.data[0].id;
     }
