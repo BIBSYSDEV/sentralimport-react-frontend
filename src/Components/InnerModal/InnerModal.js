@@ -69,7 +69,7 @@ function InnerModal(props) {
                     }
                     :
                     {
-                        value: props.data.hasOwnProperty("channel") ? (props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "0") : "0",
+                        value: props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "0",
                         label: props.data.hasOwnProperty("channel") ? props.data.channel.title : "Ingen tidsskrift funnet"
                     }
                 )
@@ -565,7 +565,7 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {props.data.hasOwnProperty("channel") ? (selectedJournal.value === (props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "") ? (
+                                        {props.data.hasOwnProperty("channel") && selectedJournal.value === (props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "") ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -573,7 +573,7 @@ function InnerModal(props) {
                                             <IconButton color="secondary" style={equalButtonStyle} onClick={copyJournal}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
-                                        )) : ""}
+                                        )}
                                     </Grid>
                                 </FormGroup>
                                 <FormGroup>
@@ -693,7 +693,7 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {props.data.hasOwnProperty("channel") ? (props.data.channel.volume === publishingDetails.volume ? (
+                                        {props.data.hasOwnProperty("channel") && props.data.channel.volume === publishingDetails.volume ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -701,7 +701,7 @@ function InnerModal(props) {
                                             <IconButton color="secondary" style={equalButtonStyle} onClick={copyVolume}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
-                                        )) : ""}
+                                        )}
                                     </Grid>
                                     <Grid item>
                                         <TextField
@@ -714,7 +714,7 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {props.data.hasOwnProperty("channel") ? (props.data.channel.issue === publishingDetails.issue ? (
+                                        {props.data.hasOwnProperty("channel") && props.data.channel.issue === publishingDetails.issue ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -722,7 +722,7 @@ function InnerModal(props) {
                                             <IconButton color="secondary" style={equalButtonStyle} onClick={copyIssue}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
-                                        )) : ""}
+                                        )}
                                     </Grid>
                                     <Grid item container sm>
                                         <div>
@@ -742,7 +742,7 @@ function InnerModal(props) {
                                                 disabled
                                             />
  </div>  </div>
-                                        {props.data.hasOwnProperty("channel") ? (props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
+                                        {props.data.hasOwnProperty("channel") && props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -750,7 +750,7 @@ function InnerModal(props) {
                                             <IconButton color="secondary" style={equalButtonStyle} onClick={copyPages}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
-                                        )) : ""}
+                                        )}
                                        
                                     </Grid>
                                 </FormGroup>
