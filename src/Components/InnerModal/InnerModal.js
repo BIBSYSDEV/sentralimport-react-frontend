@@ -69,8 +69,8 @@ function InnerModal(props) {
                     }
                     :
                     {
-                        value: props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "0",
-                        label: props.data.channel.title
+                        value: props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "0",
+                        label: props.data.hasOwnProperty("channel") ? props.data.channel.title : "Ingen tidsskrift funnet"
                     }
                 )
             );
@@ -561,11 +561,11 @@ function InnerModal(props) {
                                         <TextField
                                             id="import-tidsskrift"
                                             label="Tidsskrift"
-                                            value={props.data.channel.title}
+                                            value={props.data.hasOwnProperty("channel") ? props.data.channel.title : ""}
                                             margin="normal"
                                             disabled
                                         />
-                                        {selectedJournal.value === (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "") ? (
+                                        {props.data.hasOwnProperty("channel") && selectedJournal.value === (props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "") ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -687,13 +687,13 @@ function InnerModal(props) {
                                             id="import-utgivelsesdata"
                                             label="Volum"
                                             value={
-                                                props.data.channel.volume ? props.data.channel.volume
+                                                props.data.hasOwnProperty("channel") ? props.data.channel.volume
                                                     : "Ingen utgivelsesdata funnet"
                                             }
                                             margin="normal"
                                             disabled
                                         />
-                                        {props.data.channel.volume === publishingDetails.volume ? (
+                                        {props.data.hasOwnProperty("channel") && props.data.channel.volume === publishingDetails.volume ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -708,13 +708,13 @@ function InnerModal(props) {
                                             id="import-hefte"
                                             label="Hefte"
                                             value={
-                                                props.data.channel.issue ? props.data.channel.issue
+                                                props.data.hasOwnProperty("channel") ? props.data.channel.issue
                                                     : ""
                                             }
                                             margin="normal"
                                             disabled
                                         />
-                                        {props.data.channel.issue === publishingDetails.issue ? (
+                                        {props.data.hasOwnProperty("channel") && props.data.channel.issue === publishingDetails.issue ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -731,18 +731,18 @@ function InnerModal(props) {
                                         <div>
                                             <input
                                                 id="pageFrom"
-                                                value={props.data.channel.pageFrom ? props.data.channel.pageFrom : ""}
+                                                value={props.data.hasOwnProperty("channel") ? props.data.channel.pageFrom : ""}
                                                 style={pageStyle}
                                                 disabled
                                             />
                                             <input
                                                 id="pageTo"
-                                                value={props.data.channel.pageTo ? props.data.channel.pageTo : ""}
+                                                value={props.data.hasOwnProperty("channel") ? props.data.channel.pageTo : ""}
                                                 style={pageStyle}
                                                 disabled
                                             />
  </div>  </div>
-                                        {props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
+                                        {props.data.hasOwnProperty("channel") && props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -873,7 +873,7 @@ function InnerModal(props) {
                                         <TextField
                                             id="Cristin-utgivelsesdata"
                                             label="Volum"
-                                            value={publishingDetails.volume}
+                                            value={publishingDetails ? publishingDetails.volume : ""}
                                             margin="normal"
                                             onChange={handleChangeVolume}
                                         />
@@ -882,7 +882,7 @@ function InnerModal(props) {
                                         <TextField
                                             id="Cristin-hefte"
                                             label="Hefte"
-                                            value={publishingDetails.issue}
+                                            value={publishingDetails ? publishingDetails.issue : ""}
                                             margin="normal"
                                             onChange={handleChangeIssue}
                                         />
@@ -893,13 +893,13 @@ function InnerModal(props) {
                                         <div>
                                             <input
                                                 id="pageFromCristin"
-                                                value={publishingDetails.pageFrom ? publishingDetails.pageFrom : ""}
+                                                value={publishingDetails ? publishingDetails.pageFrom : ""}
                                                 style={pageStyle}
                                                 onChange={handleChangePageFrom}
                                             />
                                             <input
                                                 id="pageToCristin"
-                                                value={publishingDetails.pageTo ? publishingDetails.pageTo : ""}
+                                                value={publishingDetails ? publishingDetails.pageTo : ""}
                                                 style={pageStyle}
                                                 onChange={handleChangePageTo}
                                             />
