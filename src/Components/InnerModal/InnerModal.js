@@ -433,11 +433,10 @@ function InnerModal(props) {
     }
 
     async function getJournalId(issn) {
-        if (issn === null || issn === ""){
+        if (issn === null || issn === "")
             return null;
-        }
+        
         let journal = await axios.get(properties.crisrest_gatekeeper_url + "/results/channels?type=journal&query=issn:" + issn[0].value, JSON.parse(localStorage.getItem("config")));
-        console.log(journal);
         return journal.data[0].id;
     }
 
