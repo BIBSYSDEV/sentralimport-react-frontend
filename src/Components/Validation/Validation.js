@@ -168,7 +168,7 @@ export default function Validation(props) {
           break;
         case "doi":
           var doiValid = data[i].value.match(
-            /^([0-9]{2})[.]([0-9]{4})[/]([a-z0-9-.]{1,})/i
+            /^([0-9]{2})[.]([0-9]{4,5})[/]([a-z0-9-.]{1,})/i
           );
           var doiError = "Doi har galt format";
 
