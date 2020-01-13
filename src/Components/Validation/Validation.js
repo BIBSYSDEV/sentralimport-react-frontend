@@ -168,7 +168,7 @@ export default function Validation(props) {
           break;
         case "doi":
           var doiValid = data[i].value.match(
-            /^([0-9]{2})[.]([0-9]{4})[/]([a-z0-9-.]{1,})/i
+            /^([0-9]{2})[.]([0-9]{4,5})[/]([a-z0-9-.]{1,})/i
           );
           var doiError = "Doi har galt format";
 
@@ -197,13 +197,13 @@ export default function Validation(props) {
           break;
         case "aarstall":
           var aarstallValid =
-            data[i].value.length === 4 && data[i].value <= "2019";
+            data[i].value.length === 4 && data[i].value <= new Date().getFullYear();
           var aarstallError = "Årstall er galt/over grensen";
 
           !aarstallValid ? fieldErrors.push(aarstallError) : fieldErrors.push();
 
           break;
-        case "kategori":
+        case "kategori": 
           var kategoriValid = data[i].value.length > 3;
           var kategoriError = "Kategori er for kort";
 
