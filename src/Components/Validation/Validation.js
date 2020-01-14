@@ -51,7 +51,7 @@ export default function Validation(props) {
         break;
       case "doi":
         var doiValid = state.validation.match(
-          /^([0-9]{2})[.]([0-9]{4})[/]([\w-.]{1,})/i
+          /^([0-9]{2})[.]([0-9]{4,5})[/]([\w-.]{1,})/i
         );
         var doiError = "Doi har galt format";
 
@@ -76,7 +76,7 @@ export default function Validation(props) {
         break;
       case "aarstall":
         var aarstallValid =
-          state.validation.length === 4 && state.validation <= "2019";
+          state.validation.length === 4 && state.validation <= new Date().getFullYear();
         var aarstallError = "Årstall er galt/over grensen";
 
         aarstallValid
