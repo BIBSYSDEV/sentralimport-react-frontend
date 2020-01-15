@@ -263,19 +263,22 @@ export default function EnhancedTable() {
             (state.currentPageNr + 1);
 
         if (localStorage.getItem("config")) {
-            try {
-                await axios.get(fetchString, JSON.parse(localStorage.getItem("config"))).then(response => {
-                    handleRows(response.data);
+            await axios.get(fetchString, JSON.parse(localStorage.getItem("config"))).then(response => {
+                handleRows(response.data);
 
-                    dispatch({
-                        type: "setTotalCount",
-                        payload: response.headers["x-total-count"]
-                    });
+                dispatch({
+                    type: "setTotalCount",
+                    payload: response.headers["x-total-count"]
                 });
-            } catch (e) {
+            }).catch(function (e) {
                 localStorage.setItem("authorized", "false");
-                history.push("/notAuthorized");
-            }
+                if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+                    alert("Din sesjon har utgått. Vennligst logg inn på nytt");
+                    history.push("/login");
+                } else {
+                    history.push("/error");
+                }
+            });
         }
     }
 
@@ -345,21 +348,20 @@ export default function EnhancedTable() {
     }
 
     function handleOwnerInstitutions(row) {
-        var inst = [];
-        var authorList = row.authors;
-        for (var h = 0; h < authorList.length; h++) {
-            var check = 0;
-            for (var i = 0; i < inst.length; i++) {
-                if (inst[i] === authorList[h].institutions[0].acronym) {
-                    check++;
-                }
-            }
-            if (check === 0) {
-                if (authorList[h].institutions[0].acronym !== "") {
-                    inst.push(authorList[h].institutions[0].acronym);
-                }
+        let inst = [];
+        let authorList = row.authors;
+        for (let h = 0; h < authorList.length; h++) {
+            for (let i = 0; i < authorList[h].institutions.length; i++) {
+                inst.push(authorList[h].institutions[i].acronym);
             }
         }
+        inst = inst.filter(function (element, index) {
+            return (element !== undefined && inst.indexOf(element) === index);
+        });
+
+        return inst.map((name, i) => {
+            return (<p key={i}>{name}</p>);
+        });
     }
 
     function removeFromList() {

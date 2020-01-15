@@ -54,21 +54,24 @@ export default function CustomizedTables() {
       state.currentImportYear.value !== prevYear ||
         (state.totalCount !== prevCount && localStorage.getItem("config"))
     ) {
-      try {
-          await axios
-              .get(
-                  properties.piarest_gatekeeper_url + "/sentralimport/publicationCount/" +
-                  state.currentImportYear.value, JSON.parse(localStorage.getItem("config"))
-              )
-              .then(response => {
-                  setData(response.data);
-              });
-          setPrevYear(state.currentImportYear.value);
-          setPrevCount(state.totalCount);
-      } catch (e) {
-          localStorage.setItem("authorized", "false");
-          history.push("/notAuthorized");
-      }
+      await axios
+          .get(
+              properties.piarest_gatekeeper_url + "/sentralimport/publicationCount/" +
+              state.currentImportYear.value, JSON.parse(localStorage.getItem("config"))
+          )
+          .then(response => {
+              setData(response.data);
+          }).catch(function (e) {
+            localStorage.setItem("authorized", "false");
+            if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+              alert("Din sesjon har utgått. Vennligst logg inn på nytt");
+              history.push("/login");
+            } else {
+              history.push("/error");
+            }
+          });
+      setPrevYear(state.currentImportYear.value);
+      setPrevCount(state.totalCount);
     }
   }
 

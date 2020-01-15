@@ -6,7 +6,7 @@ import React from "react";
 import ErrorIcon from "../../assets/icons/alert-triangle.svg";
 import {useHistory} from "react-router-dom";
 
-export default function NotAuthorized() {
+export default function Error() {
     let history = useHistory();
 
     const getMainImage = () => {
@@ -32,18 +32,18 @@ export default function NotAuthorized() {
                                 Du har ikke tilgang til Sentralimport
                             </Typography>
                             <hr />
-                            <Typography variant="body1">
-                                <div>Dette kan være fordi:</div>
-                                <div>
+                            <div>
+                                <p>Dette kan være fordi:</p>
+                                <p>
                                     1. Du ikke har blitt gitt tilgang til Sentralimport av
                                     administrator
-                                </div>
-                                <div>2. Det har skjedd noe galt ved innlogging </div>
-                                <div>3. Din sesjon har gått ut og du må logge inn på nytt</div>
-                                <div> --- </div>
-                                <div>Dersom problemet vedvarer, kontakt administrator</div>
-                                <div> --- </div>
-                            </Typography>
+                                </p>
+                                <p>2. Det har skjedd noe galt ved innlogging </p>
+                                <p>3. Din sesjon har gått ut og du må logge inn på nytt</p>
+                                <p> --- </p>
+                                <p>Dersom problemet vedvarer, kontakt administrator</p>
+                                <p> --- </p>
+                            </div>
                             <hr />
 
                             <Button

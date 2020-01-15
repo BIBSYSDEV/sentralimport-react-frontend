@@ -379,15 +379,31 @@ function InnerModal(props) {
         setPublishingDetails({...publishingDetails, issue: props.data.channel.issue})
     }
 
-    function toggle() {
+    function toggle(status) {
         setDialogOpen(false);
         props.toggle();
-        props.enqueueSnackbar(
-            "Importerte ny publikasjon med id: " + props.data.pubId,
-            {
-                variant: "success"
-            }
-        );
+        if (status === 200) {
+            props.enqueueSnackbar(
+                "Importerte ny publikasjon med id: " + props.data.pubId,
+                {
+                    variant: "success"
+                }
+            );
+        } else if (status === 401 || status === 403){
+            props.enqueueSnackbar(
+                "Din sesjon har gått ut. Vennligst logg inn på nytt",
+                {
+                    variant: "warning"
+                }
+            );
+        } else {
+            props.enqueueSnackbar(
+                "Noe gikk galt med import av publikasjon med id: " + props.data.pubId,
+                {
+                    variant: "error"
+                }
+            );
+        }
     }
 
     function abortToggle() {

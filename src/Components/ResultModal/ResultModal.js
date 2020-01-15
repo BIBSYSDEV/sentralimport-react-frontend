@@ -50,16 +50,20 @@ export default function ResultModal(props) {
 
   async function setNotRelevant() {
     let relevantStatus = state.currentImportStatus !== "ikke aktuelle";
-    try {
-      await axios.patch(
-        properties.piarest_gatekeeper_url + "/sentralimport/publication/" +
-          props.data.pubId,
-        JSON.stringify({ not_relevant: relevantStatus }), JSON.parse(localStorage.getItem("config"))
-      );
-    } catch (e) {
+    await axios.patch(
+      properties.piarest_gatekeeper_url + "/sentralimport/publication/" +
+        props.data.pubId,
+      JSON.stringify({ not_relevant: relevantStatus }), JSON.parse(localStorage.getItem("config"))
+    ).catch(function (e) {
+      localStorage.setItem("authorized", "false");
       console.log("Patch request failed:", e);
-      history.push("/notAuthorized");
-    }
+      if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+        alert("Din sesjon har utgått. Vennligst logg inn på nytt");
+        history.push("/login");
+      } else {
+        history.push("/error");
+      }
+    });
   }
 
   return (
