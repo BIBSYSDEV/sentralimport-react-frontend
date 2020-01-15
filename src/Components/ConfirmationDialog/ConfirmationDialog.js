@@ -27,9 +27,15 @@ export default function ConfirmationDialog(props) {
             dispatch({type: "setFormErrors", payload: emptyArray});
         } catch (e) {
             console.log("There was an error while importing the publication", e);
-            alert("There was an error while importing the publication. Please try again");
-            history.push("/notAuthorized");
+            localStorage.setItem("authorized", "false");
+            if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+                history.push("/login");
+            } else {
+                history.push("/error");
+            }
+            return e.response.status;
         }
+        return 200;
     }
 
     async function patch() {
@@ -40,9 +46,15 @@ export default function ConfirmationDialog(props) {
             await patchPiaPublication(publication.cristinResultId, publication.pubId);
         } catch (e) {
             console.log("There was an error while updating the publication", e);
-            alert("Something went wrong while trying to update the publication. Please try again");
-            history.push("/notAuthorized");
+            localStorage.setItem("authorized", "false");
+            if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+                history.push("/login");
+            } else {
+                history.push("/error");
+            }
+            return e.response.status;
         }
+        return 200;
     }
 
     async function postPublication(publication) {
@@ -170,8 +182,7 @@ export default function ConfirmationDialog(props) {
                 <Button
                     color="primary"
                     onClick={() => {
-                        props.handleClose();
-                        props.duplicate ? patch() : post();
+                        props.duplicate ? patch().then(response => props.handleClose(response)) : post().then(response => props.handleClose(response));
                     }}
                 >
                     Importer

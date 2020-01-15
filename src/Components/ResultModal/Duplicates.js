@@ -71,8 +71,8 @@ export function Duplicates(props) {
                 {/* Ved bruk av egendefinerte radiobuttons i en radiogroup, husk FormControlLabels slik at aria fungerer korrekt */}
                     {duplicate.length > 0 ? (
                         duplicate.map((item, i) => 
-                            <FormControlLabel
-                                control={<Result data={item.data} key={i} />}
+                            <FormControlLabel key={i}
+                                control={<Result data={item.data} />}
                             />
                         )
                     ) : (

@@ -9,7 +9,7 @@ import Header from "./Components/Header/Header";
 import { Box } from "@material-ui/core";
 import "./assets/styles/buttons.scss";
 import {useHistory} from "react-router-dom";
-import NotAuthorized from "./Components/Login/NotAuthorized";
+import Login from "./Components/Login/Login";
 
 export default function App() {
     let history = useHistory();
@@ -43,6 +43,6 @@ export default function App() {
       </Grid>
     </div>
   )
-      : (<div><NotAuthorized /></div>
+      : (<div><Login location={"login"}/></div>
   );
 }
