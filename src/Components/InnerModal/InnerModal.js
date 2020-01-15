@@ -398,7 +398,7 @@ function InnerModal(props) {
             );
         } else {
             props.enqueueSnackbar(
-                "Noe gikk galt med import av publikasjon med id: " + props.data.pubId,
+                "Noe gikk galt med import av publikasjon med id: " + props.data.pubId +  ". Dine endringer er fortsatt lagret i browseren. Vennligst prøv på nytt.",
                 {
                     variant: "error"
                 }

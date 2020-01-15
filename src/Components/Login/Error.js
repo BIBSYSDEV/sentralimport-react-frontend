@@ -29,7 +29,7 @@ export default function Error() {
                     <Card>
                         <CardContent alignItems="center">
                             <Typography variant="h4">
-                                Du har ikke tilgang til Sentralimport
+                                Det har skjedd en feil
                             </Typography>
                             <hr />
                             <div>
@@ -40,6 +40,7 @@ export default function Error() {
                                 </p>
                                 <p>2. Det har skjedd noe galt ved innlogging </p>
                                 <p>3. Din sesjon har gått ut og du må logge inn på nytt</p>
+                                <p>4. Det har skjedd en feil på serveren</p>
                                 <p> --- </p>
                                 <p>Dersom problemet vedvarer, kontakt administrator</p>
                                 <p> --- </p>
