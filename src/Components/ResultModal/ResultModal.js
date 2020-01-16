@@ -58,7 +58,6 @@ export default function ResultModal(props) {
       localStorage.setItem("authorized", "false");
       console.log("Patch request failed:", e);
       if (e.response && (e.response.status === 401 || e.response.status === 403)) {
-        alert("Din sesjon har utgått. Vennligst logg inn på nytt");
         history.push("/login");
       } else {
         history.push("/error");

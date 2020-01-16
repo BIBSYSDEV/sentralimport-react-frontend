@@ -233,6 +233,9 @@ export default function EnhancedTable() {
             state.currentInstitution.value === null ||
             state.currentInstitution.value === " "
         ) {
+            if (state.isSampublikasjon) {
+                fetchString += "&copublication=" + state.isSampublikasjon;
+            }
             if (state.currentImportStatus !== "ikke aktuelle") {
                 fetchString = fetchString + ("&imported=" + state.currentImportStatus);
             } else {
