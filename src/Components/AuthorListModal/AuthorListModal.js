@@ -1,36 +1,22 @@
 import React from "react";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
-import { FixedSizeList as VList } from "react-window";
 
 export default function AuthorListModal(props) {
-  const Row = ({ data, index, style }) => {
-    const items = data;
+
+  function createRow(props) {
     return (
-      <div tabIndex="0" style={style}>
-        {items[index].sequenceNr}
-        &nbsp;
-        {items[index].authorName}
-        <br />
-        {items[index].institutions[0].institutionName}
-      </div>
+        <div style={{overflow: 'auto', height: props.data.authors.length < 5 ? props.data.authors.length * 70 : 350}}>
+          {props.data.authors.map(author => (<div style={{padding: '5px'}}><b>{author.sequenceNr + ". " + author.authorName}</b><br />
+            {author.institutions.map(inst => (<p style={{margin: 0}}><i>{inst.institutionName}</i></p>))}</div>))}
+        </div>
     );
-  };
+  }
 
   return (
     <Modal isOpen={props.open}>
       <ModalHeader toggle={props.handleClose}>Forfatterliste</ModalHeader>
       <ModalBody>
-        <VList
-          height={
-            props.data.authors.length < 5 ? props.data.authors.length * 60 : 250
-          }
-          itemCount={props.data.authors.length}
-          itemSize={75}
-          width={475}
-          itemData={props.data.authors}
-        >
-          {Row}
-        </VList>
+          {createRow(props)}
       </ModalBody>
     </Modal>
   );

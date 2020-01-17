@@ -526,14 +526,14 @@ function ContributorModal(props) {
 async function fetchContributors(result) {
     let authors = result.authors;
 
-    if (result.authors.length > 10 && result.authors[10].sequenceNr !== 11) {
-        authors = await axios.get(
-            properties.piarest_gatekeeper_url + "/sentralimport/publication/" +
-            result.pubId +
-            "/contributors", JSON.parse(localStorage.getItem("config"))
-        );
-        authors = authors.data;
-    }
+    // if (result.authors.length > 10 && result.authors[10].sequenceNr !== 11) {
+    //     authors = await axios.get(
+    //         properties.piarest_gatekeeper_url + "/sentralimport/publication/" +
+    //         result.pubId +
+    //         "/contributors", JSON.parse(localStorage.getItem("config"))
+    //     );
+    //     authors = authors.data;
+    // }
 
     return authors;
 }
