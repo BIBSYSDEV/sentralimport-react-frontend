@@ -841,7 +841,7 @@ function InnerModal(props) {
                                 </FormGroup>
                                 <FormGroup>
                                     <label style={labelStyle}>Språk</label>
-                                    <ButtonGroup className={`buttonGroup`} variant="contained" size="sm all" aria-label="small contained button group">
+                                    <ButtonGroup className={`buttonGroup`} variant="contained" size="small" aria-label="small contained button group">
                                     {languages.map((lang, i) =>
                                         <Button key={i} className={selectedLang === lang ? `selected` : ``} onClick={() => handleSelectedLang(lang)}>{lang.lang}</Button>
                                     )}
@@ -849,17 +849,17 @@ function InnerModal(props) {
                                 </FormGroup>
                                 <FormGroup>
                                     <Grid item>
-                                    <TextField
-                                        id="Cristin-tittel"
-                                        label="Tittel"
-                                        name="Tittel"
-                                        value={selectedLang.title}
-                                        onChange={event => handleChangeTittel(event)}
-                                        margin="normal"
-                                        required
-                                        multiline
-                                        defaultValue=""
-                                    /> </Grid>
+                                        <TextField
+                                            id="Cristin-tittel"
+                                            label="Tittel"
+                                            name="Tittel"
+                                            value={selectedLang.title}
+                                            onChange={event => handleChangeTittel(event)}
+                                            margin="normal"
+                                            required
+                                            multiline
+                                        />
+                                    </Grid>
                                 </FormGroup>
                                 <FormGroup>
                                     <TextField

@@ -6,8 +6,8 @@ export default function AuthorListModal(props) {
   function createRow(props) {
     return (
         <div style={{overflow: 'auto', height: props.data.authors.length < 5 ? props.data.authors.length * 70 : 350}}>
-          {props.data.authors.map(author => (<div style={{padding: '5px'}}><b>{author.sequenceNr + ". " + author.authorName}</b><br />
-            {author.institutions.map(inst => (<p style={{margin: 0}}><i>{inst.institutionName}</i></p>))}</div>))}
+          {props.data.authors.map((author, i) => (<div style={{padding: '5px'}} key={i}><b>{author.sequenceNr + ". " + author.authorName}</b><br />
+            {author.institutions.map((inst, j) => (<p style={{margin: 0}} key={j}><i>{inst.unitName}</i></p>))}</div>))}
         </div>
     );
   }

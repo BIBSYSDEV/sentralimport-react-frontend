@@ -33,7 +33,8 @@ function ContributorModal(props) {
         handleTempSave();
     }, [data]);
 
-    useEffect(() => {
+    const updatePersons = useRef(true);
+    useLayoutEffect(() => {
         async function fetch() {
 
             let contributors = [];
@@ -52,15 +53,6 @@ function ContributorModal(props) {
                 const imported = await fetchContributors(props.data);
 
                 for (let i = 0; i < Math.max(cristinAuthors.length, imported.length); i++) {
-                    let currentAuthor =
-                        cristinAuthors.length > i ? cristinAuthors[i] : defaultAuthor;
-                    for (let j = 0; j < currentAuthor.affiliations.length; j++) {
-                        currentAuthor.affiliations[j].institutionName = await fetchInstitutionName(
-                            currentAuthor.affiliations[j].institution
-                                .cristin_institution_id
-                        );
-                    }
-
                     contributors[i] = {
                         imported:
                             imported.length > i
@@ -91,7 +83,7 @@ function ContributorModal(props) {
                         contributors[i].cristin === defaultAuthor
                             ? Object.assign({}, contributors[i].imported)
                             : Object.assign({}, contributors[i].cristin);
-                    contributors[i].toBeCreated = {
+                    contributors[i].toBeCreated = cristinAuthors[i].cristin_person_id !== null ? cristinAuthors[i] : {
                         ...copy, affiliations: await fetchInstitutions(imported[i].institutions)
                     };
                 }
@@ -99,8 +91,11 @@ function ContributorModal(props) {
             setData(contributors);
         }
 
-        fetch();
-        handleTempSave();
+        if (updatePersons.current) {
+            updatePersons.current = false;
+            fetch();
+            handleTempSave();
+        }
     }, [props.data, props.open, state.selectedPublication]);
 
     function handleClose() {
@@ -406,7 +401,7 @@ function ContributorModal(props) {
                                             ? row.imported.order
                                             : row.imported.order + " (" + row.toBeCreated.order + ")"}
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell style={{width: '40%'}}>
                                         <div className={`result contributor`}>
                                             <div className="image-wrapper person">
                                                 <img src={getMainImage()} alt="person"/>
@@ -424,7 +419,7 @@ function ContributorModal(props) {
                                                 <div className={`metadata`}>
                                                     {row.imported.affiliations.map((inst, j) => (
                                                         <p className={`italic`} key={j}>
-                                                            {inst.institutionName}
+                                                            {inst.unitName}
                                                         </p>
                                                     ))}
                                                 </div>
@@ -538,32 +533,49 @@ async function fetchContributors(result) {
     return authors;
 }
 
-async function fetchInstitutionName(institutionId) {
-    if (institutionId === "0") return " ";
-    let institution = await axios.get(
-        properties.crisrest_gatekeeper_url + "/institutions/" + institutionId, JSON.parse(localStorage.getItem("config"))
-    );
-    return institution.data.institution_name.hasOwnProperty("nb")
-        ? institution.data.institution_name.nb
-        : institution.data.institution_name.en;
+async function fetchPerson(personId) {
+    if (personId === 0)
+        return;
+
+    return await axios.get(properties.crisrest_gatekeeper_url + "/persons/" + personId);
 }
 
+let institutionNames = {};
+async function fetchInstitutionName(institutionId) {
+    if (institutionId === "0") return " ";
+    if (institutionNames[institutionId] === undefined) {
+        let institution = await axios.get(
+            properties.crisrest_gatekeeper_url + "/institutions/" + institutionId, JSON.parse(localStorage.getItem("config"))
+        );
+        institutionNames[institutionId] = institution.data.institution_name.hasOwnProperty("nb")
+            ? institution.data.institution_name.nb
+            : institution.data.institution_name.en;
+    }
+    return institutionNames[institutionId];
+}
+
+let countries = {};
 async function fetchInstitutions(affiliations) {
     let arr = [];
     for (let i = 0; i < affiliations.length; i++) {
         let inst = affiliations[i];
-        if ((inst.cristinInstitutionNr === 9127 || inst.cristinInstitutionNr === 0) && inst.hasOwnProperty("countryCode")) {
-            let response = await axios.get(properties.crisrest_gatekeeper_url + "/institutions/country/" + inst.countryCode + "?lang=nb",
-                JSON.parse(localStorage.getItem("config")));
-            if (response.data.length > 0) {
-                inst = {
-                    cristinInstitutionNr: response.data[0].cristin_institution_id,
-                    institutionName: (response.data[0].institution_name.hasOwnProperty("nb") ? response.data[0].institution_name.nb : response.data[0].institution_name.en) + "(Ukjent institusjon)",
-                    countryCode: response.data[0].country,
-                    isCristinInstitution: response.data[0].isCristinInstitution
-                };
+        if ((inst.cristinInstitutionNr === 9127 || inst.cristinInstitutionNr === 9126 || inst.cristinInstitutionNr === 0) && inst.hasOwnProperty("countryCode")) {
+            if (countries[inst.countryCode] === undefined) {
+                let response = await axios.get(properties.crisrest_gatekeeper_url + "/institutions/country/" + inst.countryCode + "?lang=nb",
+                    JSON.parse(localStorage.getItem("config")));
+                if (response.data.length > 0) {
+                    inst = {
+                        cristinInstitutionNr: response.data[0].cristin_institution_id,
+                        institutionName: (response.data[0].institution_name.hasOwnProperty("nb") ? response.data[0].institution_name.nb : response.data[0].institution_name.en) + " (Ukjent institusjon)",
+                        countryCode: response.data[0].country,
+                        isCristinInstitution: response.data[0].isCristinInstitution
+                    };
+                } else {
+                    console.log(affiliations[i]);
+                }
+                countries[inst.countryCode] = inst;
             } else {
-                console.log(affiliations[i]);
+                inst = countries[inst.countryCode];
             }
         }
         arr.push(inst);
@@ -572,30 +584,53 @@ async function fetchInstitutions(affiliations) {
     return arr;
 }
 
-//TODO søket i crisRest må kanskje endres til å gi muligheten til å returnere personer som ikke er identified?
-//TODO også mulighet til å sende med flere intitusjoner og søke med OR i stedet for AND
+
 async function searchContributors(authors) {
     let suggestedAuthors = [];
     for (let i = 0; i < authors.length; i++) {
-        let authorName = authors[i].hasOwnProperty("firstname")
-            ? authors[i].firstname.substr(0, 1) + " " + authors[i].surname
-            : authors[i].authorName;
-        let searchedAuthors = await axios.get(
-            properties.crisrest_gatekeeper_url + "/persons?name=" +
-            authorName +
-            "&institution=" +
-            (authors[i].institutions[0].hasOwnProperty("acronym")
-                ? authors[i].institutions[0].acronym
-                : (authors[i].institutions[0].hasOwnProperty("institutionName") ? authors[i].institutions[0].institutionName.replace("&", "") : ""))
-            , JSON.parse(localStorage.getItem("config")));
-
-        if (searchedAuthors.data.length > 0) {
-            let authorSuggestion = await axios.get(searchedAuthors.data[0].url);
-            suggestedAuthors[i] = authorSuggestion.data;
+        let person = defaultAuthor;
+        let affiliations = [];
+        if (authors[i].cristinId !== 0) {
+            person = await fetchPerson(authors[i].cristinId);
+            person = person.data;
         } else {
-            suggestedAuthors[i] = defaultAuthor;
+            let authorName = authors[i].hasOwnProperty("firstname")
+                ? authors[i].firstname.substr(0, 1) + " " + authors[i].surname
+                : authors[i].authorName;
+            let searchedAuthors = await axios.get(
+                properties.crisrest_gatekeeper_url + "/persons?name=" +
+                authorName +
+                "&institution=" +
+                (authors[i].institutions[0].hasOwnProperty("acronym")
+                    ? authors[i].institutions[0].acronym
+                    : (authors[i].institutions[0].hasOwnProperty("institutionName") ? authors[i].institutions[0].institutionName.replace("&", "") : ""))
+                , JSON.parse(localStorage.getItem("config")));
+
+            if (searchedAuthors.data.length > 0) {
+                person = await axios.get(searchedAuthors.data[0].url);
+                person = person.data;
+            }
         }
-        suggestedAuthors[i].order = i + 1;
+        if (person !== defaultAuthor) {
+            if (person.hasOwnProperty("affiliations")) {
+                for (let j = 0; j < person.affiliations.length; j++) {
+                    affiliations[j] = {
+                        cristinInstitutionNr: person.affiliations[j].institution.cristin_institution_id,
+                        institutionName: await fetchInstitutionName(person.affiliations[j].institution.cristin_institution_id),
+                    }
+                }
+            }
+            person = {
+                cristin_person_id: person.cristin_person_id,
+                first_name: person.first_name,
+                surname: person.surname,
+                affiliations: affiliations,
+                url: properties.crisrest_gatekeeper_url + "/persons/" + person.cristin_person_id,
+                isEditing: false,
+                order: i + 1
+            };
+        }
+        suggestedAuthors[i] = person;
     }
 
     return suggestedAuthors;

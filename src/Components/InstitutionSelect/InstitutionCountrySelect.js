@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useLayoutEffect} from "react";
 
 import Select from "react-select";
 import axios from "axios";
@@ -22,6 +22,7 @@ export default function InstitutionCountrySelect(props) {
         setGroupOptions(temp);
     }, []);
 
+
     useEffect(() => {
         async function fetchPlaces() {
             await getPlaces();
@@ -30,13 +31,14 @@ export default function InstitutionCountrySelect(props) {
         fetchPlaces();
         var temp = [{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}];
         setGroupOptions(temp);
-    }, [inputValue])
+    }, [inputValue]);
 
     async function getPlaces() {
+        if (inputValue !== "") {
             let temp = await axios.get(
                 properties.crisrest_gatekeeper_url + "/institutions?cristin_institution=false&lang=nb&name=" + inputValue, JSON.parse(localStorage.getItem("config"))
             );
-            
+
             let places = [];
             for (let i = 0; i < temp.data.length; i++) {
                 places.push({
@@ -46,6 +48,7 @@ export default function InstitutionCountrySelect(props) {
                 });
             }
             setPlaces(places);
+        }
     }
 
     function handleInput(event) {
