@@ -537,7 +537,7 @@ async function fetchPerson(personId) {
     if (personId === 0)
         return;
 
-    return await axios.get(properties.crisrest_gatekeeper_url + "/persons/" + personId);
+    return await axios.get(properties.crisrest_gatekeeper_url + "/persons/" + personId, JSON.parse(localStorage.getItem("config")));
 }
 
 let institutionNames = {};
