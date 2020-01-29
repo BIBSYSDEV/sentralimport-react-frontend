@@ -45,6 +45,7 @@ export default function ResultModal(props) {
   }
 
   function handleClose() {
+    setDuplicate(false);
     setInnerModal(false);
   }
 

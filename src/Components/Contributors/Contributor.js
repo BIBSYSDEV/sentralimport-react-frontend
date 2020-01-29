@@ -165,6 +165,13 @@ export default function Contributor(props) {
             >
               Slett person
             </Button>
+            {data.imported.cristin_person_id === 0 ?
+                <Button onClick={() => props.searchAgain(data.imported, rowIndex)}>
+                  Søk igjen
+                </Button>
+                : ""
+            }
+
           </Form>
         </div>
       </div>
@@ -185,13 +192,6 @@ export default function Contributor(props) {
               </p>
             ))}
           </div>
-          {data.cristin.surname !== "" && data.cristin.first_name !== "" ? (
-            <Button onClick={() => props.searchAgain(data.imported, rowIndex)}>
-              Søk igjen
-            </Button>
-          ) : (
-            ""
-          )}
           <Button onClick={() => updateEditing()}>Rediger</Button>
 
           <Button

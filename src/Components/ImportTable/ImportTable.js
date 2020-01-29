@@ -21,6 +21,7 @@ import "../../assets/styles/Imports.css";
 import {TableFooter} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
 import {properties} from "../../properties";
+import Skeleton from '@material-ui/lab/Skeleton';
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -189,6 +190,7 @@ export default function EnhancedTable() {
     const [rows, setRows] = React.useState([]);
     const [authorList, setAuthorList] = React.useState(false);
     const [authorData, setAuthorData] = React.useState();
+    const [fetched, setFetched] = React.useState(false);
     let history = useHistory();
 
     const getMainImage = () => {
@@ -266,14 +268,18 @@ export default function EnhancedTable() {
             (state.currentPageNr + 1);
 
         if (localStorage.getItem("config")) {
-            await axios.get(fetchString, JSON.parse(localStorage.getItem("config"))).then(response => {
-                handleRows(response.data);
+            setFetched(false);
+            try {
+                await axios.get(fetchString, JSON.parse(localStorage.getItem("config"))).then(response => {
+                    handleRows(response.data);
 
-                dispatch({
-                    type: "setTotalCount",
-                    payload: response.headers["x-total-count"]
+                    dispatch({
+                        type: "setTotalCount",
+                        payload: response.headers["x-total-count"]
+                    });
                 });
-            }).catch(function (e) {
+                setFetched(true);
+            } catch(e) {
                 localStorage.setItem("authorized", "false");
                 if (e.response && (e.response.status === 401 || e.response.status === 403)) {
                     alert("Din sesjon har utgått. Vennligst logg inn på nytt");
@@ -281,7 +287,7 @@ export default function EnhancedTable() {
                 } else {
                     history.push("/error");
                 }
-            });
+            }
         }
     }
 
@@ -411,6 +417,8 @@ export default function EnhancedTable() {
                                             <TableCell component="td" scope="row" padding="none" />
 
                                             <TableCell>
+                                                {!fetched ? <Skeleton variant="rect" width='auto' height={118} /> : (
+                                                    <div>
                                                 <div className="image-wrapper">
                                                     <img src={getMainImage("result")} alt="result" />
                                                 </div>
@@ -447,14 +455,20 @@ export default function EnhancedTable() {
                                                         {row.hasOwnProperty("doi") ? " doi:" + row.doi : ""}
                                                     </div>
                                                 </div>
+                                                    </div>
+                                                    )}
                                             </TableCell>
                                             <TableCell align="right">
-                                                <div>{row.categoryName}</div>
+                                                {
+                                                    !fetched ? <Skeleton variant="rect" width='auto' height={10}/> :
+                                                    <div>{row.categoryName}</div>
+                                                }
                                             </TableCell>
-                                            <TableCell align="right">{row.sourceName}</TableCell>
-                                            <TableCell align="right">{row.registered}</TableCell>
                                             <TableCell align="right">
-                                                {handleOwnerInstitutions(row)}
+                                                {!fetched ? <Skeleton variant="rect" width='auto' height={10}/> : row.sourceName}</TableCell>
+                                            <TableCell align="right">{!fetched ? <Skeleton variant="rect" width='auto' height={10}/> : row.registered}</TableCell>
+                                            <TableCell align="right">
+                                                {!fetched ? <Skeleton variant="rect" width='auto' height={10}/> : handleOwnerInstitutions(row)}
                                             </TableCell>
                                             <TableCell align="right">
                                                 <IconButton
@@ -467,7 +481,7 @@ export default function EnhancedTable() {
                                                         e.stopPropagation();
                                                     }}
                                                     alt="Forfatterliste"
-                                                    
+
                                                 > <div hidden={true}> Forfatterliste </div>
                                                     <PeopleIcon />
                                                 </IconButton>
