@@ -383,136 +383,183 @@ export default function EnhancedTable() {
         rowsPerPage -
         Math.min(rowsPerPage, rows != null ? rows.length - page * rowsPerPage : 0);
 
-    return (
-        <div className={classes.root}>
-            <Paper className={classes.paper}>
-                <EnhancedTableToolbar />
-                <div className={classes.tableWrapper}>
-                    <Table className={classes.table}>
-                        <EnhancedTableHead
-                            order={order}
-                            orderBy={orderBy}
-                            onRequestSort={handleRequestSort}
-                            rowCount={rows != null ? rows.length : 0}
-                        />
-                        <TableBody>
-                            {stableSort(rows, getSorting(order, orderBy))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map(row => {
-                                    const labelId = row.pubId;
+    function createTable(body) {
+        return (
+            <div className={classes.root}>
+                <Paper className={classes.paper}>
+                    <EnhancedTableToolbar/>
+                    <div className={classes.tableWrapper}>
+                        <Table className={classes.table}>
+                            <EnhancedTableHead
+                                order={order}
+                                orderBy={orderBy}
+                                onRequestSort={handleRequestSort}
+                                rowCount={rows != null ? rows.length : 0}
+                            />
+                            <TableBody>
+                                {body}
+                            </TableBody>
+                            <TableFooter>
+                                <Pagination data={rows}/>
+                            </TableFooter>
+                        </Table>
+                    </div>
+                </Paper>
+            </div>
+        );
+    }
 
-                                    return (
-                                        <TableRow
-                                            hover
-                                            id={labelId}
-                                            onClick={event => handleClick(event, {row})}
-                                            role="checkbox"
-                                            key={labelId}
-                                            onKeyDown={event => handleKeyPress(event, {row})}
-                                            className={`card-horiz basic-background result`}
-                                            tabIndex="0"
-                                            onFocus={event => handleOnFocus(event, {row})}
-                                            onBlur={event => handleOnBlur(event, {row})}
-                                        >
-                                            <TableCell component="td" scope="row" padding="none" />
+    if (!fetched) {
+        const body = Array.from({length:5}, (value, index) =>
+                <TableRow
+                    hover
+                    id={'skeleton'+index}
+                    role="checkbox"
+                    key={index}
+                    className={`card-horiz basic-background result`}
+                    tabIndex="0"
+                >
+                    <TableCell component="td" scope="row" padding="none"/>
+                    <TableCell>
+                        <Skeleton variant="rect" width='auto' height={118}/>
+                    </TableCell>
+                    <TableCell>
+                        <Skeleton variant="rect" width='auto' height={10}/>
+                    </TableCell>
+                    <TableCell>
+                        <Skeleton variant="rect" width='auto' height={10}/>
+                    </TableCell>
+                    <TableCell>
+                        <Skeleton variant="rect" width='auto' height={10}/>
+                    </TableCell>
+                    <TableCell>
+                        <Skeleton variant="rect" width='auto' height={10}/>
+                    </TableCell>
+                    <TableCell>
+                        <Skeleton variant="rect" width={40} height={40} style={{float:'right'}}/>
+                    </TableCell>
+                </TableRow>
+            );
+        return createTable(body);
+    } else {
+        let body =
+            stableSort(rows, getSorting(order, orderBy))
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .map(row => {
+                const labelId = row.pubId;
 
-                                            <TableCell>
-                                                {!fetched ? <Skeleton variant="rect" width='auto' height={118} /> : (
-                                                    <div>
-                                                <div className="image-wrapper">
-                                                    <img src={getMainImage("result")} alt="result" />
-                                                </div>
-                                                <div className="content-wrapper">
-                                                    <h6 className={`result-title`}>
-                                                        {row.languages.filter(l => l.original)[0].title}
-                                                    </h6>
-                                                    <div className={`metadata`}>
-                                                        {row.authors
-                                                            .slice(0, 5)
-                                                            .map(author => author.authorName + "; ")}
-                                                        {row.authors.length > 5 ? " et al " : ""}
-                                                        {" (" + row.authors.length + ") "}
-                                                        <p className={`journal-name`}>
-                                                            {row.hasOwnProperty("channel") &&
-                                                            row.channel.hasOwnProperty("title")
-                                                                ? row.channel.title + " "
-                                                                : ""}
-                                                        </p>
-                                                        {row.registered.substring(
-                                                            row.registered.length - 4,
-                                                            row.registered.length
-                                                        ) + ";"}
-                                                        {row.hasOwnProperty("channel")
-                                                            ? row.channel.volume + ";"
-                                                            : ""}
-                                                        {row.hasOwnProperty("channel") &&
-                                                            row.channel.hasOwnProperty("pageFrom")
-                                                            ? row.channel.pageFrom + "-"
-                                                            : ""}
-                                                        {row.hasOwnProperty("channel") && row.channel.hasOwnProperty("pageTo")
-                                                            ? row.channel.pageTo
-                                                            : ""}
-                                                        {row.hasOwnProperty("doi") ? " doi:" + row.doi : ""}
-                                                    </div>
-                                                </div>
-                                                    </div>
-                                                    )}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {
-                                                    !fetched ? <Skeleton variant="rect" width='auto' height={10}/> :
-                                                    <div>{row.categoryName}</div>
-                                                }
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {!fetched ? <Skeleton variant="rect" width='auto' height={10}/> : row.sourceName}</TableCell>
-                                            <TableCell align="right">{!fetched ? <Skeleton variant="rect" width='auto' height={10}/> : row.registered}</TableCell>
-                                            <TableCell align="right">
-                                                {!fetched ? <Skeleton variant="rect" width='auto' height={10}/> : handleOwnerInstitutions(row)}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <IconButton
-                                                    onClick={e => {
-                                                        handleAuthorClick(e, row);
-                                                        e.stopPropagation();
-                                                    }}
-                                                    onKeyDown={e => {
-                                                        handleAuthorPress(e, row);
-                                                        e.stopPropagation();
-                                                    }}
-                                                    alt="Forfatterliste"
+                return (
+                    <TableRow
+                        hover
+                        id={labelId}
+                        onClick={event => handleClick(event, {row})}
+                        role="checkbox"
+                        key={labelId}
+                        onKeyDown={event => handleKeyPress(event, {row})}
+                        className={`card-horiz basic-background result`}
+                        tabIndex="0"
+                        onFocus={event => handleOnFocus(event, {row})}
+                        onBlur={event => handleOnBlur(event, {row})}
+                    >
+                        <TableCell component="td" scope="row" padding="none"/>
 
-                                                > <div hidden={true}> Forfatterliste </div>
-                                                    <PeopleIcon />
-                                                </IconButton>
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            {emptyRows > 0 && (
-                                <TableRow style={{height: 49 * emptyRows}}>
-                                    <TableCell colSpan={6} />
-                                </TableRow>
+                        <TableCell>
+                            {!fetched ? <Skeleton variant="rect" width='auto' height={118}/> : (
+                                <div>
+                                    <div className="image-wrapper">
+                                        <img src={getMainImage("result")} alt="result"/>
+                                    </div>
+                                    <div className="content-wrapper">
+                                        <h6 className={`result-title`}>
+                                            {row.languages.filter(l => l.original)[0].title}
+                                        </h6>
+                                        <div className={`metadata`}>
+                                            {row.authors
+                                                .slice(0, 5)
+                                                .map(author => author.authorName + "; ")}
+                                            {row.authors.length > 5 ? " et al " : ""}
+                                            {" (" + row.authors.length + ") "}
+                                            <p className={`journal-name`}>
+                                                {row.hasOwnProperty("channel") &&
+                                                row.channel.hasOwnProperty("title")
+                                                    ? row.channel.title + " "
+                                                    : ""}
+                                            </p>
+                                            {row.registered.substring(
+                                                row.registered.length - 4,
+                                                row.registered.length
+                                            ) + ";"}
+                                            {row.hasOwnProperty("channel")
+                                                ? row.channel.volume + ";"
+                                                : ""}
+                                            {row.hasOwnProperty("channel") &&
+                                            row.channel.hasOwnProperty("pageFrom")
+                                                ? row.channel.pageFrom + "-"
+                                                : ""}
+                                            {row.hasOwnProperty("channel") && row.channel.hasOwnProperty("pageTo")
+                                                ? row.channel.pageTo
+                                                : ""}
+                                            {row.hasOwnProperty("doi") ? " doi:" + row.doi : ""}
+                                        </div>
+                                    </div>
+                                </div>
                             )}
-                        </TableBody>
-                        <TableFooter>
-                            <Pagination data={rows} />
-                        </TableFooter>
-                    </Table>
-                </div>
-            </Paper>
+                        </TableCell>
+                        <TableCell align="right">
+                            {
+                                !fetched ? <Skeleton variant="rect" width='auto' height={10}/> :
+                                    <div>{row.categoryName}</div>
+                            }
+                        </TableCell>
+                        <TableCell align="right">
+                            {!fetched ? <Skeleton variant="rect" width='auto'
+                                                  height={10}/> : row.sourceName}</TableCell>
+                        <TableCell align="right">{!fetched ?
+                            <Skeleton variant="rect" width='auto'
+                                      height={10}/> : row.registered}</TableCell>
+                        <TableCell align="right">
+                            {!fetched ? <Skeleton variant="rect" width='auto'
+                                                  height={10}/> : handleOwnerInstitutions(row)}
+                        </TableCell>
+                        <TableCell align="right">
+                            {!fetched ? <Skeleton variant="rect" height={40} width={40}
+                                                  style={{float: "right"}}/> :
+                                <IconButton
+                                    onClick={e => {
+                                        handleAuthorClick(e, row);
+                                        e.stopPropagation();
+                                    }}
+                                    onKeyDown={e => {
+                                        handleAuthorPress(e, row);
+                                        e.stopPropagation();
+                                    }}
+                                    alt="Forfatterliste"
 
-            <ResultModal
-                open={open}
-                data={modalData}
-                handleClose={handleClose.bind(this)}
-                removeFromList={removeFromList.bind(this)}
-            />
-            <AuthorListModal
-                open={authorList}
-                data={authorData}
-                handleClose={handleCloseList}
-            />
-        </div>
-    );
+                                >
+                                    <div hidden={true}> Forfatterliste</div>
+                                    <PeopleIcon/>
+                                </IconButton>
+                            }
+                        </TableCell>
+                    </TableRow>
+                );
+            });
+
+        return (
+            <div>
+                {createTable(body)}
+                <ResultModal
+                    open={open}
+                    data={modalData}
+                    handleClose={handleClose.bind(this)}
+                    removeFromList={removeFromList.bind(this)}
+                />
+                <AuthorListModal
+                    open={authorList}
+                    data={authorData}
+                    handleClose={handleCloseList}
+                />
+            </div>
+        );
+    }
 }

@@ -44,16 +44,10 @@ export default function CustomizedTables() {
   let { state } = React.useContext(Context);
   const [prevCount, setPrevCount] = React.useState(state.totalCount);
   let history = useHistory();
-  const {useRef, useLayoutEffect} = React;
 
-  const firstUpdate = useRef(true);
-  useLayoutEffect(() => {
-    if (firstUpdate.current) {
-      firstUpdate.current = false;
-      return;
-    }
+  useEffect(() => {
     getNumbers();
-  }, [state.currentImportYear, state.totalCount]);
+  }, [state.currentImportYear]);
 
   async function getNumbers() {
     if (
