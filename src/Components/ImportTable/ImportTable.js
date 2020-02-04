@@ -22,6 +22,7 @@ import {TableFooter} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
 import {properties} from "../../properties";
 import Skeleton from '@material-ui/lab/Skeleton';
+import Checkbox from '@material-ui/core/Checkbox';
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -89,16 +90,16 @@ function EnhancedTableHead(props) {
         <TableHead>
             <TableRow>
             <TableCell component="td" scope="row" padding="checkbox" >
-                <input type='checkbox' key='allPubs'
-                       onClick={(e) => {
-                           e.stopPropagation();
-                           props.checkAll(!allChecked);
-                       }}
-                       onChange={(e) => {
-                           e.stopPropagation();
-                           let temp = !allChecked;
-                           setAllChecked(temp);
-                       }}
+                <Checkbox key='allPubs'
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        props.checkAll(!allChecked);
+                    }}
+                    onChange={(e) => {
+                        e.stopPropagation();
+                        let temp = !allChecked;
+                        setAllChecked(temp);
+                    }}
                 />
             </TableCell>
                 {headRows.map(row => (
@@ -511,24 +512,24 @@ export default function EnhancedTable() {
                         onBlur={event => handleOnBlur(event, {row})}
                     >
                         <TableCell component="td" scope="row" padding="none">
-                            <input type='checkbox' key={row.pubId}
-                                   checked={checked[i]}
-                                   onClick={(e) => {
-                                       e.stopPropagation();
-                                   }}
-                                   onChange={(e) => {
-                                       e.stopPropagation();
-                                       let statuses = [...checked];
-                                       statuses[i] = !statuses[i];
-                                       let toOpen = [...openSeveral];
-                                       if (statuses[i])
-                                           toOpen.push(labelId);
-                                       else
-                                           toOpen = toOpen.filter(item => item !== row.pubId);
+                            <Checkbox key={row.pubId}
+                                checked={checked[i]}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                }}
+                                onChange={(e) => {
+                                    e.stopPropagation();
+                                    let statuses = [...checked];
+                                    statuses[i] = !statuses[i];
+                                    let toOpen = [...openSeveral];
+                                    if (statuses[i])
+                                        toOpen.push(labelId);
+                                    else
+                                        toOpen = toOpen.filter(item => item !== row.pubId);
 
-                                       setChecked(statuses);
-                                       setOpenSeveral(toOpen);
-                                   }}
+                                    setChecked(statuses);
+                                    setOpenSeveral(toOpen);
+                                }}
                             />
                         </TableCell>
 
