@@ -149,7 +149,7 @@ function InnerModal(props) {
         }
         
         setFields();
-    }, [props.duplicate, state.selectedPublication]);
+    }, [props.duplicate, state.selectedPublication, props.data]);
 
     const [kilde, setKilde] = React.useState("");
 

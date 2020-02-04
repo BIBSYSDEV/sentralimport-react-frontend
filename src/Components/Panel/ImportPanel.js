@@ -47,7 +47,7 @@ export default function CustomizedTables() {
 
   useEffect(() => {
     getNumbers();
-  }, [state.currentImportYear]);
+  }, [state.currentImportYear, state.totalCount]);
 
   async function getNumbers() {
     if (

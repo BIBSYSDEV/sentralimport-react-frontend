@@ -96,11 +96,6 @@ function ContributorModal(props) {
             setData(contributors);
         }
 
-        // if (updatePersons.current) {
-        //     updatePersons.current = false;
-        //     fetch();
-        //     handleTempSave();
-        // }
         fetch();
         handleTempSave();
     }, [props.data, props.open, state.selectedPublication]);

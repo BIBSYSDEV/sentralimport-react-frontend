@@ -22,6 +22,7 @@ import {TableFooter} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
 import {properties} from "../../properties";
 import Skeleton from '@material-ui/lab/Skeleton';
+import Checkbox from '@material-ui/core/Checkbox';
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -83,11 +84,24 @@ function EnhancedTableHead(props) {
     const createSortHandler = property => event => {
         onRequestSort(event, property);
     };
+    const [allChecked, setAllChecked] = React.useState(false);
 
     return (
         <TableHead>
             <TableRow>
-            <TableCell component="td" scope="row" padding="checkbox" />
+            <TableCell component="td" scope="row" padding="checkbox" >
+                <Checkbox key='allPubs'
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        props.checkAll(!allChecked);
+                    }}
+                    onChange={(e) => {
+                        e.stopPropagation();
+                        let temp = !allChecked;
+                        setAllChecked(temp);
+                    }}
+                />
+            </TableCell>
                 {headRows.map(row => (
                     <TableCell
                         key={row.id}
@@ -191,6 +205,8 @@ export default function EnhancedTable() {
     const [authorList, setAuthorList] = React.useState(false);
     const [authorData, setAuthorData] = React.useState();
     const [fetched, setFetched] = React.useState(false);
+    const [checked, setChecked] = React.useState([]);
+    const [openSeveral, setOpenSeveral] = React.useState([]);
     let history = useHistory();
 
     const getMainImage = () => {
@@ -267,6 +283,12 @@ export default function EnhancedTable() {
             "&page=" +
             (state.currentPageNr + 1);
 
+        let checkedValues = [];
+        for (let i = 0; i < state.currentPerPage.value; i ++) {
+            checkedValues.push(false);
+        }
+        setChecked(checkedValues);
+
         if (localStorage.getItem("config")) {
             setFetched(false);
             try {
@@ -309,7 +331,17 @@ export default function EnhancedTable() {
 
     function handleClose() {
         setOpen(false);
-        dispatch({type: "setSelected", payload: "false"});
+        if (openSeveral.length > 1) {
+            let index = rows.findIndex(id => id.pubId === openSeveral[1]);
+            let temp = [...openSeveral];
+            temp.splice(0, 1);
+            setOpenSeveral(temp);
+            setModalData(rows[index]);
+            setOpen(true);
+        } else {
+            checkAll(false);
+            dispatch({type: "setSelected", payload: "false"});
+        }
     }
 
     function handleCloseList() {
@@ -334,7 +366,11 @@ export default function EnhancedTable() {
 
     function handleClick(event, row) {
         setOpen(true);
-        setModalData(row.row);
+        if (openSeveral.length > 0) {
+            let index = rows.findIndex(r => r.pubId === openSeveral[0]);
+            setModalData(rows[index]);
+        } else
+            setModalData(row.row);
     }
 
     function handleKeyPress(event, row) {
@@ -383,6 +419,19 @@ export default function EnhancedTable() {
         rowsPerPage -
         Math.min(rowsPerPage, rows != null ? rows.length - page * rowsPerPage : 0);
 
+    function checkAll(status) {
+        let temp = [...checked];
+        let ids = [];
+        for (let i = 0; i < rows.length; i++) {
+            temp[i] = status;
+            if (status)
+                ids.push(rows[i].pubId);
+        }
+
+        setOpenSeveral(ids);
+        setChecked(temp);
+    }
+
     function createTable(body) {
         return (
             <div className={classes.root}>
@@ -395,6 +444,7 @@ export default function EnhancedTable() {
                                 orderBy={orderBy}
                                 onRequestSort={handleRequestSort}
                                 rowCount={rows != null ? rows.length : 0}
+                                checkAll={checkAll.bind(this)}
                             />
                             <TableBody>
                                 {body}
@@ -445,7 +495,7 @@ export default function EnhancedTable() {
         let body =
             stableSort(rows, getSorting(order, orderBy))
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map(row => {
+            .map((row, i) => {
                 const labelId = row.pubId;
 
                 return (
@@ -461,7 +511,27 @@ export default function EnhancedTable() {
                         onFocus={event => handleOnFocus(event, {row})}
                         onBlur={event => handleOnBlur(event, {row})}
                     >
-                        <TableCell component="td" scope="row" padding="none"/>
+                        <TableCell component="td" scope="row" padding="none">
+                            <Checkbox key={row.pubId}
+                                checked={checked[i]}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                }}
+                                onChange={(e) => {
+                                    e.stopPropagation();
+                                    let statuses = [...checked];
+                                    statuses[i] = !statuses[i];
+                                    let toOpen = [...openSeveral];
+                                    if (statuses[i])
+                                        toOpen.push(labelId);
+                                    else
+                                        toOpen = toOpen.filter(item => item !== row.pubId);
+
+                                    setChecked(statuses);
+                                    setOpenSeveral(toOpen);
+                                }}
+                            />
+                        </TableCell>
 
                         <TableCell>
                             {!fetched ? <Skeleton variant="rect" width='auto' height={118}/> : (
