@@ -451,9 +451,15 @@ function InnerModal(props) {
     async function getJournalId(issn) {
         if (issn === null || issn === "")
             return null;
-        
-        let journal = await axios.get(properties.crisrest_gatekeeper_url + "/results/channels?type=journal&query=issn:" + issn[0].value, JSON.parse(localStorage.getItem("config")));
-        return journal.data[0].id;
+
+        let journal;
+        try {
+            journal = await axios.get(properties.crisrest_gatekeeper_url + "/results/channels?type=journal&query=issn:" + issn[0].value, JSON.parse(localStorage.getItem("config")));
+        } catch (e) {
+            console.log("There was an error while getting the journal id");
+        }
+
+        return journal.data.length > 0 ? journal.data[0].id : null;
     }
 
     async function getCategories() {
@@ -937,7 +943,7 @@ function InnerModal(props) {
                 <ModalFooter>
                 <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
                 <Button
-                    disabled={state.formErrors.length >= 1}
+                    disabled={state.formErrors.length >= 1 || props.data.hasOwnProperty("cristin_id")}
                     color="primary"
                     onClick={handleSubmit}
                     variant="contained"

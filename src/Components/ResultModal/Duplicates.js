@@ -49,6 +49,14 @@ export function Duplicates(props) {
         fetch();
     }, [publication]);
 
+    useEffect(() => {
+       if (publication.hasOwnProperty("cristin_id") && duplicate.length > 0) {
+           dispatch({type: "setSelected", payload: duplicate[0].data.cristin_result_id});
+           dispatch({type: "setSelectedPublication", payload: duplicate[0].data});
+       }
+    }, [duplicate]);
+
+
     function handleChange(event) {
         console.log(event.target.value);
         dispatch({type: "setSelected", payload: event.target.value});
@@ -67,7 +75,7 @@ export function Duplicates(props) {
     return (
         <div>
             <ul className={`no-padding`}>
-                <RadioGroup onChange={handleChange} value={state.selected}> 
+                <RadioGroup onChange={handleChange} value={state.selected}>
                 {/* Ved bruk av egendefinerte radiobuttons i en radiogroup, husk FormControlLabels slik at aria fungerer korrekt */}
                     {duplicate.length > 0 ? (
                         duplicate.map((item, i) => 
@@ -86,11 +94,13 @@ export function Duplicates(props) {
                             value="false"
                             control={<Radio />}
                             label={relevantStatus ? "Marker som ikke aktuell" : "Marker som aktuell"}
+                            disabled={publication.hasOwnProperty("cristin_id")}
                         />
                         <FormControlLabel
                             value="true"
                             control={<Radio />}
                             label="Opprett ny cristin-publikasjon basert på importpublikasjon"
+                            disabled={publication.hasOwnProperty("cristin_id")}
                         />
                     </ListGroupItem>
                 </RadioGroup>
