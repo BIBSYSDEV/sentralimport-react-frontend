@@ -7,6 +7,8 @@ import {properties} from "../../properties.js"
 
 export default function InstitutionCountrySelect(props) {
     const [institutions, setInstitutions] = React.useState("");
+    const [units, setUnits] = React.useState("");
+    const [unit, setUnit] = React.useState("");
     let {state, dispatch} = React.useContext(Context);
     const [places, setPlaces] = React.useState("");
     const [groupOptions, setGroupOptions] = React.useState([{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}]);
@@ -33,6 +35,17 @@ export default function InstitutionCountrySelect(props) {
         setGroupOptions(temp);
     }, [inputValue]);
 
+    useEffect(() => {
+        console.log(props.institution);
+        setUnit("");
+        getUnits();
+    }, [props.institution]);
+
+    useEffect(() => {
+        props.onChange("");
+        setUnit("");
+    }, [state.contributorPage]);
+
     async function getPlaces() {
         if (inputValue !== "") {
             let temp = await axios.get(
@@ -54,6 +67,10 @@ export default function InstitutionCountrySelect(props) {
     function handleInput(event) {
         console.log(event);
         setInputValue(event);
+    }
+
+    function handleChange(option) {
+        setUnit(option);
     }
 
     async function getInstitutions() {
@@ -78,7 +95,27 @@ export default function InstitutionCountrySelect(props) {
         }
     }
 
+    async function getUnits() {
+      
+        if(props.institution.institutionNr) {
+            let temp = await axios.get(properties.crisrest_gatekeeper_url + "/units?parent_unit_id=" + props.institution.institutionNr + ".0.0.0&per_page=900", JSON.parse(localStorage.getItem("config")));
+            console.log(temp);
+            let units = [];
+            for (let i = 0; i < temp.data.length; i++) {
+                if(temp.data[i].hasOwnProperty("unit_name") && (temp.data[i].unit_name.nb || temp.data[i].unit_name.en)) {
+                units.push({
+                    label: temp.data[i].unit_name.nb || temp.data[i].unit_name.en,
+                    value: temp.data[i].cristin_unit_id
+                });
+            }
+            }
+            console.log(units);
+            setUnits(units);
+        }
+    }
+
     return (
+        <div>
         <Select
             placeholder="Søk på institusjoner eller sted"
             name="institutionSelect"
@@ -89,5 +126,8 @@ export default function InstitutionCountrySelect(props) {
             onInputChange={handleInput}
             aria-label="Institusjonsvelger"  
         />
+
+        {props.institution.value && units.length > 0 ? <Select placeholder="Søk på enheter" name="unitSelect" options={units} value={unit} onChange={handleChange} isClearable /> : ""}
+        </div>
     );
 }

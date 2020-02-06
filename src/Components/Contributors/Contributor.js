@@ -141,7 +141,7 @@ export default function Contributor(props) {
                 </p>
               ))}
             </div>
-            <InstitutionCountrySelect onChange={handleInstitutionChange} aria-label={"Institusjonsvelger " + props.index}/>
+            <InstitutionCountrySelect onChange={handleInstitutionChange} aria-label={"Institusjonsvelger " + props.index} institution={selectedInstitution}/>
             <Button
               onClick={() => addInstitution()}
               disabled={
@@ -155,9 +155,6 @@ export default function Contributor(props) {
             >
               Add
             </Button>
-            <Button color="primary" onClick={() => handleSubmit()}>
-              Opprett person
-            </Button>
 
             <Button
               color="secondary"
@@ -165,6 +162,11 @@ export default function Contributor(props) {
             >
               Slett person
             </Button>
+
+            <Button color="primary" onClick={() => handleSubmit()}>
+              Lagre endringer
+            </Button>
+
             {data.imported.cristin_person_id === 0 ?
                 <Button onClick={() => props.searchAgain(data.imported, rowIndex)}>
                   Søk igjen

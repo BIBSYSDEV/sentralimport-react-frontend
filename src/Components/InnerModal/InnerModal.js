@@ -643,7 +643,6 @@ function InnerModal(props) {
                                             disabled
                                             multiline
                                             aria-multiline="true"
-                                            rowsMax="10"
                                         />
 
                                         {languageCopy.filter(lang => lang.lang === selectedLang.lang)[0].title === selectedLang.title ? (

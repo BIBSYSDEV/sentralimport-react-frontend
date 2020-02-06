@@ -10,6 +10,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import PersonIcon from "../../assets/icons/person-active.svg";
+import InactivePersonIcon from "../../assets/icons/person-inactive.svg";
 import ArrowUpIcon from "../../assets/icons/arrowhead-up3.svg";
 import ArrowDownIcon from "../../assets/icons/arrowhead-down3.svg";
 import {Button, TableFooter} from "@material-ui/core";
@@ -96,6 +97,11 @@ function ContributorModal(props) {
             setData(contributors);
         }
 
+        // if (updatePersons.current) {
+        //     updatePersons.current = false;
+        //     fetch();
+        //     handleTempSave();
+        // }
         fetch();
         handleTempSave();
     }, [props.data, props.open, state.selectedPublication]);
@@ -282,6 +288,9 @@ function ContributorModal(props) {
     const getArrowUpImage = () => {
         return ArrowUpIcon;
     };
+    const getInactiveImage = () => {
+        return InactivePersonIcon;
+    };
 
     function addContributor() {
         var temp = [...data];
@@ -455,7 +464,7 @@ function ContributorModal(props) {
                                     <TableCell>
                                         <div className={`result contributor`}>
                                             <div className="image-wrapper person">
-                                                <img src={getMainImage()} alt="person"/>
+                                        {row.toBeCreated.hasOwnProperty("cristin_person_id") && row.toBeCreated.cristin_person_id ? <img src={getMainImage()} alt="person"/> : <img src={getInactiveImage()} alt="inaktiv person" /> }
                                             </div>
                                             <div className={`orderButtons`}>
                                                 {row.toBeCreated.order > 1 &&
