@@ -2,11 +2,20 @@ import React, { useEffect } from "react";
 import { Button, FormGroup, TextField } from "@material-ui/core";
 import InstitutionCountrySelect from "../InstitutionSelect/InstitutionCountrySelect";
 import { Form } from "reactstrap";
+import { Context } from "../../Context";
 export default function Contributor(props) {
+  
+  let {state} = React.useContext(Context);
+
   useEffect(() => {
     setRowIndex(props.index);
     setData(props.author);
   }, [props.author]);
+
+  useEffect(() => {
+    setSelectedUnit("");
+    setSetSelectedInstitution("");
+  }, [state.contributorPage])
 
   const [data, setData] = React.useState(props.author);
 
@@ -16,6 +25,8 @@ export default function Contributor(props) {
     value: "",
     institutionNr: 0
   });
+
+  const [selectedUnit, setSelectedUnit] = React.useState("");
 
   function updateEditing() {
     let temp = data;
@@ -33,6 +44,10 @@ export default function Contributor(props) {
       value: "",
       institutionNr: 0
     });
+  }
+
+  function handleUnitChange(unit) {
+    setSelectedUnit(unit);
   }
 
   function handleInstitutionChange(institution) {
@@ -141,7 +156,7 @@ export default function Contributor(props) {
                 </p>
               ))}
             </div>
-            <InstitutionCountrySelect onChange={handleInstitutionChange} aria-label={"Institusjonsvelger " + props.index} institution={selectedInstitution}/>
+            <InstitutionCountrySelect onChange={handleInstitutionChange} handleChange={handleUnitChange} aria-label={"Institusjonsvelger " + props.index} institution={selectedInstitution}/>
             <Button
               onClick={() => addInstitution()}
               disabled={

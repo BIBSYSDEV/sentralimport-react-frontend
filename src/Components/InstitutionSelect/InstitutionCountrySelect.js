@@ -4,11 +4,11 @@ import Select from "react-select";
 import axios from "axios";
 import {Context} from "../../Context";
 import {properties} from "../../properties.js"
+import { Card } from "@material-ui/core";
 
 export default function InstitutionCountrySelect(props) {
     const [institutions, setInstitutions] = React.useState("");
     const [units, setUnits] = React.useState("");
-    const [unit, setUnit] = React.useState("");
     let {state, dispatch} = React.useContext(Context);
     const [places, setPlaces] = React.useState("");
     const [groupOptions, setGroupOptions] = React.useState([{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}]);
@@ -37,14 +37,17 @@ export default function InstitutionCountrySelect(props) {
 
     useEffect(() => {
         console.log(props.institution);
-        setUnit("");
         getUnits();
     }, [props.institution]);
 
-    useEffect(() => {
-        props.onChange("");
-        setUnit("");
-    }, [state.contributorPage]);
+    const cardStyle = {
+        overflow: "visible",
+        padding: "10px"
+    };
+
+    const unitSelectStyle = {
+        marginTop: "10px"
+    }
 
     async function getPlaces() {
         if (inputValue !== "") {
@@ -67,11 +70,7 @@ export default function InstitutionCountrySelect(props) {
     function handleInput(event) {
         console.log(event);
         setInputValue(event);
-    }
-
-    function handleChange(option) {
-        setUnit(option);
-    }
+    };
 
     async function getInstitutions() {
         if (state.institutions === null) {
@@ -115,7 +114,7 @@ export default function InstitutionCountrySelect(props) {
     }
 
     return (
-        <div>
+        <Card style={cardStyle}>
         <Select
             placeholder="Søk på institusjoner eller sted"
             name="institutionSelect"
@@ -124,10 +123,11 @@ export default function InstitutionCountrySelect(props) {
             classNamePrefix="select"
             onChange={props.onChange}
             onInputChange={handleInput}
-            aria-label="Institusjonsvelger"  
+            aria-label="Institusjonsvelger"
+            value={props.institution}  
         />
 
-        {props.institution.value && units.length > 0 ? <Select placeholder="Søk på enheter" name="unitSelect" options={units} value={unit} onChange={handleChange} isClearable /> : ""}
-        </div>
+        {props.institution.value && units.length > 0 ? <div style={unitSelectStyle}><Select placeholder="Søk på enheter" name="unitSelect" options={units} onChange={props.handleChange} isClearable /></div> : ""}
+        </Card>
     );
 }
