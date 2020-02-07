@@ -28,6 +28,10 @@ export default function Contributor(props) {
 
   const [selectedUnit, setSelectedUnit] = React.useState("");
 
+  const unitStyle = {
+    marginLeft: "0px"
+  }
+
   function updateEditing() {
     let temp = data;
     temp.isEditing = true;
@@ -65,18 +69,82 @@ export default function Contributor(props) {
     props.updateData(temp, rowIndex);
   }
 
+  function removeUnit(instIndex, unitIndex) {
+    let affiliationCopy = [...data.toBeCreated.affiliations];
+    affiliationCopy[instIndex].units.splice(unitIndex, 1);
+    let temp = data;
+    temp.toBeCreated.affiliations = affiliationCopy;
+    console.log(affiliationCopy);
+    console.log(temp);
+
+    props.updateData(temp, instIndex);
+  }
+
+  function checkForUnit() {
+    let affiliationCopy = [...data.toBeCreated.affiliations];
+    var duplicate = 0;
+    for(var i = 0; i < affiliationCopy.length; i++) {
+      if(affiliationCopy[i].hasOwnProperty("units")) {
+        for(var h = 0; h < affiliationCopy[i].units.length; h++) {
+          if(affiliationCopy[i].units[h].unitNr === selectedUnit.value) {
+            duplicate++;
+          }
+        }
+      }
+    }
+
+    if(duplicate > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   function addInstitution() {
     let affiliationCopy = [...data.toBeCreated.affiliations];
-    affiliationCopy.push({
-      countryCode: "test",
-      institutionName: selectedInstitution.label,
-      institutionNr: selectedInstitution.institutionNr,
-      isCristinInstitution: true
-    });
+    var duplicate = 0;
+    for(var i = 0; i < affiliationCopy.length; i++){
+      if(affiliationCopy[i].institutionNr === selectedInstitution.institutionNr){
+        duplicate++;
+      }
+    }
+    if(duplicate < 1){
+      affiliationCopy.push({
+        countryCode: "test",
+        institutionName: selectedInstitution.label,
+        institutionNr: selectedInstitution.institutionNr,
+        isCristinInstitution: true
+      });
+    }
+
+    if(selectedUnit) {
+      affiliationCopy = addUnit(affiliationCopy);
+    }
+
     let temp = data;
     temp.toBeCreated.affiliations = affiliationCopy;
 
     props.updateData(temp, rowIndex);
+  }
+
+  function addUnit(affiliationCopy) {
+    for(var i = 0; i < affiliationCopy.length; i++){
+    if(affiliationCopy[i].institutionNr === selectedInstitution.institutionNr) {
+      if(affiliationCopy[i].hasOwnProperty("units")) {
+        affiliationCopy[i].units.push({
+          unitName: selectedUnit.label,
+          unitNr: selectedUnit.value
+        });
+      } else {
+        affiliationCopy[i].units = [];
+        affiliationCopy[i].units.push({
+          unitName: selectedUnit.label,
+          unitNr: selectedUnit.value
+        });
+      }
+    }
+  }
+    return affiliationCopy;
   }
 
   function handleChange(event, obj, property) {
@@ -144,6 +212,7 @@ export default function Contributor(props) {
             </FormGroup>
             <div className={`metadata`}>
               {data.toBeCreated.affiliations.map((inst, j) => (
+                <div>
                 <p className={`italic`} key={j}>
                   {inst.institutionName}
                   <Button
@@ -154,6 +223,9 @@ export default function Contributor(props) {
                     Fjern tilknytning
                   </Button>
                 </p>
+                { inst.hasOwnProperty("units") ? inst.units.map((unit, g) => <p className={'italic'} style={unitStyle} key={g}> &bull; {unit.unitName} <Button onClick={() => removeUnit(j, g)}> Fjern enhet </Button></p>) : ""}
+                </div>
+                
               ))}
             </div>
             <InstitutionCountrySelect onChange={handleInstitutionChange} handleChange={handleUnitChange} aria-label={"Institusjonsvelger " + props.index} institution={selectedInstitution}/>
@@ -161,11 +233,11 @@ export default function Contributor(props) {
               onClick={() => addInstitution()}
               disabled={
                 selectedInstitution.institutionNr === 0 ||
-                data.toBeCreated.affiliations.filter(instNr => {
+                (data.toBeCreated.affiliations.filter(instNr => {
                   return (
                     selectedInstitution.institutionNr === instNr.institutionNr
                   );
-                }).length > 0
+                }).length > 0 && (!selectedUnit)) || (selectedUnit !== "" ? checkForUnit() : null)
               }
             >
               Add
