@@ -77,7 +77,7 @@ export default function Contributor(props) {
     console.log(affiliationCopy);
     console.log(temp);
 
-    props.updateData(temp, instIndex);
+    props.updateData(temp, rowIndex);
   }
 
   function checkForUnit() {
