@@ -52,6 +52,7 @@ export default function Pagination(props) {
           onChange={onChangePerPage}
           defaultValue={rowsPerPage[0]}
           aria-label="Publikasjoner per side"
+          value={state.currentPerPage}
         />
       </TableCell>
       <TableCell></TableCell>
