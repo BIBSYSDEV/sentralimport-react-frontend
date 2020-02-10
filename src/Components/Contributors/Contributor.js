@@ -276,9 +276,12 @@ export default function Contributor(props) {
           </h6>
           <div className={`metadata`}>
             {data.toBeCreated.affiliations.map((inst, j) => (
+              <div>
               <p className={`italic`} key={j}>
                 {inst.institutionName}
               </p>
+              { inst.hasOwnProperty("units") ? inst.units.map((unit, g) => <p className={'italic'} style={unitStyle} key={g}> &bull; {unit.unitName} </p>) : ""}
+              </div>
             ))}
           </div>
           <Button onClick={() => updateEditing()}>Rediger</Button>
