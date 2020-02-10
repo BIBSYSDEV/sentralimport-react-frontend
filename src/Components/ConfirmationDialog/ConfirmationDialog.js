@@ -136,6 +136,14 @@ export default function ConfirmationDialog(props) {
         for (let i = 0; i < temp.contributors.length; i++) {
             let affiliations = [];
             for (let j = 0; j < temp.contributors[i].toBeCreated.affiliations.length; j++) {
+                let instUnits = [];
+                if(temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("units")){
+                    for(let h = 0; h < temp.contributors[i].toBeCreated.affiliations[j].units.length; h++){
+                        instUnits[h] = {
+                            unit: temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr
+                        }
+                    }
+                }
                 affiliations[j] = {
                     role_code: temp.contributors[i].imported.role_code,
                     institution: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("institution") ?
@@ -143,7 +151,8 @@ export default function ConfirmationDialog(props) {
                         :
                         {
                             cristin_institution_id: temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString(),
-                        }
+                        },
+                    units: instUnits
                 }
             }
             contributors[i] = {
