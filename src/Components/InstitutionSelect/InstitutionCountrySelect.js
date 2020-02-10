@@ -127,7 +127,7 @@ export default function InstitutionCountrySelect(props) {
             value={props.institution}  
         />
 
-        {props.institution.value && units.length > 0 ? <div style={unitSelectStyle}><Select placeholder="Søk på enheter" name="unitSelect" options={units} onChange={props.handleChange} isClearable /></div> : ""}
+        {props.institution.value && units.length > 0 ? <div style={unitSelectStyle}><Select placeholder="Søk på enheter" name="unitSelect" options={units} value={props.unit} onChange={props.handleChange} isClearable /></div> : ""}
         </Card>
     );
 }

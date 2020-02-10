@@ -56,6 +56,7 @@ export default function Contributor(props) {
 
   function handleInstitutionChange(institution) {
     setSetSelectedInstitution(institution);
+    setSelectedUnit("");
   }
 
   function removeInstitution(index) {
@@ -83,6 +84,7 @@ export default function Contributor(props) {
   function checkForUnit() {
     let affiliationCopy = [...data.toBeCreated.affiliations];
     var duplicate = 0;
+    if(selectedUnit){
     for(var i = 0; i < affiliationCopy.length; i++) {
       if(affiliationCopy[i].hasOwnProperty("units")) {
         for(var h = 0; h < affiliationCopy[i].units.length; h++) {
@@ -98,6 +100,7 @@ export default function Contributor(props) {
     } else {
       return false;
     }
+  }
   }
 
   function addInstitution() {
@@ -228,7 +231,7 @@ export default function Contributor(props) {
                 
               ))}
             </div>
-            <InstitutionCountrySelect onChange={handleInstitutionChange} handleChange={handleUnitChange} aria-label={"Institusjonsvelger " + props.index} institution={selectedInstitution}/>
+            <InstitutionCountrySelect onChange={handleInstitutionChange} handleChange={handleUnitChange} aria-label={"Institusjonsvelger " + props.index} institution={selectedInstitution} unit={selectedUnit}/>
             <Button
               onClick={() => addInstitution()}
               disabled={
