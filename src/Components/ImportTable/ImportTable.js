@@ -85,21 +85,21 @@ function EnhancedTableHead(props) {
     const createSortHandler = property => event => {
         onRequestSort(event, property);
     };
-    const [allChecked, setAllChecked] = React.useState(false);
+    let {state, dispatch} = React.useContext(Context);
 
     return (
         <TableHead>
             <TableRow>
             <TableCell component="td" scope="row" padding="checkbox" >
-                <Checkbox key='allPubs'
+                <Checkbox key='allPubs' checked={state.allChecked}
                     onClick={(e) => {
                         e.stopPropagation();
-                        props.checkAll(!allChecked);
+                        props.checkAll(!state.allChecked);
                     }}
                     onChange={(e) => {
                         e.stopPropagation();
-                        let temp = !allChecked;
-                        setAllChecked(temp);
+                        let temp = !state.allChecked;
+                        dispatch({type: "allChecked", payload: temp});
                     }}
                 />
             </TableCell>
@@ -342,6 +342,7 @@ export default function EnhancedTable() {
         } else {
             checkAll(false);
             dispatch({type: "setSelected", payload: "false"});
+            dispatch({type: "allChecked", payload: false});
         }
     }
 
