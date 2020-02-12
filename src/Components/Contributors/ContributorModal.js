@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {Modal, ModalBody, ModalHeader} from "reactstrap";
 import axios from "axios";
 import {withSnackbar} from "notistack";
@@ -34,6 +34,10 @@ function ContributorModal(props) {
         }
         handleTempSave();
     }, [data]);
+
+    useEffect(() => {
+       
+    }, [state.contributorPage])
 
     const updatePersons = useRef(true);
     useLayoutEffect(() => {
@@ -79,9 +83,12 @@ function ContributorModal(props) {
                                 }
                                 : defaultAuthor,
                         cristin:
-                            cristinAuthors.length > i ? cristinAuthors[i] : defaultAuthor,
+                            cristinAuthors.length > i ? cristinAuthors[i] : defaultAuthor,      
                         toBeCreated: defaultAuthor
+                                
+
                     };
+                   
 
                     contributors[i].isEditing = (contributors[i].cristin.cristin_person_id === null);
 
@@ -92,6 +99,7 @@ function ContributorModal(props) {
                     contributors[i].toBeCreated = cristinAuthors[i].cristin_person_id !== null ? cristinAuthors[i] : {
                         ...copy, affiliations: await fetchInstitutions(props.duplicate ? cristinAuthors[i].affiliations : imported[i].institutions)
                     };
+                    
                 }
             }
             setData(contributors);

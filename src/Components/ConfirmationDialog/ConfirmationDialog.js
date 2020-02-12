@@ -136,15 +136,9 @@ export default function ConfirmationDialog(props) {
         for (let i = 0; i < temp.contributors.length; i++) {
             let affiliations = [];
             for (let j = 0; j < temp.contributors[i].toBeCreated.affiliations.length; j++) {
-                let instUnits = [];
-                if(temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("units")){
-                    for(let h = 0; h < temp.contributors[i].toBeCreated.affiliations[j].units.length; h++){
-                        instUnits[h] = {
-                            unit: temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr
-                        }
-                    }
-                }
-                affiliations[j] = {
+                let count = 0;
+                if(!temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("units")) { 
+                affiliations[j + count] = {
                     role_code: temp.contributors[i].imported.role_code,
                     institution: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("institution") ?
                         {...temp.contributors[i].toBeCreated.affiliations[j].institution, role_code: temp.contributors[i].imported.role_code}
@@ -152,8 +146,20 @@ export default function ConfirmationDialog(props) {
                         {
                             cristin_institution_id: temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString(),
                         },
-                    units: instUnits
+                     }
+                } else { 
+                    for(var h = 0; h < temp.contributors[i].toBeCreated.affiliations[j].units.length; h++) {
+                        affiliations[j + count] = {
+                            role_code: temp.contributors[i].imported.role_code,
+                            unit: 
+                                {
+                                    cristin_unit_id: temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr.toString(),
+                                },
+                        }
+                     count++;
+                    }
                 }
+                
             }
             contributors[i] = {
                 ...temp.contributors[i].toBeCreated,
