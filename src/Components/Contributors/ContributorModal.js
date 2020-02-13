@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {Modal, ModalBody, ModalHeader} from "reactstrap";
 import axios from "axios";
 import {withSnackbar} from "notistack";
@@ -10,6 +10,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import PersonIcon from "../../assets/icons/person-active.svg";
+import InactivePersonIcon from "../../assets/icons/person-inactive.svg";
 import ArrowUpIcon from "../../assets/icons/arrowhead-up3.svg";
 import ArrowDownIcon from "../../assets/icons/arrowhead-down3.svg";
 import {Button, TableFooter} from "@material-ui/core";
@@ -33,6 +34,10 @@ function ContributorModal(props) {
         }
         handleTempSave();
     }, [data]);
+
+    useEffect(() => {
+       
+    }, [state.contributorPage])
 
     const updatePersons = useRef(true);
     useLayoutEffect(() => {
@@ -78,7 +83,7 @@ function ContributorModal(props) {
                                 }
                                 : defaultAuthor,
                         cristin:
-                            cristinAuthors.length > i ? cristinAuthors[i] : defaultAuthor,
+                            cristinAuthors.length > i ? cristinAuthors[i] : defaultAuthor,      
                         toBeCreated: defaultAuthor
                     };
 
@@ -91,6 +96,7 @@ function ContributorModal(props) {
                     contributors[i].toBeCreated = cristinAuthors[i].cristin_person_id !== null ? cristinAuthors[i] : {
                         ...copy, affiliations: await fetchInstitutions(props.duplicate ? cristinAuthors[i].affiliations : imported[i].institutions)
                     };
+                    
                 }
             }
             setData(contributors);
@@ -282,6 +288,9 @@ function ContributorModal(props) {
     const getArrowUpImage = () => {
         return ArrowUpIcon;
     };
+    const getInactiveImage = () => {
+        return InactivePersonIcon;
+    };
 
     function addContributor() {
         var temp = [...data];
@@ -455,7 +464,7 @@ function ContributorModal(props) {
                                     <TableCell>
                                         <div className={`result contributor`}>
                                             <div className="image-wrapper person">
-                                                <img src={getMainImage()} alt="person"/>
+                                        {row.toBeCreated.hasOwnProperty("cristin_person_id") && row.toBeCreated.cristin_person_id ? <img src={getMainImage()} alt="person"/> : <img src={getInactiveImage()} alt="inaktiv person" /> }
                                             </div>
                                             <div className={`orderButtons`}>
                                                 {row.toBeCreated.order > 1 &&
