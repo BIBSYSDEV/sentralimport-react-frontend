@@ -191,6 +191,10 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+const monsterPostStyle = {
+    fontWeight: "bolder"
+}
+
 export default function EnhancedTable() {
     const classes = useStyles();
     let {state, dispatch} = React.useContext(Context);
@@ -440,12 +444,6 @@ export default function EnhancedTable() {
                 <Paper className={classes.paper}>
                     <EnhancedTableToolbar/>
                     <div className={classes.tableWrapper}>
-                        {openSeveral.length > 0 ?
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={event => handleClick(event, null)}
-                            >Importer {openSeveral.length} publikasjoner</Button> : ""}
                         <Table className={classes.table}>
                             <EnhancedTableHead
                                 order={order}
@@ -457,8 +455,8 @@ export default function EnhancedTable() {
                             <TableBody>
                                 {body}
                             </TableBody>
-                            <TableFooter>
-                                <Pagination data={rows}/>
+                            <TableFooter>                        
+                                <Pagination data={rows} openMore={openSeveral} handlePress={handleClick}/>                                
                             </TableFooter>
                         </Table>
                     </div>
@@ -556,7 +554,7 @@ export default function EnhancedTable() {
                                                 .slice(0, 5)
                                                 .map(author => author.authorName + "; ")}
                                             {row.authors.length > 5 ? " et al " : ""}
-                                            {" (" + row.authors.length + ") "}
+                                            { row.authors.length > 500 ? <div style={monsterPostStyle}> ({row.authors.length}) Stort antall bidragsytere </div> :" (" + row.authors.length + ") "}
                                             <p className={`journal-name`}>
                                                 {row.hasOwnProperty("channel") &&
                                                 row.channel.hasOwnProperty("title")

@@ -40,7 +40,17 @@ export default function Pagination(props) {
 
   return (
     <TableRow overflow="visible">
-      <TableCell></TableCell>
+      <TableCell>
+        {props.openMore.length > 0 ?
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={event => props.handlePress(event, null)}
+                            >
+                              Importer {props.openMore.length} publikasjoner
+                            </Button> 
+                            : ""}
+        </TableCell>
       <TableCell align="left" overflow="visible">
         <div>Publikasjoner per side: &nbsp;</div>
 
