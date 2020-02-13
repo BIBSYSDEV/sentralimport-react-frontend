@@ -85,10 +85,7 @@ function ContributorModal(props) {
                         cristin:
                             cristinAuthors.length > i ? cristinAuthors[i] : defaultAuthor,      
                         toBeCreated: defaultAuthor
-                                
-
                     };
-                   
 
                     contributors[i].isEditing = (contributors[i].cristin.cristin_person_id === null);
 
@@ -105,11 +102,6 @@ function ContributorModal(props) {
             setData(contributors);
         }
 
-        // if (updatePersons.current) {
-        //     updatePersons.current = false;
-        //     fetch();
-        //     handleTempSave();
-        // }
         fetch();
         handleTempSave();
     }, [props.data, props.open, state.selectedPublication]);
