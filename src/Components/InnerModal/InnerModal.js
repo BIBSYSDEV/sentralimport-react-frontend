@@ -643,7 +643,6 @@ function InnerModal(props) {
                                             disabled
                                             multiline
                                             aria-multiline="true"
-                                            rowsMax="10"
                                         />
 
                                         {languageCopy.filter(lang => lang.lang === selectedLang.lang)[0].title === selectedLang.title ? (
@@ -748,22 +747,23 @@ function InnerModal(props) {
                                     </Grid>
                                     <Grid item container sm>
                                         <div>
-                                        <label style={labelStyle} htmlFor="pageFrom">Side fra</label>
-                                        <label style={labelStyle} htmlFor="pageTo">Side til</label>
-                                        <div>
-                                            <input
-                                                id="pageFrom"
-                                                value={props.data.hasOwnProperty("channel") ? props.data.channel.pageFrom : ""}
-                                                style={pageStyle}
-                                                disabled
-                                            />
-                                            <input
-                                                id="pageTo"
-                                                value={props.data.hasOwnProperty("channel") ? props.data.channel.pageTo : ""}
-                                                style={pageStyle}
-                                                disabled
-                                            />
- </div>  </div>
+                                            <label style={labelStyle} htmlFor="pageFrom">Side fra</label>
+                                            <label style={labelStyle} htmlFor="pageTo">Side til</label>
+                                            <div>
+                                                <input
+                                                    id="pageFrom"
+                                                    value={props.data.hasOwnProperty("channel") ? props.data.channel.pageFrom : ""}
+                                                    style={pageStyle}
+                                                    disabled
+                                                />
+                                                <input
+                                                    id="pageTo"
+                                                    value={props.data.hasOwnProperty("channel") ? props.data.channel.pageTo : ""}
+                                                    style={pageStyle}
+                                                    disabled
+                                                />
+                                            </div>
+                                        </div>
                                         {props.data.hasOwnProperty("channel") && props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
@@ -820,7 +820,7 @@ function InnerModal(props) {
                                     />
                                 </FormGroup>
                                 <FormGroup>
-                                    <FormLabel style={selectStyle}> Tidsskrift </FormLabel>
+                                    <FormLabel style={selectStyle} required> Tidsskrift </FormLabel>
                                     <Select
                                     aria-label="Tidsskrift-select"
                                         placeholder="Søk på tidsskrift"
@@ -878,7 +878,7 @@ function InnerModal(props) {
                                     />
                                 </FormGroup>
                                 <FormGroup>
-                                    <FormLabel style={selectStyle}> Kategori </FormLabel>
+                                    <FormLabel style={selectStyle} required> Kategori </FormLabel>
                                     <Select
                                         aria-label="Kategori"
                                         placeholder="Søk på kategori"

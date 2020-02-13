@@ -23,6 +23,7 @@ import {useHistory} from "react-router-dom";
 import {properties} from "../../properties";
 import Skeleton from '@material-ui/lab/Skeleton';
 import Checkbox from '@material-ui/core/Checkbox';
+import Button from "@material-ui/core/Button";
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -84,21 +85,21 @@ function EnhancedTableHead(props) {
     const createSortHandler = property => event => {
         onRequestSort(event, property);
     };
-    const [allChecked, setAllChecked] = React.useState(false);
+    let {state, dispatch} = React.useContext(Context);
 
     return (
         <TableHead>
             <TableRow>
             <TableCell component="td" scope="row" padding="checkbox" >
-                <Checkbox key='allPubs'
+                <Checkbox key='allPubs' checked={state.allChecked}
                     onClick={(e) => {
                         e.stopPropagation();
-                        props.checkAll(!allChecked);
+                        props.checkAll(!state.allChecked);
                     }}
                     onChange={(e) => {
                         e.stopPropagation();
-                        let temp = !allChecked;
-                        setAllChecked(temp);
+                        let temp = !state.allChecked;
+                        dispatch({type: "allChecked", payload: temp});
                     }}
                 />
             </TableCell>
@@ -341,6 +342,7 @@ export default function EnhancedTable() {
         } else {
             checkAll(false);
             dispatch({type: "setSelected", payload: "false"});
+            dispatch({type: "allChecked", payload: false});
         }
     }
 
@@ -438,6 +440,12 @@ export default function EnhancedTable() {
                 <Paper className={classes.paper}>
                     <EnhancedTableToolbar/>
                     <div className={classes.tableWrapper}>
+                        {openSeveral.length > 0 ?
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={event => handleClick(event, null)}
+                            >Importer {openSeveral.length} publikasjoner</Button> : ""}
                         <Table className={classes.table}>
                             <EnhancedTableHead
                                 order={order}
