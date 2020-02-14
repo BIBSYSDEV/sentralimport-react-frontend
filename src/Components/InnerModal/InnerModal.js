@@ -204,7 +204,7 @@ function InnerModal(props) {
             return;
         }
         handleTempSave();
-    }, [selectedCategory, selectedJournal, doi, aarstall, selectedLang, publishingDetails]);
+    }, [selectedCategory, selectedJournal, doi, aarstall, selectedLang, publishingDetails, state.doSave]);
 
     useEffect(() => {
         async function fetch() {
@@ -241,6 +241,8 @@ function InnerModal(props) {
                 // authors: props.data.authors
             }
         };
+        console.log(temp);
+        console.log(state.doSave);
         if (state.doSave)
             localStorage.setItem("tempPublication", JSON.stringify(temp));
     }
