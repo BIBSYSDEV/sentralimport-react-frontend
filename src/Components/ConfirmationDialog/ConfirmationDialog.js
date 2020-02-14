@@ -23,7 +23,7 @@ export default function ConfirmationDialog(props) {
         try {
             let id = await postPublication(publication);
             await putContributors(id);
-            await patchPiaPublication(id, publication.pubId);
+            await patchPiaPublication(id, publication.pub_id);
             dispatch({type: "setFormErrors", payload: emptyArray});
         } catch (e) {
             console.log("There was an error while importing the publication", e);
