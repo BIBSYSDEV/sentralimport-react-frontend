@@ -117,7 +117,7 @@ export default function Validation(props) {
       },
       {
         name: "doi",
-        value: props.duplicate
+        value: (props.duplicate && props.publication.hasOwnProperty("links"))
           ? props.publication.links[
               props.publication.links.length - 1
             ].url.substring(

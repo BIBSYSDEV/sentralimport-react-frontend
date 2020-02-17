@@ -130,6 +130,7 @@ export default function ResultModal(props) {
         data={props.data}
         cristinpub={state.selectedPublication}
         duplicate={isDuplicate}
+        close={props.handleClose}
       />
     </Modal>
   );

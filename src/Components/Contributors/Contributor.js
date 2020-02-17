@@ -64,8 +64,6 @@ export default function Contributor(props) {
     affiliationCopy.splice(index, 1);
     let temp = data;
     temp.toBeCreated.affiliations = affiliationCopy;
-    console.log(affiliationCopy);
-    console.log(temp);
 
     props.updateData(temp, rowIndex);
   }
@@ -75,8 +73,6 @@ export default function Contributor(props) {
     affiliationCopy[instIndex].units.splice(unitIndex, 1);
     let temp = data;
     temp.toBeCreated.affiliations = affiliationCopy;
-    console.log(affiliationCopy);
-    console.log(temp);
 
     props.updateData(temp, rowIndex);
   }
@@ -215,7 +211,7 @@ export default function Contributor(props) {
             </FormGroup>
             <div className={`metadata`}>
               {data.toBeCreated.affiliations.map((inst, j) => (
-                <div>
+                <div key={j}>
                 <p className={`italic`} key={j}>
                   {inst.institutionName}
                   <Button
@@ -279,7 +275,7 @@ export default function Contributor(props) {
           </h6>
           <div className={`metadata`}>
             {data.toBeCreated.affiliations.map((inst, j) => (
-              <div>
+              <div key={j}>
               <p className={`italic`} key={j}>
                 {inst.institutionName}
               </p>

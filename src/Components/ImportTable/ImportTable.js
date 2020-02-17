@@ -23,7 +23,6 @@ import {useHistory} from "react-router-dom";
 import {properties} from "../../properties";
 import Skeleton from '@material-ui/lab/Skeleton';
 import Checkbox from '@material-ui/core/Checkbox';
-import Button from "@material-ui/core/Button";
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -420,10 +419,6 @@ export default function EnhancedTable() {
             getRows();
         }, 200);
     }
-
-    const emptyRows =
-        rowsPerPage -
-        Math.min(rowsPerPage, rows != null ? rows.length - page * rowsPerPage : 0);
 
     function checkAll(status) {
         let temp = [...checked];

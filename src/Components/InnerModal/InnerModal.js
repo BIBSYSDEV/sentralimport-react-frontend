@@ -241,8 +241,6 @@ function InnerModal(props) {
                 // authors: props.data.authors
             }
         };
-        console.log(temp);
-        console.log(state.doSave);
         if (state.doSave)
             localStorage.setItem("tempPublication", JSON.stringify(temp));
     }
@@ -406,17 +404,19 @@ function InnerModal(props) {
                 }
             );
         }
+        props.close();
     }
 
     function abortToggle() {
         setDialogAbortOpen(false);
         props.toggle();
         props.enqueueSnackbar(
-            "Lukket publikasjon. Endringer har ikke blitt lagret.",
+            "Lukket publikasjon. Endringer har blitt lagret i browseren",
             {
                 variant: "warning"
             }
         );
+        props.close();
     }
 
     function toggleDialog() {
@@ -710,13 +710,14 @@ function InnerModal(props) {
                                             id="import-utgivelsesdata"
                                             label="Volum"
                                             value={
-                                                props.data.hasOwnProperty("channel") ? props.data.channel.volume
-                                                    : "Ingen utgivelsesdata funnet"
+                                                (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume")) ?
+                                                    props.data.channel.volume :
+                                                    "Ingen utgivelsesdata funnet"
                                             }
                                             margin="normal"
                                             disabled
                                         />
-                                        {props.data.hasOwnProperty("channel") && props.data.channel.volume === publishingDetails.volume ? (
+                                        {props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume") && props.data.channel.volume === publishingDetails.volume ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>

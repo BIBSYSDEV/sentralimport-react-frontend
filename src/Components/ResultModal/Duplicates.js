@@ -16,8 +16,8 @@ export function Duplicates(props) {
         async function fetch() {
             state.selected = "true";
             let searchString = "";
-            let registered = parseInt(publication.registered.substr(7, 10));
-            console.log("registered: " + registered);
+            let dateLength = publication.registered.length;
+            let registered = parseInt(publication.registered.substr(dateLength - 4, dateLength));
             if (publication.hasOwnProperty("doi")) {
                 console.log("DOI exists. Looking for duplicates");
                 searchString = "?doi=" + publication.doi;
@@ -60,16 +60,14 @@ export function Duplicates(props) {
     function handleChange(event) {
         console.log(event.target.value);
         dispatch({type: "setSelected", payload: event.target.value});
-        {
-            event.target.value !== "true" && event.target.value !== "false"
-                ? dispatch({
-                    type: "setSelectedPublication",
-                    payload: duplicate.find(
-                        element => element.data.cristin_result_id === event.target.value
-                    ).data
-                })
-                : console.log();
-        }
+        event.target.value !== "true" && event.target.value !== "false"
+            ? dispatch({
+                type: "setSelectedPublication",
+                payload: duplicate.find(
+                    element => element.data.cristin_result_id === event.target.value
+                ).data
+            })
+            : console.log();
     }
 
     return (

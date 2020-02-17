@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect} from "react";
+import React, {useEffect} from "react";
 
 import Select from "react-select";
 import axios from "axios";
@@ -47,7 +47,7 @@ export default function InstitutionCountrySelect(props) {
 
     const unitSelectStyle = {
         marginTop: "10px"
-    }
+    };
 
     async function getPlaces() {
         if (inputValue !== "") {

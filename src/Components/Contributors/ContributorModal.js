@@ -18,11 +18,13 @@ import {properties} from "../../properties.js"
 
 import ContributorPagination from "../ContributorPagination/ContributorPagination";
 import Contributor from "./Contributor";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 function ContributorModal(props) {
     const {useRef, useLayoutEffect} = React;
     const [data, setData] = React.useState([]);
     const [searchResults, setSearchResults] = React.useState(null);
+    const [fetched, setFetched] = React.useState(false);
 
     let {state, dispatch} = React.useContext(Context);
 
@@ -39,9 +41,10 @@ function ContributorModal(props) {
        
     }, [state.contributorPage])
 
-    const updatePersons = useRef(true);
+    // const updatePersons = useRef(true);
     useLayoutEffect(() => {
         async function fetch() {
+            setFetched(false);
 
             let contributors = [];
             let cristinAuthors = [];
@@ -60,7 +63,6 @@ function ContributorModal(props) {
 
                 for (let i = 0; i < Math.max(cristinAuthors.length, imported.length); i++) {
                     if (props.duplicate && state.doSave) {
-                        console.log(state.selectedPublication.authors);
                         cristinAuthors[i].affiliations = await getDuplicateAffiliations(state.selectedPublication.authors[i]);
                     }
                     contributors[i] = {
@@ -100,6 +102,7 @@ function ContributorModal(props) {
                 }
             }
             setData(contributors);
+            setFetched(true);
         }
 
         fetch();
@@ -402,6 +405,145 @@ function ContributorModal(props) {
         }
     }
 
+    function createBody() {
+        if(fetched) {
+            return (
+                <TableBody>
+                    {data
+                        .slice(
+                            state.contributorPage * state.contributorPerPage,
+                            (state.contributorPage + 1) * state.contributorPerPage
+                        )
+                        .map((row, i) => (
+                            <TableRow key={i} hover>
+                                <TableCell>
+                                    {row.toBeCreated.order === row.imported.order
+                                        ? row.imported.order
+                                        : row.imported.order + " (" + row.toBeCreated.order + ")"}
+                                </TableCell>
+                                <TableCell style={{width: '40%'}}>
+                                    <div className={`result contributor`}>
+                                        <div className="image-wrapper person">
+                                            <img src={getMainImage()} alt="person"/>
+                                        </div>
+                                        <div className="content-wrapper">
+                                            <h6>
+                                                {row.imported.surname && row.imported.first_name
+                                                    ? row.imported.surname +
+                                                    ", " +
+                                                    row.imported.first_name
+                                                    : row.imported.authorName
+                                                        ? row.imported.authorName
+                                                        : null}
+                                            </h6>
+                                            <div className={`metadata`}>
+                                                {row.imported.affiliations.map((inst, j) => (
+                                                    <p className={`italic`} key={j}>
+                                                        {inst.unitName}
+                                                    </p>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {row.imported.surname && row.imported.first_name ? (
+                                        <Button
+                                            color="primary"
+                                            onClick={() => handleChooseAuthor(row)}
+                                        >
+                                            Velg denne
+                                        </Button>
+                                    ) : null}
+                                </TableCell>
+                                <TableCell>
+                                    <div className={`result contributor`}>
+                                        <div className="image-wrapper person">
+                                            {row.toBeCreated.hasOwnProperty("cristin_person_id") && row.toBeCreated.cristin_person_id ?
+                                                <img src={getMainImage()} alt="person"/> :
+                                                <img src={getInactiveImage()} alt="inaktiv person"/>}
+                                        </div>
+                                        <div className={`orderButtons`}>
+                                            {row.toBeCreated.order > 1 &&
+                                            row.toBeCreated.order < data.length ? (
+                                                <div>
+                                                    <div>
+                                                        <Button onClick={() => handleOrder(row, true)}>
+                                                            <img src={getArrowUpImage()} alt="up-arrow"/>
+                                                        </Button>
+                                                    </div>
+                                                    <div>
+                                                        <Button onClick={() => handleOrder(row, false)}>
+                                                            <img
+                                                                src={getArrowDownImage()}
+                                                                alt="down-arrow"
+                                                            />
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            ) : row.toBeCreated.order === data.length &&
+                                            data.length > 1 ? (
+                                                <Button onClick={() => handleOrder(row, true)}>
+                                                    <img src={getArrowUpImage()} alt="up-arrow"/>
+                                                </Button>
+                                            ) : row.toBeCreated.order < data.length ? (
+                                                <Button onClick={() => handleOrder(row, false)}>
+                                                    <img src={getArrowDownImage()} alt="down-arrow"/>
+                                                </Button>
+                                            ) : null}
+                                        </div>
+                                        <Contributor
+                                            author={row}
+                                            index={
+                                                i + state.contributorPage * state.contributorPerPage
+                                            }
+                                            updateData={updateContributor}
+                                            isOpen={props.open}
+                                            searchAgain={retrySearch}
+                                            deleteContributor={removeContributor}
+                                        />
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    {state.contributorPage + 1 >= data.length / 5 ? (
+                        <TableRow>
+                            <TableCell>+</TableCell>
+                            <TableCell></TableCell>
+                            <TableCell>
+                                <Button onClick={() => addContributor()}>
+                                    Legg til bidragsyter
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ) : null}
+                    <ContributorPagination totalCount={data.length}/>
+                </TableBody>
+            );
+        } else {
+            return (
+                <TableBody>
+                    {Array.from({length:5}, (value, index) =>
+                    <TableRow
+                        hover
+                        id={'skeleton'+index}
+                        key={index}
+                        tabIndex="0"
+                    >
+                        <TableCell>
+                            <Skeleton variant="rect" width={40} height={20}/>
+                        </TableCell>
+                        <TableCell>
+                            <Skeleton variant="rect" width='auto' height={118}/>
+                        </TableCell>
+                        <TableCell>
+                            <Skeleton variant="rect" width='auto' height={118}/>
+                        </TableCell>
+                    </TableRow>
+                )}
+                </TableBody>
+            );
+        }
+    }
+
 
     return (
         <Modal isOpen={props.open} className={`contributorModal`}>
@@ -415,114 +557,7 @@ function ContributorModal(props) {
                             <TableCell>Cristin-Forfatter</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>
-                        {data
-                            .slice(
-                                state.contributorPage * state.contributorPerPage,
-                                (state.contributorPage + 1) * state.contributorPerPage
-                            )
-                            .map((row, i) => (
-                                <TableRow key={i} hover>
-                                    <TableCell>
-                                        {row.toBeCreated.order === row.imported.order
-                                            ? row.imported.order
-                                            : row.imported.order + " (" + row.toBeCreated.order + ")"}
-                                    </TableCell>
-                                    <TableCell style={{width: '40%'}}>
-                                        <div className={`result contributor`}>
-                                            <div className="image-wrapper person">
-                                                <img src={getMainImage()} alt="person"/>
-                                            </div>
-                                            <div className="content-wrapper">
-                                                <h6>
-                                                    {row.imported.surname && row.imported.first_name
-                                                        ? row.imported.surname +
-                                                        ", " +
-                                                        row.imported.first_name
-                                                        : row.imported.authorName
-                                                            ? row.imported.authorName
-                                                            : null}
-                                                </h6>
-                                                <div className={`metadata`}>
-                                                    {row.imported.affiliations.map((inst, j) => (
-                                                        <p className={`italic`} key={j}>
-                                                            {inst.unitName}
-                                                        </p>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {row.imported.surname && row.imported.first_name ? (
-                                            <Button
-                                                color="primary"
-                                                onClick={() => handleChooseAuthor(row)}
-                                            >
-                                                Velg denne
-                                            </Button>
-                                        ) : null}
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className={`result contributor`}>
-                                            <div className="image-wrapper person">
-                                        {row.toBeCreated.hasOwnProperty("cristin_person_id") && row.toBeCreated.cristin_person_id ? <img src={getMainImage()} alt="person"/> : <img src={getInactiveImage()} alt="inaktiv person" /> }
-                                            </div>
-                                            <div className={`orderButtons`}>
-                                                {row.toBeCreated.order > 1 &&
-                                                row.toBeCreated.order < data.length ? (
-                                                    <div>
-                                                        <div>
-                                                            <Button onClick={() => handleOrder(row, true)}>
-                                                                <img src={getArrowUpImage()} alt="up-arrow"/>
-                                                            </Button>
-                                                        </div>
-                                                        <div>
-                                                            <Button onClick={() => handleOrder(row, false)}>
-                                                                <img
-                                                                    src={getArrowDownImage()}
-                                                                    alt="down-arrow"
-                                                                />
-                                                            </Button>
-                                                        </div>
-                                                    </div>
-                                                ) : row.toBeCreated.order === data.length &&
-                                                data.length > 1 ? (
-                                                    <Button onClick={() => handleOrder(row, true)}>
-                                                        <img src={getArrowUpImage()} alt="up-arrow"/>
-                                                    </Button>
-                                                ) : row.toBeCreated.order < data.length ? (
-                                                    <Button onClick={() => handleOrder(row, false)}>
-                                                        <img src={getArrowDownImage()} alt="down-arrow"/>
-                                                    </Button>
-                                                ) : null}
-                                            </div>
-                                            <Contributor
-                                                author={row}
-                                                index={
-                                                    i + state.contributorPage * state.contributorPerPage
-                                                }
-                                                updateData={updateContributor}
-                                                isOpen={props.open}
-                                                searchAgain={retrySearch}
-                                                deleteContributor={removeContributor}
-                                            />
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        {state.contributorPage + 1 >= data.length / 5 ? (
-                            <TableRow>
-                                <TableCell>+</TableCell>
-                                <TableCell></TableCell>
-                                <TableCell>
-                                    <Button onClick={() => addContributor()}>
-                                        Legg til bidragsyter
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ) : null}
-                        <ContributorPagination totalCount={data.length}/>
-                    </TableBody>
-
+                    {createBody()}
                     <TableFooter>
                         <TableRow>
                             <TableCell></TableCell>
@@ -543,12 +578,6 @@ function ContributorModal(props) {
             </ModalBody>
         </Modal>
     );
-}
-
-async function fetchContributors(result) {
-    let authors = result.authors;
-
-    return authors;
 }
 
 async function fetchPerson(personId) {
