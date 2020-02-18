@@ -329,13 +329,14 @@ function ContributorModal(props) {
             let authorName = author.hasOwnProperty("first_name")
                 ? author.first_name.substr(0, 1) + " " + author.surname
                 : author.authorName;
+            let institution = author.affiliations[0].hasOwnProperty("acronym")
+                ? author.affiliations[0].acronym
+                : author.affiliations[0].institutionName;
+            institution = institution.replace("&", " ");
             let searchedAuthors = await axios.get(
                 properties.crisrest_gatekeeper_url + "/persons?name=" +
                 authorName +
-                "&institution=" +
-                (author.affiliations[0].hasOwnProperty("acronym")
-                    ? author.affiliations[0].acronym
-                    : author.affiliations[0].institutionName)
+                "&institution=" + institution
                 , JSON.parse(localStorage.getItem("config")));
             if (author.cristin_person_id !== 0) {
                 searchedAuthors.data.push(author);
