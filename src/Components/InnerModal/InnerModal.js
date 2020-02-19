@@ -484,7 +484,7 @@ function InnerModal(props) {
 
     const equalButtonStyle = {
         marginTop: "20px",
-        marginLeft: "50px"
+        marginLeft: "30px"
     };
 
     const selectStyle = {
@@ -500,7 +500,7 @@ function InnerModal(props) {
 
     const tittelButtonStyle = {
         marginTop: "20px",
-        marginLeft: "68px",
+        marginLeft: "48px",
         color: red
     };
 
@@ -521,7 +521,7 @@ function InnerModal(props) {
     }
 
     const gridStyle = {
-        marginLeft: "20px"
+        marginLeft: "50px"
     }
 
     return (
