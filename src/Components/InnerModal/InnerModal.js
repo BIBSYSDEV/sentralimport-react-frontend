@@ -484,7 +484,7 @@ function InnerModal(props) {
 
     const equalButtonStyle = {
         marginTop: "20px",
-        marginLeft: "50px"
+        marginLeft: "30px"
     };
 
     const selectStyle = {
@@ -500,7 +500,7 @@ function InnerModal(props) {
 
     const tittelButtonStyle = {
         marginTop: "20px",
-        marginLeft: "68px",
+        marginLeft: "48px",
         color: red
     };
 
@@ -516,23 +516,31 @@ function InnerModal(props) {
             padding: 0
     };
 
+    const cristinSelectStyle = {
+        width: "220px"
+    }
+
+    const gridStyle = {
+        marginLeft: "50px"
+    }
+
     return (
         <div>
             <Modal isOpen={props.open} size="lg" style={modalContent}>
                 <ModalHeader toggle={handleClose}>Import av publikasjon</ModalHeader>
                 <ModalBody>
-                    <Grid item
-                        container
-                        direction="row"
-                        justify="center"
-                        alignItems="center"
-                        xs
-                        sm
-                    >
-                        <Grid container item md={5} xs={12} alignContent="center" alignItems="center">
-                            <Form>
-                                <h3>Importpublikasjon</h3>
-                                <FormGroup>
+                        <Grid item container md={12} xs={12} direction="column" justify="center" alignItems="center" style={gridStyle}>
+                            
+                                <Grid container item justify="center" direction="row" xs={10}>
+                                    <Grid item xs>
+                                        <h3>Importpublikasjon</h3>
+                                    </Grid>
+                                    <Grid item xs>
+                                        <h3>Cristin-publikasjon</h3>
+                                    </Grid>
+                                </Grid>
+                                
+                                    <Grid item container justify="center" direction="row" xs={10}>
                                     <Grid item xs>
                                         <TextField
                                             id="import-id"
@@ -542,20 +550,40 @@ function InnerModal(props) {
                                             disabled
                                         />
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                                    <Grid item xs>
                                         <TextField
-                                            id="import-registrert"
-                                            label="Dato registrert"
-                                            value={props.data.registered}
+                                            id="Cristin-id"
+                                            label="Cristinid"
                                             margin="normal"
+                                            value={props.duplicate ? props.cristinpub.cristin_result_id : ""}
                                             disabled
                                         />
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                                    </Grid>
+                                
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="import-registrert"
+                                                label="Dato registrert"
+                                                value={props.data.registered}
+                                                margin="normal"
+                                                disabled
+                                            /> 
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="Cristin-opprettet"
+                                                label="Dato opprettet"
+                                                margin="normal"
+                                                value={props.duplicate ? props.cristinpub.created.date.substring(0, 10) : ""}
+                                                disabled
+                                            />
+                                        </Grid>
+                                    </Grid>
+                               
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <FormControl required={true}>
                                             <TextField
                                                 id="import-kilde"
@@ -565,10 +593,21 @@ function InnerModal(props) {
                                                 disabled
                                             />
                                         </FormControl>
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="Cristin-kilde"
+                                                label="Kilde"
+                                                value={kilde}
+                                                margin="normal"
+                                                required
+                                                disabled
+                                            />
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                               
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <FormControl required={true}>
                                             <TextField
                                                 id="import-kildeid"
@@ -578,10 +617,21 @@ function InnerModal(props) {
                                                 disabled
                                             />
                                         </FormControl>
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="Cristin-kildeid"
+                                                label="KildeId"
+                                                value={kildeId}
+                                                margin="normal"
+                                                required
+                                                disabled
+                                            />
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                                
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <TextField
                                             id="import-tidsskrift"
                                             label="Tidsskrift"
@@ -598,10 +648,32 @@ function InnerModal(props) {
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
+                                        </Grid>
+                                        <Grid item container xs direction="row">
+                                            <Grid item>
+                                            <FormLabel style={selectStyle} required> Tidsskrift </FormLabel>
+                                            <div style={cristinSelectStyle}>
+                                            <Select
+                                                aria-label="Tidsskrift-select"
+                                                placeholder="Søk på tidsskrift"
+                                                name="journalSelect"
+                                                options={journals}
+                                                value={selectedJournal}
+                                                className="basic-select"
+                                                classNamePrefix="select"
+                                                onChange={handleChangeJournal}
+                                                onInputChange={searchJournals}
+                                            />
+                                            </div>
+                                            </Grid>
+                                            <Grid item>
+                                                <CreateJournalPanel handleCreateJournal={handleNewJournal}/>
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                               
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <a href={"https://doi.org/" + props.data.doi} target="_blank" rel="noopener noreferrer">
                                             <TextField
                                                 id="import-doi"
@@ -620,11 +692,23 @@ function InnerModal(props) {
                                             <IconButton color="secondary" style={equalButtonStyle} onClick={copyDoi}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
-                                        )}
+                                        )} </Grid>
+                                        <Grid item xs>
+                                            <FormControl required>
+                                            <TextField
+                                                id="Cristin-doi"
+                                                label="Doi"
+                                                value={doi}
+                                                onChange={event => handleChangeDoi(event)}
+                                                margin="normal"
+                                                required
+                                            />
+                                        </FormControl>
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                                
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <TextField
                                             id="import-lang"
                                             label="Språk"
@@ -632,10 +716,23 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
+                                        </Grid>
+                                        <Grid item xs direction="column">
+                                            <Grid item>
+                                            <label style={labelStyle}>Språk</label>
+                                            </Grid>
+                                            <Grid item>
+                                            <ButtonGroup className={`buttonGroup`} variant="contained" size="small" aria-label="small contained button group">
+                                            {languages.map((lang, i) =>
+                                                <Button key={i} className={selectedLang === lang ? `selected` : ``} onClick={() => handleSelectedLang(lang)}>{lang.lang}</Button>
+                                            )}
+                                            </ButtonGroup>
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item container>
+                            
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <TextField
                                             aria-label="Import-tittel"
                                             id="Import-tittel"
@@ -656,10 +753,23 @@ function InnerModal(props) {
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="Cristin-tittel"
+                                                label="Tittel"
+                                                name="Tittel"
+                                                value={selectedLang.title}
+                                                onChange={event => handleChangeTittel(event)}
+                                                margin="normal"
+                                                required
+                                                multiline
+                                            />
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                                
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <TextField
                                             id="import-aarstall"
                                             label="Årstall"
@@ -682,10 +792,21 @@ function InnerModal(props) {
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="Cristin-aarstall"
+                                                label="Årstall"
+                                                value={aarstall}
+                                                onChange={handleChangeAarstall}
+                                                margin="normal"
+                                                required
+                                            />
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                             
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <TextField
                                             id="import-kategori"
                                             label="Kategori"
@@ -702,10 +823,26 @@ function InnerModal(props) {
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
+                                        </Grid>
+                                        <Grid item xs>
+                                            <FormLabel style={selectStyle} required> Kategori </FormLabel>
+                                            <div style={cristinSelectStyle}>
+                                            <Select
+                                                aria-label="Kategori"
+                                                placeholder="Søk på kategori"
+                                                name="categorySelect"
+                                                options={categories}
+                                                value={selectedCategory}
+                                                className="basic-select"
+                                                classNamePrefix="select"
+                                                onChange={handleChangeCategory}
+                                            />
+                                            </div>
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                                
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <TextField
                                             id="import-utgivelsesdata"
                                             label="Volum"
@@ -726,8 +863,19 @@ function InnerModal(props) {
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="Cristin-utgivelsesdata"
+                                                label="Volum"
+                                                value={publishingDetails ? publishingDetails.volume : ""}
+                                                margin="normal"
+                                                onChange={handleChangeVolume}
+                                            />
+                                        </Grid>
                                     </Grid>
-                                    <Grid item>
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <TextField
                                             id="import-hefte"
                                             label="Hefte"
@@ -747,9 +895,21 @@ function InnerModal(props) {
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="Cristin-hefte"
+                                                label="Hefte"
+                                                value={publishingDetails ? publishingDetails.issue : ""}
+                                                margin="normal"
+                                                onChange={handleChangeIssue}
+                                            />
+                                        </Grid>
                                     </Grid>
-                                    <Grid item container sm>
-                                        <div>
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item container xs>
+                                            <Grid item>
+                                            <div>
                                             <label style={labelStyle} htmlFor="pageFrom">Side fra</label>
                                             <label style={labelStyle} htmlFor="pageTo">Side til</label>
                                             <div>
@@ -767,6 +927,8 @@ function InnerModal(props) {
                                                 />
                                             </div>
                                         </div>
+                                        </Grid>
+                                        <Grid item>
                                         {props.data.hasOwnProperty("channel") && props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
@@ -775,144 +937,9 @@ function InnerModal(props) {
                                             <IconButton color="secondary" style={equalButtonStyle} onClick={copyPages}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
-                                        )}
-                                       
-                                    </Grid>
-                                </FormGroup>
-                            </Form>
-                        </Grid>
-                        <Grid container item md={4} sm={12}>
-                            <Form>
-                                <h3> Cristinpublikasjon </h3>
-                                <FormGroup>
-                                    <TextField
-                                        id="Cristin-id"
-                                        label="Cristinid"
-                                        margin="normal"
-                                        value={props.duplicate ? props.cristinpub.cristin_result_id : ""}
-                                        disabled
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <TextField
-                                        id="Cristin-opprettet"
-                                        label="Dato opprettet"
-                                        margin="normal"
-                                        value={props.duplicate ? props.cristinpub.created.date.substring(0, 10) : ""}
-                                        disabled
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <TextField
-                                        id="Cristin-kilde"
-                                        label="Kilde"
-                                        value={kilde}
-                                        margin="normal"
-                                        required
-                                        disabled
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <TextField
-                                        id="Cristin-kildeid"
-                                        label="KildeId"
-                                        value={kildeId}
-                                        margin="normal"
-                                        required
-                                        disabled
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <FormLabel style={selectStyle} required> Tidsskrift </FormLabel>
-                                    <Select
-                                    aria-label="Tidsskrift-select"
-                                        placeholder="Søk på tidsskrift"
-                                        name="journalSelect"
-                                        options={journals}
-                                        value={selectedJournal}
-                                        className="basic-select"
-                                        classNamePrefix="select"
-                                        onChange={handleChangeJournal}
-                                        onInputChange={searchJournals}
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <FormControl required>
-                                        <TextField
-                                            id="Cristin-doi"
-                                            label="Doi"
-                                            value={doi}
-                                            onChange={event => handleChangeDoi(event)}
-                                            margin="normal"
-                                            required
-                                        />
-                                    </FormControl>
-                                </FormGroup>
-                                <FormGroup>
-                                    <label style={labelStyle}>Språk</label>
-                                    <ButtonGroup className={`buttonGroup`} variant="contained" size="small" aria-label="small contained button group">
-                                    {languages.map((lang, i) =>
-                                        <Button key={i} className={selectedLang === lang ? `selected` : ``} onClick={() => handleSelectedLang(lang)}>{lang.lang}</Button>
-                                    )}
-                                    </ButtonGroup>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
-                                        <TextField
-                                            id="Cristin-tittel"
-                                            label="Tittel"
-                                            name="Tittel"
-                                            value={selectedLang.title}
-                                            onChange={event => handleChangeTittel(event)}
-                                            margin="normal"
-                                            required
-                                            multiline
-                                        />
-                                    </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <TextField
-                                        id="Cristin-aarstall"
-                                        label="Årstall"
-                                        value={aarstall}
-                                        onChange={handleChangeAarstall}
-                                        margin="normal"
-                                        required
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <FormLabel style={selectStyle} required> Kategori </FormLabel>
-                                    <Select
-                                        aria-label="Kategori"
-                                        placeholder="Søk på kategori"
-                                        name="categorySelect"
-                                        options={categories}
-                                        value={selectedCategory}
-                                        className="basic-select"
-                                        classNamePrefix="select"
-                                        onChange={handleChangeCategory}
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
-                                        <TextField
-                                            id="Cristin-utgivelsesdata"
-                                            label="Volum"
-                                            value={publishingDetails ? publishingDetails.volume : ""}
-                                            margin="normal"
-                                            onChange={handleChangeVolume}
-                                        />
-                                    </Grid>
-                                    <Grid item>
-                                        <TextField
-                                            id="Cristin-hefte"
-                                            label="Hefte"
-                                            value={publishingDetails ? publishingDetails.issue : ""}
-                                            margin="normal"
-                                            onChange={handleChangeIssue}
-                                        />
-                                    </Grid>
-                                    <Grid item>
+                                        )} </Grid>
+                                       </Grid>
+                                       <Grid item xs>
                                         <label style={labelStyle} htmlFor="pageFromCristin">Side fra</label>
                                         <label style={labelStyle} htmlFor="pageToCristin">Side til</label>
                                         <div>
@@ -929,14 +956,14 @@ function InnerModal(props) {
                                                 onChange={handleChangePageTo}
                                             />
                                         </div>
+                                       </Grid>
                                     </Grid>
-                                </FormGroup>                             
-                            </Form>
+                                
                         </Grid>
-                    </Grid> 
-                    <div className={"createJournalPanel"}> {/* TODO: Flytt CreateJournalPanel opp til tidsskrift. Overflow-y i forhold til grid/form? */}
+                     
+                    {/* <div className={"createJournalPanel"}> 
                     <CreateJournalPanel handleCreateJournal={handleNewJournal}/>
-                    </div>
+                                        </div> */}
                     <div>{state.formErrors.map((error, i) => { return(
                         <div key={i}>{error + "; "}</div>
                     )})}</div>
