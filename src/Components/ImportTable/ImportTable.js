@@ -182,7 +182,8 @@ const useStyles = makeStyles(theme => ({
     },
     paper: {
         width: "100%",
-        marginBottom: theme.spacing(2)
+        marginBottom: theme.spacing(2),
+        marginRight: "10px"
     },
     tableWrapper: {
         overflowX: "visible",
@@ -439,7 +440,7 @@ export default function EnhancedTable() {
                 <Paper className={classes.paper}>
                     <EnhancedTableToolbar/>
                     <div className={classes.tableWrapper}>
-                        <Table className={classes.table}>
+                        <Table className={classes.table} >
                             <EnhancedTableHead
                                 order={order}
                                 orderBy={orderBy}
