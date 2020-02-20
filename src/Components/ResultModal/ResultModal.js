@@ -90,10 +90,7 @@ export default function ResultModal(props) {
                   ? " " + props.data.channel.title + " "
                   : ""}
               </i>
-              {props.data.registered.substring(
-                props.data.registered.length - 4,
-                props.data.registered.length
-              ) + ";"}
+              {props.data.yearPublished + ";"}
               {props.data.hasOwnProperty("channel")
                 ? props.data.channel.volume + ";"
                 : ""}

@@ -112,7 +112,7 @@ export default function ConfirmationDialog(props) {
             original_language: temp.publication.languages.filter(l => l.original)[0].lang.toLowerCase(),
             title: title,
             pub_id: temp.publication.pubId,
-            year_published: temp.publication.registered,
+            year_published: temp.publication.yearPublished,
             import_sources: temp.publication.import_sources,
             volume: temp.publication.channel.volume,
             issue: temp.publication.channel.issue,

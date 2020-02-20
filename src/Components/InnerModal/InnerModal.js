@@ -122,12 +122,9 @@ function InnerModal(props) {
                 )
             );
 
-            setAarstall(workedOn ? temp.publication.registered :
+            setAarstall(workedOn ? temp.publication.yearPublished :
                 (props.duplicate ? state.selectedPublication.year_published :
-                    props.data.registered.substring(
-                        props.data.registered.length - 4,
-                        props.data.registered.length
-                    )));
+                    props.data.yearPublished));
 
             setDoi(workedOn ? temp.publication.doi :
                 (props.duplicate ? state.selectedPublication.links[state.selectedPublication.links.length - 1].url.substring(16, state.selectedPublication.links[0].url.length + 1) :
@@ -230,7 +227,8 @@ function InnerModal(props) {
                 doi: doi,
                 languages: languages,
                 pubId: props.data.pubId,
-                registered: aarstall,
+                registered: props.data.registered,
+                yearPublished: aarstall,
                 duplicate: props.duplicate,
                 import_sources: [
                     {
@@ -238,7 +236,6 @@ function InnerModal(props) {
                         source_reference_id: kildeId
                     }
                 ],
-                // authors: props.data.authors
             }
         };
         if (state.doSave)
@@ -320,20 +317,9 @@ function InnerModal(props) {
     }
 
     function copyAarstall() {
-        setAarstall(
-            props.data.registered.substring(
-                props.data.registered.length - 4,
-                props.data.registered.length
-            )
-        );
-        dispatch({type: "setSelectedField", payload: "aarstall"});
-        dispatch({
-            type: "setValidation",
-            payload: props.data.registered.substring(
-                props.data.registered.length - 4,
-                props.data.registered.length
-            )
-        });
+        setAarstall(props.data.yearPublished);
+        dispatch({ type: "setSelectedField", payload: "aarstall" });
+        dispatch({ type: "setValidation", payload: props.data.yearPublished });
     }
 
     function copyCategory() {
@@ -717,7 +703,7 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         </Grid>
-                                        <Grid item xs direction="column">
+                                        <Grid item xs container direction="column">
                                             <Grid item>
                                             <label style={labelStyle}>Språk</label>
                                             </Grid>
@@ -773,17 +759,11 @@ function InnerModal(props) {
                                         <TextField
                                             id="import-aarstall"
                                             label="Årstall"
-                                            value={props.data.registered.substring(
-                                                props.data.registered.length - 4,
-                                                props.data.registered.length
-                                            )}
+                                            value={props.data.yearPublished}
                                             margin="normal"
                                             disabled
                                         />
-                                        {aarstall === props.data.registered.substring(
-                                            props.data.registered.length - 4,
-                                            props.data.registered.length
-                                        ) ? (
+                                        {aarstall === props.data.yearPublished ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>

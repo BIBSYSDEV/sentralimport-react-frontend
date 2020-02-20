@@ -12,12 +12,12 @@ export function Duplicates(props) {
     let publication = props.publication;
     const relevantStatus = state.currentImportStatus !== "ikke aktuelle";
 
+    // TODO duplikater lastes inn feil nå
     useEffect(() => {
         async function fetch() {
             state.selected = "true";
             let searchString = "";
-            let dateLength = publication.registered.length;
-            let registered = parseInt(publication.registered.substr(dateLength - 4, dateLength));
+            let published = publication.yearPublished;
             if (publication.hasOwnProperty("doi")) {
                 console.log("DOI exists. Looking for duplicates");
                 searchString = "?doi=" + publication.doi;
@@ -32,9 +32,9 @@ export function Duplicates(props) {
                     "?title=" +
                     title +
                     "&published_since=" +
-                    (registered - 1) +
+                    (published - 1) +
                     "&published_before=" +
-                    registered;
+                    published;
 
                 if (publication.hasOwnProperty("channel") && publication.channel.hasOwnProperty("issns")) {
                     let issn = props.publication.channel.issns[0];
