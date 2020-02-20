@@ -34,12 +34,12 @@ export default function LogoHeader() {
             </Nav>
             <Navbar.Collapse>
                 <Nav className="mr-auto" />
+                <Nav>
+                    <Nav.Item className="header-title"> Sentralimport &nbsp; </Nav.Item>
+                </Nav>
                 <Nav style={style}>
                     {(localStorage.getItem("authorized") && localStorage.getItem("authorized") === "true") ? <Button onClick={handleLogout}>Logg ut</Button> :
                         <Button onClick={login}>Logg inn</Button>}
-                </Nav>
-                <Nav>
-                    <Nav.Item className="header-title">Sentralimport</Nav.Item>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>

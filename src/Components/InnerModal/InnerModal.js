@@ -32,7 +32,8 @@ import {makeStyles} from "@material-ui/styles";
 
 const useStyles = makeStyles({
     doi: {
-        cursor: 'pointer'
+        cursor: 'pointer',
+        color: "blue"
     }
 });
 
@@ -524,6 +525,11 @@ function InnerModal(props) {
         marginLeft: "50px"
     }
 
+    const linkStyle = {
+        color: "blue",
+        textDecoration: "underline"
+    }
+
     return (
         <div>
             <Modal isOpen={props.open} size="lg" style={modalContent}>
@@ -637,14 +643,15 @@ function InnerModal(props) {
                                             label="Tidsskrift"
                                             value={props.data.hasOwnProperty("channel") ? props.data.channel.title : ""}
                                             margin="normal"
+                                            multiline
                                             disabled
                                         />
                                         {props.data.hasOwnProperty("channel") && selectedJournal.value === (props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "") ? (
-                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
+                                            <IconButton color="primary" style={tittelButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyJournal}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyJournal}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -674,7 +681,7 @@ function InnerModal(props) {
                                
                                     <Grid item container justify="center" direction="row" xs={10}>
                                         <Grid item xs>
-                                        <a href={"https://doi.org/" + props.data.doi} target="_blank" rel="noopener noreferrer">
+                                        <a href={"https://doi.org/" + props.data.doi} target="_blank" rel="noopener noreferrer" style={linkStyle}>
                                             <TextField
                                                 id="import-doi"
                                                 label="Doi"
@@ -682,6 +689,7 @@ function InnerModal(props) {
                                                 margin="normal"
                                                 InputProps={{classes: { input: classes.doi} }}
                                                 disabled
+                                                style={linkStyle}
                                             />
                                         </a>
                                         {doi === props.data.doi ? (
@@ -930,11 +938,11 @@ function InnerModal(props) {
                                         </Grid>
                                         <Grid item>
                                         {props.data.hasOwnProperty("channel") && props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
-                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
+                                            <IconButton color="primary" style={tittelButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyPages}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyPages}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )} </Grid>

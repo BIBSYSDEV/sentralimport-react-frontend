@@ -24,10 +24,12 @@ export default function Pagination(props) {
 
   function decrementPage() {
     dispatch({ type: "setPageNr", payload: state.currentPageNr - 1 });
+    window.scrollTo(0, 0);
   }
 
   function incrementPage() {
     dispatch({ type: "setPageNr", payload: state.currentPageNr + 1 });
+    window.scrollTo(0, 0);
   }
 
   function changePage(option) {

@@ -425,7 +425,7 @@ function ContributorModal(props) {
                                 <TableCell style={{width: '40%'}}>
                                     <div className={`result contributor`}>
                                         <div className="image-wrapper person">
-                                            <img src={getMainImage()} alt="person"/>
+                                            <img src={getInactiveImage()} alt="person"/>
                                         </div>
                                         <div className="content-wrapper">
                                             <h6>
