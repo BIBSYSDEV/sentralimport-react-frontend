@@ -14,8 +14,8 @@ import {withSnackbar} from "notistack";
 import TrendingFlatIcon from "@material-ui/icons/TrendingFlat";
 import DragHandleIcon from "@material-ui/icons/DragHandle";
 import Select from "react-select";
-import ConfirmationDialog from "../ConfirmationDialog/ConfirmationDialog";
-import ClosingDialog from "../ClosingDialog/ClosingDialog";
+import ConfirmationDialog from "../Dialogs/ConfirmationDialog";
+import ClosingDialog from "../Dialogs/ClosingDialog";
 import Validation from "../Validation/Validation";
 import {Context} from "../../Context";
 import axios from "axios";
@@ -435,6 +435,10 @@ function InnerModal(props) {
         getJournals(searchString);
     }
 
+    function emptyArr() {
+        dispatch({ type: "setFormErrors", payload: [] });
+    }
+
     const handleNewJournal = (newJournal) => {
         setSelectedJournal({label: newJournal.title, value: 0, issn: newJournal.issn, eissn: newJournal.eissn });
        
@@ -518,11 +522,11 @@ function InnerModal(props) {
 
     const cristinSelectStyle = {
         width: "220px"
-    }
+    };
 
     const gridStyle = {
         marginLeft: "50px"
-    }
+    };
 
     return (
         <div>
@@ -971,18 +975,21 @@ function InnerModal(props) {
                 </ModalBody>
                 <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
                 <ModalFooter>
-                <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
-                <Button
-                    disabled={state.formErrors.length >= 1 || props.data.hasOwnProperty("cristin_id")}
-                    color="primary"
-                    onClick={handleSubmit}
-                    variant="contained"
-                >
-                Importer
-                </Button>
+                    <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
+                    <Button
+                        disabled={state.formErrors.length >= 1 || props.data.hasOwnProperty("cristin_id")}
+                        color="primary"
+                        onClick={handleSubmit}
+                        variant="contained"
+                    >
+                    Importer
+                    </Button>
                 </ModalFooter>
             </Modal>
             <ClosingDialog
+                doFunction={emptyArr}
+                title={"Avbryt import"}
+                text={"Er du sikker på at du vil lukke denne publikasjonen?"}
                 open={dialogAbortOpen}
                 handleClose={abortToggle}
                 handleCloseDialog={toggleAbortDialog}

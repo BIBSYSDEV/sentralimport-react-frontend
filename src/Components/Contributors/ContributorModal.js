@@ -19,12 +19,14 @@ import {properties} from "../../properties.js"
 import ContributorPagination from "../ContributorPagination/ContributorPagination";
 import Contributor from "./Contributor";
 import Skeleton from "@material-ui/lab/Skeleton";
+import ClosingDialog from "../Dialogs/ClosingDialog";
 
 function ContributorModal(props) {
     const {useRef, useLayoutEffect} = React;
     const [data, setData] = React.useState([]);
     const [searchResults, setSearchResults] = React.useState(null);
     const [fetched, setFetched] = React.useState(false);
+    const [dialog, setDialog] = React.useState(false);
 
     let {state, dispatch} = React.useContext(Context);
 
@@ -39,7 +41,7 @@ function ContributorModal(props) {
 
     useEffect(() => {
        
-    }, [state.contributorPage])
+    }, [state.contributorPage]);
 
     // const updatePersons = useRef(true);
     useLayoutEffect(() => {
@@ -282,6 +284,11 @@ function ContributorModal(props) {
         setData(temp);
     };
 
+    const toggle = rowIndex => {
+        dispatch({type: "param", payload: rowIndex});
+        setDialog(!dialog);
+    };
+
     const getMainImage = () => {
         return PersonIcon;
     };
@@ -324,7 +331,6 @@ function ContributorModal(props) {
 
     async function retrySearch(author, rowIndex) {
         let results = searchResults;
-        console.log(results);
         if (searchResults === null || searchResults.order !== rowIndex) {
             let authorName = author.hasOwnProperty("first_name")
                 ? author.first_name.substr(0, 1) + " " + author.surname
@@ -499,7 +505,15 @@ function ContributorModal(props) {
                                             updateData={updateContributor}
                                             isOpen={props.open}
                                             searchAgain={retrySearch}
-                                            deleteContributor={removeContributor}
+                                            deleteContributor={toggle}
+                                        />
+                                        <ClosingDialog
+                                            doFunction={removeContributor}
+                                            title={"Slett bidragsyter"}
+                                            text={"Er du sikker på at du vil slette denne bidragsyteren?"}
+                                            open={dialog}
+                                            handleClose={toggle}
+                                            handleCloseDialog={toggle}
                                         />
                                     </div>
                                 </TableCell>
