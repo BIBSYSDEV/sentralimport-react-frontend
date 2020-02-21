@@ -7,16 +7,10 @@ import {
   DialogContent,
   DialogContentText
 } from "@material-ui/core";
-import { Context } from "../../Context";
+import {Context} from "../../Context";
 
 export default function ClosingDialog(props) {
-  let { dispatch } = React.useContext(Context);
-
-  var emptyArray = [];
-
-  function emptyArr() {
-    dispatch({ type: "setFormErrors", payload: emptyArray });
-  }
+  let {state} = React.useContext(Context);
 
   return (
     <Dialog
@@ -25,11 +19,10 @@ export default function ClosingDialog(props) {
       disableBackdropClick
       disableEscapeKeyDown
     >
-      <DialogTitle>Avbryt import</DialogTitle>
+      <DialogTitle>{props.title}</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Er du sikker på at du vil lukke denne publikasjonen? <br />
-          (Ulagrede endringer vil bli tapt)
+          {props.text}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -39,7 +32,7 @@ export default function ClosingDialog(props) {
         <Button
           color="primary"
           onClick={() => {
-            emptyArr();
+            props.doFunction(state.param);
             props.handleClose();
           }}
         >

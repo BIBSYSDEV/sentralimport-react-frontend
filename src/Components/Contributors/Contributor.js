@@ -15,7 +15,7 @@ export default function Contributor(props) {
   useEffect(() => {
     setSelectedUnit("");
     setSetSelectedInstitution("");
-  }, [state.contributorPage])
+  }, [state.contributorPage]);
 
   const [data, setData] = React.useState(props.author);
 
@@ -30,7 +30,7 @@ export default function Contributor(props) {
 
   const unitStyle = {
     marginLeft: "0px"
-  }
+  };
 
   function updateEditing() {
     let temp = data;
@@ -79,30 +79,26 @@ export default function Contributor(props) {
 
   function checkForUnit() {
     let affiliationCopy = [...data.toBeCreated.affiliations];
-    var duplicate = 0;
+    let duplicate = 0;
     if(selectedUnit){
-    for(var i = 0; i < affiliationCopy.length; i++) {
-      if(affiliationCopy[i].hasOwnProperty("units")) {
-        for(var h = 0; h < affiliationCopy[i].units.length; h++) {
-          if(affiliationCopy[i].units[h].unitNr === selectedUnit.value) {
-            duplicate++;
+      for(let i = 0; i < affiliationCopy.length; i++) {
+        if(affiliationCopy[i].hasOwnProperty("units")) {
+          for(let h = 0; h < affiliationCopy[i].units.length; h++) {
+            if(affiliationCopy[i].units[h].unitNr === selectedUnit.value) {
+              duplicate++;
+            }
           }
         }
       }
-    }
 
-    if(duplicate > 0) {
-      return true;
-    } else {
-      return false;
+      return duplicate > 0;
     }
-  }
   }
 
   function addInstitution() {
     let affiliationCopy = [...data.toBeCreated.affiliations];
-    var duplicate = 0;
-    for(var i = 0; i < affiliationCopy.length; i++){
+    let duplicate = 0;
+    for(let i = 0; i < affiliationCopy.length; i++){
       if(affiliationCopy[i].institutionNr === selectedInstitution.institutionNr){
         duplicate++;
       }
