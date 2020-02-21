@@ -14,8 +14,8 @@ import {withSnackbar} from "notistack";
 import TrendingFlatIcon from "@material-ui/icons/TrendingFlat";
 import DragHandleIcon from "@material-ui/icons/DragHandle";
 import Select from "react-select";
-import ConfirmationDialog from "../ConfirmationDialog/ConfirmationDialog";
-import ClosingDialog from "../ClosingDialog/ClosingDialog";
+import ConfirmationDialog from "../Dialogs/ConfirmationDialog";
+import ClosingDialog from "../Dialogs/ClosingDialog";
 import Validation from "../Validation/Validation";
 import {Context} from "../../Context";
 import axios from "axios";
@@ -123,12 +123,9 @@ function InnerModal(props) {
                 )
             );
 
-            setAarstall(workedOn ? temp.publication.registered :
+            setAarstall(workedOn ? temp.publication.yearPublished :
                 (props.duplicate ? state.selectedPublication.year_published :
-                    props.data.registered.substring(
-                        props.data.registered.length - 4,
-                        props.data.registered.length
-                    )));
+                    props.data.yearPublished));
 
             setDoi(workedOn ? temp.publication.doi :
                 (props.duplicate ? state.selectedPublication.links[state.selectedPublication.links.length - 1].url.substring(16, state.selectedPublication.links[0].url.length + 1) :
@@ -231,7 +228,8 @@ function InnerModal(props) {
                 doi: doi,
                 languages: languages,
                 pubId: props.data.pubId,
-                registered: aarstall,
+                registered: props.data.registered,
+                yearPublished: aarstall,
                 duplicate: props.duplicate,
                 import_sources: [
                     {
@@ -239,7 +237,6 @@ function InnerModal(props) {
                         source_reference_id: kildeId
                     }
                 ],
-                // authors: props.data.authors
             }
         };
         if (state.doSave)
@@ -321,20 +318,9 @@ function InnerModal(props) {
     }
 
     function copyAarstall() {
-        setAarstall(
-            props.data.registered.substring(
-                props.data.registered.length - 4,
-                props.data.registered.length
-            )
-        );
-        dispatch({type: "setSelectedField", payload: "aarstall"});
-        dispatch({
-            type: "setValidation",
-            payload: props.data.registered.substring(
-                props.data.registered.length - 4,
-                props.data.registered.length
-            )
-        });
+        setAarstall(props.data.yearPublished);
+        dispatch({ type: "setSelectedField", payload: "aarstall" });
+        dispatch({ type: "setValidation", payload: props.data.yearPublished });
     }
 
     function copyCategory() {
@@ -436,6 +422,10 @@ function InnerModal(props) {
         getJournals(searchString);
     }
 
+    function emptyArr() {
+        dispatch({ type: "setFormErrors", payload: [] });
+    }
+
     const handleNewJournal = (newJournal) => {
         setSelectedJournal({label: newJournal.title, value: 0, issn: newJournal.issn, eissn: newJournal.eissn });
        
@@ -519,11 +509,11 @@ function InnerModal(props) {
 
     const cristinSelectStyle = {
         width: "220px"
-    }
+    };
 
     const gridStyle = {
         marginLeft: "50px"
-    }
+    };
 
     const linkStyle = {
         color: "blue",
@@ -725,7 +715,7 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         </Grid>
-                                        <Grid item xs direction="column">
+                                        <Grid item xs container direction="column">
                                             <Grid item>
                                             <label style={labelStyle}>Språk</label>
                                             </Grid>
@@ -781,17 +771,11 @@ function InnerModal(props) {
                                         <TextField
                                             id="import-aarstall"
                                             label="Årstall"
-                                            value={props.data.registered.substring(
-                                                props.data.registered.length - 4,
-                                                props.data.registered.length
-                                            )}
+                                            value={props.data.yearPublished}
                                             margin="normal"
                                             disabled
                                         />
-                                        {aarstall === props.data.registered.substring(
-                                            props.data.registered.length - 4,
-                                            props.data.registered.length
-                                        ) ? (
+                                        {aarstall === props.data.yearPublished ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -979,18 +963,21 @@ function InnerModal(props) {
                 </ModalBody>
                 <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
                 <ModalFooter>
-                <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
-                <Button
-                    disabled={state.formErrors.length >= 1 || props.data.hasOwnProperty("cristin_id")}
-                    color="primary"
-                    onClick={handleSubmit}
-                    variant="contained"
-                >
-                Importer
-                </Button>
+                    <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
+                    <Button
+                        disabled={state.formErrors.length >= 1 || props.data.hasOwnProperty("cristin_id")}
+                        color="primary"
+                        onClick={handleSubmit}
+                        variant="contained"
+                    >
+                    Importer
+                    </Button>
                 </ModalFooter>
             </Modal>
             <ClosingDialog
+                doFunction={emptyArr}
+                title={"Avbryt import"}
+                text={"Er du sikker på at du vil lukke denne publikasjonen?"}
                 open={dialogAbortOpen}
                 handleClose={abortToggle}
                 handleCloseDialog={toggleAbortDialog}
