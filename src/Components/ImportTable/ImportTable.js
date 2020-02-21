@@ -557,10 +557,7 @@ export default function EnhancedTable() {
                                                     ? row.channel.title + " "
                                                     : ""}
                                             </p>
-                                            {row.registered.substring(
-                                                row.registered.length - 4,
-                                                row.registered.length
-                                            ) + ";"}
+                                            {row.yearPublished + ";"}
                                             {row.hasOwnProperty("channel")
                                                 ? row.channel.volume + ";"
                                                 : ""}
