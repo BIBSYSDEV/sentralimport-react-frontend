@@ -366,17 +366,17 @@ function InnerModal(props) {
         setPublishingDetails({...publishingDetails, issue: props.data.channel.issue})
     }
 
-    function toggle(status) {
+    function toggle(result) {
         setDialogOpen(false);
         props.toggle();
-        if (status === 200) {
+        if (result.status === 200) {
             props.enqueueSnackbar(
-                "Importerte ny publikasjon med id: " + props.data.pubId,
+                "Importerte ny publikasjon med Cristin-id: " + result.result.id + " og tittel: " + result.result.title,
                 {
                     variant: "success"
                 }
             );
-        } else if (status === 401 || status === 403){
+        } else if (result.status === 401 || result.status === 403){
             props.enqueueSnackbar(
                 "Din sesjon har gått ut. Vennligst logg inn på nytt",
                 {
@@ -385,7 +385,7 @@ function InnerModal(props) {
             );
         } else {
             props.enqueueSnackbar(
-                "Noe gikk galt med import av publikasjon med id: " + props.data.pubId +  ". Dine endringer er fortsatt lagret i browseren. Vennligst prøv på nytt.",
+                "Noe gikk galt med import av publikasjon med pub-id: " + props.data.pubId +  ". Dine endringer er fortsatt lagret i browseren. Vennligst prøv på nytt.",
                 {
                     variant: "error"
                 }
