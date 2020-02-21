@@ -70,7 +70,7 @@ export default function InstitutionCountrySelect(props) {
     function handleInput(event) {
         console.log(event);
         setInputValue(event);
-    };
+    }
 
     async function getInstitutions() {
         if (state.institutions === null) {
@@ -97,7 +97,7 @@ export default function InstitutionCountrySelect(props) {
     async function getUnits() {
       
         if(props.institution.institutionNr) {
-            let temp = await axios.get(properties.crisrest_gatekeeper_url + "/units?parent_unit_id=" + props.institution.institutionNr + ".0.0.0&per_page=900", JSON.parse(localStorage.getItem("config")));
+            let temp = await axios.get(properties.crisrest_gatekeeper_url + "/units?parent_unit_id=" + props.institution.institutionNr + ".0.0.0&per_page=900&lang=nb", JSON.parse(localStorage.getItem("config")));
             console.log(temp);
             let units = [];
             for (let i = 0; i < temp.data.length; i++) {

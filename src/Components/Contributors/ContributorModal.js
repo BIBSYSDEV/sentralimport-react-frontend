@@ -170,7 +170,6 @@ function ContributorModal(props) {
     }
 
     function handleOrder(author, up) {
-        console.log("order changed");
         let copy = [...data];
         let index = author.toBeCreated.order - 1;
         let movedToOrder;
@@ -391,7 +390,6 @@ function ContributorModal(props) {
 
 
             setSearchResults({ ...results, current: current + 1, order: results.order });
-            // setData(temp);
         } else {
             let temp = [...data];
 
