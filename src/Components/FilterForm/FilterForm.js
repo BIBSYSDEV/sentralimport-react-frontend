@@ -78,7 +78,12 @@ export default function FilterForm() {
   }
 
   function handleChange(option) {
+    if(option !== null){
     dispatch({ type: "setInstitution", payload: option });
+    } else {
+      var tempOption = {value: null, label: "Ingen filtrering"}
+      dispatch({ type: "setInstitution", payload: tempOption });
+    }
   }
 
   return (

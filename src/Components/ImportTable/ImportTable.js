@@ -192,7 +192,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const monsterPostStyle = {
-    fontWeight: "bolder"
+    fontWeight: "bolder",
+    color: "#e30000"
 }
 
 export default function EnhancedTable() {
@@ -550,7 +551,7 @@ export default function EnhancedTable() {
                                                 .slice(0, 5)
                                                 .map(author => author.authorName + "; ")}
                                             {row.authors.length > 5 ? " et al " : ""}
-                                            { row.authors.length > 500 ? <div style={monsterPostStyle}> ({row.authors.length}) Stort antall bidragsytere </div> :" (" + row.authors.length + ") "}
+                                            { row.authors.length > 100 ? <div style={monsterPostStyle}> ({row.authors.length}) Stort antall bidragsytere </div> :" (" + row.authors.length + ") "}
                                             <p className={`journal-name`}>
                                                 {row.hasOwnProperty("channel") &&
                                                 row.channel.hasOwnProperty("title")
