@@ -485,8 +485,8 @@ function InnerModal(props) {
         let tempMonth = months[newDate.getMonth()];
 
         let formattedDate = tempMonth + " " + tempDay + ", " + tempYear;
+        
         return formattedDate;
-
     }
 
     const equalButtonStyle = {
