@@ -37,7 +37,14 @@ export default function ConfirmationDialog(props) {
             return {result: null, status: e.response.status};
         }
         let title = publication.title.hasOwnProperty("nb") ? publication.title.nb : publication.title.en;
-        title = title.length > 14 ? title.substr(0, 15) : title;
+        title = title.length > 50 ? title.substr(0, 49) : title;
+        let log = JSON.parse(localStorage.getItem("log"));
+        if (log === null)
+            log = [];
+        else if (log.length > 15)
+            log.shift();
+        log.push({id: id, title: title});
+        localStorage.setItem("log", JSON.stringify(log));
         return {result: {id: id, title: title}, status: 200};
     }
 
