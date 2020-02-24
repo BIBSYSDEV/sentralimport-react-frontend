@@ -473,6 +473,22 @@ function InnerModal(props) {
         setJournals(tempArray);
     }
 
+    function formatDate(dateString) {
+        let newDate = new Date(dateString);
+        let tempDay = newDate.getDate();
+        let tempYear = newDate.getFullYear();
+        
+        let months = [
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+
+        let tempMonth = months[newDate.getMonth()];
+
+        let formattedDate = tempMonth + " " + tempDay + ", " + tempYear;
+        
+        return formattedDate;
+    }
+
     const equalButtonStyle = {
         marginTop: "20px",
         marginLeft: "30px"
@@ -572,7 +588,7 @@ function InnerModal(props) {
                                                 id="Cristin-opprettet"
                                                 label="Dato opprettet"
                                                 margin="normal"
-                                                value={props.duplicate ? props.cristinpub.created.date.substring(0, 10) : ""}
+                                                value={props.duplicate ? formatDate(props.cristinpub.created.date.substring(0, 10)) : ""}
                                                 disabled
                                             />
                                         </Grid>
