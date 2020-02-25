@@ -233,6 +233,7 @@ export default function EnhancedTable() {
 
     useEffect(() => {
         getRows();
+        window.scroll({ top: 0, left: 0, behavior: 'smooth' });
     }, [
         state.currentImportYear,
         state.isSampublikasjon,
@@ -241,7 +242,8 @@ export default function EnhancedTable() {
         state.currentPerPage,
         state.currentPageNr,
         state.currentSortOrder,
-        state.currentSortValue
+        state.currentSortValue,
+        state.doiFilter
     ]);
 
     useEffect(() => {
@@ -252,6 +254,10 @@ export default function EnhancedTable() {
         let fetchString =
             properties.piarest_gatekeeper_url + "/sentralimport/publications?year_published=" +
             state.currentImportYear.value;
+
+        if (state.doiFilter !== null) {
+            fetchString += "&doi=" + state.doiFilter
+        }
 
         if (
             state.currentInstitution.value === null ||
@@ -615,7 +621,7 @@ export default function EnhancedTable() {
                 );
             });
 
-        return (
+        return rows.length > 0 ? (
             <div>
                 {createTable(body)}
                 <ResultModal
@@ -630,6 +636,21 @@ export default function EnhancedTable() {
                     handleClose={handleCloseList}
                 />
             </div>
-        );
+        ) : <div>
+                <p>
+                    Fant ingen publikasjoner med følgende filter:
+                </p>
+                <p>
+                    År -
+                    {state.currentImportYear.value}
+                </p>
+                <p>
+                    Importstatus -
+                    {state.currentImportStatus === "true" ? " Importert" : state.currentImportStatus === "false" ? " Ikke importert" : " Ikke aktuelle"}
+                </p>
+                    {state.isSampublikasjon ? <p>Sampublikasjon - Ja</p> : ""}
+                    {state.currentInstitution.value !== null ? <p>Institusjon - {state.currentInstitution.label}</p> : ""}
+                    {state.doiFilter !== null ? <p>Doi - {state.doiFilter}</p> : ""}
+            </div>;
     }
 }

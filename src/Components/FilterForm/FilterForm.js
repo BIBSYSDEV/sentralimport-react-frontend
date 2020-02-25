@@ -12,12 +12,14 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
-  Checkbox
+  Checkbox, TextField
 } from "@material-ui/core";
 import { Context } from "../../Context";
 import DownloadIcon from "./download-green.png";
 import ExportIcon from "./export-purple.png";
 import X2Icon from "./x2-red.png";
+import ClearIcon from "@material-ui/icons/Clear";
+import { IconButton } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -54,6 +56,7 @@ export default function FilterForm() {
   const classes = useStyles();
 
   let { state, dispatch } = React.useContext(Context);
+  const [doi, setDoi] = React.useState("");
 
   const imgStyle = {
     height: "22px",
@@ -79,11 +82,23 @@ export default function FilterForm() {
 
   function handleChange(option) {
     if(option !== null){
-    dispatch({ type: "setInstitution", payload: option });
+      dispatch({ type: "setInstitution", payload: option });
     } else {
       var tempOption = {value: null, label: "Ingen filtrering"}
       dispatch({ type: "setInstitution", payload: tempOption });
     }
+  }
+
+  function handleDoiChange(event) {
+    if (event === null || event.target.value === "") {
+      setDoi("");
+      dispatch({ type: "doiFilter", payload: null });
+      return;
+    }
+    else if (event.target.value.match(/^([0-9]{2})[.]([0-9]{4,5})[/]([a-z0-9-.]{1,})/i)) {
+      dispatch({ type: "doiFilter", payload: event.target.value });
+    }
+    setDoi(event.target.value);
   }
 
   return (
@@ -142,6 +157,27 @@ export default function FilterForm() {
             label="Sampublikasjoner"
           />
           <InstitutionSelect onChange={handleChange} />
+        </div>
+        <hr />
+        <CardHeader title="DOI" />
+        <hr />
+        <div>
+          <TextField
+              id="doiFilter"
+              label="Søk på doi"
+              fullWidth
+              clearable
+              onChange={handleDoiChange}
+              value={doi}
+              shrink={true}
+              InputProps={{
+                endAdornment: (
+                    <IconButton onClick={() => handleDoiChange(null)}>
+                      <ClearIcon />
+                    </IconButton>
+                )
+              }}
+          />
         </div>
       </CardContent>
     </Card>

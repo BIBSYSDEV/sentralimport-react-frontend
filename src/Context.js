@@ -30,7 +30,8 @@ let initialState = {
     institutions: null,
     doSave: false,
     allChecked: false,
-    param: null
+    param: null,
+    doiFilter: null
 };
 
 let reducer = (state, action) => {
@@ -79,6 +80,8 @@ let reducer = (state, action) => {
             return {...state, allChecked: action.payload};
         case "param":
             return {...state, param: action.payload};
+        case "doiFilter":
+            return {...state, doiFilter: action.payload};
         default:
             return state;
     }
