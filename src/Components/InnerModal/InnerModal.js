@@ -2,14 +2,12 @@ import React, {useEffect} from "react";
 import {Modal, ModalBody, ModalHeader, ModalFooter} from "reactstrap";
 import {
     TextField,
-    FormGroup,
     Button,
     Grid,
     FormControl,
     IconButton,
     FormLabel
 } from "@material-ui/core";
-import {Form} from "reactstrap";
 import {withSnackbar} from "notistack";
 import TrendingFlatIcon from "@material-ui/icons/TrendingFlat";
 import DragHandleIcon from "@material-ui/icons/DragHandle";
@@ -141,7 +139,13 @@ function InnerModal(props) {
                         issue: state.selectedPublication.hasOwnProperty("issue") ? state.selectedPublication.issue : ""
                     }
                     :
-                        props.data.channel
+                    {
+                        ...props.data.channel,
+                        volume: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume")) ? props.data.channel.volume : "",
+                        pageFrom: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pages")) ? props.data.channel.pages.from : "",
+                        pageTo: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pages")) ? props.data.channel.pages.to : "",
+                        issue: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("issue")) ? props.data.channel.issue : ""
+                    }
                 )
             );
         }
