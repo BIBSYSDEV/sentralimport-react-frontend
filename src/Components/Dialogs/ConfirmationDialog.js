@@ -20,8 +20,9 @@ export default function ConfirmationDialog(props) {
 
     async function post() {
         let publication = createPublicationObject();
+        let id = 0;
         try {
-            let id = await postPublication(publication);
+            id = await postPublication(publication);
             await putContributors(id);
             await patchPiaPublication(id, publication.pub_id);
             dispatch({type: "setFormErrors", payload: []});
@@ -33,9 +34,18 @@ export default function ConfirmationDialog(props) {
             } else {
                 history.push("/error");
             }
-            return e.response.status;
+            return {result: null, status: e.response.status};
         }
-        return 200;
+        let title = publication.title.hasOwnProperty("nb") ? publication.title.nb : publication.title.en;
+        title = title.length > 50 ? title.substr(0, 49) : title;
+        let log = JSON.parse(localStorage.getItem("log"));
+        if (log === null)
+            log = [];
+        else if (log.length > 15)
+            log.shift();
+        log.push({id: id, title: title});
+        localStorage.setItem("log", JSON.stringify(log));
+        return {result: {id: id, title: title}, status: 200};
     }
 
     async function patch() {
@@ -52,9 +62,10 @@ export default function ConfirmationDialog(props) {
             } else {
                 history.push("/error");
             }
-            return e.response.status;
+            return {result: null, status: e.response.status};
         }
-        return 200;
+        let title = publication.title.length > 14 ? publication.title.substr(0, 15) : publication.title;
+        return {result: {id: publication.id, title: title}, status: 200};
     }
 
     async function postPublication(publication) {

@@ -14,7 +14,6 @@ import {Context} from "../../Context";
 import IconButton from "@material-ui/core/IconButton";
 import PeopleIcon from "@material-ui/icons/People";
 import ResultModal from "../ResultModal/ResultModal";
-import AuthorListModal from "../AuthorListModal/AuthorListModal";
 import Pagination from "../Pagination/Pagination";
 import "../../assets/styles/Results.scss";
 import "../../assets/styles/Imports.css";
@@ -23,6 +22,7 @@ import {useHistory} from "react-router-dom";
 import {properties} from "../../properties";
 import Skeleton from '@material-ui/lab/Skeleton';
 import Checkbox from '@material-ui/core/Checkbox';
+import ListModal from "../ListModal/ListModal";
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -441,6 +441,15 @@ export default function EnhancedTable() {
         setChecked(temp);
     }
 
+    function createAuthorRows() {
+        return authorData === undefined ? <div>Ingen forfattere funnet</div> : (
+            <div style={{overflow: 'auto', height: authorData.authors.length < 5 ? authorData.authors.length * 70 : 350}}>
+                {authorData.authors.map((author, i) => (<div style={{padding: '5px'}} key={i}><b>{author.sequenceNr + ". " + author.authorName}</b><br />
+                    {author.institutions.map((inst, j) => (<p style={{margin: 0}} key={j}><i>{inst.unitName}</i></p>))}</div>))}
+            </div>
+        );
+    }
+
     function createTable(body) {
         return (
             <div className={classes.root}>
@@ -543,79 +552,65 @@ export default function EnhancedTable() {
                         </TableCell>
 
                         <TableCell>
-                            {!fetched ? <Skeleton variant="rect" width='auto' height={118}/> : (
-                                <div>
-                                    <div className="image-wrapper">
-                                        <img src={getMainImage("result")} alt="result"/>
-                                    </div>
-                                    <div className="content-wrapper">
-                                        <h6 className={`result-title`}>
-                                            {row.languages.filter(l => l.original)[0].title}
-                                        </h6>
-                                        <div className={`metadata`}>
-                                            {row.authors
-                                                .slice(0, 5)
-                                                .map(author => author.authorName + "; ")}
-                                            {row.authors.length > 5 ? " et al " : ""}
-                                            { row.authors.length > 100 ? <div style={monsterPostStyle}> ({row.authors.length}) Stort antall bidragsytere </div> :" (" + row.authors.length + ") "}
-                                            <p className={`journal-name`}>
-                                                {row.hasOwnProperty("channel") &&
-                                                row.channel.hasOwnProperty("title")
-                                                    ? row.channel.title + " "
-                                                    : ""}
-                                            </p>
-                                            {row.yearPublished + ";"}
-                                            {row.hasOwnProperty("channel")
-                                                ? row.channel.volume + ";"
-                                                : ""}
+                            <div>
+                                <div className="image-wrapper">
+                                    <img src={getMainImage("result")} alt="result"/>
+                                </div>
+                                <div className="content-wrapper">
+                                    <h6 className={`result-title`}>
+                                        {row.languages.filter(l => l.original)[0].title}
+                                    </h6>
+                                    <div className={`metadata`}>
+                                        {row.authors
+                                            .slice(0, 5)
+                                            .map(author => author.authorName + "; ")}
+                                        {row.authors.length > 5 ? " et al " : ""}
+                                        { row.authors.length > 100 ? <div style={monsterPostStyle}> ({row.authors.length}) Stort antall bidragsytere </div> :" (" + row.authors.length + ") "}
+                                        <p className={`journal-name`}>
                                             {row.hasOwnProperty("channel") &&
-                                            row.channel.hasOwnProperty("pageFrom")
-                                                ? row.channel.pageFrom + "-"
+                                            row.channel.hasOwnProperty("title")
+                                                ? row.channel.title + " "
                                                 : ""}
-                                            {row.hasOwnProperty("channel") && row.channel.hasOwnProperty("pageTo")
-                                                ? row.channel.pageTo
-                                                : ""}
-                                            {row.hasOwnProperty("doi") ? " doi:" + row.doi : ""}
-                                        </div>
+                                        </p>
+                                        {row.yearPublished + ";"}
+                                        {row.hasOwnProperty("channel")
+                                            ? row.channel.volume + ";"
+                                            : ""}
+                                        {row.hasOwnProperty("channel") &&
+                                        row.channel.hasOwnProperty("pageFrom")
+                                            ? row.channel.pageFrom + "-"
+                                            : ""}
+                                        {row.hasOwnProperty("channel") && row.channel.hasOwnProperty("pageTo")
+                                            ? row.channel.pageTo
+                                            : ""}
+                                        {row.hasOwnProperty("doi") ? " doi:" + row.doi : ""}
                                     </div>
                                 </div>
-                            )}
+                            </div>
                         </TableCell>
                         <TableCell align="right">
-                            {
-                                !fetched ? <Skeleton variant="rect" width='auto' height={10}/> :
-                                    <div>{row.categoryName}</div>
-                            }
+                            <div>{row.categoryName}</div>
+                        </TableCell>
+                        <TableCell align="right">{row.sourceName}</TableCell>
+                        <TableCell align="right">{row.registered}</TableCell>
+                        <TableCell align="right">
+                            {handleOwnerInstitutions(row)}
                         </TableCell>
                         <TableCell align="right">
-                            {!fetched ? <Skeleton variant="rect" width='auto'
-                                                  height={10}/> : row.sourceName}</TableCell>
-                        <TableCell align="right">{!fetched ?
-                            <Skeleton variant="rect" width='auto'
-                                      height={10}/> : row.registered}</TableCell>
-                        <TableCell align="right">
-                            {!fetched ? <Skeleton variant="rect" width='auto'
-                                                  height={10}/> : handleOwnerInstitutions(row)}
-                        </TableCell>
-                        <TableCell align="right">
-                            {!fetched ? <Skeleton variant="rect" height={40} width={40}
-                                                  style={{float: "right"}}/> :
-                                <IconButton
-                                    onClick={e => {
-                                        handleAuthorClick(e, row);
-                                        e.stopPropagation();
-                                    }}
-                                    onKeyDown={e => {
-                                        handleAuthorPress(e, row);
-                                        e.stopPropagation();
-                                    }}
-                                    alt="Forfatterliste"
-
-                                >
-                                    <div hidden={true}> Forfatterliste</div>
-                                    <PeopleIcon/>
-                                </IconButton>
-                            }
+                            <IconButton
+                                onClick={e => {
+                                    handleAuthorClick(e, row);
+                                    e.stopPropagation();
+                                }}
+                                onKeyDown={e => {
+                                    handleAuthorPress(e, row);
+                                    e.stopPropagation();
+                                }}
+                                alt="Forfatterliste"
+                            >
+                                <div hidden={true}> Forfatterliste</div>
+                                <PeopleIcon/>
+                            </IconButton>
                         </TableCell>
                     </TableRow>
                 );
@@ -630,9 +625,10 @@ export default function EnhancedTable() {
                     handleClose={handleClose.bind(this)}
                     removeFromList={removeFromList.bind(this)}
                 />
-                <AuthorListModal
+                <ListModal
+                    title={"Forfatterliste"}
                     open={authorList}
-                    data={authorData}
+                    body={createAuthorRows()}
                     handleClose={handleCloseList}
                 />
             </div>

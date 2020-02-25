@@ -10,6 +10,7 @@ import { Box } from "@material-ui/core";
 import "./assets/styles/buttons.scss";
 import {useHistory} from "react-router-dom";
 import Login from "./Components/Login/Login";
+import Log from "./Components/Log/Log"
 
 export default function App() {
     let history = useHistory();
@@ -36,6 +37,7 @@ export default function App() {
       <Grid container spacing={3}>
         <Grid item xs={12} md={3}>
           <FilterForm />
+          <Log />
         </Grid>
         <Grid item xs={12} md={9}>
           <ImportTable />
