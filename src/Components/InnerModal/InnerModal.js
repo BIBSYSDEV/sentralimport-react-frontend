@@ -258,6 +258,8 @@ function InnerModal(props) {
         setSelectedLang({...selectedLang, title: event.target.value});
         languages[index].title = event.target.value;
         setLanguages(languages);
+        dispatch({type: "setSelectedField", payload: "tittel"});
+        dispatch({type: "setValidation", payload: event.target.value});
     }
 
     function handleChangeAarstall(event) {
@@ -322,6 +324,7 @@ function InnerModal(props) {
     }
 
     function copyAarstall() {
+        console.log(props.data.yearPublished);
         setAarstall(props.data.yearPublished);
         dispatch({ type: "setSelectedField", payload: "aarstall" });
         dispatch({ type: "setValidation", payload: props.data.yearPublished });
@@ -720,6 +723,9 @@ function InnerModal(props) {
                                                 onChange={event => handleChangeDoi(event)}
                                                 margin="normal"
                                                 required
+                                                error={!doi.match(
+                                                    /^([0-9]{2})[.]([0-9]{4,5})[/]([\w-.]{1,})/i
+                                                  )}
                                             />
                                         </FormControl>
                                         </Grid>
@@ -782,6 +788,7 @@ function InnerModal(props) {
                                                 margin="normal"
                                                 required
                                                 multiline
+                                                error={selectedLang.title.length < 6}
                                             />
                                         </Grid>
                                     </Grid>
@@ -813,6 +820,7 @@ function InnerModal(props) {
                                                 onChange={handleChangeAarstall}
                                                 margin="normal"
                                                 required
+                                                error={aarstall.toString().length !== 4 || !(parseInt(aarstall) <= (new Date().getFullYear()))}
                                             />
                                         </Grid>
                                     </Grid>
