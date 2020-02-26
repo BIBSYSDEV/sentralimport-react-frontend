@@ -324,7 +324,6 @@ function InnerModal(props) {
     }
 
     function copyAarstall() {
-        console.log(props.data.yearPublished);
         setAarstall(props.data.yearPublished);
         dispatch({ type: "setSelectedField", payload: "aarstall" });
         dispatch({ type: "setValidation", payload: props.data.yearPublished });
