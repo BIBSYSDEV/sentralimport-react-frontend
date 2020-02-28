@@ -258,6 +258,8 @@ function InnerModal(props) {
         setSelectedLang({...selectedLang, title: event.target.value});
         languages[index].title = event.target.value;
         setLanguages(languages);
+        dispatch({type: "setSelectedField", payload: "tittel"});
+        dispatch({type: "setValidation", payload: event.target.value});
     }
 
     function handleChangeAarstall(event) {
@@ -720,6 +722,12 @@ function InnerModal(props) {
                                                 onChange={event => handleChangeDoi(event)}
                                                 margin="normal"
                                                 required
+                                                error={!doi.match(
+                                                    /^([0-9]{2})[.]([0-9]{4,5})[/]([\w-.]{1,})/i
+                                                  )}
+                                                helperText={!doi.match(
+                                                    /^([0-9]{2})[.]([0-9]{4,5})[/]([\w-.]{1,})/i
+                                                  ) ? "Doi har galt format" : ""}
                                             />
                                         </FormControl>
                                         </Grid>
@@ -782,6 +790,8 @@ function InnerModal(props) {
                                                 margin="normal"
                                                 required
                                                 multiline
+                                                error={selectedLang.title.length < 6}
+                                                helperText={selectedLang.title.length < 6 ? "Tittel er for kort/mangler" : ""}
                                             />
                                         </Grid>
                                     </Grid>
@@ -813,6 +823,8 @@ function InnerModal(props) {
                                                 onChange={handleChangeAarstall}
                                                 margin="normal"
                                                 required
+                                                error={aarstall.toString().length !== 4 || !(parseInt(aarstall) <= (new Date().getFullYear()))}
+                                                helperText={(aarstall.toString().length !== 4 || !(parseInt(aarstall) <= (new Date().getFullYear()))) ? "Årstall er over grensen/galt" : ""}
                                             />
                                         </Grid>
                                     </Grid>
@@ -972,13 +984,7 @@ function InnerModal(props) {
                                     </Grid>
                                 
                         </Grid>
-                     
-                    {/* <div className={"createJournalPanel"}> 
-                    <CreateJournalPanel handleCreateJournal={handleNewJournal}/>
-                                        </div> */}
-                    <div>{state.formErrors.map((error, i) => { return(
-                        <div key={i}>{error + "; "}</div>
-                    )})}</div>
+                    
                      <Button className={`contributorButton`} onClick={openContributorModal} variant="contained">Bidragsytere</Button>
                 </ModalBody>
                 <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
