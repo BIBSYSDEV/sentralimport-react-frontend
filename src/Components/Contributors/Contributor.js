@@ -209,7 +209,7 @@ export default function Contributor(props) {
               {data.toBeCreated.affiliations.map((inst, j) => (
                 <div key={j}>
                 <p className={`italic`} key={j}>
-                  {inst.institutionName}
+                  {inst.hasOwnProperty("unitName") ? inst.unitName : inst.institutionName}
                   <Button
                     size="small"
                     color="primary"
@@ -273,7 +273,7 @@ export default function Contributor(props) {
             {data.toBeCreated.affiliations.map((inst, j) => (
               <div key={j}>
               <p className={`italic`} key={j}>
-                {inst.institutionName}
+                {inst.hasOwnProperty("unitName") ? inst.unitName : inst.institutionName}
               </p>
               { inst.hasOwnProperty("units") ? inst.units.map((unit, g) => <p className={'italic'} style={unitStyle} key={g}> &bull; {unit.unitName} </p>) : ""}
               </div>
