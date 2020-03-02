@@ -334,10 +334,15 @@ function ContributorModal(props) {
             let authorName = author.hasOwnProperty("first_name")
                 ? author.first_name.substr(0, 1) + " " + author.surname
                 : author.authorName;
-            let institution = author.affiliations[0].hasOwnProperty("acronym")
-                ? author.affiliations[0].acronym
-                : author.affiliations[0].institutionName;
-            institution = institution.replace("&", " ");
+            let institution = "";
+            if(author.affiliations[0].hasOwnProperty("acronym") || author.affiliations[0].hasOwnProperty("institutionName")){
+                institution = author.affiliations[0].hasOwnProperty("acronym")
+                    ? author.affiliations[0].acronym
+                    : author.affiliations[0].institutionName;
+                institution = institution.replace("&", " ");
+            } else {
+                institution = "";
+            }
             let searchedAuthors = await axios.get(
                 properties.crisrest_gatekeeper_url + "/persons?name=" +
                 authorName +
