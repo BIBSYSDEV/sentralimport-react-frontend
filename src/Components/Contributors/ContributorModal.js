@@ -340,8 +340,6 @@ function ContributorModal(props) {
                     ? author.affiliations[0].acronym
                     : author.affiliations[0].institutionName;
                 institution = institution.replace("&", " ");
-            } else {
-                institution = "";
             }
             let searchedAuthors = await axios.get(
                 properties.crisrest_gatekeeper_url + "/persons?name=" +
