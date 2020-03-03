@@ -494,6 +494,19 @@ function InnerModal(props) {
         return formattedDate;
     }
 
+    function parseData(data) {
+        let tempString;
+        console.log(data);
+
+        if(data !== undefined) {
+            tempString = data.toString();
+        } else {
+            tempString = "";
+        }
+        
+        return tempString;
+    }
+
     const equalButtonStyle = {
         marginTop: "20px",
         marginLeft: "30px"
@@ -872,12 +885,12 @@ function InnerModal(props) {
                                             value={
                                                 (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume")) ?
                                                     props.data.channel.volume :
-                                                    "Ingen utgivelsesdata funnet"
+                                                    ""
                                             }
                                             margin="normal"
                                             disabled
                                         />
-                                        {props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume") && props.data.channel.volume === publishingDetails.volume ? (
+                                        {props.data.hasOwnProperty("channel") && parseData(props.data.channel.volume) === parseData(publishingDetails.volume) ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -909,7 +922,7 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {props.data.hasOwnProperty("channel") && props.data.channel.issue === publishingDetails.issue ? (
+                                        {props.data.hasOwnProperty("channel") && parseData(props.data.channel.issue) === parseData(publishingDetails.issue) ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
@@ -953,7 +966,7 @@ function InnerModal(props) {
                                         </Grid>
                                         <Grid item>
                                             
-                                        {props.data.hasOwnProperty("channel") && props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
+                                        {props.data.hasOwnProperty("channel") && parseData(props.data.channel.pageFrom) === parseData(publishingDetails.pageFrom) && parseData(props.data.channel.pageTo) === parseData(publishingDetails.pageTo) ? (
                                             <IconButton color="primary" style={tittelButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
