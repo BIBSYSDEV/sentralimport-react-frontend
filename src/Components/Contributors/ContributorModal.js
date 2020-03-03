@@ -339,8 +339,8 @@ function ContributorModal(props) {
                 institution = author.affiliations[0].hasOwnProperty("acronym")
                     ? author.affiliations[0].acronym
                     : author.affiliations[0].institutionName;
-                institution = institution.replace("&", " ");
             }
+            institution = institution.replace("&", " ");
             let searchedAuthors = await axios.get(
                 properties.crisrest_gatekeeper_url + "/persons?name=" +
                 authorName +
