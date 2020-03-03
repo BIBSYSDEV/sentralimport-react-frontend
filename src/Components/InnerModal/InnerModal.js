@@ -149,9 +149,7 @@ function InnerModal(props) {
                 )
             );
         }
-        console.log(props.data);
         setFields();
-        checkDisabled();
     }, [props.duplicate, state.selectedPublication, props.data]);
 
     const [kilde, setKilde] = React.useState("");
@@ -494,17 +492,6 @@ function InnerModal(props) {
         let formattedDate = tempMonth + " " + tempDay + ", " + tempYear;
         
         return formattedDate;
-    }
-
-    function checkDisabled() {
-        let value;
-        if(!props.data.hasOwnProperty("channel") && !(props.data.channel.hasOwnProperty("pageFrom") || props.data.channel.hasOwnProperty("pageTo"))){
-            value = true;
-        } else {
-            value = false;
-        }
-
-        return value
     }
 
     const equalButtonStyle = {
