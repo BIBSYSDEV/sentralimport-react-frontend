@@ -149,7 +149,6 @@ function InnerModal(props) {
                 )
             );
         }
-        
         setFields();
     }, [props.duplicate, state.selectedPublication, props.data]);
 
@@ -495,6 +494,19 @@ function InnerModal(props) {
         return formattedDate;
     }
 
+    function parseData(data) {
+        let tempString;
+        console.log(data);
+
+        if(data !== undefined) {
+            tempString = data.toString();
+        } else {
+            tempString = "";
+        }
+        
+        return tempString;
+    }
+
     const equalButtonStyle = {
         marginTop: "20px",
         marginLeft: "30px"
@@ -659,11 +671,11 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         {props.data.hasOwnProperty("channel") && selectedJournal.value === (props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "") ? (
-                                            <IconButton color="primary" style={tittelButtonStyle}> <div hidden={true}> Lik </div>
+                                            <IconButton color="primary" style={tittelButtonStyle} disabled={!(props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("title"))}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyJournal}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyJournal} disabled={!(props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("title"))}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -709,7 +721,7 @@ function InnerModal(props) {
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyDoi}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyDoi} disabled={!props.data.hasOwnProperty("doi")}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )} </Grid>
@@ -775,7 +787,7 @@ function InnerModal(props) {
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyTittel}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyTittel} disabled={!props.data.hasOwnProperty("languages")}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -810,7 +822,7 @@ function InnerModal(props) {
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyAarstall}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyAarstall} disabled={!(props.data.hasOwnProperty("yearPublished"))}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -843,7 +855,7 @@ function InnerModal(props) {
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyCategory}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyCategory} disabled={!(props.data.hasOwnProperty("categoryName"))}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -873,17 +885,17 @@ function InnerModal(props) {
                                             value={
                                                 (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume")) ?
                                                     props.data.channel.volume :
-                                                    "Ingen utgivelsesdata funnet"
+                                                    ""
                                             }
                                             margin="normal"
                                             disabled
                                         />
-                                        {props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume") && props.data.channel.volume === publishingDetails.volume ? (
+                                        {props.data.hasOwnProperty("channel") && parseData(props.data.channel.volume) === parseData(publishingDetails.volume) ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyVolume}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyVolume} disabled={!(props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume"))}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -910,12 +922,12 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {props.data.hasOwnProperty("channel") && props.data.channel.issue === publishingDetails.issue ? (
+                                        {props.data.hasOwnProperty("channel") && parseData(props.data.channel.issue) === parseData(publishingDetails.issue) ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyIssue}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyIssue} disabled={!(props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("issue"))}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
@@ -953,15 +965,17 @@ function InnerModal(props) {
                                         </div>
                                         </Grid>
                                         <Grid item>
-                                        {props.data.hasOwnProperty("channel") && props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
+                                            
+                                        {props.data.hasOwnProperty("channel") && parseData(props.data.channel.pageFrom) === parseData(publishingDetails.pageFrom) && parseData(props.data.channel.pageTo) === parseData(publishingDetails.pageTo) ? (
                                             <IconButton color="primary" style={tittelButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyPages}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyPages} disabled={!(props.data.hasOwnProperty("channel") && (props.data.channel.hasOwnProperty("pageFrom") || props.data.channel.hasOwnProperty("pageTo")))}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
-                                        )} </Grid>
+                                        )} 
+                                        </Grid>
                                        </Grid>
                                        <Grid item xs>
                                         <label style={labelStyle} htmlFor="pageFromCristin">Side fra</label>
