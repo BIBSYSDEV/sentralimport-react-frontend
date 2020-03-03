@@ -717,7 +717,7 @@ function InnerModal(props) {
                                             />
                                         </a>
                                         {doi === props.data.doi ? (
-                                            <IconButton color="primary" style={equalButtonStyle} disabled={!props.data.hasOwnProperty("doi")}> <div hidden={true}> Lik </div>
+                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
@@ -783,7 +783,7 @@ function InnerModal(props) {
                                         />
 
                                         {languageCopy.filter(lang => lang.lang === selectedLang.lang)[0].title === selectedLang.title ? (
-                                            <IconButton color="primary" style={tittelButtonStyle} disabled={!props.data.hasOwnProperty("languages")}> <div hidden={true}> Lik </div>
+                                            <IconButton color="primary" style={tittelButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
@@ -818,7 +818,7 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         {aarstall === props.data.yearPublished ? (
-                                            <IconButton color="primary" style={equalButtonStyle} disabled={!(props.data.hasOwnProperty("yearPublished"))}> <div hidden={true}> Lik </div>
+                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
@@ -851,7 +851,7 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         {selectedCategory.label === props.data.categoryName ? (
-                                            <IconButton color="primary" style={equalButtonStyle} disabled={!(props.data.hasOwnProperty("categoryName"))}> <div hidden={true}> Lik </div>
+                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
@@ -891,7 +891,7 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         {props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume") && props.data.channel.volume === publishingDetails.volume ? (
-                                            <IconButton color="primary" style={equalButtonStyle} disabled={!(props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume"))}> <div hidden={true}> Lik </div>
+                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
@@ -923,7 +923,7 @@ function InnerModal(props) {
                                             disabled
                                         />
                                         {props.data.hasOwnProperty("channel") && props.data.channel.issue === publishingDetails.issue ? (
-                                            <IconButton color="primary" style={equalButtonStyle} disabled={!(props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("issue"))}> <div hidden={true}> Lik </div>
+                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
@@ -967,7 +967,7 @@ function InnerModal(props) {
                                         <Grid item>
                                             
                                         {props.data.hasOwnProperty("channel") && props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
-                                            <IconButton color="primary" style={tittelButtonStyle} disabled={!(props.data.hasOwnProperty("channel") && (props.data.channel.hasOwnProperty("pageFrom") || props.data.channel.hasOwnProperty("pageTo")))}> <div hidden={true}> Lik </div>
+                                            <IconButton color="primary" style={tittelButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
