@@ -34,7 +34,7 @@ export default function ConfirmationDialog(props) {
             } else {
                 history.push("/error");
             }
-            return {result: null, status: e.response.status};
+            return {result: null, status: e.response !== undefined ? e.response.status : 500};
         }
         let title = publication.title.hasOwnProperty("nb") ? publication.title.nb : publication.title.en;
         title = title.length > 50 ? title.substr(0, 49) : title;
@@ -62,13 +62,14 @@ export default function ConfirmationDialog(props) {
             } else {
                 history.push("/error");
             }
-            return {result: null, status: e.response.status};
+            return {result: null, status: e.response !== undefined ? e.response.status : 500};
         }
         let title = publication.title.length > 14 ? publication.title.substr(0, 15) : publication.title;
         return {result: {id: publication.id, title: title}, status: 200};
     }
 
     async function postPublication(publication) {
+        console.log(publication);
         let response = await axios.post(properties.crisrest_gatekeeper_url + "/results", publication,
             JSON.parse(localStorage.getItem("config")));
         return response.data.cristin_result_id;
@@ -114,8 +115,7 @@ export default function ConfirmationDialog(props) {
             ],
             pia_journal_number: temp.publication.channel.cristinTidsskriftNr
         };
-        return {
-            cristinResultId: props.duplicate ? temp.publication.cristinResultId : "",
+        let pub =  {
             category: {
                 code: temp.publication.category
             },
@@ -139,9 +139,13 @@ export default function ConfirmationDialog(props) {
                 count: temp.publication.channel.pageTo !== null && temp.publication.channel.pageFrom !== null ?
                     (temp.publication.channel.pageTo - temp.publication.channel.pageFrom).toString() :
                     "0"
-            },
-            annotation: annotation
+            }
         };
+        if (props.duplicate)
+            pub.cristinResultId = temp.publication.cristinResultId;
+        if (annotation !== null)
+            pub.annotaion = annotation;
+        return pub;
     }
 
     function createContributorObject() {

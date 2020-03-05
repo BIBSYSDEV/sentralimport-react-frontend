@@ -663,6 +663,8 @@ async function searchContributors(authors) {
                         institutionName: await fetchInstitutionName(person.affiliations[j].institution.cristin_institution_id),
                     }
                 }
+            } else {
+                affiliations = await fetchInstitutions(authors[i].institutions);
             }
             person = {
                 cristin_person_id: person.cristin_person_id,

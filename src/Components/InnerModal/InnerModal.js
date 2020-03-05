@@ -496,7 +496,6 @@ function InnerModal(props) {
 
     function parseData(data) {
         let tempString;
-        console.log(data);
 
         if(data !== undefined) {
             tempString = data.toString();
