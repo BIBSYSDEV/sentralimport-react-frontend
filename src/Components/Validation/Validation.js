@@ -112,7 +112,7 @@ export default function Validation(props) {
       {
         name: "tidsskrift",
         value: props.duplicate
-          ? props.publication.journal.name
+          ? (props.publication.hasOwnProperty("journal") ? props.publication.journal.name : "")
           : (props.publication.hasOwnProperty("channel") ? props.publication.channel.title : "")
       },
       {

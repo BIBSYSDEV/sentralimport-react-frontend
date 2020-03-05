@@ -12,7 +12,6 @@ export function Duplicates(props) {
     let publication = props.publication;
     const relevantStatus = state.currentImportStatus !== "ikke aktuelle";
 
-    // TODO duplikater lastes inn feil nå
     useEffect(() => {
         async function fetch() {
             state.selected = "true";

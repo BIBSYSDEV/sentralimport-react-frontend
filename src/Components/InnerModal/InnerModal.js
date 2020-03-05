@@ -173,8 +173,8 @@ function InnerModal(props) {
     const [publishingDetails, setPublishingDetails] = React.useState(props.data.channel);
 
     const [selectedJournal, setSelectedJournal] = React.useState(props.duplicate ? {
-        value: state.selectedPublication.journal.name,
-        label: state.selectedPublication.journal.name
+        value: state.selectedPublication.hasOwnProperty("journal") ? state.selectedPublication.journal.name : "0",
+        label: state.selectedPublication.hasOwnProperty("journal") ? state.selectedPublication.journal.name : "Ingen tidsskrift/journal funnet"
     } : (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? {
         value: props.data.channel.cristinTidsskriftNr.toString(),
         label: props.data.channel.title 
