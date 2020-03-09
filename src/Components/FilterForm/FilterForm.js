@@ -166,10 +166,8 @@ export default function FilterForm() {
               id="doiFilter"
               label="Søk på doi"
               fullWidth
-              clearable
               onChange={handleDoiChange}
               value={doi}
-              shrink={true}
               InputProps={{
                 endAdornment: (
                     <IconButton onClick={() => handleDoiChange(null)}>
