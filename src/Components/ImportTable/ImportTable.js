@@ -450,6 +450,19 @@ export default function EnhancedTable() {
         );
     }
 
+
+    function countFoundPersons(persons) {
+        let personCount = 0;
+        console.log(persons);
+        for(let i = 0; i < persons.length; i++) {
+            if(persons[i].hasOwnProperty("cristinId") && persons[i].cristinId !== 0) {
+                personCount++;
+            }
+        }
+
+        return personCount;
+    }
+
     function createTable(body) {
         return (
             <div className={classes.root}>
@@ -564,8 +577,8 @@ export default function EnhancedTable() {
                                         {row.authors
                                             .slice(0, 5)
                                             .map(author => author.authorName + "; ")}
-                                        {row.authors.length > 5 ? " et al " : ""}
-                                        { row.authors.length > 100 ? <div style={monsterPostStyle}> ({row.authors.length}) Stort antall bidragsytere </div> :" (" + row.authors.length + ") "}
+                                        { row.authors.length > 5 ? " et al " : "" }
+                                        { row.authors.length > 100 ? <div style={monsterPostStyle}> ({row.authors.length}) Stort antall bidragsytere </div> :" (" + countFoundPersons(row.authors) + " / " + row.authors.length + ") "}
                                         <p className={`journal-name`}>
                                             {row.hasOwnProperty("channel") &&
                                             row.channel.hasOwnProperty("title")
