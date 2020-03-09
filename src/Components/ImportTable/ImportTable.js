@@ -453,7 +453,6 @@ export default function EnhancedTable() {
 
     function countFoundPersons(persons) {
         let personCount = 0;
-        console.log(persons);
         for(let i = 0; i < persons.length; i++) {
             if(persons[i].hasOwnProperty("cristinId") && persons[i].cristinId !== 0) {
                 personCount++;
