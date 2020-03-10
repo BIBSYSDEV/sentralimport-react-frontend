@@ -29,7 +29,7 @@ export default function LogoHeader() {
             <Nav>
                 <img
                     src={logo}
-                    alt="CRISTIN - Current Research Information System In Norway"
+                    alt="CRISTIN - Current Research Information SysTem In Norway"
                 />
             </Nav>
             <Navbar.Collapse>
