@@ -51,22 +51,22 @@ export default function Login(props) {
     }
 
     /* if gatekeeper is set to https://47e.httpjs.net/ you can view headers etc there */
-    async function testApi() {
-        if (localStorage.getItem("access_token") != null) {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token")
-                }
-            };
-            let test = await axios.get(
-                "https://crisrest-utv.dataporten-api.no",
-                config
-            );
-            console.log(test);
-        } else {
-            console.log("access-token no good");
-        }
-    }
+    // async function testApi() {
+    //     if (localStorage.getItem("access_token") != null) {
+    //         let config = {
+    //             headers: {
+    //                 Authorization: "Bearer " + localStorage.getItem("access_token")
+    //             }
+    //         };
+    //         let test = await axios.get(
+    //             "https://crisrest-utv.dataporten-api.no",
+    //             config
+    //         );
+    //         console.log(test);
+    //     } else {
+    //         console.log("access-token no good");
+    //     }
+    // }
 
     function validate() {
         let jsonToken = jwt.decode(search.id_token);

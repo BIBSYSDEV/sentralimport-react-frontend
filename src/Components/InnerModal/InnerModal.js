@@ -2,20 +2,18 @@ import React, {useEffect} from "react";
 import {Modal, ModalBody, ModalHeader, ModalFooter} from "reactstrap";
 import {
     TextField,
-    FormGroup,
     Button,
     Grid,
     FormControl,
     IconButton,
     FormLabel
 } from "@material-ui/core";
-import {Form} from "reactstrap";
 import {withSnackbar} from "notistack";
 import TrendingFlatIcon from "@material-ui/icons/TrendingFlat";
 import DragHandleIcon from "@material-ui/icons/DragHandle";
 import Select from "react-select";
-import ConfirmationDialog from "../ConfirmationDialog/ConfirmationDialog";
-import ClosingDialog from "../ClosingDialog/ClosingDialog";
+import ConfirmationDialog from "../Dialogs/ConfirmationDialog";
+import ClosingDialog from "../Dialogs/ClosingDialog";
 import Validation from "../Validation/Validation";
 import {Context} from "../../Context";
 import axios from "axios";
@@ -32,7 +30,8 @@ import {makeStyles} from "@material-ui/styles";
 
 const useStyles = makeStyles({
     doi: {
-        cursor: 'pointer'
+        cursor: 'pointer',
+        color: "blue"
     }
 });
 
@@ -122,12 +121,9 @@ function InnerModal(props) {
                 )
             );
 
-            setAarstall(workedOn ? temp.publication.registered :
+            setAarstall(workedOn ? temp.publication.yearPublished :
                 (props.duplicate ? state.selectedPublication.year_published :
-                    props.data.registered.substring(
-                        props.data.registered.length - 4,
-                        props.data.registered.length
-                    )));
+                    props.data.yearPublished));
 
             setDoi(workedOn ? temp.publication.doi :
                 (props.duplicate ? state.selectedPublication.links[state.selectedPublication.links.length - 1].url.substring(16, state.selectedPublication.links[0].url.length + 1) :
@@ -143,13 +139,18 @@ function InnerModal(props) {
                         issue: state.selectedPublication.hasOwnProperty("issue") ? state.selectedPublication.issue : ""
                     }
                     :
-                        props.data.channel
+                    {
+                        ...props.data.channel,
+                        volume: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume")) ? props.data.channel.volume : "",
+                        pageFrom: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pages")) ? props.data.channel.pages.from : "",
+                        pageTo: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pages")) ? props.data.channel.pages.to : "",
+                        issue: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("issue")) ? props.data.channel.issue : ""
+                    }
                 )
             );
         }
-        
         setFields();
-    }, [props.duplicate, state.selectedPublication]);
+    }, [props.duplicate, state.selectedPublication, props.data]);
 
     const [kilde, setKilde] = React.useState("");
 
@@ -172,8 +173,8 @@ function InnerModal(props) {
     const [publishingDetails, setPublishingDetails] = React.useState(props.data.channel);
 
     const [selectedJournal, setSelectedJournal] = React.useState(props.duplicate ? {
-        value: state.selectedPublication.journal.name,
-        label: state.selectedPublication.journal.name
+        value: state.selectedPublication.hasOwnProperty("journal") ? state.selectedPublication.journal.name : "0",
+        label: state.selectedPublication.hasOwnProperty("journal") ? state.selectedPublication.journal.name : "Ingen tidsskrift/journal funnet"
     } : (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? {
         value: props.data.channel.cristinTidsskriftNr.toString(),
         label: props.data.channel.title 
@@ -204,7 +205,7 @@ function InnerModal(props) {
             return;
         }
         handleTempSave();
-    }, [selectedCategory, selectedJournal, doi, aarstall, selectedLang, publishingDetails]);
+    }, [selectedCategory, selectedJournal, doi, aarstall, selectedLang, publishingDetails, state.doSave]);
 
     useEffect(() => {
         async function fetch() {
@@ -230,7 +231,8 @@ function InnerModal(props) {
                 doi: doi,
                 languages: languages,
                 pubId: props.data.pubId,
-                registered: aarstall,
+                registered: props.data.registered,
+                yearPublished: aarstall,
                 duplicate: props.duplicate,
                 import_sources: [
                     {
@@ -238,7 +240,6 @@ function InnerModal(props) {
                         source_reference_id: kildeId
                     }
                 ],
-                // authors: props.data.authors
             }
         };
         if (state.doSave)
@@ -256,6 +257,8 @@ function InnerModal(props) {
         setSelectedLang({...selectedLang, title: event.target.value});
         languages[index].title = event.target.value;
         setLanguages(languages);
+        dispatch({type: "setSelectedField", payload: "tittel"});
+        dispatch({type: "setValidation", payload: event.target.value});
     }
 
     function handleChangeAarstall(event) {
@@ -320,20 +323,9 @@ function InnerModal(props) {
     }
 
     function copyAarstall() {
-        setAarstall(
-            props.data.registered.substring(
-                props.data.registered.length - 4,
-                props.data.registered.length
-            )
-        );
-        dispatch({type: "setSelectedField", payload: "aarstall"});
-        dispatch({
-            type: "setValidation",
-            payload: props.data.registered.substring(
-                props.data.registered.length - 4,
-                props.data.registered.length
-            )
-        });
+        setAarstall(props.data.yearPublished);
+        dispatch({ type: "setSelectedField", payload: "aarstall" });
+        dispatch({ type: "setValidation", payload: props.data.yearPublished });
     }
 
     function copyCategory() {
@@ -379,17 +371,17 @@ function InnerModal(props) {
         setPublishingDetails({...publishingDetails, issue: props.data.channel.issue})
     }
 
-    function toggle(status) {
+    function toggle(result) {
         setDialogOpen(false);
         props.toggle();
-        if (status === 200) {
+        if (result.status === 200) {
             props.enqueueSnackbar(
-                "Importerte ny publikasjon med id: " + props.data.pubId,
+                "Importerte ny publikasjon med Cristin-id: " + result.result.id + " og tittel: " + result.result.title,
                 {
                     variant: "success"
                 }
             );
-        } else if (status === 401 || status === 403){
+        } else if (result.status === 401 || result.status === 403){
             props.enqueueSnackbar(
                 "Din sesjon har gått ut. Vennligst logg inn på nytt",
                 {
@@ -398,23 +390,25 @@ function InnerModal(props) {
             );
         } else {
             props.enqueueSnackbar(
-                "Noe gikk galt med import av publikasjon med id: " + props.data.pubId +  ". Dine endringer er fortsatt lagret i browseren. Vennligst prøv på nytt.",
+                "Noe gikk galt med import av publikasjon med pub-id: " + props.data.pubId +  ". Dine endringer er fortsatt lagret i browseren. Vennligst prøv på nytt.",
                 {
                     variant: "error"
                 }
             );
         }
+        props.close();
     }
 
     function abortToggle() {
         setDialogAbortOpen(false);
         props.toggle();
         props.enqueueSnackbar(
-            "Lukket publikasjon. Endringer har ikke blitt lagret.",
+            "Lukket publikasjon. Endringer har blitt lagret i browseren",
             {
                 variant: "warning"
             }
         );
+        props.close();
     }
 
     function toggleDialog() {
@@ -431,6 +425,10 @@ function InnerModal(props) {
 
     function searchJournals(searchString) {
         getJournals(searchString);
+    }
+
+    function emptyArr() {
+        dispatch({ type: "setFormErrors", payload: [] });
     }
 
     const handleNewJournal = (newJournal) => {
@@ -451,9 +449,15 @@ function InnerModal(props) {
     async function getJournalId(issn) {
         if (issn === null || issn === "")
             return null;
-        
-        let journal = await axios.get(properties.crisrest_gatekeeper_url + "/results/channels?type=journal&query=issn:" + issn[0].value, JSON.parse(localStorage.getItem("config")));
-        return journal.data[0].id;
+
+        let journal;
+        try {
+            journal = await axios.get(properties.crisrest_gatekeeper_url + "/results/channels?type=journal&query=issn:" + issn[0].value, JSON.parse(localStorage.getItem("config")));
+        } catch (e) {
+            console.log("There was an error while getting the journal id");
+        }
+
+        return journal.data.length > 0 ? journal.data[0].id : null;
     }
 
     async function getCategories() {
@@ -474,9 +478,37 @@ function InnerModal(props) {
         setJournals(tempArray);
     }
 
+    function formatDate(dateString) {
+        let newDate = new Date(dateString);
+        let tempDay = newDate.getDate();
+        let tempYear = newDate.getFullYear();
+        
+        let months = [
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+
+        let tempMonth = months[newDate.getMonth()];
+
+        let formattedDate = tempMonth + " " + tempDay + ", " + tempYear;
+        
+        return formattedDate;
+    }
+
+    function parseData(data) {
+        let tempString;
+
+        if(data !== undefined) {
+            tempString = data.toString();
+        } else {
+            tempString = "";
+        }
+        
+        return tempString;
+    }
+
     const equalButtonStyle = {
         marginTop: "20px",
-        marginLeft: "50px"
+        marginLeft: "30px"
     };
 
     const selectStyle = {
@@ -492,7 +524,7 @@ function InnerModal(props) {
 
     const tittelButtonStyle = {
         marginTop: "20px",
-        marginLeft: "68px",
+        marginLeft: "48px",
         color: red
     };
 
@@ -508,23 +540,36 @@ function InnerModal(props) {
             padding: 0
     };
 
+    const cristinSelectStyle = {
+        width: "220px"
+    };
+
+    const gridStyle = {
+        marginLeft: "50px"
+    };
+
+    const linkStyle = {
+        color: "blue",
+        textDecoration: "underline"
+    }
+
     return (
         <div>
             <Modal isOpen={props.open} size="lg" style={modalContent}>
                 <ModalHeader toggle={handleClose}>Import av publikasjon</ModalHeader>
                 <ModalBody>
-                    <Grid item
-                        container
-                        direction="row"
-                        justify="center"
-                        alignItems="center"
-                        xs
-                        sm
-                    >
-                        <Grid container item md={5} xs={12} alignContent="center" alignItems="center">
-                            <Form>
-                                <h3>Importpublikasjon</h3>
-                                <FormGroup>
+                        <Grid item container md={12} xs={12} direction="column" justify="center" alignItems="center" style={gridStyle}>
+                            
+                                <Grid container item justify="center" direction="row" xs={10}>
+                                    <Grid item xs>
+                                        <h3>Importpublikasjon</h3>
+                                    </Grid>
+                                    <Grid item xs>
+                                        <h3>Cristin-publikasjon</h3>
+                                    </Grid>
+                                </Grid>
+                                
+                                    <Grid item container justify="center" direction="row" xs={10}>
                                     <Grid item xs>
                                         <TextField
                                             id="import-id"
@@ -534,20 +579,40 @@ function InnerModal(props) {
                                             disabled
                                         />
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                                    <Grid item xs>
                                         <TextField
-                                            id="import-registrert"
-                                            label="Dato registrert"
-                                            value={props.data.registered}
+                                            id="Cristin-id"
+                                            label="Cristinid"
                                             margin="normal"
+                                            value={props.duplicate ? props.cristinpub.cristin_result_id : ""}
                                             disabled
                                         />
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                                    </Grid>
+                                
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="import-registrert"
+                                                label="Dato registrert"
+                                                value={props.data.registered}
+                                                margin="normal"
+                                                disabled
+                                            /> 
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="Cristin-opprettet"
+                                                label="Dato opprettet"
+                                                margin="normal"
+                                                value={props.duplicate ? formatDate(props.cristinpub.created.date.substring(0, 10)) : ""}
+                                                disabled
+                                            />
+                                        </Grid>
+                                    </Grid>
+                               
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <FormControl required={true}>
                                             <TextField
                                                 id="import-kilde"
@@ -557,10 +622,21 @@ function InnerModal(props) {
                                                 disabled
                                             />
                                         </FormControl>
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="Cristin-kilde"
+                                                label="Kilde"
+                                                value={kilde}
+                                                margin="normal"
+                                                required
+                                                disabled
+                                            />
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                               
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <FormControl required={true}>
                                             <TextField
                                                 id="import-kildeid"
@@ -570,31 +646,65 @@ function InnerModal(props) {
                                                 disabled
                                             />
                                         </FormControl>
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="Cristin-kildeid"
+                                                label="KildeId"
+                                                value={kildeId}
+                                                margin="normal"
+                                                required
+                                                disabled
+                                            />
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                                
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <TextField
                                             id="import-tidsskrift"
                                             label="Tidsskrift"
                                             value={props.data.hasOwnProperty("channel") ? props.data.channel.title : ""}
                                             margin="normal"
+                                            multiline
                                             disabled
                                         />
                                         {props.data.hasOwnProperty("channel") && selectedJournal.value === (props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "") ? (
-                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
+                                            <IconButton color="primary" style={tittelButtonStyle} disabled={!(props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("title"))}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyJournal}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyJournal} disabled={!(props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("title"))}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
+                                        </Grid>
+                                        <Grid item container xs direction="row">
+                                            <Grid item>
+                                            <FormLabel style={selectStyle} required> Tidsskrift </FormLabel>
+                                            <div style={cristinSelectStyle}>
+                                            <Select
+                                                aria-label="Tidsskrift-select"
+                                                placeholder="Søk på tidsskrift"
+                                                name="journalSelect"
+                                                options={journals}
+                                                value={selectedJournal}
+                                                className="basic-select"
+                                                classNamePrefix="select"
+                                                onChange={handleChangeJournal}
+                                                onInputChange={searchJournals}
+                                            />
+                                            </div>
+                                            </Grid>
+                                            <Grid item>
+                                                <CreateJournalPanel handleCreateJournal={handleNewJournal}/>
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
-                                        <a href={"https://doi.org/" + props.data.doi} target="_blank" rel="noopener noreferrer">
+                               
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
+                                        <a href={"https://doi.org/" + props.data.doi} target="_blank" rel="noopener noreferrer" style={linkStyle}>
                                             <TextField
                                                 id="import-doi"
                                                 label="Doi"
@@ -602,6 +712,7 @@ function InnerModal(props) {
                                                 margin="normal"
                                                 InputProps={{classes: { input: classes.doi} }}
                                                 disabled
+                                                style={linkStyle}
                                             />
                                         </a>
                                         {doi === props.data.doi ? (
@@ -609,14 +720,32 @@ function InnerModal(props) {
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyDoi}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyDoi} disabled={!props.data.hasOwnProperty("doi")}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
-                                        )}
+                                        )} </Grid>
+                                        <Grid item xs>
+                                            <FormControl required>
+                                            <TextField
+                                                id="Cristin-doi"
+                                                label="Doi"
+                                                value={doi}
+                                                onChange={event => handleChangeDoi(event)}
+                                                margin="normal"
+                                                required
+                                                error={!doi.match(
+                                                    /^([0-9]{2})[.]([0-9]{4,5})[/]([\w-.]{1,})/i
+                                                  )}
+                                                helperText={!doi.match(
+                                                    /^([0-9]{2})[.]([0-9]{4,5})[/]([\w-.]{1,})/i
+                                                  ) ? "Doi har galt format" : ""}
+                                            />
+                                        </FormControl>
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                                
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <TextField
                                             id="import-lang"
                                             label="Språk"
@@ -624,10 +753,23 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
+                                        </Grid>
+                                        <Grid item xs container direction="column">
+                                            <Grid item>
+                                            <label style={labelStyle}>Språk</label>
+                                            </Grid>
+                                            <Grid item>
+                                            <ButtonGroup className={`buttonGroup`} variant="contained" size="small" aria-label="small contained button group">
+                                            {languages.map((lang, i) =>
+                                                <Button key={i} className={selectedLang === lang ? `selected` : ``} onClick={() => handleSelectedLang(lang)}>{lang.lang}</Button>
+                                            )}
+                                            </ButtonGroup>
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item container>
+                            
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <TextField
                                             aria-label="Import-tittel"
                                             id="Import-tittel"
@@ -637,7 +779,6 @@ function InnerModal(props) {
                                             disabled
                                             multiline
                                             aria-multiline="true"
-                                            rowsMax="10"
                                         />
 
                                         {languageCopy.filter(lang => lang.lang === selectedLang.lang)[0].title === selectedLang.title ? (
@@ -645,40 +786,62 @@ function InnerModal(props) {
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyTittel}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyTittel} disabled={!props.data.hasOwnProperty("languages")}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="Cristin-tittel"
+                                                label="Tittel"
+                                                name="Tittel"
+                                                value={selectedLang.title}
+                                                onChange={event => handleChangeTittel(event)}
+                                                margin="normal"
+                                                required
+                                                multiline
+                                                error={selectedLang.title.length < 6}
+                                                helperText={selectedLang.title.length < 6 ? "Tittel er for kort/mangler" : ""}
+                                            />
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                                
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <TextField
                                             id="import-aarstall"
                                             label="Årstall"
-                                            value={props.data.registered.substring(
-                                                props.data.registered.length - 4,
-                                                props.data.registered.length
-                                            )}
+                                            value={props.data.yearPublished}
                                             margin="normal"
                                             disabled
                                         />
-                                        {aarstall === props.data.registered.substring(
-                                            props.data.registered.length - 4,
-                                            props.data.registered.length
-                                        ) ? (
+                                        {aarstall === props.data.yearPublished ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyAarstall}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyAarstall} disabled={!(props.data.hasOwnProperty("yearPublished"))}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="Cristin-aarstall"
+                                                label="Årstall"
+                                                value={aarstall}
+                                                onChange={handleChangeAarstall}
+                                                margin="normal"
+                                                required
+                                                error={aarstall.toString().length !== 4 || !(parseInt(aarstall) <= (new Date().getFullYear()))}
+                                                helperText={(aarstall.toString().length !== 4 || !(parseInt(aarstall) <= (new Date().getFullYear()))) ? "Årstall er over grensen/galt" : ""}
+                                            />
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                             
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <TextField
                                             id="import-kategori"
                                             label="Kategori"
@@ -691,35 +854,63 @@ function InnerModal(props) {
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyCategory}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyCategory} disabled={!(props.data.hasOwnProperty("categoryName"))}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
+                                        </Grid>
+                                        <Grid item xs>
+                                            <FormLabel style={selectStyle} required> Kategori </FormLabel>
+                                            <div style={cristinSelectStyle}>
+                                            <Select
+                                                aria-label="Kategori"
+                                                placeholder="Søk på kategori"
+                                                name="categorySelect"
+                                                options={categories}
+                                                value={selectedCategory}
+                                                className="basic-select"
+                                                classNamePrefix="select"
+                                                onChange={handleChangeCategory}
+                                            />
+                                            </div>
+                                        </Grid>
                                     </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
+                                
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <TextField
                                             id="import-utgivelsesdata"
                                             label="Volum"
                                             value={
-                                                props.data.hasOwnProperty("channel") ? props.data.channel.volume
-                                                    : "Ingen utgivelsesdata funnet"
+                                                (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume")) ?
+                                                    props.data.channel.volume :
+                                                    ""
                                             }
                                             margin="normal"
                                             disabled
                                         />
-                                        {props.data.hasOwnProperty("channel") && props.data.channel.volume === publishingDetails.volume ? (
+                                        {props.data.hasOwnProperty("channel") && parseData(props.data.channel.volume) === parseData(publishingDetails.volume) ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyVolume}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyVolume} disabled={!(props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume"))}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="Cristin-utgivelsesdata"
+                                                label="Volum"
+                                                value={publishingDetails ? publishingDetails.volume : ""}
+                                                margin="normal"
+                                                onChange={handleChangeVolume}
+                                            />
+                                        </Grid>
                                     </Grid>
-                                    <Grid item>
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item xs>
                                         <TextField
                                             id="import-hefte"
                                             label="Hefte"
@@ -730,180 +921,62 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {props.data.hasOwnProperty("channel") && props.data.channel.issue === publishingDetails.issue ? (
+                                        {props.data.hasOwnProperty("channel") && parseData(props.data.channel.issue) === parseData(publishingDetails.issue) ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyIssue}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyIssue} disabled={!(props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("issue"))}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
                                         )}
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                id="Cristin-hefte"
+                                                label="Hefte"
+                                                value={publishingDetails ? publishingDetails.issue : ""}
+                                                margin="normal"
+                                                onChange={handleChangeIssue}
+                                            />
+                                        </Grid>
                                     </Grid>
-                                    <Grid item container sm>
-                                        <div>
-                                        <label style={labelStyle} htmlFor="pageFrom">Side fra</label>
-                                        <label style={labelStyle} htmlFor="pageTo">Side til</label>
-                                        <div>
-                                            <input
-                                                id="pageFrom"
-                                                value={props.data.hasOwnProperty("channel") ? props.data.channel.pageFrom : ""}
-                                                style={pageStyle}
-                                                disabled
-                                            />
-                                            <input
-                                                id="pageTo"
-                                                value={props.data.hasOwnProperty("channel") ? props.data.channel.pageTo : ""}
-                                                style={pageStyle}
-                                                disabled
-                                            />
- </div>  </div>
-                                        {props.data.hasOwnProperty("channel") && props.data.channel.pageFrom === publishingDetails.pageFrom && props.data.channel.pageTo === publishingDetails.pageTo ? (
-                                            <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
+                                    <Grid item container justify="center" direction="row" xs={10}>
+                                        <Grid item container xs>
+                                            <Grid item>
+                                            <div>
+                                            <label style={labelStyle} htmlFor="pageFrom">Side fra</label>
+                                            <label style={labelStyle} htmlFor="pageTo">Side til</label>
+                                            <div>
+                                                <input
+                                                    id="pageFrom"
+                                                    value={props.data.hasOwnProperty("channel") ? props.data.channel.pageFrom : ""}
+                                                    style={pageStyle}
+                                                    disabled
+                                                />
+                                                <input
+                                                    id="pageTo"
+                                                    value={props.data.hasOwnProperty("channel") ? props.data.channel.pageTo : ""}
+                                                    style={pageStyle}
+                                                    disabled
+                                                />
+                                            </div>
+                                        </div>
+                                        </Grid>
+                                        <Grid item>
+                                            
+                                        {props.data.hasOwnProperty("channel") && parseData(props.data.channel.pageFrom) === parseData(publishingDetails.pageFrom) && parseData(props.data.channel.pageTo) === parseData(publishingDetails.pageTo) ? (
+                                            <IconButton color="primary" style={tittelButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
                                         ) : (
-                                            <IconButton color="secondary" style={equalButtonStyle} onClick={copyPages}> <div hidden={true}> Ulik </div>
+                                            <IconButton color="secondary" style={tittelButtonStyle} onClick={copyPages} disabled={!(props.data.hasOwnProperty("channel") && (props.data.channel.hasOwnProperty("pageFrom") || props.data.channel.hasOwnProperty("pageTo")))}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
-                                        )}
-                                       
-                                    </Grid>
-                                </FormGroup>
-                            </Form>
-                        </Grid>
-                        <Grid container item md={4} sm={12}>
-                            <Form>
-                                <h3> Cristinpublikasjon </h3>
-                                <FormGroup>
-                                    <TextField
-                                        id="Cristin-id"
-                                        label="Cristinid"
-                                        margin="normal"
-                                        value={props.duplicate ? props.cristinpub.cristin_result_id : ""}
-                                        disabled
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <TextField
-                                        id="Cristin-opprettet"
-                                        label="Dato opprettet"
-                                        margin="normal"
-                                        value={props.duplicate ? props.cristinpub.created.date.substring(0, 10) : ""}
-                                        disabled
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <TextField
-                                        id="Cristin-kilde"
-                                        label="Kilde"
-                                        value={kilde}
-                                        margin="normal"
-                                        required
-                                        disabled
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <TextField
-                                        id="Cristin-kildeid"
-                                        label="KildeId"
-                                        value={kildeId}
-                                        margin="normal"
-                                        required
-                                        disabled
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <FormLabel style={selectStyle}> Tidsskrift </FormLabel>
-                                    <Select
-                                    aria-label="Tidsskrift-select"
-                                        placeholder="Søk på tidsskrift"
-                                        name="journalSelect"
-                                        options={journals}
-                                        value={selectedJournal}
-                                        className="basic-select"
-                                        classNamePrefix="select"
-                                        onChange={handleChangeJournal}
-                                        onInputChange={searchJournals}
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <FormControl required>
-                                        <TextField
-                                            id="Cristin-doi"
-                                            label="Doi"
-                                            value={doi}
-                                            onChange={event => handleChangeDoi(event)}
-                                            margin="normal"
-                                            required
-                                        />
-                                    </FormControl>
-                                </FormGroup>
-                                <FormGroup>
-                                    <label style={labelStyle}>Språk</label>
-                                    <ButtonGroup className={`buttonGroup`} variant="contained" size="sm all" aria-label="small contained button group">
-                                    {languages.map((lang, i) =>
-                                        <Button key={i} className={selectedLang === lang ? `selected` : ``} onClick={() => handleSelectedLang(lang)}>{lang.lang}</Button>
-                                    )}
-                                    </ButtonGroup>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
-                                    <TextField
-                                        id="Cristin-tittel"
-                                        label="Tittel"
-                                        name="Tittel"
-                                        value={selectedLang.title}
-                                        onChange={event => handleChangeTittel(event)}
-                                        margin="normal"
-                                        required
-                                        multiline
-                                        defaultValue=""
-                                    /> </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <TextField
-                                        id="Cristin-aarstall"
-                                        label="Årstall"
-                                        value={aarstall}
-                                        onChange={handleChangeAarstall}
-                                        margin="normal"
-                                        required
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <FormLabel style={selectStyle}> Kategori </FormLabel>
-                                    <Select
-                                        aria-label="Kategori"
-                                        placeholder="Søk på kategori"
-                                        name="categorySelect"
-                                        options={categories}
-                                        value={selectedCategory}
-                                        className="basic-select"
-                                        classNamePrefix="select"
-                                        onChange={handleChangeCategory}
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid item>
-                                        <TextField
-                                            id="Cristin-utgivelsesdata"
-                                            label="Volum"
-                                            value={publishingDetails ? publishingDetails.volume : ""}
-                                            margin="normal"
-                                            onChange={handleChangeVolume}
-                                        />
-                                    </Grid>
-                                    <Grid item>
-                                        <TextField
-                                            id="Cristin-hefte"
-                                            label="Hefte"
-                                            value={publishingDetails ? publishingDetails.issue : ""}
-                                            margin="normal"
-                                            onChange={handleChangeIssue}
-                                        />
-                                    </Grid>
-                                    <Grid item>
+                                        )} 
+                                        </Grid>
+                                       </Grid>
+                                       <Grid item xs>
                                         <label style={labelStyle} htmlFor="pageFromCristin">Side fra</label>
                                         <label style={labelStyle} htmlFor="pageToCristin">Side til</label>
                                         <div>
@@ -920,33 +993,30 @@ function InnerModal(props) {
                                                 onChange={handleChangePageTo}
                                             />
                                         </div>
+                                       </Grid>
                                     </Grid>
-                                </FormGroup>                             
-                            </Form>
+                                
                         </Grid>
-                    </Grid> 
-                    <div className={"createJournalPanel"}> {/* TODO: Flytt CreateJournalPanel opp til tidsskrift. Overflow-y i forhold til grid/form? */}
-                    <CreateJournalPanel handleCreateJournal={handleNewJournal}/>
-                    </div>
-                    <div>{state.formErrors.map((error, i) => { return(
-                        <div key={i}>{error + "; "}</div>
-                    )})}</div>
+                    
                      <Button className={`contributorButton`} onClick={openContributorModal} variant="contained">Bidragsytere</Button>
                 </ModalBody>
                 <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
                 <ModalFooter>
-                <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
-                <Button
-                    disabled={state.formErrors.length >= 1}
-                    color="primary"
-                    onClick={handleSubmit}
-                    variant="contained"
-                >
-                Importer
-                </Button>
+                    <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
+                    <Button
+                        disabled={state.formErrors.length >= 1 || props.data.hasOwnProperty("cristin_id")}
+                        color="primary"
+                        onClick={handleSubmit}
+                        variant="contained"
+                    >
+                    Importer
+                    </Button>
                 </ModalFooter>
             </Modal>
             <ClosingDialog
+                doFunction={emptyArr}
+                title={"Avbryt import"}
+                text={"Er du sikker på at du vil lukke denne publikasjonen?"}
                 open={dialogAbortOpen}
                 handleClose={abortToggle}
                 handleCloseDialog={toggleAbortDialog}

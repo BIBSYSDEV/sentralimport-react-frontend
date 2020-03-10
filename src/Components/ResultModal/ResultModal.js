@@ -45,6 +45,7 @@ export default function ResultModal(props) {
   }
 
   function handleClose() {
+    setDuplicate(false);
     setInnerModal(false);
   }
 
@@ -58,7 +59,6 @@ export default function ResultModal(props) {
       localStorage.setItem("authorized", "false");
       console.log("Patch request failed:", e);
       if (e.response && (e.response.status === 401 || e.response.status === 403)) {
-        alert("Din sesjon har utgått. Vennligst logg inn på nytt");
         history.push("/login");
       } else {
         history.push("/error");
@@ -90,10 +90,7 @@ export default function ResultModal(props) {
                   ? " " + props.data.channel.title + " "
                   : ""}
               </i>
-              {props.data.registered.substring(
-                props.data.registered.length - 4,
-                props.data.registered.length
-              ) + ";"}
+              {props.data.yearPublished + ";"}
               {props.data.hasOwnProperty("channel")
                 ? props.data.channel.volume + ";"
                 : ""}
@@ -130,6 +127,7 @@ export default function ResultModal(props) {
         data={props.data}
         cristinpub={state.selectedPublication}
         duplicate={isDuplicate}
+        close={props.handleClose}
       />
     </Modal>
   );

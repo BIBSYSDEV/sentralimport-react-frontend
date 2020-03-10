@@ -10,29 +10,10 @@
 .buttonGroup {
   max-width: 0;
 }
-.createJournalPanel {
-  position: absolute;
-  top: 385px;
-  right: 35px;
-}
-
-.createJournalButton {
-  width: 130px;
-  position: absolute;
-  right: -30px;
-  top: -1px;
-}
-
-.createJournalCard {
-  position: relative;
-  left: 150px;
-  top: 40px;
-  width: 250px;
-}
 
 .errorLogoutButton {
-  position: relative;
-  left: 450px;
+  margin: 0 auto;
+  display: block;
 }
 
 .selected {

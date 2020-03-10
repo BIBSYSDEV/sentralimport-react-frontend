@@ -16,8 +16,7 @@ export function Duplicates(props) {
         async function fetch() {
             state.selected = "true";
             let searchString = "";
-            let registered = parseInt(publication.registered.substr(7, 10));
-            console.log("registered: " + registered);
+            let published = publication.yearPublished;
             if (publication.hasOwnProperty("doi")) {
                 console.log("DOI exists. Looking for duplicates");
                 searchString = "?doi=" + publication.doi;
@@ -32,9 +31,9 @@ export function Duplicates(props) {
                     "?title=" +
                     title +
                     "&published_since=" +
-                    (registered - 1) +
+                    (published - 1) +
                     "&published_before=" +
-                    registered;
+                    published;
 
                 if (publication.hasOwnProperty("channel") && publication.channel.hasOwnProperty("issns")) {
                     let issn = props.publication.channel.issns[0];
@@ -49,25 +48,31 @@ export function Duplicates(props) {
         fetch();
     }, [publication]);
 
+    useEffect(() => {
+       if (publication.hasOwnProperty("cristin_id") && duplicate.length > 0) {
+           dispatch({type: "setSelected", payload: duplicate[0].data.cristin_result_id});
+           dispatch({type: "setSelectedPublication", payload: duplicate[0].data});
+       }
+    }, [duplicate]);
+
+
     function handleChange(event) {
         console.log(event.target.value);
         dispatch({type: "setSelected", payload: event.target.value});
-        {
-            event.target.value !== "true" && event.target.value !== "false"
-                ? dispatch({
-                    type: "setSelectedPublication",
-                    payload: duplicate.find(
-                        element => element.data.cristin_result_id === event.target.value
-                    ).data
-                })
-                : console.log();
-        }
+        event.target.value !== "true" && event.target.value !== "false"
+            ? dispatch({
+                type: "setSelectedPublication",
+                payload: duplicate.find(
+                    element => element.data.cristin_result_id === event.target.value
+                ).data
+            })
+            : console.log();
     }
 
     return (
         <div>
             <ul className={`no-padding`}>
-                <RadioGroup onChange={handleChange} value={state.selected}> 
+                <RadioGroup onChange={handleChange} value={state.selected}>
                 {/* Ved bruk av egendefinerte radiobuttons i en radiogroup, husk FormControlLabels slik at aria fungerer korrekt */}
                     {duplicate.length > 0 ? (
                         duplicate.map((item, i) => 
@@ -86,11 +91,13 @@ export function Duplicates(props) {
                             value="false"
                             control={<Radio />}
                             label={relevantStatus ? "Marker som ikke aktuell" : "Marker som aktuell"}
+                            disabled={publication.hasOwnProperty("cristin_id")}
                         />
                         <FormControlLabel
                             value="true"
                             control={<Radio />}
                             label="Opprett ny cristin-publikasjon basert på importpublikasjon"
+                            disabled={publication.hasOwnProperty("cristin_id")}
                         />
                     </ListGroupItem>
                 </RadioGroup>

@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import {Modal, ModalBody, ModalHeader} from "reactstrap";
 import axios from "axios";
 import {withSnackbar} from "notistack";
@@ -10,6 +10,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import PersonIcon from "../../assets/icons/person-active.svg";
+import InactivePersonIcon from "../../assets/icons/person-inactive.svg";
 import ArrowUpIcon from "../../assets/icons/arrowhead-up3.svg";
 import ArrowDownIcon from "../../assets/icons/arrowhead-down3.svg";
 import {Button, TableFooter} from "@material-ui/core";
@@ -17,10 +18,15 @@ import {properties} from "../../properties.js"
 
 import ContributorPagination from "../ContributorPagination/ContributorPagination";
 import Contributor from "./Contributor";
+import Skeleton from "@material-ui/lab/Skeleton";
+import ClosingDialog from "../Dialogs/ClosingDialog";
 
 function ContributorModal(props) {
     const {useRef, useLayoutEffect} = React;
     const [data, setData] = React.useState([]);
+    const [searchResults, setSearchResults] = React.useState(null);
+    const [fetched, setFetched] = React.useState(false);
+    const [dialog, setDialog] = React.useState(false);
 
     let {state, dispatch} = React.useContext(Context);
 
@@ -34,7 +40,13 @@ function ContributorModal(props) {
     }, [data]);
 
     useEffect(() => {
+       
+    }, [state.contributorPage]);
+
+    // const updatePersons = useRef(true);
+    useLayoutEffect(() => {
         async function fetch() {
+            setFetched(false);
 
             let contributors = [];
             let cristinAuthors = [];
@@ -43,29 +55,23 @@ function ContributorModal(props) {
             if (temp !== null && temp.pubId === props.data.pubId && temp.duplicate === props.duplicate) {
                 contributors = temp.contributors;
             } else {
-                if (props.duplicate) {
+                if (props.duplicate === true) {
                     cristinAuthors = state.selectedPublication.authors;
-                } else {
+                } else if (props.duplicate === false) {
                     cristinAuthors = await searchContributors(props.data.authors);
                 }
 
-                const imported = await fetchContributors(props.data);
+                const imported = props.data.authors;
 
                 for (let i = 0; i < Math.max(cristinAuthors.length, imported.length); i++) {
-                    let currentAuthor =
-                        cristinAuthors.length > i ? cristinAuthors[i] : defaultAuthor;
-                    for (let j = 0; j < currentAuthor.affiliations.length; j++) {
-                        currentAuthor.affiliations[j].institutionName = await fetchInstitutionName(
-                            currentAuthor.affiliations[j].institution
-                                .cristin_institution_id
-                        );
+                    if (props.duplicate && state.doSave) {
+                        cristinAuthors[i].affiliations = await getDuplicateAffiliations(state.selectedPublication.authors[i]);
                     }
-
                     contributors[i] = {
                         imported:
                             imported.length > i
                                 ? {
-                                    cristin_person_id: 0,
+                                    cristin_person_id: imported[i].cristinId,
                                     first_name: imported[i].hasOwnProperty("firstname")
                                         ? imported[i].firstname
                                         : imported[i].authorName.split(" ")[1],
@@ -81,7 +87,7 @@ function ContributorModal(props) {
                                 }
                                 : defaultAuthor,
                         cristin:
-                            cristinAuthors.length > i ? cristinAuthors[i] : defaultAuthor,
+                            cristinAuthors.length > i ? cristinAuthors[i] : defaultAuthor,      
                         toBeCreated: defaultAuthor
                     };
 
@@ -91,12 +97,14 @@ function ContributorModal(props) {
                         contributors[i].cristin === defaultAuthor
                             ? Object.assign({}, contributors[i].imported)
                             : Object.assign({}, contributors[i].cristin);
-                    contributors[i].toBeCreated = {
-                        ...copy, affiliations: await fetchInstitutions(imported[i].institutions)
+                    contributors[i].toBeCreated = cristinAuthors[i].cristin_person_id !== null ? cristinAuthors[i] : {
+                        ...copy, affiliations: await fetchInstitutions(props.duplicate ? cristinAuthors[i].affiliations : imported[i].institutions)
                     };
+                    
                 }
             }
             setData(contributors);
+            setFetched(true);
         }
 
         fetch();
@@ -110,6 +118,18 @@ function ContributorModal(props) {
         props.toggle();
         dispatch({type: "setContributorPage", payload: 0});
         dispatch({type: "setContributorPerPage", payload: 5});
+    }
+
+    async function getDuplicateAffiliations(author) {
+        let affiliations = [];
+        for (let i = 0; i < author.affiliations.length; i++) {
+            affiliations.push({
+                cristinInstitutionNr: author.affiliations[i].institution.cristin_institution_id,
+                institutionName: await fetchInstitutionName(author.affiliations[i].institution.cristin_institution_id)
+            });
+        }
+        return affiliations;
+
     }
 
     function handleSave() {
@@ -152,7 +172,6 @@ function ContributorModal(props) {
     }
 
     function handleOrder(author, up) {
-        console.log("order changed");
         let copy = [...data];
         let index = author.toBeCreated.order - 1;
         let movedToOrder;
@@ -264,6 +283,11 @@ function ContributorModal(props) {
         setData(temp);
     };
 
+    const toggle = rowIndex => {
+        dispatch({type: "param", payload: rowIndex});
+        setDialog(!dialog);
+    };
+
     const getMainImage = () => {
         return PersonIcon;
     };
@@ -272,6 +296,9 @@ function ContributorModal(props) {
     };
     const getArrowUpImage = () => {
         return ArrowUpIcon;
+    };
+    const getInactiveImage = () => {
+        return InactivePersonIcon;
     };
 
     function addContributor() {
@@ -300,56 +327,47 @@ function ContributorModal(props) {
         setData(temp);
     }
 
+
     async function retrySearch(author, rowIndex) {
-        console.log(author);
-        let authorName = author.hasOwnProperty("first_name")
-            ? author.first_name.substr(0, 1) + " " + author.surname
-            : author.authorName;
-        let searchedAuthors = await axios.get(
-            properties.crisrest_gatekeeper_url + "/persons?name=" +
-            authorName +
-            "&institution=" +
-            (author.affiliations[0].hasOwnProperty("acronym")
-                ? author.affiliations[0].acronym
-                : author.affiliations[0].institutionName)
-            , JSON.parse(localStorage.getItem("config")));
-        console.log(searchedAuthors);
-        await findBestMatch(author, searchedAuthors.data, rowIndex);
+        let results = searchResults;
+        if (searchResults === null || searchResults.order !== rowIndex) {
+            let authorName = author.hasOwnProperty("first_name")
+                ? author.first_name.substr(0, 1) + " " + author.surname
+                : author.authorName;
+            let institution = "";
+            if(author.affiliations[0].hasOwnProperty("acronym") || author.affiliations[0].hasOwnProperty("institutionName")){
+                institution = author.affiliations[0].hasOwnProperty("acronym")
+                    ? author.affiliations[0].acronym
+                    : author.affiliations[0].institutionName;
+            }
+            institution = institution.replace("&", " ");
+            let searchedAuthors = await axios.get(
+                properties.crisrest_gatekeeper_url + "/persons?name=" +
+                authorName +
+                "&institution=" + institution
+                , JSON.parse(localStorage.getItem("config")));
+            if (author.cristin_person_id !== 0) {
+                searchedAuthors.data.push(author);
+            }
+            if (searchedAuthors.data.length > 0) {
+                props.enqueueSnackbar("Fant " + searchedAuthors.data.length + " forfattere med søk.", {variant: "success"});
+            } else {
+                props.enqueueSnackbar("Fant ingen forfattere med søk.", {variant: "warning"});
+            }
+            results = { order: rowIndex, authors: searchedAuthors.data, current: 0 };
+            setSearchResults(results);
+        }
+
+        await nextSearchResult(results, results.current);
     }
 
-    async function findBestMatch(author, potentialAuthors, rowIndex) {
-        let bestMatch = "";
-        let maxCharsMatched = 0;
-        for (let i = 0; i < potentialAuthors.length; i++) {
-            let charsMatched = 0;
 
-            for (let h = 0; h < author.first_name.length; h++) {
-                if (
-                    author.first_name.substr(h, h + 1) ===
-                    potentialAuthors[i].first_name.substr(h, h + 1)
-                ) {
-                    charsMatched++;
-                }
-            }
-            for (let h = 0; h < author.surname.length; h++) {
-                if (
-                    author.surname.substr(h, h + 1) ===
-                    potentialAuthors[i].surname.substr(h, h + 1)
-                ) {
-                    charsMatched++;
-                }
-            }
-            if (charsMatched > maxCharsMatched) {
-                bestMatch = potentialAuthors[i];
-                maxCharsMatched = charsMatched;
-            }
-        }
-        if (bestMatch !== "") {
+    async function nextSearchResult(results, current) {
+        if (results.authors.length > 0 && current < results.authors.length) {
             let tempAuthor = await axios.get(
                 properties.crisrest_gatekeeper_url + "/persons/" +
-                bestMatch.cristin_person_id
+                results.authors[current].cristin_person_id
                 , JSON.parse(localStorage.getItem("config")));
-            console.log(tempAuthor.data);
             let tempAffliations = [];
             for (let j = 0; j < tempAuthor.data.affiliations.length; j++) {
                 let tempdata = await axios.get(
@@ -365,21 +383,183 @@ function ContributorModal(props) {
                     institutionNr: tempdata.data.cristin_institution_id,
                     isCristinInstitution: tempdata.data.cristin_user_institution
                 };
+                console.log(tempInstitution);
                 tempAffliations.push(tempInstitution);
             }
             let temp = [...data];
-            bestMatch.affiliations = tempAffliations;
+            results.authors[current].affiliations = tempAffliations;
 
-            temp[rowIndex].cristin = bestMatch;
-            temp[rowIndex].cristin.isEditing = false;
-            temp[rowIndex].cristin.order = rowIndex + 1;
+            temp[results.order].cristin = results.authors[current];
+            temp[results.order].cristin.isEditing = false;
+            temp[results.order].cristin.order = results.order + 1;
 
-            temp[rowIndex].toBeCreated = bestMatch;
-            temp[rowIndex].toBeCreated.order = rowIndex + 1;
+            temp[results.order].toBeCreated = results.authors[current];
+            temp[results.order].toBeCreated.isEditing = false;
+            temp[results.order].toBeCreated.order = results.order + 1;
 
-            setData(temp);
+
+            setSearchResults({ ...results, current: current + 1, order: results.order });
+        } else {
+            let temp = [...data];
+
+            temp[results.order].cristin = temp[results.order].imported;
+            temp[results.order].cristin.isEditing = true;
+            temp[results.order].cristin.order = results.order + 1;
+
+            temp[results.order].toBeCreated = temp[results.order].imported;
+            temp[results.order].toBeCreated.isEditing = true;
+            temp[results.order].toBeCreated.order = results.order + 1;
+            setSearchResults({ ...results, current: 0 })
         }
     }
+
+    function createBody() {
+        if(fetched) {
+            return (
+                <TableBody>
+                    {data
+                        .slice(
+                            state.contributorPage * state.contributorPerPage,
+                            (state.contributorPage + 1) * state.contributorPerPage
+                        )
+                        .map((row, i) => (
+                            <TableRow key={i} hover>
+                                <TableCell>
+                                    {row.toBeCreated.order === row.imported.order
+                                        ? row.imported.order
+                                        : row.imported.order + " (" + row.toBeCreated.order + ")"}
+                                </TableCell>
+                                <TableCell style={{width: '40%'}}>
+                                    <div className={`result contributor`}>
+                                        <div className="image-wrapper person">
+                                            <img src={getInactiveImage()} alt="person"/>
+                                        </div>
+                                        <div className="content-wrapper">
+                                            <h6>
+                                                {row.imported.surname && row.imported.first_name
+                                                    ? row.imported.surname +
+                                                    ", " +
+                                                    row.imported.first_name
+                                                    : row.imported.authorName
+                                                        ? row.imported.authorName
+                                                        : null}
+                                            </h6>
+                                            <div className={`metadata`}>
+                                                {row.imported.affiliations.map((inst, j) => (
+                                                    <p className={`italic`} key={j}>
+                                                        {inst.unitName}
+                                                    </p>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {row.imported.surname && row.imported.first_name ? (
+                                        <Button
+                                            color="primary"
+                                            onClick={() => handleChooseAuthor(row)}
+                                        >
+                                            Velg denne
+                                        </Button>
+                                    ) : null}
+                                </TableCell>
+                                <TableCell>
+                                    <div className={`result contributor`}>
+                                        <div className="image-wrapper person">
+                                            {row.toBeCreated.hasOwnProperty("cristin_person_id") && row.toBeCreated.cristin_person_id ?
+                                                <img src={getMainImage()} alt="person"/> :
+                                                <img src={getInactiveImage()} alt="inaktiv person"/>}
+                                        </div>
+                                        <div className={`orderButtons`}>
+                                            {row.toBeCreated.order > 1 &&
+                                            row.toBeCreated.order < data.length ? (
+                                                <div>
+                                                    <div>
+                                                        <Button onClick={() => handleOrder(row, true)}>
+                                                            <img src={getArrowUpImage()} alt="up-arrow"/>
+                                                        </Button>
+                                                    </div>
+                                                    <div>
+                                                        <Button onClick={() => handleOrder(row, false)}>
+                                                            <img
+                                                                src={getArrowDownImage()}
+                                                                alt="down-arrow"
+                                                            />
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            ) : row.toBeCreated.order === data.length &&
+                                            data.length > 1 ? (
+                                                <Button onClick={() => handleOrder(row, true)}>
+                                                    <img src={getArrowUpImage()} alt="up-arrow"/>
+                                                </Button>
+                                            ) : row.toBeCreated.order < data.length ? (
+                                                <Button onClick={() => handleOrder(row, false)}>
+                                                    <img src={getArrowDownImage()} alt="down-arrow"/>
+                                                </Button>
+                                            ) : null}
+                                        </div>
+                                        <Contributor
+                                            author={row}
+                                            index={
+                                                i + state.contributorPage * state.contributorPerPage
+                                            }
+                                            updateData={updateContributor}
+                                            isOpen={props.open}
+                                            searchAgain={retrySearch}
+                                            deleteContributor={toggle}
+                                        />
+                                        <ClosingDialog
+                                            doFunction={removeContributor}
+                                            title={"Slett bidragsyter"}
+                                            text={"Er du sikker på at du vil slette denne bidragsyteren?"}
+                                            open={dialog}
+                                            handleClose={toggle}
+                                            handleCloseDialog={toggle}
+                                        />
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    {state.contributorPage + 1 >= data.length / 5 ? (
+                        <TableRow>
+                            <TableCell>+</TableCell>
+                            <TableCell></TableCell>
+                            <TableCell>
+                                <Button onClick={() => addContributor()}>
+                                    Legg til bidragsyter
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ) : null}
+                    <ContributorPagination totalCount={data.length}/>
+                </TableBody>
+            );
+        } else {
+            return (
+                <TableBody>
+                    {Array.from({length:5}, (value, index) =>
+                    <TableRow
+                        hover
+                        id={'skeleton'+index}
+                        key={index}
+                        tabIndex="0"
+                    >
+                        <TableCell>
+                            <Skeleton variant="rect" width={40} height={20}/>
+                        </TableCell>
+                        <TableCell>
+                            <Skeleton variant="rect" width='auto' height={118}/>
+                        </TableCell>
+                        <TableCell>
+                            <Skeleton variant="rect" width='auto' height={118}/>
+                        </TableCell>
+                    </TableRow>
+                )}
+                </TableBody>
+            );
+        }
+    }
+
 
     return (
         <Modal isOpen={props.open} className={`contributorModal`}>
@@ -393,114 +573,7 @@ function ContributorModal(props) {
                             <TableCell>Cristin-Forfatter</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>
-                        {data
-                            .slice(
-                                state.contributorPage * state.contributorPerPage,
-                                (state.contributorPage + 1) * state.contributorPerPage
-                            )
-                            .map((row, i) => (
-                                <TableRow key={i} hover>
-                                    <TableCell>
-                                        {row.toBeCreated.order === row.imported.order
-                                            ? row.imported.order
-                                            : row.imported.order + " (" + row.toBeCreated.order + ")"}
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className={`result contributor`}>
-                                            <div className="image-wrapper person">
-                                                <img src={getMainImage()} alt="person"/>
-                                            </div>
-                                            <div className="content-wrapper">
-                                                <h6>
-                                                    {row.imported.surname && row.imported.first_name
-                                                        ? row.imported.surname +
-                                                        ", " +
-                                                        row.imported.first_name
-                                                        : row.imported.authorName
-                                                            ? row.imported.authorName
-                                                            : null}
-                                                </h6>
-                                                <div className={`metadata`}>
-                                                    {row.imported.affiliations.map((inst, j) => (
-                                                        <p className={`italic`} key={j}>
-                                                            {inst.institutionName}
-                                                        </p>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {row.imported.surname && row.imported.first_name ? (
-                                            <Button
-                                                color="primary"
-                                                onClick={() => handleChooseAuthor(row)}
-                                            >
-                                                Velg denne
-                                            </Button>
-                                        ) : null}
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className={`result contributor`}>
-                                            <div className="image-wrapper person">
-                                                <img src={getMainImage()} alt="person"/>
-                                            </div>
-                                            <div className={`orderButtons`}>
-                                                {row.toBeCreated.order > 1 &&
-                                                row.toBeCreated.order < data.length ? (
-                                                    <div>
-                                                        <div>
-                                                            <Button onClick={() => handleOrder(row, true)}>
-                                                                <img src={getArrowUpImage()} alt="up-arrow"/>
-                                                            </Button>
-                                                        </div>
-                                                        <div>
-                                                            <Button onClick={() => handleOrder(row, false)}>
-                                                                <img
-                                                                    src={getArrowDownImage()}
-                                                                    alt="down-arrow"
-                                                                />
-                                                            </Button>
-                                                        </div>
-                                                    </div>
-                                                ) : row.toBeCreated.order === data.length &&
-                                                data.length > 1 ? (
-                                                    <Button onClick={() => handleOrder(row, true)}>
-                                                        <img src={getArrowUpImage()} alt="up-arrow"/>
-                                                    </Button>
-                                                ) : row.toBeCreated.order < data.length ? (
-                                                    <Button onClick={() => handleOrder(row, false)}>
-                                                        <img src={getArrowDownImage()} alt="down-arrow"/>
-                                                    </Button>
-                                                ) : null}
-                                            </div>
-                                            <Contributor
-                                                author={row}
-                                                index={
-                                                    i + state.contributorPage * state.contributorPerPage
-                                                }
-                                                updateData={updateContributor}
-                                                isOpen={props.open}
-                                                searchAgain={retrySearch}
-                                                deleteContributor={removeContributor}
-                                            />
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        {state.contributorPage + 1 >= data.length / 5 ? (
-                            <TableRow>
-                                <TableCell>+</TableCell>
-                                <TableCell></TableCell>
-                                <TableCell>
-                                    <Button onClick={() => addContributor()}>
-                                        Legg til bidragsyter
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ) : null}
-                        <ContributorPagination totalCount={data.length}/>
-                    </TableBody>
-
+                    {createBody()}
                     <TableFooter>
                         <TableRow>
                             <TableCell></TableCell>
@@ -523,47 +596,49 @@ function ContributorModal(props) {
     );
 }
 
-async function fetchContributors(result) {
-    let authors = result.authors;
+async function fetchPerson(personId) {
+    if (personId === 0)
+        return;
 
-    if (result.authors.length > 10 && result.authors[10].sequenceNr !== 11) {
-        authors = await axios.get(
-            properties.piarest_gatekeeper_url + "/sentralimport/publication/" +
-            result.pubId +
-            "/contributors", JSON.parse(localStorage.getItem("config"))
-        );
-        authors = authors.data;
-    }
-
-    return authors;
+    return await axios.get(properties.crisrest_gatekeeper_url + "/persons/" + personId, JSON.parse(localStorage.getItem("config")));
 }
 
+let institutionNames = {};
 async function fetchInstitutionName(institutionId) {
     if (institutionId === "0") return " ";
-    let institution = await axios.get(
-        properties.crisrest_gatekeeper_url + "/institutions/" + institutionId, JSON.parse(localStorage.getItem("config"))
-    );
-    return institution.data.institution_name.hasOwnProperty("nb")
-        ? institution.data.institution_name.nb
-        : institution.data.institution_name.en;
+    if (institutionNames[institutionId] === undefined) {
+        let institution = await axios.get(
+            properties.crisrest_gatekeeper_url + "/institutions/" + institutionId, JSON.parse(localStorage.getItem("config"))
+        );
+        institutionNames[institutionId] = institution.data.institution_name.hasOwnProperty("nb")
+            ? institution.data.institution_name.nb
+            : institution.data.institution_name.en;
+    }
+    return institutionNames[institutionId];
 }
 
+let countries = {};
 async function fetchInstitutions(affiliations) {
     let arr = [];
     for (let i = 0; i < affiliations.length; i++) {
         let inst = affiliations[i];
-        if ((inst.cristinInstitutionNr === 9127 || inst.cristinInstitutionNr === 0) && inst.hasOwnProperty("countryCode")) {
-            let response = await axios.get(properties.crisrest_gatekeeper_url + "/institutions/country/" + inst.countryCode + "?lang=nb",
-                JSON.parse(localStorage.getItem("config")));
-            if (response.data.length > 0) {
-                inst = {
-                    cristinInstitutionNr: response.data[0].cristin_institution_id,
-                    institutionName: (response.data[0].institution_name.hasOwnProperty("nb") ? response.data[0].institution_name.nb : response.data[0].institution_name.en) + "(Ukjent institusjon)",
-                    countryCode: response.data[0].country,
-                    isCristinInstitution: response.data[0].isCristinInstitution
-                };
+        if ((inst.cristinInstitutionNr === 9127 || inst.cristinInstitutionNr === 9126 || inst.cristinInstitutionNr === 0) && inst.hasOwnProperty("countryCode")) {
+            if (countries[inst.countryCode] === undefined) {
+                let response = await axios.get(properties.crisrest_gatekeeper_url + "/institutions/country/" + inst.countryCode + "?lang=nb",
+                    JSON.parse(localStorage.getItem("config")));
+                if (response.data.length > 0) {
+                    inst = {
+                        cristinInstitutionNr: response.data[0].cristin_institution_id,
+                        institutionName: (response.data[0].institution_name.hasOwnProperty("nb") ? response.data[0].institution_name.nb : response.data[0].institution_name.en) + " (Ukjent institusjon)",
+                        countryCode: response.data[0].country,
+                        isCristinInstitution: response.data[0].isCristinInstitution
+                    };
+                } else {
+                    console.log(affiliations[i]);
+                }
+                countries[inst.countryCode] = inst;
             } else {
-                console.log(affiliations[i]);
+                inst = countries[inst.countryCode];
             }
         }
         arr.push(inst);
@@ -572,30 +647,36 @@ async function fetchInstitutions(affiliations) {
     return arr;
 }
 
-//TODO søket i crisRest må kanskje endres til å gi muligheten til å returnere personer som ikke er identified?
-//TODO også mulighet til å sende med flere intitusjoner og søke med OR i stedet for AND
+
 async function searchContributors(authors) {
     let suggestedAuthors = [];
     for (let i = 0; i < authors.length; i++) {
-        let authorName = authors[i].hasOwnProperty("firstname")
-            ? authors[i].firstname.substr(0, 1) + " " + authors[i].surname
-            : authors[i].authorName;
-        let searchedAuthors = await axios.get(
-            properties.crisrest_gatekeeper_url + "/persons?name=" +
-            authorName +
-            "&institution=" +
-            (authors[i].institutions[0].hasOwnProperty("acronym")
-                ? authors[i].institutions[0].acronym
-                : (authors[i].institutions[0].hasOwnProperty("institutionName") ? authors[i].institutions[0].institutionName.replace("&", "") : ""))
-            , JSON.parse(localStorage.getItem("config")));
-
-        if (searchedAuthors.data.length > 0) {
-            let authorSuggestion = await axios.get(searchedAuthors.data[0].url);
-            suggestedAuthors[i] = authorSuggestion.data;
-        } else {
-            suggestedAuthors[i] = defaultAuthor;
+        let person = defaultAuthor;
+        let affiliations = [];
+        if (authors[i].cristinId !== 0) {
+            person = await fetchPerson(authors[i].cristinId);
+            person = person.data;
+            if (person.hasOwnProperty("affiliations")) {
+                for (let j = 0; j < person.affiliations.length; j++) {
+                    affiliations[j] = {
+                        cristinInstitutionNr: person.affiliations[j].institution.cristin_institution_id,
+                        institutionName: await fetchInstitutionName(person.affiliations[j].institution.cristin_institution_id),
+                    }
+                }
+            } else {
+                affiliations = await fetchInstitutions(authors[i].institutions);
+            }
+            person = {
+                cristin_person_id: person.cristin_person_id,
+                first_name: person.first_name,
+                surname: person.surname,
+                affiliations: affiliations,
+                url: properties.crisrest_gatekeeper_url + "/persons/" + person.cristin_person_id,
+                isEditing: false,
+                order: i + 1
+            };
         }
-        suggestedAuthors[i].order = i + 1;
+        suggestedAuthors[i] = person;
     }
 
     return suggestedAuthors;

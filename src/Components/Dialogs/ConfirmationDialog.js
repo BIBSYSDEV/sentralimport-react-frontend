@@ -11,20 +11,21 @@ import {Context} from "../../Context";
 import axios from "axios";
 import {useHistory} from "react-router-dom";
 import {properties} from "../../properties.js"
+import TextField from "@material-ui/core/TextField";
 
 export default function ConfirmationDialog(props) {
     let {dispatch} = React.useContext(Context);
     let history = useHistory();
-
-    let emptyArray = [];
+    const [annotation, setAnnotation] = React.useState(null);
 
     async function post() {
         let publication = createPublicationObject();
+        let id = 0;
         try {
-            let id = await postPublication(publication);
+            id = await postPublication(publication);
             await putContributors(id);
-            await patchPiaPublication(id, publication.pubId);
-            dispatch({type: "setFormErrors", payload: emptyArray});
+            await patchPiaPublication(id, publication.pub_id);
+            dispatch({type: "setFormErrors", payload: []});
         } catch (e) {
             console.log("There was an error while importing the publication", e);
             localStorage.setItem("authorized", "false");
@@ -33,9 +34,18 @@ export default function ConfirmationDialog(props) {
             } else {
                 history.push("/error");
             }
-            return e.response.status;
+            return {result: null, status: e.response !== undefined ? e.response.status : 500};
         }
-        return 200;
+        let title = publication.title.hasOwnProperty("nb") ? publication.title.nb : publication.title.en;
+        title = title.length > 50 ? title.substr(0, 49) : title;
+        let log = JSON.parse(localStorage.getItem("log"));
+        if (log === null)
+            log = [];
+        else if (log.length > 15)
+            log.shift();
+        log.push({id: id, title: title});
+        localStorage.setItem("log", JSON.stringify(log));
+        return {result: {id: id, title: title}, status: 200};
     }
 
     async function patch() {
@@ -52,12 +62,14 @@ export default function ConfirmationDialog(props) {
             } else {
                 history.push("/error");
             }
-            return e.response.status;
+            return {result: null, status: e.response !== undefined ? e.response.status : 500};
         }
-        return 200;
+        let title = publication.title.length > 14 ? publication.title.substr(0, 15) : publication.title;
+        return {result: {id: publication.id, title: title}, status: 200};
     }
 
     async function postPublication(publication) {
+        console.log(publication);
         let response = await axios.post(properties.crisrest_gatekeeper_url + "/results", publication,
             JSON.parse(localStorage.getItem("config")));
         return response.data.cristin_result_id;
@@ -103,8 +115,7 @@ export default function ConfirmationDialog(props) {
             ],
             pia_journal_number: temp.publication.channel.cristinTidsskriftNr
         };
-        return {
-            cristinResultId: props.duplicate ? temp.publication.cristinResultId : "",
+        let pub =  {
             category: {
                 code: temp.publication.category
             },
@@ -112,7 +123,7 @@ export default function ConfirmationDialog(props) {
             original_language: temp.publication.languages.filter(l => l.original)[0].lang.toLowerCase(),
             title: title,
             pub_id: temp.publication.pubId,
-            year_published: temp.publication.registered,
+            year_published: temp.publication.yearPublished.toString(),
             import_sources: temp.publication.import_sources,
             volume: temp.publication.channel.volume,
             issue: temp.publication.channel.issue,
@@ -125,9 +136,16 @@ export default function ConfirmationDialog(props) {
             pages: {
                 from: temp.publication.channel.pageFrom,
                 to: temp.publication.channel.pageTo,
-                count: temp.publication.channel.pageTo - temp.publication.channel.pageFrom
+                count: temp.publication.channel.pageTo !== null && temp.publication.channel.pageFrom !== null ?
+                    (temp.publication.channel.pageTo - temp.publication.channel.pageFrom).toString() :
+                    "0"
             }
         };
+        if (props.duplicate)
+            pub.cristinResultId = temp.publication.cristinResultId;
+        if (annotation !== null)
+            pub.annotaion = annotation;
+        return pub;
     }
 
     function createContributorObject() {
@@ -136,15 +154,30 @@ export default function ConfirmationDialog(props) {
         for (let i = 0; i < temp.contributors.length; i++) {
             let affiliations = [];
             for (let j = 0; j < temp.contributors[i].toBeCreated.affiliations.length; j++) {
-                affiliations[j] = {
+                let count = 0;
+                if(!temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("units")) { 
+                affiliations[j + count] = {
                     role_code: temp.contributors[i].imported.role_code,
                     institution: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("institution") ?
                         {...temp.contributors[i].toBeCreated.affiliations[j].institution, role_code: temp.contributors[i].imported.role_code}
                         :
                         {
                             cristin_institution_id: temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString(),
-                        }
+                        },
+                     }
+                } else { 
+                    for(let h = 0; h < temp.contributors[i].toBeCreated.affiliations[j].units.length; h++) {
+                        affiliations[j + count] = {
+                            role_code: temp.contributors[i].imported.role_code,
+                            unit: 
+                                {
+                                    cristin_unit_id: temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr.toString(),
+                                },
+                        };
+                     count++;
+                    }
                 }
+                
             }
             contributors[i] = {
                 ...temp.contributors[i].toBeCreated,
@@ -162,6 +195,10 @@ export default function ConfirmationDialog(props) {
         return contributors;
     }
 
+    function handleChange(event) {
+        setAnnotation(event.target.value);
+    }
+
     return (
         <Dialog
             open={props.open}
@@ -171,6 +208,16 @@ export default function ConfirmationDialog(props) {
         >
             <DialogTitle>Bekreft import</DialogTitle>
             <DialogContent>
+                <TextField
+                    placeholder="Om du ønsker å legge ved en merknad, skriv den inn her før du importerer"
+                    multiline
+                    rows={3}
+                    rowsMax={6}
+                    margin="normal"
+                    onChange={handleChange}
+                    fullWidth
+                    inputProps={{ maxLength: 250 }}
+                />
                 <DialogContentText>
                     Er du sikker på at du vil importere denne publikasjonen?
                 </DialogContentText>

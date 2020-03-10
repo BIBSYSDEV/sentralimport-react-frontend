@@ -27,7 +27,7 @@ export default function Error() {
                 <br />
                 <Grid item>
                     <Card>
-                        <CardContent alignItems="center">
+                        <CardContent>
                             <Typography variant="h4">
                                 Det har skjedd en feil
                             </Typography>

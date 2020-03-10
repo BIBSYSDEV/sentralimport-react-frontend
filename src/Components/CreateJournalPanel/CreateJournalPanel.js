@@ -60,7 +60,7 @@ function CreateJournalPanel(props) {
   function handleSubmit() {
     setOpen(false);
 
-    var newJournal = new Object();
+    let newJournal = {};
     newJournal.title = title;
     newJournal.issn = issn;
     newJournal.eissn = eissn;
@@ -160,12 +160,12 @@ function CreateJournalPanel(props) {
 
                 <FormGroup>
                 <TextField
-                id="EISSN"
+                id="E-ISSN"
                   error={
                     eissn.length > 0 &&
                     !eissn.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)
                   }
-                  label={"EISSN"}
+                  label={"E-ISSN"}
                   
                   value={eissn}
                   onChange={e => handleChangeEissn(e)}

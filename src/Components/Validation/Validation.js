@@ -76,7 +76,7 @@ export default function Validation(props) {
         break;
       case "aarstall":
         var aarstallValid =
-          state.validation.length === 4 && state.validation <= new Date().getFullYear();
+          state.validation > 999 && state.validation <= new Date().getFullYear();
         var aarstallError = "Årstall er galt/over grensen";
 
         aarstallValid
@@ -112,12 +112,12 @@ export default function Validation(props) {
       {
         name: "tidsskrift",
         value: props.duplicate
-          ? props.publication.journal.name
+          ? (props.publication.hasOwnProperty("journal") ? props.publication.journal.name : "")
           : (props.publication.hasOwnProperty("channel") ? props.publication.channel.title : "")
       },
       {
         name: "doi",
-        value: props.duplicate
+        value: (props.duplicate && props.publication.hasOwnProperty("links"))
           ? props.publication.links[
               props.publication.links.length - 1
             ].url.substring(
@@ -139,10 +139,7 @@ export default function Validation(props) {
         name: "aarstall",
         value: props.duplicate
           ? props.publication.year_published
-          : props.publication.registered.substring(
-              props.publication.registered.length - 4,
-              props.publication.registered.length
-            )
+          : props.publication.yearPublished
       },
       {
         name: "kategori",
@@ -197,7 +194,7 @@ export default function Validation(props) {
           break;
         case "aarstall":
           var aarstallValid =
-            data[i].value.length === 4 && data[i].value <= new Date().getFullYear();
+            data[i].value > 999 && data[i].value <= new Date().getFullYear();
           var aarstallError = "Årstall er galt/over grensen";
 
           !aarstallValid ? fieldErrors.push(aarstallError) : fieldErrors.push();

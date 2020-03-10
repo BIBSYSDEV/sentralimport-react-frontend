@@ -43,7 +43,7 @@ export default function CustomizedTables() {
   const [data, setData] = React.useState([]);
   let { state } = React.useContext(Context);
   const [prevCount, setPrevCount] = React.useState(state.totalCount);
-    let history = useHistory();
+  let history = useHistory();
 
   useEffect(() => {
     getNumbers();
