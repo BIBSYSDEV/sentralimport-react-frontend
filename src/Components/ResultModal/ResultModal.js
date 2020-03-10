@@ -13,6 +13,7 @@ import "../../assets/styles/Results.scss";
 import axios from "axios";
 import {useHistory} from "react-router-dom";
 import {properties} from "../../properties";
+import { Markup } from "interweave";
 
 export default function ResultModal(props) {
   const [innerModal, setInnerModal] = React.useState(false);
@@ -66,6 +67,21 @@ export default function ResultModal(props) {
     });
   }
 
+  function parseTitle(title) {
+    let cleanTitle = title;
+    while(cleanTitle.indexOf("&lt;") !== -1){
+        cleanTitle = cleanTitle.replace("&lt;", "<");
+        cleanTitle = cleanTitle.replace("&gt;", ">");
+    }
+
+    if(cleanTitle.indexOf("<inf>") || cleanTitle.indexOf("</inf>") ){
+        cleanTitle = cleanTitle.replace("<inf>", "<sub>");
+        cleanTitle = cleanTitle.replace("</inf>", "</sub>");
+    }
+
+    return cleanTitle;
+}
+
   return (
     <Modal isOpen={props.open}>
       <ModalHeader toggle={props.handleClose}>
@@ -84,7 +100,7 @@ export default function ResultModal(props) {
               {props.data.authors.length > 5
                 ? "et al (" + props.data.authors.length + ") "
                 : ""}
-              {props.data.languages[0].title}
+              <Markup content={parseTitle(props.data.languages[0].title)} />
               <i>
                 {props.data.hasOwnProperty("channel")
                   ? " " + props.data.channel.title + " "
