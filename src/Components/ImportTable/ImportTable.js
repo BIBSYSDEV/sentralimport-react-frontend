@@ -23,6 +23,7 @@ import {properties} from "../../properties";
 import Skeleton from '@material-ui/lab/Skeleton';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListModal from "../ListModal/ListModal";
+import { Markup } from 'interweave';
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -462,6 +463,29 @@ export default function EnhancedTable() {
         return personCount;
     }
 
+    function filterTitle(row) {
+        let tempTitle;
+        tempTitle = row.languages.filter(l => l.original)[0].title;
+
+        return tempTitle;
+    }
+
+    function parseTitle(title) {
+        let cleanTitle = title;
+        while(cleanTitle.indexOf("&lt;") !== -1){
+            cleanTitle = cleanTitle.replace("&lt;", "<");
+            cleanTitle = cleanTitle.replace("&gt;", ">");
+            console.log("replaced");
+        }
+
+        if(cleanTitle.indexOf("<inf>") || cleanTitle.indexOf("</inf>") ){
+            cleanTitle = cleanTitle.replace("<inf>", "<sub>");
+            cleanTitle = cleanTitle.replace("</inf>", "</sub>");
+        }
+
+        return cleanTitle;
+    }
+
     function createTable(body) {
         return (
             <div className={classes.root}>
@@ -570,7 +594,7 @@ export default function EnhancedTable() {
                                 </div>
                                 <div className="content-wrapper">
                                     <h6 className={`result-title`}>
-                                        {row.languages.filter(l => l.original)[0].title}
+                                        <Markup content={parseTitle(filterTitle(row))} />
                                     </h6>
                                     <div className={`metadata`}>
                                         {row.authors
