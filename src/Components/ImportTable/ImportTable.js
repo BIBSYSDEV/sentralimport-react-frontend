@@ -475,7 +475,6 @@ export default function EnhancedTable() {
         while(cleanTitle.indexOf("&lt;") !== -1){
             cleanTitle = cleanTitle.replace("&lt;", "<");
             cleanTitle = cleanTitle.replace("&gt;", ">");
-            console.log("replaced");
         }
 
         if(cleanTitle.indexOf("<inf>") || cleanTitle.indexOf("</inf>") ){
