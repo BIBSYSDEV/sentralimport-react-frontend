@@ -11,6 +11,7 @@ import "./assets/styles/buttons.scss";
 import {useHistory} from "react-router-dom";
 import Login from "./Components/Login/Login";
 import Log from "./Components/Log/Log"
+import Footer from "./Components/Footer/Footer";
 
 export default function App() {
     let history = useHistory();
@@ -43,6 +44,7 @@ export default function App() {
           <ImportTable />
         </Grid>
       </Grid>
+      <Footer/>
     </div>
   )
       : (<div><Login location={"login"}/></div>
