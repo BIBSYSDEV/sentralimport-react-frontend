@@ -324,6 +324,11 @@ function ContributorModal(props) {
             }
         };
         temp.push(newContributor);
+
+        if((data.length / state.contributorPerPage) === state.contributorPage + 1) {
+            dispatch({ type: "setContributorPage", payload: state.contributorPage + 1});
+        }
+        
         setData(temp);
     }
 
