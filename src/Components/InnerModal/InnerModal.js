@@ -816,7 +816,7 @@ function InnerModal(props) {
                                             margin="normal"
                                             disabled
                                         />
-                                        {aarstall === props.data.yearPublished ? (
+                                        {parseData(aarstall) === parseData(props.data.yearPublished) ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
