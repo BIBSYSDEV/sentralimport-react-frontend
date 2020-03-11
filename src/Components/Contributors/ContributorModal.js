@@ -525,7 +525,7 @@ function ContributorModal(props) {
                                 </TableCell>
                             </TableRow>
                         ))}
-                    {state.contributorPage + 1 >= data.length / 5 ? (
+                    {state.contributorPage + 1 >= data.length / state.contributorPerPage ? (
                         <TableRow>
                             <TableCell>+</TableCell>
                             <TableCell></TableCell>
