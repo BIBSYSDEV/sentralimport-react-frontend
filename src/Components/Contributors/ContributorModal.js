@@ -435,7 +435,6 @@ function ContributorModal(props) {
                                         : row.imported.order + " (" + row.toBeCreated.order + ")"}
                                 </TableCell>
                                 <TableCell style={{width: '40%'}}>
-                                    {console.log(row)}
                                     <div className={`result contributor`}>
                                         <div className="image-wrapper person">
                                             <img src={row.cristin.hasOwnProperty("cristin_person_id") && row.cristin.cristin_person_id !== null ? getMainImage() : getInactiveImage()} alt="person"/>
