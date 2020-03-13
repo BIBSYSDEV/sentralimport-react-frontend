@@ -53,7 +53,7 @@ export default function ConfirmationDialog(props) {
         try {
             await patchPublication(publication);
             await putContributors(publication.cristinResultId);
-            await patchPiaPublication(publication.cristinResultId, publication.pubId);
+            await patchPiaPublication(publication.cristinResultId, publication.pub_id);
         } catch (e) {
             console.log("There was an error while updating the publication", e);
             localStorage.setItem("authorized", "false");
