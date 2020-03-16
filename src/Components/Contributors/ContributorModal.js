@@ -153,7 +153,7 @@ function ContributorModal(props) {
         temp[toBeCreatedOrder - 1].toBeCreated.surname = author.imported.surname;
         temp[toBeCreatedOrder - 1].toBeCreated.authorname =
             author.imported.authorname;
-        temp[toBeCreatedOrder - 1].toBeCreated.cristin_person_id =
+        temp[toBeCreatedOrder - 1].toBeCreated.cristin_person_id = author.cristin.hasOwnProperty("cristin_person_id") && author.cristin.cristin_person_id !== null ? author.cristin.cristin_person_id : 
             author.imported.cristin_person_id;
         temp[toBeCreatedOrder - 1].isEditing = false;
 
@@ -437,7 +437,7 @@ function ContributorModal(props) {
                                 <TableCell style={{width: '40%'}}>
                                     <div className={`result contributor`}>
                                         <div className="image-wrapper person">
-                                            <img src={getInactiveImage()} alt="person"/>
+                                            <img src={row.cristin.hasOwnProperty("cristin_person_id") && row.cristin.cristin_person_id !== null ? getMainImage() : getInactiveImage()} alt="person"/>
                                         </div>
                                         <div className="content-wrapper">
                                             <h6>
