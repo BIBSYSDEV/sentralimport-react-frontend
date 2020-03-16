@@ -53,7 +53,7 @@ export default function ConfirmationDialog(props) {
         try {
             await patchPublication(publication);
             await putContributors(publication.cristinResultId);
-            await patchPiaPublication(publication.cristinResultId, publication.pubId);
+            await patchPiaPublication(publication.cristinResultId, publication.pub_id);
         } catch (e) {
             console.log("There was an error while updating the publication", e);
             localStorage.setItem("authorized", "false");
@@ -64,8 +64,8 @@ export default function ConfirmationDialog(props) {
             }
             return {result: null, status: e.response !== undefined ? e.response.status : 500};
         }
-        let title = publication.title.length > 14 ? publication.title.substr(0, 15) : publication.title;
-        return {result: {id: publication.id, title: title}, status: 200};
+        let title = (publication.title.en.length > 14 || publication.title.nb.length > 14) ? (publication.title.hasOwnProperty("en") ? publication.title.en.substr(0, 15) : publication.title.nb.substr(0, 15)) : publication.title.hasOwnProperty("en") ? publication.title.en : publication.title.nb;
+        return {result: {id: publication.cristinResultId, title: title}, status: 200};
     }
 
     async function postPublication(publication) {
