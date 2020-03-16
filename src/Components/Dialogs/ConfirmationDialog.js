@@ -64,8 +64,8 @@ export default function ConfirmationDialog(props) {
             }
             return {result: null, status: e.response !== undefined ? e.response.status : 500};
         }
-        let title = publication.title.length > 14 ? publication.title.substr(0, 15) : publication.title;
-        return {result: {id: publication.id, title: title}, status: 200};
+        let title = publication.title.length > 14 ? (publication.title.hasOwnProperty("en") ? publication.title.en.substr(0, 15) : publication.title.nb.substr(0, 15)) : publication.title.hasOwnProperty("en") ? publication.title.en : publication.title.nb;
+        return {result: {id: publication.pub_id, title: title}, status: 200};
     }
 
     async function postPublication(publication) {
@@ -99,6 +99,7 @@ export default function ConfirmationDialog(props) {
         for (let i = 0; i < temp.publication.languages.length; i++) {
             title[temp.publication.languages[i].lang.toLowerCase()] = temp.publication.languages[i].title;
         }
+        console.log(title);
 
         let journal = {
             name: temp.publication.channel.title,
