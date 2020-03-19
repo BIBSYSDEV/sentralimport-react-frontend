@@ -694,6 +694,7 @@ function InnerModal(props) {
                                                 onChange={handleChangeJournal}
                                                 onInputChange={searchJournals}
                                             />
+                                            {selectedJournal.label === "Ingen tidsskrift funnet" ? <div className="journalError"> Tidsskrift mangler </div> : ""}
                                             </div>
                                             </Grid>
                                             <Grid item>
@@ -1000,8 +1001,9 @@ function InnerModal(props) {
                     
                      <Button className={`contributorButton`} onClick={openContributorModal} variant="contained">Bidragsytere</Button>
                 </ModalBody>
-                <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
+                
                 <ModalFooter>
+                    <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
                     <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
                     <Button
                         disabled={state.formErrors.length >= 1 || props.data.hasOwnProperty("cristin_id")}
