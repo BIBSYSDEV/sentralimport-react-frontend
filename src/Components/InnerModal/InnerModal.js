@@ -433,6 +433,8 @@ function InnerModal(props) {
 
     const handleNewJournal = (newJournal) => {
         setSelectedJournal({label: newJournal.title, value: 0, issn: newJournal.issn, eissn: newJournal.eissn });
+        dispatch({type: "setSelectedField", payload: "tidsskrift"});
+        dispatch({type: "setValidation", payload: newJournal.title});
        
     };
 
