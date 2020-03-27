@@ -2,12 +2,19 @@ import React, {useEffect} from "react";
 import {Result} from "./Result";
 import axios from "axios";
 import {Context} from "../../Context";
-import {Radio, RadioGroup, FormControlLabel} from "@material-ui/core";
+import {Radio, RadioGroup, FormControlLabel, Button, Checkbox, FormGroup, Card} from "@material-ui/core";
 import {ListGroupItem} from "reactstrap";
 import {properties} from "../../properties";
+import {Collapse} from "react-bootstrap";
+import "../../assets/styles/Results.scss";
 
 export function Duplicates(props) {
     const [duplicate, setDuplicate] = React.useState([]);
+    const [isOpen, setIsOpen] = React.useState(false);
+    const [doiChecked, setDoiChecked] = React.useState(false);
+    const [titleChecked, setTitleChecked] = React.useState(false);
+    const [publishedChecked, setPublishedChecked] = React.useState(false);
+    const [issnChecked, setIssnChecked] = React.useState(false);
     let {state, dispatch} = React.useContext(Context);
     let publication = props.publication;
     const relevantStatus = state.currentImportStatus !== "ikke aktuelle";
@@ -69,6 +76,57 @@ export function Duplicates(props) {
             : console.log();
     }
 
+    function handleDoi() {
+        setDoiChecked(!doiChecked);
+    }
+    
+    function handleTitle() {
+        setTitleChecked(!titleChecked);
+    }
+    
+    function handleIssn() {
+        setIssnChecked(!issnChecked);
+    }
+    
+    function handlePublished() {
+        setPublishedChecked(!publishedChecked);
+    }
+
+    function handleOpen() {
+        console.log(isOpen);
+        setIsOpen(true);
+        console.log(isOpen);
+    }
+
+    async function retrySearch() {
+        setIsOpen(false);
+        let searchString = "";
+    
+        let published = props.publication.yearPublished;
+        let title = (props.publication.languages[0].title.length > 20 ? props.publication.languages[0].title.substr(0, 20) : props.publication.languages[0].title);
+        let issn = props.publication.hasOwnProperty("channel") && props.publication.channel.hasOwnProperty("issns") ? props.publication.channel.issns[0] : "";
+        
+        searchString = (doiChecked ? ("?doi=" + publication.doi) : "") +
+                      
+        (titleChecked ? ("?title=" + title) : "") +
+    
+        (publishedChecked ? ("&published_since=" + (published - 1) + "&published_before=" + published) : "") + 
+    
+        (issnChecked ? "&issn=" + issn : "") +
+                
+        "&per_page=5";
+                
+        console.log(searchString);
+
+        setDoiChecked(false);
+        setTitleChecked(false);
+        setIssnChecked(false);
+        setPublishedChecked(false);
+                
+        await fetchDuplicates(searchString).then(response => setDuplicate(response));
+    
+    }
+
     return (
         <div>
             <ul className={`no-padding`}>
@@ -84,6 +142,38 @@ export function Duplicates(props) {
                         <p>
                             Det finnes ingen Cristinpublikasjoner som matcher
                             importpublikasjonen
+
+                            <Button hidden={isOpen} onClick={() => handleOpen()}> Søk på nytt </Button>
+
+                            <Collapse in={isOpen}>
+                                <Card className="card-search">
+                                <p>Søk med parametre: </p>
+                                <FormGroup>
+                                <FormControlLabel
+                                    control={<Checkbox checked={doiChecked} onClick={() => handleDoi()} />}
+                                    label="DOI"
+                                />
+
+                                <FormControlLabel
+                                    control={<Checkbox checked={titleChecked} onClick={() => handleTitle()} />}
+                                    label="Tittel"
+                                />
+
+                                {props.publication.hasOwnProperty("channel") && props.publication.channel.hasOwnProperty("issns") ?
+                                <FormControlLabel
+                                    control={<Checkbox checked={issnChecked} onClick={() => handleIssn()} />}
+                                    label="ISSN"
+                                /> : ""}
+
+                                <FormControlLabel
+                                    control={<Checkbox checked={publishedChecked} onClick={() => handlePublished()} />}
+                                    label="Publiseringsår"
+                                />
+                                </FormGroup>
+                            
+                                <Button onClick={() => retrySearch()}> Søk </Button>
+                                </Card>
+                            </Collapse>
                         </p>
                     )}
                     <ListGroupItem>
