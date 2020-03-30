@@ -32,7 +32,7 @@ export default function Log() {
         let publications = JSON.parse(localStorage.getItem("log"));
         return publications !== null ? (
             <div>
-                {publications.map((pub, i) => (<div style={{padding: '5px'}} key={i}><p><b>{"CristinId: " + pub.id}<br />{"Tittel: " + pub.title}</b></p></div>))}
+                {publications.reverse().map((pub, i) => (<div style={{padding: '5px'}} key={i}><p><b>{"CristinId: " + pub.id}<br />{"Tittel: " + pub.title}</b></p></div>))}
             </div>
         ) : <div>Ingen publikasjoner</div>;
     }
