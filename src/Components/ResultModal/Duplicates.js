@@ -125,11 +125,11 @@ export function Duplicates(props) {
         
         searchString = (doiChecked ? ("?doi=" + publication.doi) : "") +
                       
-        (titleChecked ? ("?title=" + title) : "") +
+        (titleChecked ? ((doiChecked ? "&" : "?" ) + "title=" + title) : "") +
     
-        (publishedChecked ? ("&published_since=" + (published - 1) + "&published_before=" + published) : "") + 
+        (publishedChecked ? ((doiChecked || titleChecked ? "&" : "?" ) + "published_since=" + (published - 1) + "&published_before=" + published) : "") + 
     
-        (issnChecked ? "&issn=" + issn : "") +
+        (issnChecked ? (doiChecked || publishedChecked || issnChecked ? "&" : "?" ) + "issn=" + issn : "") +
                 
         "&per_page=5";
 
