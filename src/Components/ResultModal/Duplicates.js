@@ -7,8 +7,10 @@ import {ListGroupItem} from "reactstrap";
 import {properties} from "../../properties";
 import {Collapse} from "react-bootstrap";
 import "../../assets/styles/Results.scss";
+import { useSnackbar } from 'notistack';
 
 export function Duplicates(props) {
+    const {enqueueSnackbar, closeSnackbar} = useSnackbar();
     const [duplicate, setDuplicate] = React.useState([]);
     const [isOpen, setIsOpen] = React.useState(false);
     const [doiChecked, setDoiChecked] = React.useState(false);
@@ -93,9 +95,24 @@ export function Duplicates(props) {
     }
 
     function handleOpen() {
-        console.log(isOpen);
         setIsOpen(true);
-        console.log(isOpen);
+    }
+
+    function handleSnackbar(response) {
+        console.log(response);
+        if(response.length === 0) {
+            enqueueSnackbar("Fant ingen duplikater.", {
+                variant: "error"
+            });
+        } else if (response.length === 1) {
+            enqueueSnackbar("Fant " + response.length + " duplikat.", {
+                variant: "success"
+            });
+        } else {
+            enqueueSnackbar("Fant " + response.length + " duplikater.", {
+                variant: "success"
+            });  
+        }
     }
 
     async function retrySearch() {
@@ -115,15 +132,15 @@ export function Duplicates(props) {
         (issnChecked ? "&issn=" + issn : "") +
                 
         "&per_page=5";
-                
-        console.log(searchString);
 
         setDoiChecked(false);
         setTitleChecked(false);
         setIssnChecked(false);
         setPublishedChecked(false);
-                
-        await fetchDuplicates(searchString).then(response => setDuplicate(response));
+        
+        let results = await fetchDuplicates(searchString);
+        handleSnackbar(results);
+        setDuplicate(results);
     
     }
 
@@ -142,40 +159,39 @@ export function Duplicates(props) {
                         <p>
                             Det finnes ingen Cristinpublikasjoner som matcher
                             importpublikasjonen
-
-                            <Button hidden={isOpen} onClick={() => handleOpen()}> Søk på nytt </Button>
-
-                            <Collapse in={isOpen}>
-                                <Card className="card-search">
-                                <p>Søk med parametre: </p>
-                                <FormGroup>
-                                <FormControlLabel
-                                    control={<Checkbox checked={doiChecked} onClick={() => handleDoi()} />}
-                                    label="DOI"
-                                />
-
-                                <FormControlLabel
-                                    control={<Checkbox checked={titleChecked} onClick={() => handleTitle()} />}
-                                    label="Tittel"
-                                />
-
-                                {props.publication.hasOwnProperty("channel") && props.publication.channel.hasOwnProperty("issns") ?
-                                <FormControlLabel
-                                    control={<Checkbox checked={issnChecked} onClick={() => handleIssn()} />}
-                                    label="ISSN"
-                                /> : ""}
-
-                                <FormControlLabel
-                                    control={<Checkbox checked={publishedChecked} onClick={() => handlePublished()} />}
-                                    label="Publiseringsår"
-                                />
-                                </FormGroup>
-                            
-                                <Button onClick={() => retrySearch()}> Søk </Button>
-                                </Card>
-                            </Collapse>
                         </p>
                     )}
+                    <Button variant="contained" color="primary" hidden={isOpen} onClick={() => handleOpen()}> Søk på nytt </Button>
+
+                        <Collapse in={isOpen}>
+                            <Card className="card-search">
+                                <p>Søk med parametre: </p>
+                                <FormGroup>
+                                    <FormControlLabel
+                                        control={<Checkbox checked={doiChecked} onClick={() => handleDoi()} />}
+                                        label="DOI"
+                                    />
+
+                                    <FormControlLabel
+                                        control={<Checkbox checked={titleChecked} onClick={() => handleTitle()} />}
+                                        label="Tittel"
+                                    />
+
+                                    {publication.hasOwnProperty("channel") && publication.channel.hasOwnProperty("issns") ?
+                                    <FormControlLabel
+                                        control={<Checkbox checked={issnChecked} onClick={() => handleIssn()} />}
+                                        label="ISSN"
+                                    /> : ""}
+
+                                    <FormControlLabel
+                                        control={<Checkbox checked={publishedChecked} onClick={() => handlePublished()} />}
+                                        label="Publiseringsår"
+                                    />
+                                </FormGroup>
+
+                                <Button variant="contained" color="primary" onClick={() => retrySearch()}> Søk </Button>
+                            </Card>
+                        </Collapse>
                     <ListGroupItem>
                         <FormControlLabel
                             value="false"
