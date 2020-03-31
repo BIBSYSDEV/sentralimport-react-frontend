@@ -204,6 +204,9 @@ function ContributorModal(props) {
                     return copy[i];
                 })
             );
+            if(index / state.contributorPerPage === state.contributorPage) {
+                dispatch({ type: "setContributorPage", payload: state.contributorPage - 1});
+            }
         } else {
             copy[index] = copy[index + 1];
             copy[index + 1] = author;
@@ -233,6 +236,9 @@ function ContributorModal(props) {
                     return copy[i];
                 })
             );
+            if(index + 1 % state.contributorPerPage === 0) {
+                dispatch({ type: "setContributorPage", payload: state.contributorPage + 1});
+            }
         }
     }
 
