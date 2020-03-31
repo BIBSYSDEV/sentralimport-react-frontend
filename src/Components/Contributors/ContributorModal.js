@@ -174,6 +174,7 @@ function ContributorModal(props) {
     function handleOrder(author, up) {
         let copy = [...data];
         let index = author.toBeCreated.order - 1;
+        let trueIndex = author.toBeCreated.order;
         let movedToOrder;
         if (up) {
             copy[index] = copy[index - 1];
@@ -204,6 +205,9 @@ function ContributorModal(props) {
                     return copy[i];
                 })
             );
+            if(index / state.contributorPerPage === state.contributorPage) {
+                dispatch({ type: "setContributorPage", payload: state.contributorPage - 1});
+            }
         } else {
             copy[index] = copy[index + 1];
             copy[index + 1] = author;
@@ -233,6 +237,9 @@ function ContributorModal(props) {
                     return copy[i];
                 })
             );
+            if(trueIndex % state.contributorPerPage === 0) {
+                dispatch({ type: "setContributorPage", payload: state.contributorPage + 1});
+            }
         }
     }
 
