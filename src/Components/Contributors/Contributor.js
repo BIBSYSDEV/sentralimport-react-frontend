@@ -159,17 +159,10 @@ export default function Contributor(props) {
 
     if (property === "first") {
       obj.toBeCreated.first_name = firstName;
-      setAuthName(obj.toBeCreated.surname + ", " + firstName);
     } else if (property === "last") {
       obj.toBeCreated.surname = lastName;
-      setAuthName(lastName + ", " + obj.toBeCreated.first_name);
     } else {
       obj.toBeCreated.authorName = authName;
-      
-      let splitName = event.target.value.split(", ");
-      
-      obj.toBeCreated.surname = splitName[0];
-      obj.toBeCreated.first_name = splitName[1];
     }
 
     props.updateData(obj, rowIndex);
