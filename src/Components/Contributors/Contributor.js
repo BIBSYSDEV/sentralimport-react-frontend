@@ -8,7 +8,6 @@ export default function Contributor(props) {
   let {state} = React.useContext(Context);
 
   useEffect(() => {
-    console.log(data.toBeCreated);
     setRowIndex(props.index);
     setData(props.author);
     setAuthName(data.toBeCreated.hasOwnProperty("authorName") ? data.toBeCreated.authorName : data.toBeCreated.surname + ", " + data.toBeCreated.first_name);
