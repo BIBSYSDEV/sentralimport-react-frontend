@@ -8,8 +8,10 @@ export default function Contributor(props) {
   let {state} = React.useContext(Context);
 
   useEffect(() => {
+    console.log(data.toBeCreated);
     setRowIndex(props.index);
     setData(props.author);
+    setAuthName(data.toBeCreated.hasOwnProperty("authorName") ? data.toBeCreated.authorName : data.toBeCreated.surname + ", " + data.toBeCreated.first_name);
   }, [props.author]);
 
   useEffect(() => {
@@ -27,6 +29,8 @@ export default function Contributor(props) {
   });
 
   const [selectedUnit, setSelectedUnit] = React.useState("");
+
+  const [authName, setAuthName] = React.useState("");
 
   const unitStyle = {
     marginLeft: "0px"
@@ -152,12 +156,21 @@ export default function Contributor(props) {
         ? event.target.value
         : obj.toBeCreated.authorname;
 
+    setAuthName(authorName);
+
     if (property === "first") {
       obj.toBeCreated.first_name = firstName;
+      setAuthName(obj.toBeCreated.surname + ", " + firstName);
     } else if (property === "last") {
       obj.toBeCreated.surname = lastName;
+      setAuthName(lastName + ", " + obj.toBeCreated.first_name);
     } else {
-      obj.toBeCreated.authorName = authorName;
+      obj.toBeCreated.authorName = authName;
+      
+      let splitName = event.target.value.split(", ");
+      
+      obj.toBeCreated.surname = splitName[0];
+      obj.toBeCreated.first_name = splitName[1];
     }
 
     props.updateData(obj, rowIndex);
@@ -192,14 +205,7 @@ export default function Contributor(props) {
               <TextField
                 id={"authorName" + props.index}
                 label="Forfatternavn"
-                value={
-                  data.toBeCreated.hasOwnProperty("authorname")
-                    ? data.toBeCreated.authorname
-                    : data.toBeCreated.surname +
-                      " " +
-                      data.toBeCreated.first_name.substr(0, 1) +
-                      "."
-                }
+                value={authName}
                 margin="normal"
                 onChange={e => handleChange(e, data, "authorName")}
                 required
