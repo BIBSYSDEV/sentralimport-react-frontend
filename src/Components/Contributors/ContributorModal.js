@@ -112,7 +112,7 @@ function ContributorModal(props) {
     }, [props.data, props.open, state.selectedPublication]);
 
     function handleClose() {
-        props.enqueueSnackbar("Endringer er ikke blitt lagret.", {
+        props.enqueueSnackbar("Endringer er blitt lagret midlertidig. (Ved åpning av ny publikasjon vil endringer bli mistet)", {
             variant: "warning"
         });
         props.toggle();
