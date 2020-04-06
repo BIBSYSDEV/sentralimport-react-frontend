@@ -1,9 +1,15 @@
 import React, { useEffect } from "react";
-import { Button, FormGroup, TextField } from "@material-ui/core";
+import { Button, FormGroup, TextField, Collapse, Card } from "@material-ui/core";
 import InstitutionCountrySelect from "../InstitutionSelect/InstitutionCountrySelect";
+import ContributorSearchPanel from "./ContributorSearchPanel";
 import { Form } from "reactstrap";
 import { Context } from "../../Context";
-export default function Contributor(props) {
+import axios from "axios";
+import {properties} from "../../properties.js";
+import { withSnackbar } from "notistack";
+import "../../assets/styles/common.scss"
+
+function Contributor(props) {
   
   let {state} = React.useContext(Context);
 
@@ -30,6 +36,10 @@ export default function Contributor(props) {
   const [selectedUnit, setSelectedUnit] = React.useState("");
 
   const [authName, setAuthName] = React.useState("");
+
+  const [searchResults, setSearchResults] = React.useState("");
+
+  const [open, setOpen] = React.useState(false);
 
   const unitStyle = {
     marginLeft: "0px"
@@ -168,6 +178,64 @@ export default function Contributor(props) {
     props.updateData(obj, rowIndex);
   }
 
+  async function retrySearch(data) {
+    let authorResults = await axios.get(properties.crisrest_gatekeeper_url + "/persons/" +
+                                        (data.imported.cristin_person_id !== 0 ? "?id=" + data.imported.cristin_person_id : "?name=" + data.imported.first_name.substr(0, 1) + " " + data.imported.surname)
+                                        , JSON.parse(localStorage.getItem("config"))); 
+                                      
+    if(authorResults.data.length > 0) {   
+        let fetchedAuthors = [];
+        for(var i = 0; i < authorResults.data.length; i++) {
+          let fetchedAuthor = await axios.get(properties.crisrest_gatekeeper_url + "/persons/" + authorResults.data[i].cristin_person_id, JSON.parse(localStorage.getItem("config")));
+          let fetchedAffilations = [];
+          for(var h = 0; h < fetchedAuthor.data.affiliations.length; h++) {
+            let fetchedAffilation = await axios.get(properties.crisrest_gatekeeper_url + "/institutions/" + fetchedAuthor.data.affiliations[h].institution.cristin_institution_id, JSON.parse(localStorage.getItem("config")))
+            let tempAffiliation = new Object();
+            tempAffiliation.institutionName = fetchedAffilation.data.institution_name.en ||  fetchedAffilation.data.institution_name.nb;
+            tempAffiliation.institutionNr = fetchedAffilation.data.cristin_institution_id;
+            fetchedAffilations.push(tempAffiliation);
+          }
+          fetchedAuthor.data.affiliations = fetchedAffilations;
+          fetchedAuthors.push(fetchedAuthor.data);
+        }
+        props.enqueueSnackbar("Fant " + fetchedAuthors.length + " bidragsytere", {variant: "success"});
+        setSearchResults(fetchedAuthors);
+        handleOpen();
+      } else {
+        props.enqueueSnackbar("Fant ingen bidragsytere", { variant: "error" });
+      }
+  }
+
+
+  function handleOpen() {
+    setOpen(true);
+  }
+
+  function handleClose() {
+    setOpen(false);
+    if(searchResults !== "") {
+      setSearchResults("");
+    }
+  }
+
+  function handleSelect(author) {
+    let temp = data;
+            
+    temp.cristin = author;
+    temp.cristin.isEditing = false;
+    temp.cristin.order = rowIndex + 1;
+
+    temp.toBeCreated = author;
+    temp.toBeCreated.isEditing = false;
+    temp.toBeCreated.order = rowIndex + 1;
+
+    temp.isEditing = false;
+
+   
+    setOpen(false);
+    props.updateData(temp, rowIndex);
+  }
+
   function displayAuthorForm() {
     return (
       <div>
@@ -206,7 +274,7 @@ export default function Contributor(props) {
             <div className={`metadata`}>
               {data.toBeCreated.affiliations.map((inst, j) => (
                 <div key={j}>
-                <p className={`italic`} key={j}>
+                <p className={`italic`}>
                   {inst.hasOwnProperty("unitName") ? inst.unitName : inst.institutionName}
                   <Button
                     size="small"
@@ -248,11 +316,13 @@ export default function Contributor(props) {
             </Button>
 
             {data.imported.cristin_person_id === 0 ?
-                <Button onClick={() => props.searchAgain(data.imported, rowIndex)}>
+                <Button onClick={() => retrySearch(data)}>
                   Søk igjen
                 </Button>
                 : ""
             }
+
+            <ContributorSearchPanel collapsed={open} data={searchResults} handleChoose={handleSelect} handleAbort={handleClose} />
 
           </Form>
         </div>
@@ -292,3 +362,5 @@ export default function Contributor(props) {
     </div>
   );
 }
+
+export default withSnackbar(Contributor);

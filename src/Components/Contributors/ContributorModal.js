@@ -338,92 +338,6 @@ function ContributorModal(props) {
         setData(temp);
     }
 
-
-    async function retrySearch(author, rowIndex) {
-        let results = searchResults;
-        if (searchResults === null || searchResults.order !== rowIndex) {
-            let authorName = author.hasOwnProperty("first_name")
-                ? author.first_name.substr(0, 1) + " " + author.surname
-                : author.authorName;
-            let institution = "";
-            if(author.affiliations[0].hasOwnProperty("acronym") || author.affiliations[0].hasOwnProperty("institutionName")){
-                institution = author.affiliations[0].hasOwnProperty("acronym")
-                    ? author.affiliations[0].acronym
-                    : author.affiliations[0].institutionName;
-            }
-            institution = institution.replace("&", " ");
-            let searchedAuthors = await axios.get(
-                properties.crisrest_gatekeeper_url + "/persons?name=" +
-                authorName +
-                "&institution=" + institution
-                , JSON.parse(localStorage.getItem("config")));
-            if (author.cristin_person_id !== 0) {
-                searchedAuthors.data.push(author);
-            }
-            if (searchedAuthors.data.length > 0) {
-                props.enqueueSnackbar("Fant " + searchedAuthors.data.length + " forfattere med søk.", {variant: "success"});
-            } else {
-                props.enqueueSnackbar("Fant ingen forfattere med søk.", {variant: "warning"});
-            }
-            results = { order: rowIndex, authors: searchedAuthors.data, current: 0 };
-            setSearchResults(results);
-        }
-
-        await nextSearchResult(results, results.current);
-    }
-
-
-    async function nextSearchResult(results, current) {
-        if (results.authors.length > 0 && current < results.authors.length) {
-            let tempAuthor = await axios.get(
-                properties.crisrest_gatekeeper_url + "/persons/" +
-                results.authors[current].cristin_person_id
-                , JSON.parse(localStorage.getItem("config")));
-            let tempAffliations = [];
-            for (let j = 0; j < tempAuthor.data.affiliations.length; j++) {
-                let tempdata = await axios.get(
-                    properties.crisrest_gatekeeper_url + "/institutions/" +
-                    tempAuthor.data.affiliations[j].institution.cristin_institution_id
-                    , JSON.parse(localStorage.getItem("config")));
-                let tempInstitution = {
-                    acronym: tempdata.data.acronym,
-                    countryCode: tempdata.data.country,
-                    institutionName: tempdata.data.institution_name.hasOwnProperty("nb") ?
-                        tempdata.data.institution_name.nb :
-                        tempdata.data.institution_name.en,
-                    institutionNr: tempdata.data.cristin_institution_id,
-                    isCristinInstitution: tempdata.data.cristin_user_institution
-                };
-                console.log(tempInstitution);
-                tempAffliations.push(tempInstitution);
-            }
-            let temp = [...data];
-            results.authors[current].affiliations = tempAffliations;
-
-            temp[results.order].cristin = results.authors[current];
-            temp[results.order].cristin.isEditing = false;
-            temp[results.order].cristin.order = results.order + 1;
-
-            temp[results.order].toBeCreated = results.authors[current];
-            temp[results.order].toBeCreated.isEditing = false;
-            temp[results.order].toBeCreated.order = results.order + 1;
-
-
-            setSearchResults({ ...results, current: current + 1, order: results.order });
-        } else {
-            let temp = [...data];
-
-            temp[results.order].cristin = temp[results.order].imported;
-            temp[results.order].cristin.isEditing = true;
-            temp[results.order].cristin.order = results.order + 1;
-
-            temp[results.order].toBeCreated = temp[results.order].imported;
-            temp[results.order].toBeCreated.isEditing = true;
-            temp[results.order].toBeCreated.order = results.order + 1;
-            setSearchResults({ ...results, current: 0 })
-        }
-    }
-
     function createBody() {
         if(fetched) {
             return (
@@ -516,7 +430,6 @@ function ContributorModal(props) {
                                             }
                                             updateData={updateContributor}
                                             isOpen={props.open}
-                                            searchAgain={retrySearch}
                                             deleteContributor={toggle}
                                         />
                                         <ClosingDialog
