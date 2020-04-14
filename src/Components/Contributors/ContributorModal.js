@@ -594,7 +594,7 @@ async function searchContributors(authors) {
                 cristin_person_id: person.cristin_person_id,
                 first_name: person.first_name,
                 surname: person.surname,
-                affiliations: affiliations,
+                affiliations: affiliations.filter((item, index) => affiliations.indexOf(item) === index),
                 url: properties.crisrest_gatekeeper_url + "/persons/" + person.cristin_person_id,
                 isEditing: false,
                 order: i + 1

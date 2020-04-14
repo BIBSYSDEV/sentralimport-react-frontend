@@ -272,7 +272,8 @@ function Contributor(props) {
               />
             </FormGroup>
             <div className={`metadata`}>
-              {data.toBeCreated.affiliations.map((inst, j) => (
+              {data.toBeCreated.affiliations.filter((item, index) =>
+                  data.toBeCreated.affiliations.indexOf(item) === index).map((inst, j) => (
                 <div key={j}>
                 <p className={`italic`}>
                   {inst.hasOwnProperty("unitName") ? inst.unitName : inst.institutionName}
