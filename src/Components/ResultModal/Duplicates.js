@@ -190,7 +190,7 @@ export function Duplicates(props) {
     
         searchString = (doiChecked ? ("?doi=" + doi) : "") +
                       
-        (titleChecked ? ((doiChecked ? "&" : "?" ) + "title=" + title + (authorChecked ? "&author=" + author : "" )) : "") +
+        (titleChecked ? ((doiChecked ? "&" : "?" ) + "title=" + title + (authorChecked ? "&contributor=" + author : "" )) : "") +
     
         (publishedChecked ? ((doiChecked || titleChecked ? "&" : "?" ) + "published_since=" + (published - 1) + "&published_before=" + published) : "") + 
     
