@@ -72,7 +72,6 @@ export function Duplicates(props) {
 
 
     function handleChange(event) {
-        console.log(event.target.value);
         dispatch({type: "setSelected", payload: event.target.value});
         event.target.value !== "true" && event.target.value !== "false"
             ? dispatch({
