@@ -184,7 +184,6 @@ export function Duplicates(props) {
 
     async function retrySearch() {
         setIsOpen(false);
-        console.log(props.publication);
         let searchString = "";
         let author = props.publication.authors[0].hasOwnProperty("authorName") ? props.publication.authors[0].authorName : props.publication.authors[0].surname + ", " + props.publication.authors[0].first_name.subStr(0, 1);
     
