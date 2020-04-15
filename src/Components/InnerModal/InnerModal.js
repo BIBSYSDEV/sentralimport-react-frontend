@@ -433,6 +433,8 @@ function InnerModal(props) {
 
     const handleNewJournal = (newJournal) => {
         setSelectedJournal({label: newJournal.title, value: 0, issn: newJournal.issn, eissn: newJournal.eissn });
+        dispatch({type: "setSelectedField", payload: "tidsskrift"});
+        dispatch({type: "setValidation", payload: newJournal.title});
        
     };
 
@@ -705,7 +707,7 @@ function InnerModal(props) {
                                
                                     <Grid item container justify="center" direction="row" xs={10}>
                                         <Grid item xs>
-                                        <a href={"https://doi.org/" + props.data.doi} target="_blank" rel="noopener noreferrer" style={linkStyle}>
+                                        {props.data.doi !== undefined ? <a href={"https://doi.org/" + props.data.doi} target="_blank" rel="noopener noreferrer" style={linkStyle}>
                                             <TextField
                                                 id="import-doi"
                                                 label="Doi"
@@ -715,7 +717,15 @@ function InnerModal(props) {
                                                 disabled
                                                 style={linkStyle}
                                             />
-                                        </a>
+                                        </a> : <span>
+                                        <TextField
+                                                id="import-doi"
+                                                label="Doi"
+                                                value={props.data.doi || "Ingen DOI funnet"}
+                                                margin="normal"
+                                                disabled
+                                            />
+                                        </span> }
                                         {doi === props.data.doi ? (
                                             <IconButton color="primary" style={equalButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
