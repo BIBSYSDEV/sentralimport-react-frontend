@@ -2,12 +2,27 @@ import React, {useEffect} from "react";
 import {Result} from "./Result";
 import axios from "axios";
 import {Context} from "../../Context";
-import {Radio, RadioGroup, FormControlLabel} from "@material-ui/core";
+import {Radio, RadioGroup, FormControlLabel, Button, Checkbox, FormGroup, Card, TextField, Grid} from "@material-ui/core";
 import {ListGroupItem} from "reactstrap";
 import {properties} from "../../properties";
+import {Collapse} from "react-bootstrap";
+import "../../assets/styles/Results.scss";
+import { useSnackbar } from 'notistack';
 
 export function Duplicates(props) {
+    const {enqueueSnackbar, closeSnackbar} = useSnackbar();
     const [duplicate, setDuplicate] = React.useState([]);
+    const [isOpen, setIsOpen] = React.useState(false);
+    const [doi, setDoi] = React.useState(props.publication.hasOwnProperty("doi") ? props.publication.doi : "");
+    const [doiChecked, setDoiChecked] = React.useState(false);
+    const [title, setTitle] = React.useState(props.publication.languages[0].title);
+    const [titleChecked, setTitleChecked] = React.useState(false);
+    const [publishedChecked, setPublishedChecked] = React.useState(false);
+    const [published, setPublished] = React.useState(props.publication.yearPublished);
+    const [issnChecked, setIssnChecked] = React.useState(false);
+    const [issn, setIssn] = React.useState(props.publication.hasOwnProperty("channel") && props.publication.channel.hasOwnProperty("issns") ? props.publication.channel.issns[0] : "");
+    const [authorChecked, setAuthorChecked] = React.useState(false);
+    const [totalChecked, setTotalChecked] = React.useState(0);
     let {state, dispatch} = React.useContext(Context);
     let publication = props.publication;
     const relevantStatus = state.currentImportStatus !== "ikke aktuelle";
@@ -57,7 +72,6 @@ export function Duplicates(props) {
 
 
     function handleChange(event) {
-        console.log(event.target.value);
         dispatch({type: "setSelected", payload: event.target.value});
         event.target.value !== "true" && event.target.value !== "false"
             ? dispatch({
@@ -67,6 +81,128 @@ export function Duplicates(props) {
                 ).data
             })
             : console.log();
+    }
+
+    function handleDoi() {
+        if(!doiChecked){
+            setTotalChecked(totalChecked + 1)
+        } else {
+            setTotalChecked(totalChecked - 1)
+        }
+        setDoiChecked(!doiChecked);
+    }
+    
+    function handleTitle() {
+        if(!titleChecked){
+            setTotalChecked(totalChecked + 1)
+        } else {
+            setTotalChecked(totalChecked - 1)
+            setAuthorChecked(false);
+        }
+        setTitleChecked(!titleChecked);
+    }
+    
+    function handleIssn() {
+        if(!issnChecked){
+            setTotalChecked(totalChecked + 1)
+        } else {
+            setTotalChecked(totalChecked - 1)
+        }
+        setIssnChecked(!issnChecked);
+    }
+    
+    function handlePublished() {
+        if(!publishedChecked){
+            setTotalChecked(totalChecked + 1)
+        } else {
+            setTotalChecked(totalChecked - 1)
+        }
+        setPublishedChecked(!publishedChecked);
+    }
+
+    function handleAuthor() {
+        setAuthorChecked(!authorChecked);
+    }
+
+    function handleOpen() {
+        setIsOpen(true);
+    }
+
+    function handleChangeDoi(event) {
+        setDoi(event.target.value);
+    }
+
+    function handleChangeIssn(event) {
+        setIssn(event.target.value);
+    }
+
+    function handleChangeTitle(event) {
+        setTitle(event.target.value);
+    }
+
+    function handleChangePublished(event) {
+        setPublished(event.target.value);
+    }
+
+    function handleSnackbar(response) {
+        if(response.length === 0) {
+            enqueueSnackbar("Fant ingen duplikater.", {
+                variant: "error"
+            });
+        } else if (response.length === 1) {
+            enqueueSnackbar("Fant " + response.length + " duplikat.", {
+                variant: "success"
+            });
+        } else {
+            enqueueSnackbar("Fant " + response.length + " duplikater.", {
+                variant: "success"
+            });  
+        }
+    }
+
+    function handleClose() {
+        setIsOpen(false);
+        handleChecks();
+        resetValues();
+    }
+
+    function handleChecks() {
+        setDoiChecked(false);
+        setTitleChecked(false);
+        setAuthorChecked(false);
+        setIssnChecked(false);
+        setPublishedChecked(false);
+    }
+
+    function resetValues() {
+        setDoi(props.publication.hasOwnProperty("doi") ? props.publication.doi : "");
+        setTitle(props.publication.languages[0].title);
+        setPublished(props.publication.yearPublished);
+        setIssn(props.publication.hasOwnProperty("channel") && props.publication.channel.hasOwnProperty("issns") ? props.publication.channel.issns[0] : "");
+    }
+
+    async function retrySearch() {
+        setIsOpen(false);
+        let searchString = "";
+        let author = props.publication.authors[0].hasOwnProperty("authorName") ? props.publication.authors[0].authorName : props.publication.authors[0].surname + ", " + props.publication.authors[0].first_name.subStr(0, 1);
+    
+        searchString = (doiChecked ? ("?doi=" + doi) : "") +
+                      
+        (titleChecked ? ((doiChecked ? "&" : "?" ) + "title=" + title + (authorChecked ? "&contributor=" + author : "" )) : "") +
+    
+        (publishedChecked ? ((doiChecked || titleChecked ? "&" : "?" ) + "published_since=" + (published - 1) + "&published_before=" + published) : "") + 
+    
+        (issnChecked ? (doiChecked || publishedChecked || issnChecked ? "&" : "?" ) + "issn=" + issn : "") +
+                
+        "&per_page=5";
+        
+        handleChecks();
+        resetValues();
+
+        let results = await fetchDuplicates(searchString);
+        handleSnackbar(results);
+        setDuplicate(results);
+    
     }
 
     return (
@@ -86,6 +222,73 @@ export function Duplicates(props) {
                             importpublikasjonen
                         </p>
                     )}
+                    <Button variant="contained" color="primary" hidden={isOpen} onClick={() => handleOpen()}> Søk på nytt </Button>
+
+                        <Collapse in={isOpen}>
+                            <Card className="card-search">
+                                <p>Søk med parametre: </p>
+                               
+                                <FormGroup>
+                                <Grid direction="column" alignContent="center" justify="space-evenly" spacing={6} className="duplicate-search-grid">
+                                    <Grid item container direction="column">
+                                    <FormControlLabel
+                                        control={<Checkbox checked={doiChecked} onClick={() => handleDoi()} />}
+                                        label="DOI"
+                                    />
+                                    {doiChecked ? 
+                                    
+                                    <TextField disabled={!doiChecked} multiline value={doi} onChange={e => handleChangeDoi(e)}></TextField>
+                                    : ""}
+                                    </Grid>
+
+                                    <Grid item container direction="column">
+                                        
+                                    <FormControlLabel
+                                        control={<Checkbox checked={titleChecked} onClick={() => handleTitle()} />}
+                                        label="Tittel"
+                                    />
+                                    
+
+                                    {titleChecked ? 
+                                    <Grid item container direction="column">
+                                        <TextField disabled={!titleChecked} multiline value={title} onChange={e => handleChangeTitle(e)}></TextField>
+                                        <FormControlLabel
+                                        control={<Checkbox checked={authorChecked} onClick={() => handleAuthor()} />}
+                                        label="Søk med forfatter"
+                                    />
+                                    </Grid>
+                                    : ""}
+                                    </Grid>
+
+                                    <Grid item container direction="column">
+                                    {publication.hasOwnProperty("channel") && publication.channel.hasOwnProperty("issns") ?
+                                    <div>
+                                    <FormControlLabel
+                                        control={<Checkbox checked={issnChecked} onClick={() => handleIssn()} />}
+                                        label="ISSN"
+                                    />
+                                    {issnChecked ? 
+                                    <TextField disabled={!issnChecked} value={issn} onChange={e => handleChangeIssn(e)}></TextField>
+                                    : ""}
+                                    </div> 
+                                    : ""}
+                                    </Grid>
+                                    
+                                    <Grid item container direction="column">
+                                    <FormControlLabel
+                                        control={<Checkbox checked={publishedChecked} onClick={() => handlePublished()} />}
+                                        label="Publiseringsår"
+                                    />
+                                    {publishedChecked ? 
+                                    <TextField disabled={!publishedChecked} value={published} onChange={e => handleChangePublished(e)}></TextField>
+                                    : ""}
+                                    </Grid>
+                                </Grid>
+                                </FormGroup>
+                                
+                                <Button variant="contained" disabled={!(totalChecked >= 1)} color="primary" onClick={() => retrySearch()}> Søk </Button> <Button onClick={() => handleClose()}> Avbryt </Button>
+                            </Card>
+                        </Collapse>
                     <ListGroupItem>
                         <FormControlLabel
                             value="false"
