@@ -10,7 +10,7 @@ export default function Footer() {
 
     const date = new Date(dateTimeStamp);
 
-    dateTimeStamp = date.getUTCDate() + "-" + date.getUTCMonth() + "-" + date.getFullYear();
+    dateTimeStamp = date.getUTCDate() + "-" + (date.getUTCMonth() + 1) + "-" + date.getFullYear();
 
     const footerStyle = {
         marginTop: "10px"
