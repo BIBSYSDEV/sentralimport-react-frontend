@@ -9,7 +9,6 @@ export default function Footer() {
     let dateTimeStamp = preval`module.exports = new Date().toLocaleString();`
 
     const date = new Date(dateTimeStamp);
-    console.log(date);
 
     dateTimeStamp = date.getUTCDate() + "-" + date.getUTCMonth() + "-" + date.getFullYear();
 
