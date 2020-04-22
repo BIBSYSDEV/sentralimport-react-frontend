@@ -24,7 +24,7 @@ export function Result({data}) {
         <div>
             <li className={`card-horiz basic-background card-horiz-hover result`} key={data.cristin_result_id}>
                 <Radio value={data.cristin_result_id} aria-label="Duplikat"></Radio>
-                <a className={`result result`} href={process.env.REACT_APP_LINK_URL +"/results/show.jsf?id=" + data.cristin_result_id} target="_blank" rel="noopener noreferrer">
+                <a className={`result result`} href={"https://app.cristin.no/results/show.jsf?id=" + data.cristin_result_id} target="_blank" rel="noopener noreferrer">
                     <div className='image-wrapper'>
                         <img src={getMainImage('result')} alt="result"/>
                     </div>

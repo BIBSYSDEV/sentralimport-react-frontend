@@ -12,6 +12,7 @@ import { Context } from "../../Context";
 import "../../assets/styles/Results.scss";
 import axios from "axios";
 import {useHistory} from "react-router-dom";
+import {properties} from "../../properties";
 import { Markup } from "interweave";
 
 export default function ResultModal(props) {
@@ -52,7 +53,7 @@ export default function ResultModal(props) {
   async function setNotRelevant() {
     let relevantStatus = state.currentImportStatus !== "ikke aktuelle";
     await axios.patch(
-      process.env.REACT_APP_PIAREST_GATEKEEPER_URL + "/sentralimport/publication/" +
+      properties.piarest_gatekeeper_url + "/sentralimport/publication/" +
         props.data.pubId,
       JSON.stringify({ not_relevant: relevantStatus }), JSON.parse(localStorage.getItem("config"))
     ).catch(function (e) {

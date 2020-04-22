@@ -9,6 +9,7 @@ import {Button} from "reactstrap";
 import {Grid, CardContent, Typography} from "@material-ui/core";
 import {Card} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
+import {properties} from "../../properties";
 
 export default function Login(props) {
     const search = queryString.parse(props.location.hash);
@@ -20,11 +21,11 @@ export default function Login(props) {
         localStorage.setItem("nonce", generateNonce());
         window.location.href =
             "https://auth.dataporten.no/oauth/authorization?client_id=" +
-            process.env.REACT_APP_CLIENT_ID +
-            "&redirect_uri=" + process.env.REACT_APP_REDIRECT_URL +
+            properties.client_id +
+            "&redirect_uri=" + properties.redirect_url +
             "&scope=openid userid email userid-feide userid-nin profile " +
-            process.env.REACT_APP_PIAREST_GATEWAY_SCOPE +
-            " " + process.env.REACT_APP_CRISREST_GATEWAY_SCOPE +
+            properties.piarest_gateway_scope +
+            " " + properties.crisrest_gateway_scope +
             "&response_type=id_token token&state=" +
             authState +
             "&nonce=" +
@@ -34,7 +35,7 @@ export default function Login(props) {
     function handleLogout() {
         let id = localStorage.getItem("id_token");
         localStorage.clear();
-        window.location.href = "https://auth.dataporten.no/openid/endsession?post_logout_redirect_uri=" + process.env.REACT_APP_REDIRECT_URL +
+        window.location.href = "https://auth.dataporten.no/openid/endsession?post_logout_redirect_uri=" + properties.redirect_url +
             "&id_token_hint=" + id;
     }
 
@@ -71,12 +72,13 @@ export default function Login(props) {
         let jsonToken = jwt.decode(search.id_token);
 
         if (
-            jsonToken.aud !== process.env.REACT_APP_CLIENT_ID ||
+            jsonToken.aud !== properties.client_id ||
             jsonToken.nonce !== localStorage.getItem("nonce") ||
             search.state !== authState
         )
             console.log("Error! Wrong invalid login!");
         else {
+            console.log("Logged in");
             localStorage.setItem("authorized", "true");
             localStorage.setItem("access_token", search.access_token.toString());
             localStorage.setItem("expires", jsonToken.exp);
