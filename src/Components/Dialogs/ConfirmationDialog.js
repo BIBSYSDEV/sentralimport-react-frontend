@@ -192,6 +192,7 @@ export default function ConfirmationDialog(props) {
             affiliations: item.affiliations.filter((v, i, a) => a.findIndex(t => (t.institution.cristin_institution_id === v.institution.cristin_institution_id)) === i)
         }));
 
+        console.log(contributors);
         return contributors;
     }
 

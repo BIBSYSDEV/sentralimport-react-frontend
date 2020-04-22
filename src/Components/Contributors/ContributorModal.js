@@ -124,8 +124,9 @@ function ContributorModal(props) {
         let affiliations = [];
         for (let i = 0; i < author.affiliations.length; i++) {
             affiliations.push({
-                cristinInstitutionNr: author.affiliations[i].institution.cristin_institution_id,
-                institutionName: await fetchInstitutionName(author.affiliations[i].institution.cristin_institution_id)
+                institutionNr: author.affiliations[i].institution.cristin_institution_id,
+                institutionName: await fetchInstitutionName(author.affiliations[i].institution.cristin_institution_id),
+                isCristinInstitution: (author.affiliations[i].institution.hasOwnProperty("isCristinInstitution") && author.affiliations[i].institution.isCristinInstitution === true ? true : false)
             });
         }
         return affiliations;
@@ -262,7 +263,6 @@ function ContributorModal(props) {
                 temp[i].imported.order = temp[i].imported.order - 1;
                 temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
             } else {
-                console.log(rowIndex);
                 if (temp[i].imported.order === rowIndex) {
                 } else if (temp[i].imported.order > rowIndex) {
                     if (temp[i].imported.order > 0) {
@@ -546,13 +546,13 @@ async function fetchInstitutions(affiliations) {
     let arr = [];
     for (let i = 0; i < affiliations.length; i++) {
         let inst = affiliations[i];
-        if ((inst.cristinInstitutionNr === 9127 || inst.cristinInstitutionNr === 9126 || inst.cristinInstitutionNr === 0) && inst.hasOwnProperty("countryCode")) {
+        if ((inst.institutionNr === 9127 || inst.institutionNr === 9126 || inst.institutionNr === 0) && inst.hasOwnProperty("countryCode")) {
             if (countries[inst.countryCode] === undefined) {
                 let response = await axios.get(properties.crisrest_gatekeeper_url + "/institutions/country/" + inst.countryCode + "?lang=nb",
                     JSON.parse(localStorage.getItem("config")));
                 if (response.data.length > 0) {
                     inst = {
-                        cristinInstitutionNr: response.data[0].cristin_institution_id,
+                        institutionNr: response.data[0].cristin_institution_id,
                         institutionName: (response.data[0].institution_name.hasOwnProperty("nb") ? response.data[0].institution_name.nb : response.data[0].institution_name.en) + " (Ukjent institusjon)",
                         countryCode: response.data[0].country,
                         isCristinInstitution: response.data[0].isCristinInstitution
@@ -567,7 +567,6 @@ async function fetchInstitutions(affiliations) {
         }
         arr.push(inst);
     }
-
     return arr;
 }
 
@@ -583,8 +582,9 @@ async function searchContributors(authors) {
             if (person.hasOwnProperty("affiliations")) {
                 for (let j = 0; j < person.affiliations.length; j++) {
                     affiliations[j] = {
-                        cristinInstitutionNr: person.affiliations[j].institution.cristin_institution_id,
+                        institutionNr: person.affiliations[j].institution.cristin_institution_id,
                         institutionName: await fetchInstitutionName(person.affiliations[j].institution.cristin_institution_id),
+                        isCristinInstitution: true
                     }
                 }
             } else {
