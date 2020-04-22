@@ -10,6 +10,7 @@ import {
 import {Context} from "../../Context";
 import axios from "axios";
 import {useHistory} from "react-router-dom";
+import {properties} from "../../properties.js"
 import TextField from "@material-ui/core/TextField";
 
 export default function ConfirmationDialog(props) {
@@ -66,19 +67,19 @@ export default function ConfirmationDialog(props) {
     }
 
     async function postPublication(publication) {
-        let response = await axios.post(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/results", publication,
+        let response = await axios.post(properties.crisrest_gatekeeper_url + "/results", publication,
             JSON.parse(localStorage.getItem("config")));
         return response.data.cristin_result_id;
     }
 
     async function patchPublication(publication) {
-        await axios.patch(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/results/" + publication.cristinResultId, publication,
+        await axios.patch(properties.crisrest_gatekeeper_url + "/results/" + publication.cristinResultId, publication,
             JSON.parse(localStorage.getItem("config")));
     }
 
     async function patchPiaPublication(id, pubId) {
         await axios.patch(
-            process.env.REACT_APP_PIAREST_GATEKEEPER_URL + "/sentralimport/publication/" + pubId,
+            properties.piarest_gatekeeper_url + "/sentralimport/publication/" + pubId,
             JSON.stringify({ cristin_id: id }), JSON.parse(localStorage.getItem("config")));
     }
 

@@ -5,6 +5,7 @@ import ContributorSearchPanel from "./ContributorSearchPanel";
 import { Form } from "reactstrap";
 import { Context } from "../../Context";
 import axios from "axios";
+import {properties} from "../../properties.js";
 import { withSnackbar } from "notistack";
 import "../../assets/styles/common.scss"
 
@@ -178,17 +179,17 @@ function Contributor(props) {
   }
 
   async function retrySearch(data) {
-    let authorResults = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" +
+    let authorResults = await axios.get(properties.crisrest_gatekeeper_url + "/persons/" +
                                         (data.imported.cristin_person_id !== 0 ? "?id=" + data.imported.cristin_person_id : "?name=" + data.imported.first_name.substr(0, 1) + " " + data.imported.surname)
                                         , JSON.parse(localStorage.getItem("config"))); 
                                       
     if(authorResults.data.length > 0) {   
         let fetchedAuthors = [];
         for(var i = 0; i < authorResults.data.length; i++) {
-          let fetchedAuthor = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" + authorResults.data[i].cristin_person_id, JSON.parse(localStorage.getItem("config")));
+          let fetchedAuthor = await axios.get(properties.crisrest_gatekeeper_url + "/persons/" + authorResults.data[i].cristin_person_id, JSON.parse(localStorage.getItem("config")));
           let fetchedAffilations = [];
           for(var h = 0; h < fetchedAuthor.data.affiliations.length; h++) {
-            let fetchedAffilation = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + fetchedAuthor.data.affiliations[h].institution.cristin_institution_id, JSON.parse(localStorage.getItem("config")))
+            let fetchedAffilation = await axios.get(properties.crisrest_gatekeeper_url + "/institutions/" + fetchedAuthor.data.affiliations[h].institution.cristin_institution_id, JSON.parse(localStorage.getItem("config")))
             let tempAffiliation = new Object();
             tempAffiliation.institutionName = fetchedAffilation.data.institution_name.en ||  fetchedAffilation.data.institution_name.nb;
             tempAffiliation.institutionNr = fetchedAffilation.data.cristin_institution_id;
