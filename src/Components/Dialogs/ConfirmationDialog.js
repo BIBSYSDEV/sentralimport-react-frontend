@@ -23,13 +23,12 @@ export default function ConfirmationDialog(props) {
         let id = 0;
         try {
             id = await postPublication(publication);
-            await putContributors(id);
             await patchPiaPublication(id, publication.pub_id);
             dispatch({type: "setFormErrors", payload: []});
         } catch (e) {
             console.log("There was an error while importing the publication", e);
-            localStorage.setItem("authorized", "false");
             if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+                localStorage.setItem("authorized", "false");
                 history.push("/login");
             } else {
                 history.push("/error");
@@ -52,12 +51,11 @@ export default function ConfirmationDialog(props) {
         let publication = createPublicationObject();
         try {
             await patchPublication(publication);
-            await putContributors(publication.cristinResultId);
             await patchPiaPublication(publication.cristinResultId, publication.pub_id);
         } catch (e) {
             console.log("There was an error while updating the publication", e);
-            localStorage.setItem("authorized", "false");
             if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+                localStorage.setItem("authorized", "false");
                 history.push("/login");
             } else {
                 history.push("/error");
@@ -69,7 +67,6 @@ export default function ConfirmationDialog(props) {
     }
 
     async function postPublication(publication) {
-        console.log(publication);
         let response = await axios.post(properties.crisrest_gatekeeper_url + "/results", publication,
             JSON.parse(localStorage.getItem("config")));
         return response.data.cristin_result_id;
@@ -77,12 +74,6 @@ export default function ConfirmationDialog(props) {
 
     async function patchPublication(publication) {
         await axios.patch(properties.crisrest_gatekeeper_url + "/results/" + publication.cristinResultId, publication,
-            JSON.parse(localStorage.getItem("config")));
-    }
-
-    async function putContributors(id) {
-        let contributors = createContributorObject();
-        await axios.put(properties.crisrest_gatekeeper_url + "/results/" + id + "/contributors", contributors,
             JSON.parse(localStorage.getItem("config")));
     }
 
@@ -99,6 +90,8 @@ export default function ConfirmationDialog(props) {
         for (let i = 0; i < temp.publication.languages.length; i++) {
             title[temp.publication.languages[i].lang.toLowerCase()] = temp.publication.languages[i].title;
         }
+
+        let contributors = createContributorObject();
 
         let journal = {
             name: temp.publication.channel.title,
@@ -139,7 +132,8 @@ export default function ConfirmationDialog(props) {
                 count: temp.publication.channel.pageTo !== null && temp.publication.channel.pageFrom !== null ?
                     (temp.publication.channel.pageTo - temp.publication.channel.pageFrom).toString() :
                     "0"
-            }
+            },
+            contributor_list: contributors
         };
         if (props.duplicate)
             pub.cristinResultId = temp.publication.cristinResultId;

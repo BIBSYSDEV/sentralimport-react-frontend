@@ -3,7 +3,6 @@ import React, {useEffect} from "react";
 import Select from "react-select";
 import axios from "axios";
 import {Context} from "../../Context";
-import {properties} from "../../properties.js"
 
 export default function InstitutionSelect(props) {
     const [institutions, setInstitutions] = React.useState("");
@@ -21,7 +20,7 @@ export default function InstitutionSelect(props) {
     async function getInstitutions() {
         if (state.institutions === null) {
             let temp = await axios.get(
-                properties.crisrest_gatekeeper_url + "/institutions?cristin_institution=true&lang=nb&per_page=300", JSON.parse(localStorage.getItem("config"))
+                process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions?cristin_institution=true&lang=nb&per_page=300", JSON.parse(localStorage.getItem("config"))
             );
 
             temp = temp.data.filter(i => i.cristin_user_institution);

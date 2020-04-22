@@ -19,7 +19,6 @@ import "../../assets/styles/Results.scss";
 import "../../assets/styles/Imports.css";
 import {TableFooter} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
-import {properties} from "../../properties";
 import Skeleton from '@material-ui/lab/Skeleton';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListModal from "../ListModal/ListModal";
@@ -195,7 +194,7 @@ const useStyles = makeStyles(theme => ({
 const monsterPostStyle = {
     fontWeight: "bolder",
     color: "#e30000"
-}
+};
 
 export default function EnhancedTable() {
     const classes = useStyles();
@@ -253,7 +252,7 @@ export default function EnhancedTable() {
 
     async function getRows() {
         let fetchString =
-            properties.piarest_gatekeeper_url + "/sentralimport/publications?year_published=" +
+            process.env.REACT_APP_PIAREST_GATEKEEPER_URL + "/sentralimport/publications?year_published=" +
             state.currentImportYear.value;
 
         if (state.doiFilter !== null) {
