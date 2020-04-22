@@ -162,7 +162,7 @@ export default function ConfirmationDialog(props) {
                         {...temp.contributors[i].toBeCreated.affiliations[j].institution, role_code: temp.contributors[i].imported.role_code}
                         :
                         {
-                            cristin_institution_id: temp.contributors[i].toBeCreated.affiliations[j].institutionNr.toString(),
+                            cristin_institution_id: temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString(),
                         },
                      }
                 } else { 
@@ -192,6 +192,7 @@ export default function ConfirmationDialog(props) {
             affiliations: item.affiliations.filter((v, i, a) => a.findIndex(t => (t.institution.cristin_institution_id === v.institution.cristin_institution_id)) === i)
         }));
 
+        console.log(contributors);
         return contributors;
     }
 

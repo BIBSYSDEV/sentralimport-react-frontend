@@ -110,9 +110,11 @@ function Contributor(props) {
 
   function addInstitution() {
     let affiliationCopy = [...data.toBeCreated.affiliations];
+    console.log(affiliationCopy);
+    console.log(selectedInstitution);
     let duplicate = 0;
     for(let i = 0; i < affiliationCopy.length; i++){
-      if(affiliationCopy[i].institutionNr === selectedInstitution.institutionNr){
+      if(affiliationCopy[i].institutionNr === selectedInstitution.institutionNr || affiliationCopy[i].cristinInstitutionNr === selectedInstitution.institutionNr){
         duplicate++;
       }
     }
@@ -137,7 +139,7 @@ function Contributor(props) {
 
   function addUnit(affiliationCopy) {
     for(var i = 0; i < affiliationCopy.length; i++){
-    if(affiliationCopy[i].institutionNr === selectedInstitution.institutionNr) {
+    if(affiliationCopy[i].institutionNr === selectedInstitution.institutionNr || affiliationCopy[i].cristinInstitutionNr === selectedInstitution.institutionNr) {
       if(affiliationCopy[i].hasOwnProperty("units")) {
         affiliationCopy[i].units.push({
           unitName: selectedUnit.label,
