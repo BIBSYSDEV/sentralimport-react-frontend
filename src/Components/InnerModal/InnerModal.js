@@ -25,7 +25,6 @@ import '../../assets/styles/buttons.scss'
 import ButtonGroup from "@material-ui/core/ButtonGroup/ButtonGroup";
 import cloneDeep from 'lodash/cloneDeep';
 import CreateJournalPanel from "../CreateJournalPanel/CreateJournalPanel";
-import {properties} from "../../properties";
 import {makeStyles} from "@material-ui/styles";
 
 const useStyles = makeStyles({
@@ -442,7 +441,7 @@ function InnerModal(props) {
         if (name === null || name === "")
             name = "*";
         await axios
-            .get(properties.crisrest_gatekeeper_url + "/results/channels?type=journal&query=title_general:" + name, JSON.parse(localStorage.getItem("config")))
+            .get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/results/channels?type=journal&query=title_general:" + name, JSON.parse(localStorage.getItem("config")))
             .then(response => {
                 updateJournals(response.data);
             });
@@ -454,7 +453,7 @@ function InnerModal(props) {
 
         let journal;
         try {
-            journal = await axios.get(properties.crisrest_gatekeeper_url + "/results/channels?type=journal&query=issn:" + issn[0].value, JSON.parse(localStorage.getItem("config")));
+            journal = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/results/channels?type=journal&query=issn:" + issn[0].value, JSON.parse(localStorage.getItem("config")));
         } catch (e) {
             console.log("There was an error while getting the journal id");
         }
@@ -463,7 +462,7 @@ function InnerModal(props) {
     }
 
     async function getCategories() {
-        let fetchedCategories = await axios.get(properties.crisrest_gatekeeper_url + "/results/categories?lang=nb", JSON.parse(localStorage.getItem("config")));
+        let fetchedCategories = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/results/categories?lang=nb", JSON.parse(localStorage.getItem("config")));
 
         let tempArray = [];
         for (let i = 0; i < fetchedCategories.data.length; i++) {
