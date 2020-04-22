@@ -193,6 +193,7 @@ function Contributor(props) {
             let tempAffiliation = new Object();
             tempAffiliation.institutionName = fetchedAffilation.data.institution_name.en ||  fetchedAffilation.data.institution_name.nb;
             tempAffiliation.institutionNr = fetchedAffilation.data.cristin_institution_id;
+            tempAffiliation.isCristinInstitution = fetchedAffilation.data.hasOwnProperty("isCristinInstitution") && fetchedAffilation.data.isCristinInstitution === true ? true : false;
             fetchedAffilations.push(tempAffiliation);
           }
           fetchedAuthor.data.affiliations = fetchedAffilations;
@@ -236,6 +237,23 @@ function Contributor(props) {
     props.updateData(temp, rowIndex);
   }
 
+  function editInstitution(inst) {
+    let tempInst = {
+      value: inst.hasOwnProperty("cristinInstitutionNr") ? inst.cristinInstitutionNr : inst.institutionNr,
+      label: inst.institutionName,
+      institutionNr: inst.hasOwnProperty("cristinInstitutionNr") ? inst.cristinInstitutionNr : inst.institutionNr
+    };
+    handleInstitutionChange(tempInst);
+  }
+
+  function createEditButton(inst) {
+    if(inst.hasOwnProperty("isCristinInstitution") && inst.isCristinInstitution === true) {
+      return <Button size="small" onClick={() => editInstitution(inst)}> Rediger tilknytning </Button>
+    } else {
+      return "";
+    }
+  }
+
   function displayAuthorForm() {
     return (
       <div>
@@ -277,6 +295,7 @@ function Contributor(props) {
                 <div key={j}>
                 <p className={`italic`}>
                   {inst.hasOwnProperty("unitName") ? inst.unitName : inst.institutionName}
+                  {createEditButton(inst)}
                   <Button
                     size="small"
                     color="primary"

@@ -36,7 +36,6 @@ export default function InstitutionCountrySelect(props) {
     }, [inputValue]);
 
     useEffect(() => {
-        console.log(props.institution);
         getUnits();
     }, [props.institution]);
 
@@ -68,7 +67,6 @@ export default function InstitutionCountrySelect(props) {
     }
 
     function handleInput(event) {
-        console.log(event);
         setInputValue(event);
     }
 
