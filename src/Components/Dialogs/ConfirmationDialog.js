@@ -162,7 +162,7 @@ export default function ConfirmationDialog(props) {
                         {...temp.contributors[i].toBeCreated.affiliations[j].institution, role_code: temp.contributors[i].imported.role_code}
                         :
                         {
-                            cristin_institution_id: temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString(),
+                            cristin_institution_id: temp.contributors[i].toBeCreated.affiliations[j].institutionNr.toString(),
                         },
                      }
                 } else { 
