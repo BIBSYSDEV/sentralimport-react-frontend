@@ -183,10 +183,7 @@ function Contributor(props) {
     let authorResults = await axios.get(properties.crisrest_gatekeeper_url + "/persons/" +
                                         (data.imported.cristin_person_id !== 0 ? "?id=" + data.imported.cristin_person_id : "?name=" + data.imported.first_name.substr(0, 1) + " " + data.imported.surname)
                                         , JSON.parse(localStorage.getItem("config"))); 
-    
-     
-    
-                                      
+                  
     if(authorResults.data.length > 0) {   
         let fetchedAuthors = [];
         for(var i = 0; i < authorResults.data.length; i++) {
@@ -201,7 +198,6 @@ function Contributor(props) {
             tempAffiliation.isCristinInstitution = true;
             fetchedAffilations.push(tempAffiliation);
           }
-          console.log(fetchedAffilations);
           fetchedAuthor.data.affiliations = fetchedAffilations;
           fetchedAuthors.push(fetchedAuthor.data);
         }
