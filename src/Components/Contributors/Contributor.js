@@ -190,8 +190,7 @@ function Contributor(props) {
           let fetchedAuthor = await axios.get(properties.crisrest_gatekeeper_url + "/persons/" + authorResults.data[i].cristin_person_id, JSON.parse(localStorage.getItem("config")));
           let fetchedAffilations = [];
           for(var h = 0; h < fetchedAuthor.data.affiliations.length; h++) {
-            let fetchedAffilation = await axios.get(properties.crisrest_gatekeeper_url + "/institutions/" + fetchedAuthor.data.affiliations[h].institution.cristin_institution_id, JSON.parse(localStorage.getItem("config")))
-            console.log(fetchedAffilation);
+            let fetchedAffilation = await axios.get(properties.crisrest_gatekeeper_url + "/institutions/" + fetchedAuthor.data.affiliations[h].institution.cristin_institution_id, JSON.parse(localStorage.getItem("config")));
             let tempAffiliation = new Object();
             tempAffiliation.institutionName = fetchedAffilation.data.institution_name.en ||  fetchedAffilation.data.institution_name.nb;
             tempAffiliation.institutionNr = fetchedAffilation.data.cristin_institution_id;
