@@ -179,9 +179,13 @@ function Contributor(props) {
   }
 
   async function retrySearch(data) {
+    try{
     let authorResults = await axios.get(properties.crisrest_gatekeeper_url + "/persons/" +
                                         (data.imported.cristin_person_id !== 0 ? "?id=" + data.imported.cristin_person_id : "?name=" + data.imported.first_name.substr(0, 1) + " " + data.imported.surname)
                                         , JSON.parse(localStorage.getItem("config"))); 
+    
+     
+    
                                       
     if(authorResults.data.length > 0) {   
         let fetchedAuthors = [];
@@ -190,12 +194,14 @@ function Contributor(props) {
           let fetchedAffilations = [];
           for(var h = 0; h < fetchedAuthor.data.affiliations.length; h++) {
             let fetchedAffilation = await axios.get(properties.crisrest_gatekeeper_url + "/institutions/" + fetchedAuthor.data.affiliations[h].institution.cristin_institution_id, JSON.parse(localStorage.getItem("config")))
+            console.log(fetchedAffilation);
             let tempAffiliation = new Object();
             tempAffiliation.institutionName = fetchedAffilation.data.institution_name.en ||  fetchedAffilation.data.institution_name.nb;
             tempAffiliation.institutionNr = fetchedAffilation.data.cristin_institution_id;
-            tempAffiliation.isCristinInstitution = fetchedAffilation.data.hasOwnProperty("isCristinInstitution") && fetchedAffilation.data.isCristinInstitution === true ? true : false;
+            tempAffiliation.isCristinInstitution = true;
             fetchedAffilations.push(tempAffiliation);
           }
+          console.log(fetchedAffilations);
           fetchedAuthor.data.affiliations = fetchedAffilations;
           fetchedAuthors.push(fetchedAuthor.data);
         }
@@ -205,8 +211,12 @@ function Contributor(props) {
       } else {
         props.enqueueSnackbar("Fant ingen bidragsytere", { variant: "error" });
       }
+    }
+  
+    catch {
+      props.enqueueSnackbar("Noe gikk galt med søket, prøv igjen", {variant: "error"});
+    }
   }
-
 
   function handleOpen() {
     setOpen(true);
