@@ -17,10 +17,12 @@ export default function ConfirmationDialog(props) {
     let {dispatch} = React.useContext(Context);
     let history = useHistory();
     const [annotation, setAnnotation] = React.useState(null);
+    const [importDisabled, setImportDisabled] = React.useState(false);
 
     async function post() {
         let publication = createPublicationObject();
         let id = 0;
+        setImportDisabled(true);
         try {
             id = await postPublication(publication);
             await putContributors(id);
@@ -232,6 +234,7 @@ export default function ConfirmationDialog(props) {
                     onClick={() => {
                         props.duplicate ? patch().then(response => props.handleClose(response)) : post().then(response => props.handleClose(response));
                     }}
+                    disabled={importDisabled}
                 >
                     Importer
                 </Button>
