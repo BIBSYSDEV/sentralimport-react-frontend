@@ -30,8 +30,6 @@ export default function ConfirmationDialog(props) {
             if (e.response && (e.response.status === 401 || e.response.status === 403)) {
                 localStorage.setItem("authorized", "false");
                 history.push("/login");
-            } else {
-                history.push("/error");
             }
             return {result: null, status: e.response !== undefined ? e.response.status : 500};
         }
@@ -57,8 +55,6 @@ export default function ConfirmationDialog(props) {
             if (e.response && (e.response.status === 401 || e.response.status === 403)) {
                 localStorage.setItem("authorized", "false");
                 history.push("/login");
-            } else {
-                history.push("/error");
             }
             return {result: null, status: e.response !== undefined ? e.response.status : 500};
         }
@@ -133,7 +129,9 @@ export default function ConfirmationDialog(props) {
                     (temp.publication.channel.pageTo - temp.publication.channel.pageFrom).toString() :
                     "0"
             },
-            contributor_list: contributors
+            contributors: {
+                list: contributors
+            }
         };
         if (props.duplicate)
             pub.cristinResultId = temp.publication.cristinResultId;
