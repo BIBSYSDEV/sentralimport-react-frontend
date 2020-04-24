@@ -16,10 +16,12 @@ export default function ConfirmationDialog(props) {
     let {dispatch} = React.useContext(Context);
     let history = useHistory();
     const [annotation, setAnnotation] = React.useState(null);
+    const [importDisabled, setImportDisabled] = React.useState(false);
 
     async function post() {
         let publication = createPublicationObject();
         let id = 0;
+        setImportDisabled(true);
         try {
             id = await postPublication(publication);
             await patchPiaPublication(id, publication.pub_id);
@@ -29,8 +31,6 @@ export default function ConfirmationDialog(props) {
             if (e.response && (e.response.status === 401 || e.response.status === 403)) {
                 localStorage.setItem("authorized", "false");
                 history.push("/login");
-            } else {
-                history.push("/error");
             }
             return {result: null, status: e.response !== undefined ? e.response.status : 500};
         }
@@ -56,8 +56,6 @@ export default function ConfirmationDialog(props) {
             if (e.response && (e.response.status === 401 || e.response.status === 403)) {
                 localStorage.setItem("authorized", "false");
                 history.push("/login");
-            } else {
-                history.push("/error");
             }
             return {result: null, status: e.response !== undefined ? e.response.status : 500};
         }
@@ -132,7 +130,9 @@ export default function ConfirmationDialog(props) {
                     (temp.publication.channel.pageTo - temp.publication.channel.pageFrom).toString() :
                     "0"
             },
-            contributor_list: contributors
+            contributors: {
+                list: contributors
+            }
         };
         if (props.duplicate)
             pub.cristinResultId = temp.publication.cristinResultId;
@@ -224,6 +224,7 @@ export default function ConfirmationDialog(props) {
                     onClick={() => {
                         props.duplicate ? patch().then(response => props.handleClose(response)) : post().then(response => props.handleClose(response));
                     }}
+                    disabled={importDisabled}
                 >
                     Importer
                 </Button>
