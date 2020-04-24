@@ -14,7 +14,6 @@ import InactivePersonIcon from "../../assets/icons/person-inactive.svg";
 import ArrowUpIcon from "../../assets/icons/arrowhead-up3.svg";
 import ArrowDownIcon from "../../assets/icons/arrowhead-down3.svg";
 import {Button, TableFooter} from "@material-ui/core";
-import {properties} from "../../properties.js"
 
 import ContributorPagination from "../ContributorPagination/ContributorPagination";
 import Contributor from "./Contributor";
@@ -524,7 +523,7 @@ async function fetchPerson(personId) {
     if (personId === 0)
         return;
 
-    return await axios.get(properties.crisrest_gatekeeper_url + "/persons/" + personId, JSON.parse(localStorage.getItem("config")));
+    return await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" + personId, JSON.parse(localStorage.getItem("config")));
 }
 
 let institutionNames = {};
@@ -532,7 +531,7 @@ async function fetchInstitutionName(institutionId) {
     if (institutionId === "0") return " ";
     if (institutionNames[institutionId] === undefined) {
         let institution = await axios.get(
-            properties.crisrest_gatekeeper_url + "/institutions/" + institutionId, JSON.parse(localStorage.getItem("config"))
+            process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + institutionId, JSON.parse(localStorage.getItem("config"))
         );
         institutionNames[institutionId] = institution.data.institution_name.hasOwnProperty("nb")
             ? institution.data.institution_name.nb
@@ -548,7 +547,7 @@ async function fetchInstitutions(affiliations) {
         let inst = affiliations[i];
         if ((inst.institutionNr === 9127 || inst.institutionNr === 9126 || inst.institutionNr === 0) && inst.hasOwnProperty("countryCode")) {
             if (countries[inst.countryCode] === undefined) {
-                let response = await axios.get(properties.crisrest_gatekeeper_url + "/institutions/country/" + inst.countryCode + "?lang=nb",
+                let response = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/country/" + inst.countryCode + "?lang=nb",
                     JSON.parse(localStorage.getItem("config")));
                 if (response.data.length > 0) {
                     inst = {
@@ -595,7 +594,7 @@ async function searchContributors(authors) {
                 first_name: person.first_name,
                 surname: person.surname,
                 affiliations: affiliations.filter((item, index) => affiliations.indexOf(item) === index),
-                url: properties.crisrest_gatekeeper_url + "/persons/" + person.cristin_person_id,
+                url: process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" + person.cristin_person_id,
                 isEditing: false,
                 order: i + 1
             };
