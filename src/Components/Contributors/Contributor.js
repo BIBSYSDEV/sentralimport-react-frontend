@@ -107,12 +107,19 @@ function Contributor(props) {
     }
   }
 
-  function addInstitution() {
+  async function addInstitution() {
     let affiliationCopy = [...data.toBeCreated.affiliations];
+    let fetchedInstitution = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + selectedInstitution.institutionNr + "?lang=nb", JSON.parse(localStorage.getItem("config")));
+    
     let duplicate = 0;
     for(let i = 0; i < affiliationCopy.length; i++){
       if(affiliationCopy[i].institutionNr === selectedInstitution.institutionNr || affiliationCopy[i].cristinInstitutionNr === selectedInstitution.institutionNr){
         duplicate++;
+        
+        if(affiliationCopy[i].unitName !== fetchedInstitution.data.institution_name.nb) {
+          affiliationCopy[i].unitName = fetchedInstitution.data.institution_name.nb;
+          
+        }
       }
     }
     if(duplicate < 1){
@@ -188,7 +195,7 @@ function Contributor(props) {
           let fetchedAuthor = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" + authorResults.data[i].cristin_person_id, JSON.parse(localStorage.getItem("config")));
           let fetchedAffilations = [];
           for(var h = 0; h < fetchedAuthor.data.affiliations.length; h++) {
-            let fetchedAffilation = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + fetchedAuthor.data.affiliations[h].institution.cristin_institution_id, JSON.parse(localStorage.getItem("config")))
+            let fetchedAffilation = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + fetchedAuthor.data.affiliations[h].institution.cristin_institution_id + "?lang=nb", JSON.parse(localStorage.getItem("config")))
             let tempAffiliation = new Object();
             tempAffiliation.institutionName = fetchedAffilation.data.institution_name.en ||  fetchedAffilation.data.institution_name.nb;
             tempAffiliation.institutionNr = fetchedAffilation.data.cristin_institution_id;

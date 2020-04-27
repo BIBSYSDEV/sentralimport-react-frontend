@@ -160,6 +160,10 @@ function ContributorModal(props) {
         setData(temp);
     }
 
+    function filterCopyAffiliations(affiliations) {
+
+    }
+
     function handleTempSave() {
         let temp = {
             pubId: props.data.pubId,
@@ -531,7 +535,7 @@ async function fetchInstitutionName(institutionId) {
     if (institutionId === "0") return " ";
     if (institutionNames[institutionId] === undefined) {
         let institution = await axios.get(
-            process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + institutionId, JSON.parse(localStorage.getItem("config"))
+            process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + institutionId + "?lang=nb", JSON.parse(localStorage.getItem("config"))
         );
         institutionNames[institutionId] = institution.data.institution_name.hasOwnProperty("nb")
             ? institution.data.institution_name.nb
@@ -594,7 +598,7 @@ async function searchContributors(authors) {
                 first_name: person.first_name,
                 surname: person.surname,
                 affiliations: affiliations.filter((item, index) => affiliations.indexOf(item) === index),
-                url: process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" + person.cristin_person_id,
+                url: process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" + person.cristin_person_id + "?lang=nb",
                 isEditing: false,
                 order: i + 1
             };
