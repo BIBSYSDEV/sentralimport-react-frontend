@@ -10,29 +10,27 @@ import {
 import {Context} from "../../Context";
 import axios from "axios";
 import {useHistory} from "react-router-dom";
-import {properties} from "../../properties.js"
 import TextField from "@material-ui/core/TextField";
 
 export default function ConfirmationDialog(props) {
     let {dispatch} = React.useContext(Context);
     let history = useHistory();
     const [annotation, setAnnotation] = React.useState(null);
+    const [importDisabled, setImportDisabled] = React.useState(false);
 
     async function post() {
         let publication = createPublicationObject();
         let id = 0;
+        setImportDisabled(true);
         try {
             id = await postPublication(publication);
-            await putContributors(id);
             await patchPiaPublication(id, publication.pub_id);
             dispatch({type: "setFormErrors", payload: []});
         } catch (e) {
             console.log("There was an error while importing the publication", e);
-            localStorage.setItem("authorized", "false");
             if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+                localStorage.setItem("authorized", "false");
                 history.push("/login");
-            } else {
-                history.push("/error");
             }
             return {result: null, status: e.response !== undefined ? e.response.status : 500};
         }
@@ -52,15 +50,12 @@ export default function ConfirmationDialog(props) {
         let publication = createPublicationObject();
         try {
             await patchPublication(publication);
-            await putContributors(publication.cristinResultId);
             await patchPiaPublication(publication.cristinResultId, publication.pub_id);
         } catch (e) {
             console.log("There was an error while updating the publication", e);
-            localStorage.setItem("authorized", "false");
             if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+                localStorage.setItem("authorized", "false");
                 history.push("/login");
-            } else {
-                history.push("/error");
             }
             return {result: null, status: e.response !== undefined ? e.response.status : 500};
         }
@@ -69,26 +64,19 @@ export default function ConfirmationDialog(props) {
     }
 
     async function postPublication(publication) {
-        console.log(publication);
-        let response = await axios.post(properties.crisrest_gatekeeper_url + "/results", publication,
+        let response = await axios.post(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/results", publication,
             JSON.parse(localStorage.getItem("config")));
         return response.data.cristin_result_id;
     }
 
     async function patchPublication(publication) {
-        await axios.patch(properties.crisrest_gatekeeper_url + "/results/" + publication.cristinResultId, publication,
-            JSON.parse(localStorage.getItem("config")));
-    }
-
-    async function putContributors(id) {
-        let contributors = createContributorObject();
-        await axios.put(properties.crisrest_gatekeeper_url + "/results/" + id + "/contributors", contributors,
+        await axios.patch(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/results/" + publication.cristinResultId, publication,
             JSON.parse(localStorage.getItem("config")));
     }
 
     async function patchPiaPublication(id, pubId) {
         await axios.patch(
-            properties.piarest_gatekeeper_url + "/sentralimport/publication/" + pubId,
+            process.env.REACT_APP_PIAREST_GATEKEEPER_URL + "/sentralimport/publication/" + pubId,
             JSON.stringify({ cristin_id: id }), JSON.parse(localStorage.getItem("config")));
     }
 
@@ -99,6 +87,8 @@ export default function ConfirmationDialog(props) {
         for (let i = 0; i < temp.publication.languages.length; i++) {
             title[temp.publication.languages[i].lang.toLowerCase()] = temp.publication.languages[i].title;
         }
+
+        let contributors = createContributorObject();
 
         let journal = {
             name: temp.publication.channel.title,
@@ -139,6 +129,9 @@ export default function ConfirmationDialog(props) {
                 count: temp.publication.channel.pageTo !== null && temp.publication.channel.pageFrom !== null ?
                     (temp.publication.channel.pageTo - temp.publication.channel.pageFrom).toString() :
                     "0"
+            },
+            contributors: {
+                list: contributors
             }
         };
         if (props.duplicate)
@@ -192,7 +185,6 @@ export default function ConfirmationDialog(props) {
             affiliations: item.affiliations.filter((v, i, a) => a.findIndex(t => (t.institution.cristin_institution_id === v.institution.cristin_institution_id)) === i)
         }));
 
-        console.log(contributors);
         return contributors;
     }
 
@@ -232,6 +224,7 @@ export default function ConfirmationDialog(props) {
                     onClick={() => {
                         props.duplicate ? patch().then(response => props.handleClose(response)) : post().then(response => props.handleClose(response));
                     }}
+                    disabled={importDisabled}
                 >
                     Importer
                 </Button>
