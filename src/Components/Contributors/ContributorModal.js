@@ -160,10 +160,6 @@ function ContributorModal(props) {
         setData(temp);
     }
 
-    function filterCopyAffiliations(affiliations) {
-
-    }
-
     function handleTempSave() {
         let temp = {
             pubId: props.data.pubId,
