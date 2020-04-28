@@ -15,7 +15,6 @@ function Contributor(props) {
   useEffect(() => {
     setRowIndex(props.index);
     setData(props.author);
-    setAuthName(data.toBeCreated.hasOwnProperty("authorName") ? data.toBeCreated.authorName : data.toBeCreated.surname + ", " + data.toBeCreated.first_name);
   }, [props.author]);
 
   useEffect(() => {
@@ -33,8 +32,6 @@ function Contributor(props) {
   });
 
   const [selectedUnit, setSelectedUnit] = React.useState("");
-
-  const [authName, setAuthName] = React.useState("");
 
   const [searchResults, setSearchResults] = React.useState("");
 
@@ -162,6 +159,10 @@ function Contributor(props) {
   }
 
   function handleChange(event, obj, property) {
+    if(!obj.hasOwnProperty("authorName")) {
+      obj.authorName = "";
+    }
+    
     const firstName =
       property === "first" ? event.target.value : obj.toBeCreated.first_name;
     const lastName =
@@ -171,14 +172,12 @@ function Contributor(props) {
         ? event.target.value
         : obj.toBeCreated.authorname;
 
-    setAuthName(authorName);
-
     if (property === "first") {
       obj.toBeCreated.first_name = firstName;
     } else if (property === "last") {
       obj.toBeCreated.surname = lastName;
     } else {
-      obj.toBeCreated.authorName = authName;
+      obj.toBeCreated.authorName = authorName;
     }
 
     props.updateData(obj, rowIndex);
@@ -289,7 +288,7 @@ function Contributor(props) {
               <TextField
                 id={"authorName" + props.index}
                 label="Forfatternavn"
-                value={authName}
+                value={data.toBeCreated.hasOwnProperty("authorName") ? data.toBeCreated.authorName : data.toBeCreated.surname + ", " + data.toBeCreated.first_name}
                 margin="normal"
                 onChange={e => handleChange(e, data, "authorName")}
                 required
