@@ -246,7 +246,7 @@ function Contributor(props) {
     let tempInst = {
       value: inst.hasOwnProperty("cristinInstitutionNr") ? inst.cristinInstitutionNr : inst.institutionNr,
       label: inst.institutionName,
-      institutionNr: inst.hasOwnProperty("cristinInstitutionNr") ? inst.cristinInstitutionNr : inst.institutionNr
+      cristinInstitutionNr: inst.hasOwnProperty("cristinInstitutionNr") ? inst.cristinInstitutionNr : inst.institutionNr
     };
     handleInstitutionChange(tempInst);
   }
