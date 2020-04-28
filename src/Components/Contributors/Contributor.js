@@ -184,10 +184,11 @@ function Contributor(props) {
   }
 
   async function retrySearch(data) {
+    try {
     let authorResults = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" +
                                         (data.imported.cristin_person_id !== 0 ? "?id=" + data.imported.cristin_person_id : "?name=" + data.imported.first_name.substr(0, 1) + " " + data.imported.surname)
                                         , JSON.parse(localStorage.getItem("config"))); 
-                                      
+                  
     if(authorResults.data.length > 0) {   
         let fetchedAuthors = [];
         for(var i = 0; i < authorResults.data.length; i++) {
@@ -198,7 +199,7 @@ function Contributor(props) {
             let tempAffiliation = new Object();
             tempAffiliation.institutionName = fetchedAffilation.data.institution_name.en ||  fetchedAffilation.data.institution_name.nb;
             tempAffiliation.institutionNr = fetchedAffilation.data.cristin_institution_id;
-            tempAffiliation.isCristinInstitution = fetchedAffilation.data.hasOwnProperty("isCristinInstitution") && fetchedAffilation.data.isCristinInstitution === true ? true : false;
+            tempAffiliation.isCristinInstitution = true;
             fetchedAffilations.push(tempAffiliation);
           }
           fetchedAuthor.data.affiliations = fetchedAffilations;
@@ -210,8 +211,12 @@ function Contributor(props) {
       } else {
         props.enqueueSnackbar("Fant ingen bidragsytere", { variant: "error" });
       }
+    }
+  
+    catch {
+      props.enqueueSnackbar("Noe gikk galt med søket, prøv igjen", {variant: "error"});
+    }
   }
-
 
   function handleOpen() {
     setOpen(true);
