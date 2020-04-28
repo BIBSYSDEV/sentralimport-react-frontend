@@ -21,6 +21,7 @@ export function Duplicates(props) {
     const [issnChecked, setIssnChecked] = React.useState(false);
     const [issn, setIssn] = React.useState(props.publication.hasOwnProperty("channel") && props.publication.channel.hasOwnProperty("issns") ? props.publication.channel.issns[0] : "");
     const [authorChecked, setAuthorChecked] = React.useState(false);
+    const [author, setAuthor] = React.useState(props.publication.authors[0].hasOwnProperty("authorName") ? props.publication.authors[0].authorName : props.publication.authors[0].surname + ", " + props.publication.authors[0].first_name.subStr(0, 1));
     const [totalChecked, setTotalChecked] = React.useState(0);
     let {state, dispatch} = React.useContext(Context);
     let publication = props.publication;
@@ -143,6 +144,10 @@ export function Duplicates(props) {
         setPublished(event.target.value);
     }
 
+    function handleChangeAuthor(event) {
+        setAuthor(event.target.value);
+    }
+
     function handleSnackbar(response) {
         if(response.length === 0) {
             enqueueSnackbar("Fant ingen duplikater.", {
@@ -183,7 +188,6 @@ export function Duplicates(props) {
     async function retrySearch() {
         setIsOpen(false);
         let searchString = "";
-        let author = props.publication.authors[0].hasOwnProperty("authorName") ? props.publication.authors[0].authorName : props.publication.authors[0].surname + ", " + props.publication.authors[0].first_name.subStr(0, 1);
     
         searchString = (doiChecked ? ("?doi=" + doi) : "") +
                       
@@ -254,7 +258,8 @@ export function Duplicates(props) {
                                         <FormControlLabel
                                         control={<Checkbox checked={authorChecked} onClick={() => handleAuthor()} />}
                                         label="Søk med forfatter"
-                                    />
+                                        />
+                                        {authorChecked ? <TextField disabled={!authorChecked} value={author} onChange={e => handleChangeAuthor(e)}></TextField> : ""}
                                     </Grid>
                                     : ""}
                                     </Grid>
