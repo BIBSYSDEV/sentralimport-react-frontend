@@ -35,6 +35,7 @@ export default function InstitutionCountrySelect(props) {
     }, [inputValue]);
 
     useEffect(() => {
+        console.log(props.institution);
         getUnits();
     }, [props.institution]);
 
@@ -58,7 +59,7 @@ export default function InstitutionCountrySelect(props) {
                 places.push({
                     value: temp.data[i].acronym,
                     label: temp.data[i].institution_name.nb,
-                    institutionNr: temp.data[i].cristin_institution_id
+                    cristinInstitutionNr: temp.data[i].cristin_institution_id
                 });
             }
             setPlaces(places);
@@ -81,7 +82,7 @@ export default function InstitutionCountrySelect(props) {
                 institutions.push({
                     value: temp[i].acronym,
                     label: temp[i].institution_name.nb,
-                    institutionNr: temp[i].cristin_institution_id
+                    cristinInstitutionNr: temp[i].cristin_institution_id
                 });
             }
             setInstitutions(institutions);
@@ -93,8 +94,8 @@ export default function InstitutionCountrySelect(props) {
 
     async function getUnits() {
       
-        if(props.institution.institutionNr) {
-            let temp = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/units?parent_unit_id=" + props.institution.institutionNr + ".0.0.0&per_page=900&lang=nb", JSON.parse(localStorage.getItem("config")));
+        if(props.institution.cristinInstitutionNr) {
+            let temp = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/units?parent_unit_id=" + props.institution.cristinInstitutionNr + ".0.0.0&per_page=900&lang=nb", JSON.parse(localStorage.getItem("config")));
             console.log(temp);
             let units = [];
             for (let i = 0; i < temp.data.length; i++) {

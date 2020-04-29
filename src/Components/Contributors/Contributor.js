@@ -28,7 +28,7 @@ function Contributor(props) {
 
   const [selectedInstitution, setSetSelectedInstitution] = React.useState({
     value: "",
-    institutionNr: 0
+    cristinInstitutionNr: 0
   });
 
   const [selectedUnit, setSelectedUnit] = React.useState("");
@@ -55,7 +55,7 @@ function Contributor(props) {
     props.updateData(temp, rowIndex);
     setSetSelectedInstitution({
       value: "",
-      institutionNr: 0
+      cristinInstitutionNr: 0
     });
   }
 
@@ -64,6 +64,7 @@ function Contributor(props) {
   }
 
   function handleInstitutionChange(institution) {
+    console.log(institution);
     setSetSelectedInstitution(institution);
     setSelectedUnit("");
   }
@@ -106,11 +107,11 @@ function Contributor(props) {
 
   async function addInstitution() {
     let affiliationCopy = [...data.toBeCreated.affiliations];
-    let fetchedInstitution = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + selectedInstitution.institutionNr + "?lang=nb", JSON.parse(localStorage.getItem("config")));
+    let fetchedInstitution = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + selectedInstitution.cristinInstitutionNr + "?lang=nb", JSON.parse(localStorage.getItem("config")));
     
     let duplicate = 0;
     for(let i = 0; i < affiliationCopy.length; i++){
-      if(affiliationCopy[i].institutionNr === selectedInstitution.institutionNr || affiliationCopy[i].cristinInstitutionNr === selectedInstitution.institutionNr){
+      if(affiliationCopy[i].cristinInstitutionNr === selectedInstitution.cristinInstitutionNr || affiliationCopy[i].cristinInstitutionNr === selectedInstitution.cristinInstitutionNr){
         duplicate++;
         
         if(affiliationCopy[i].unitName !== fetchedInstitution.data.institution_name.nb) {
@@ -123,7 +124,7 @@ function Contributor(props) {
       affiliationCopy.push({
         countryCode: "test",
         institutionName: selectedInstitution.label,
-        institutionNr: selectedInstitution.institutionNr,
+        cristinInstitutionNr: selectedInstitution.cristinInstitutionNr,
         isCristinInstitution: true
       });
     }
@@ -140,7 +141,7 @@ function Contributor(props) {
 
   function addUnit(affiliationCopy) {
     for(var i = 0; i < affiliationCopy.length; i++){
-    if(affiliationCopy[i].institutionNr === selectedInstitution.institutionNr || affiliationCopy[i].cristinInstitutionNr === selectedInstitution.institutionNr) {
+    if(affiliationCopy[i].cristinInstitutionNr === selectedInstitution.cristinInstitutionNr || affiliationCopy[i].cristinInstitutionNr === selectedInstitution.cristinInstitutionNr) {
       if(affiliationCopy[i].hasOwnProperty("units")) {
         affiliationCopy[i].units.push({
           unitName: selectedUnit.label,
@@ -198,7 +199,7 @@ function Contributor(props) {
             let fetchedAffilation = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + fetchedAuthor.data.affiliations[h].institution.cristin_institution_id + "?lang=nb", JSON.parse(localStorage.getItem("config")))
             let tempAffiliation = new Object();
             tempAffiliation.institutionName = fetchedAffilation.data.institution_name.en ||  fetchedAffilation.data.institution_name.nb;
-            tempAffiliation.institutionNr = fetchedAffilation.data.cristin_institution_id;
+            tempAffiliation.cristinInstitutionNr = fetchedAffilation.data.cristin_institution_id;
             tempAffiliation.isCristinInstitution = true;
             fetchedAffilations.push(tempAffiliation);
           }
@@ -248,10 +249,11 @@ function Contributor(props) {
   }
 
   function editInstitution(inst) {
+    console.log(inst);
     let tempInst = {
-      value: inst.hasOwnProperty("cristinInstitutionNr") ? inst.cristinInstitutionNr : inst.institutionNr,
+      value: inst.cristinInstitutionNr,
       label: inst.institutionName,
-      cristinInstitutionNr: inst.hasOwnProperty("cristinInstitutionNr") ? inst.cristinInstitutionNr : inst.institutionNr
+      cristinInstitutionNr: inst.cristinInstitutionNr
     };
     handleInstitutionChange(tempInst);
   }
@@ -323,10 +325,10 @@ function Contributor(props) {
             <Button
               onClick={() => addInstitution()}
               disabled={
-                selectedInstitution.institutionNr === 0 ||
+                selectedInstitution.cristinInstitutionNr === 0 ||
                 (data.toBeCreated.affiliations.filter(instNr => {
                   return (
-                    selectedInstitution.institutionNr === instNr.institutionNr
+                    selectedInstitution.cristinInstitutionNr === instNr.cristinInstitutionNr
                   );
                 }).length > 0 && (!selectedUnit)) || (selectedUnit !== "" ? checkForUnit() : null)
               }
