@@ -29,6 +29,8 @@ function ContributorModal(props) {
 
     let {state, dispatch} = React.useContext(Context);
 
+    let countries = {};
+
     const firstUpdate = useRef(true);
     useLayoutEffect(() => {
         if (firstUpdate.current) {
@@ -142,12 +144,15 @@ function ContributorModal(props) {
         dispatch({type: "contributors", payload: data});
     }
 
-    function handleChooseAuthor(author) {
+    async function handleChooseAuthor(author) {
         const toBeCreatedOrder = author.toBeCreated.order;
+        
+        let copiedAffiliations = JSON.parse(JSON.stringify(author.imported.affiliations));
+        let cleanedAffiliations = await handleChosenAuthorAffiliations(copiedAffiliations);
 
         let temp = [...data];
         temp[toBeCreatedOrder - 1].toBeCreated.affiliations =
-            author.imported.affiliations;
+            cleanedAffiliations;
         temp[toBeCreatedOrder - 1].toBeCreated.first_name =
             author.imported.first_name;
         temp[toBeCreatedOrder - 1].toBeCreated.surname = author.imported.surname;
@@ -158,6 +163,27 @@ function ContributorModal(props) {
         temp[toBeCreatedOrder - 1].isEditing = false;
 
         setData(temp);
+    }
+
+    async function handleChosenAuthorAffiliations(affil) {
+        let tempArr = [];
+        for(var i = 0; i < affil.length; i++) {
+            let tempInst = affil[i];
+            if(countries[tempInst.countryCode] === undefined) {
+                if((!affil[i].hasOwnProperty("cristinInstitutionNr")) || affil[i].cristinInstitutionNr === 0 || affil[i].countryCode !== "NO") {
+                    let response = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/country/" + affil[i].countryCode + "?lang=nb",
+                        JSON.parse(localStorage.getItem("config")));
+                    tempInst.institutionName = (response.data[0].institution_name.hasOwnProperty("nb") ? response.data[0].institution_name.nb : response.data[0].institution_name.en) + " (Ukjent institusjon)"
+                    tempInst.unitName = (response.data[0].institution_name.hasOwnProperty("nb") ? response.data[0].institution_name.nb : response.data[0].institution_name.en) + " (Ukjent institusjon)"
+                }
+                countries[tempInst.countryCode] = tempInst;
+            } else {
+                tempInst = countries[tempInst.countryCode];
+            }
+            tempArr.push(tempInst);
+            
+        }
+        return tempArr;
     }
 
     function handleTempSave() {
