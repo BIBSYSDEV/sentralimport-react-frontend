@@ -48,6 +48,7 @@ export default function ConfirmationDialog(props) {
 
     async function patch() {
         let publication = createPublicationObject();
+        setImportDisabled(true);
         try {
             await patchPublication(publication);
             await patchPiaPublication(publication.cristinResultId, publication.pub_id);

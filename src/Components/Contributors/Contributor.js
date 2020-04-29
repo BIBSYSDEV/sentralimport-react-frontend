@@ -15,7 +15,6 @@ function Contributor(props) {
   useEffect(() => {
     setRowIndex(props.index);
     setData(props.author);
-    setAuthName(data.toBeCreated.hasOwnProperty("authorName") ? data.toBeCreated.authorName : data.toBeCreated.surname + ", " + data.toBeCreated.first_name);
   }, [props.author]);
 
   useEffect(() => {
@@ -33,8 +32,6 @@ function Contributor(props) {
   });
 
   const [selectedUnit, setSelectedUnit] = React.useState("");
-
-  const [authName, setAuthName] = React.useState("");
 
   const [searchResults, setSearchResults] = React.useState("");
 
@@ -107,12 +104,19 @@ function Contributor(props) {
     }
   }
 
-  function addInstitution() {
+  async function addInstitution() {
     let affiliationCopy = [...data.toBeCreated.affiliations];
+    let fetchedInstitution = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + selectedInstitution.institutionNr + "?lang=nb", JSON.parse(localStorage.getItem("config")));
+    
     let duplicate = 0;
     for(let i = 0; i < affiliationCopy.length; i++){
       if(affiliationCopy[i].institutionNr === selectedInstitution.institutionNr || affiliationCopy[i].cristinInstitutionNr === selectedInstitution.institutionNr){
         duplicate++;
+        
+        if(affiliationCopy[i].unitName !== fetchedInstitution.data.institution_name.nb) {
+          affiliationCopy[i].unitName = fetchedInstitution.data.institution_name.nb;
+          
+        }
       }
     }
     if(duplicate < 1){
@@ -155,6 +159,10 @@ function Contributor(props) {
   }
 
   function handleChange(event, obj, property) {
+    if(!obj.hasOwnProperty("authorName")) {
+      obj.authorName = "";
+    }
+    
     const firstName =
       property === "first" ? event.target.value : obj.toBeCreated.first_name;
     const lastName =
@@ -164,35 +172,34 @@ function Contributor(props) {
         ? event.target.value
         : obj.toBeCreated.authorname;
 
-    setAuthName(authorName);
-
     if (property === "first") {
       obj.toBeCreated.first_name = firstName;
     } else if (property === "last") {
       obj.toBeCreated.surname = lastName;
     } else {
-      obj.toBeCreated.authorName = authName;
+      obj.toBeCreated.authorName = authorName;
     }
 
     props.updateData(obj, rowIndex);
   }
 
   async function retrySearch(data) {
+    try {
     let authorResults = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" +
                                         (data.imported.cristin_person_id !== 0 ? "?id=" + data.imported.cristin_person_id : "?name=" + data.imported.first_name.substr(0, 1) + " " + data.imported.surname)
                                         , JSON.parse(localStorage.getItem("config"))); 
-                                      
+                  
     if(authorResults.data.length > 0) {   
         let fetchedAuthors = [];
         for(var i = 0; i < authorResults.data.length; i++) {
           let fetchedAuthor = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" + authorResults.data[i].cristin_person_id, JSON.parse(localStorage.getItem("config")));
           let fetchedAffilations = [];
           for(var h = 0; h < fetchedAuthor.data.affiliations.length; h++) {
-            let fetchedAffilation = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + fetchedAuthor.data.affiliations[h].institution.cristin_institution_id, JSON.parse(localStorage.getItem("config")))
+            let fetchedAffilation = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + fetchedAuthor.data.affiliations[h].institution.cristin_institution_id + "?lang=nb", JSON.parse(localStorage.getItem("config")))
             let tempAffiliation = new Object();
             tempAffiliation.institutionName = fetchedAffilation.data.institution_name.en ||  fetchedAffilation.data.institution_name.nb;
             tempAffiliation.institutionNr = fetchedAffilation.data.cristin_institution_id;
-            tempAffiliation.isCristinInstitution = fetchedAffilation.data.hasOwnProperty("isCristinInstitution") && fetchedAffilation.data.isCristinInstitution === true ? true : false;
+            tempAffiliation.isCristinInstitution = true;
             fetchedAffilations.push(tempAffiliation);
           }
           fetchedAuthor.data.affiliations = fetchedAffilations;
@@ -204,8 +211,12 @@ function Contributor(props) {
       } else {
         props.enqueueSnackbar("Fant ingen bidragsytere", { variant: "error" });
       }
+    }
+  
+    catch {
+      props.enqueueSnackbar("Noe gikk galt med søket, prøv igjen", {variant: "error"});
+    }
   }
-
 
   function handleOpen() {
     setOpen(true);
@@ -240,7 +251,7 @@ function Contributor(props) {
     let tempInst = {
       value: inst.hasOwnProperty("cristinInstitutionNr") ? inst.cristinInstitutionNr : inst.institutionNr,
       label: inst.institutionName,
-      institutionNr: inst.hasOwnProperty("cristinInstitutionNr") ? inst.cristinInstitutionNr : inst.institutionNr
+      cristinInstitutionNr: inst.hasOwnProperty("cristinInstitutionNr") ? inst.cristinInstitutionNr : inst.institutionNr
     };
     handleInstitutionChange(tempInst);
   }
@@ -282,7 +293,7 @@ function Contributor(props) {
               <TextField
                 id={"authorName" + props.index}
                 label="Forfatternavn"
-                value={authName}
+                value={data.toBeCreated.hasOwnProperty("authorName") ? data.toBeCreated.authorName : data.toBeCreated.surname + ", " + data.toBeCreated.first_name}
                 margin="normal"
                 onChange={e => handleChange(e, data, "authorName")}
                 required
