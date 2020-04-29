@@ -64,7 +64,6 @@ function Contributor(props) {
   }
 
   function handleInstitutionChange(institution) {
-    console.log(institution);
     setSetSelectedInstitution(institution);
     setSelectedUnit("");
   }
@@ -249,7 +248,6 @@ function Contributor(props) {
   }
 
   function editInstitution(inst) {
-    console.log(inst);
     let tempInst = {
       value: inst.cristinInstitutionNr,
       label: inst.institutionName,
