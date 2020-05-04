@@ -276,6 +276,7 @@ function Contributor(props) {
                 value={data.toBeCreated.first_name}
                 margin="normal"
                 onChange={e => handleChange(e, data, "first")}
+                disabled={data.toBeCreated.cristin_person_id !== 0}
                 required
               />
             </FormGroup>
@@ -286,6 +287,7 @@ function Contributor(props) {
                 value={data.toBeCreated.surname}
                 margin="normal"
                 onChange={e => handleChange(e, data, "last")}
+                disabled={data.toBeCreated.cristin_person_id !== 0}
                 required
               />
             </FormGroup>
@@ -296,6 +298,7 @@ function Contributor(props) {
                 value={data.toBeCreated.hasOwnProperty("authorName") ? data.toBeCreated.authorName : data.toBeCreated.surname + ", " + data.toBeCreated.first_name}
                 margin="normal"
                 onChange={e => handleChange(e, data, "authorName")}
+                disabled={data.toBeCreated.cristin_person_id !== 0}
                 required
               />
             </FormGroup>
