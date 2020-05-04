@@ -55,8 +55,6 @@ function Contributor(props) {
     let affiliationCopy = JSON.parse(JSON.stringify(data.toBeCreated.affiliations));
     let tempArr = await props.handleSubmitAffiliations(affiliationCopy);
 
-    console.log(tempArr);
-
     temp.toBeCreated.affiliations = tempArr;
 
     props.updateData(temp, rowIndex);

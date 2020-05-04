@@ -166,7 +166,6 @@ function ContributorModal(props) {
     }
 
     async function handleChosenAuthorAffiliations(affil) {
-        console.log(affil);
         let tempArr = [];
         for(var i = 0; i < affil.length; i++) {
             let tempInst = affil[i];
