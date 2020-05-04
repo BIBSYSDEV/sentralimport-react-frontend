@@ -110,7 +110,8 @@ function Contributor(props) {
     
     let duplicate = 0;
     for(let i = 0; i < affiliationCopy.length; i++){
-      if(affiliationCopy[i].cristinInstitutionNr === selectedInstitution.cristinInstitutionNr || affiliationCopy[i].cristinInstitutionNr === selectedInstitution.cristinInstitutionNr){
+      if(parseInt(affiliationCopy[i].cristinInstitutionNr) === parseInt(selectedInstitution.cristinInstitutionNr)){
+        
         duplicate++;
         
         if(affiliationCopy[i].unitName !== fetchedInstitution.data.institution_name.nb) {
@@ -140,7 +141,7 @@ function Contributor(props) {
 
   function addUnit(affiliationCopy) {
     for(var i = 0; i < affiliationCopy.length; i++){
-    if(affiliationCopy[i].cristinInstitutionNr === selectedInstitution.cristinInstitutionNr || affiliationCopy[i].cristinInstitutionNr === selectedInstitution.cristinInstitutionNr) {
+    if(parseInt(affiliationCopy[i].cristinInstitutionNr) === parseInt(selectedInstitution.cristinInstitutionNr)) {
       if(affiliationCopy[i].hasOwnProperty("units")) {
         affiliationCopy[i].units.push({
           unitName: selectedUnit.label,
@@ -329,7 +330,7 @@ function Contributor(props) {
                 selectedInstitution.cristinInstitutionNr === 0 ||
                 (data.toBeCreated.affiliations.filter(instNr => {
                   return (
-                    selectedInstitution.cristinInstitutionNr === instNr.cristinInstitutionNr
+                    parseInt(selectedInstitution.cristinInstitutionNr) === parseInt(instNr.cristinInstitutionNr)
                   );
                 }).length > 0 && (!selectedUnit)) || (selectedUnit !== "" ? checkForUnit() : null)
               }

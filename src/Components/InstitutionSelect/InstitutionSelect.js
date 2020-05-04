@@ -29,7 +29,7 @@ export default function InstitutionSelect(props) {
                 institutions.push({
                     value: temp[i].acronym,
                     label: temp[i].institution_name.nb,
-                    institutionNr: temp[i].cristin_institution_id
+                    cristinInstitutionNr: temp[i].cristin_institution_id
                 });
             }
             setInstitutions(institutions);
