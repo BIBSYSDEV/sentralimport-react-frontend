@@ -58,7 +58,7 @@ export default function ResultModal(props) {
     ).catch(function (e) {
       localStorage.setItem("authorized", "false");
       console.log("Patch request failed:", e);
-      if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+      if (!e.hasOwnProperty("response") || (e.response.status === 401 || e.response.status === 403)) {
         history.push("/login");
       } else {
         history.push("/error");

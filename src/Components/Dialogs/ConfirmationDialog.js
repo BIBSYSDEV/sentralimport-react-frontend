@@ -28,7 +28,7 @@ export default function ConfirmationDialog(props) {
             dispatch({type: "setFormErrors", payload: []});
         } catch (e) {
             console.log("There was an error while importing the publication", e);
-            if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+            if (!e.hasOwnProperty("response") || (e.response.status === 401 || e.response.status === 403)) {
                 localStorage.setItem("authorized", "false");
                 history.push("/login");
             }
@@ -54,7 +54,7 @@ export default function ConfirmationDialog(props) {
             await patchPiaPublication(publication.cristinResultId, publication.pub_id);
         } catch (e) {
             console.log("There was an error while updating the publication", e);
-            if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+            if (!e.hasOwnProperty("response") || (e.response.status === 401 || e.response.status === 403)) {
                 localStorage.setItem("authorized", "false");
                 history.push("/login");
             }

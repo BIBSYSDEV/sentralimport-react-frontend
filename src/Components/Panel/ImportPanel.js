@@ -62,7 +62,7 @@ export default function CustomizedTables() {
               setData(response.data);
           }).catch(function (e) {
             localStorage.setItem("authorized", "false");
-            if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+            if (!e.hasOwnProperty("response") || (e.response.status === 401 || e.response.status === 403)) {
               alert("Din sesjon har utgått. Vennligst logg inn på nytt");
               history.push("/login");
             } else {
