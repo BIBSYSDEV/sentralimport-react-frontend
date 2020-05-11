@@ -48,9 +48,14 @@ function Contributor(props) {
     props.updateData(temp, rowIndex);
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     let temp = data;
     temp.isEditing = false;
+
+    let affiliationCopy = JSON.parse(JSON.stringify(data.toBeCreated.affiliations));
+    let tempArr = await props.handleSubmitAffiliations(affiliationCopy);
+
+    temp.toBeCreated.affiliations = tempArr;
 
     props.updateData(temp, rowIndex);
     setSetSelectedInstitution({
