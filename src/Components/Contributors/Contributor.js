@@ -109,6 +109,12 @@ function Contributor(props) {
     }
   }
 
+  async function filterInstitutions(affiliations) {
+    let cleanAff = affiliations.filter((item) => affiliations.indexOf(item) > 1);
+    
+    return cleanAff;
+  }
+
   async function addInstitution() {
     let affiliationCopy = [...data.toBeCreated.affiliations];
     let fetchedInstitution = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + selectedInstitution.cristinInstitutionNr + "?lang=nb", JSON.parse(localStorage.getItem("config")));
@@ -139,7 +145,7 @@ function Contributor(props) {
     }
 
     let temp = data;
-    temp.toBeCreated.affiliations = affiliationCopy;
+    temp.toBeCreated.affiliations = await filterInstitutions(affiliationCopy);
 
     props.updateData(temp, rowIndex);
   }
