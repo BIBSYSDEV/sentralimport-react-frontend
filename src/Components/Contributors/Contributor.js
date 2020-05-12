@@ -110,9 +110,13 @@ function Contributor(props) {
   }
 
   async function filterInstitutions(affiliations) {
-    let cleanAff = affiliations.filter((item) => affiliations.indexOf(item) > 1);
-    
-    return cleanAff;
+    for(var i = 0; i < affiliations.length - 1; i++) {
+      if (affiliations[i].cristinInstitutionNr == affiliations[i + 1].cristinInstitutionNr) {
+        affiliations.splice(i, 1);
+      }
+    }
+
+    return affiliations; 
   }
 
   async function addInstitution() {
