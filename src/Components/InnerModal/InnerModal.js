@@ -373,7 +373,7 @@ function InnerModal(props) {
     function toggle(result) {
         setDialogOpen(false);
         props.toggle();
-        /* if (result.status === 200) {
+        if (result.status === 200) {
             props.enqueueSnackbar(
                 "Importerte ny publikasjon med Cristin-id: " + result.result.id + " og tittel: " + result.result.title,
                 {
@@ -394,7 +394,7 @@ function InnerModal(props) {
                     variant: "error"
                 }
             );
-        } */
+        }
         props.close();
     }
 
