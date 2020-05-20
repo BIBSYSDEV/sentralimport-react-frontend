@@ -373,7 +373,7 @@ function InnerModal(props) {
     function toggle(result) {
         setDialogOpen(false);
         props.toggle();
-        if (result.status === 200) {
+        /* if (result.status === 200) {
             props.enqueueSnackbar(
                 "Importerte ny publikasjon med Cristin-id: " + result.result.id + " og tittel: " + result.result.title,
                 {
@@ -394,7 +394,7 @@ function InnerModal(props) {
                     variant: "error"
                 }
             );
-        }
+        } */
         props.close();
     }
 
@@ -1009,13 +1009,14 @@ function InnerModal(props) {
                         </Grid>
                     
                      <Button className={`contributorButton`} onClick={openContributorModal} variant="contained">Bidragsytere</Button>
+                     {state.contributorErrors >= 1 ? <div> Feil i bidragsyterlisten, kan ikke importere. Sjekk at alle påkrevde felter er utfylt. </div> : ""}
                 </ModalBody>
                 
                 <ModalFooter>
                     <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
                     <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
                     <Button
-                        disabled={state.formErrors.length >= 1 || props.data.hasOwnProperty("cristin_id")}
+                        disabled={state.formErrors.length >= 1 || props.data.hasOwnProperty("cristin_id") || state.contributorErrors >= 1}
                         color="primary"
                         onClick={handleSubmit}
                         variant="contained"

@@ -31,7 +31,8 @@ let initialState = {
     doSave: false,
     allChecked: false,
     param: null,
-    doiFilter: null
+    doiFilter: null,
+    contributorErrors: 0
 };
 
 let reducer = (state, action) => {
@@ -82,6 +83,8 @@ let reducer = (state, action) => {
             return {...state, param: action.payload};
         case "doiFilter":
             return {...state, doiFilter: action.payload};
+        case "setContributorErrors": 
+            return {...state, contributorErrors: action.payload};
         default:
             return state;
     }

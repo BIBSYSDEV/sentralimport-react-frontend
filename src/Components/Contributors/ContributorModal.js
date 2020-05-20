@@ -112,6 +112,19 @@ function ContributorModal(props) {
         handleTempSave();
     }, [props.data, props.open, state.selectedPublication]);
 
+    function checkContributorErrors(contributors) {
+        let errors = 0;
+
+        for(var i = 0; i < contributors.length; i++) {
+            console.log(contributors[i].toBeCreated);
+            if(!contributors[i].toBeCreated.hasOwnProperty("first_name") || !contributors[i].toBeCreated.hasOwnProperty("surname") || !contributors[i].toBeCreated.hasOwnProperty("authorname") || contributors[i].toBeCreated.affiliations.length < 1) {
+                errors++;
+            }
+        }
+
+        dispatch({type: "setContributorErrors", payload: errors});
+    }
+
     function handleClose() {
         props.enqueueSnackbar("Endringer er blitt lagret midlertidig. (Ved åpning av ny publikasjon vil endringer bli mistet)", {
             variant: "warning"
@@ -119,6 +132,7 @@ function ContributorModal(props) {
         props.toggle();
         dispatch({type: "setContributorPage", payload: 0});
         dispatch({type: "setContributorPerPage", payload: 5});
+        checkContributorErrors(data);
     }
 
     async function getDuplicateAffiliations(author) {
@@ -142,6 +156,7 @@ function ContributorModal(props) {
         dispatch({type: "setContributorPage", payload: 0});
         dispatch({type: "setContributorPerPage", payload: 5});
         dispatch({type: "contributors", payload: data});
+        checkContributorErrors(data);
     }
 
     async function handleChooseAuthor(author) {
@@ -170,7 +185,7 @@ function ContributorModal(props) {
         for(var i = 0; i < affil.length; i++) {
             let tempInst = affil[i];
             if(countries[tempInst.countryCode] === undefined) {
-                if((!affil[i].hasOwnProperty("cristinInstitutionNr")) || affil[i].cristinInstitutionNr === 0 || affil[i].countryCode !== "NO" || affil[i].isCristinInstitution === false) {
+                if(((!affil[i].hasOwnProperty("cristinInstitutionNr")) || affil[i].cristinInstitutionNr === 0 || affil[i].isCristinInstitution === false) && affil[i].hasOwnProperty("countryCode")) {
                     let response = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/country/" + affil[i].countryCode + "?lang=nb",
                         JSON.parse(localStorage.getItem("config")));
                     if(response.data.length > 0) {
