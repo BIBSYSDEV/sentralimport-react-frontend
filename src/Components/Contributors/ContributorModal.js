@@ -13,7 +13,7 @@ import PersonIcon from "../../assets/icons/person-active.svg";
 import InactivePersonIcon from "../../assets/icons/person-inactive.svg";
 import ArrowUpIcon from "../../assets/icons/arrowhead-up3.svg";
 import ArrowDownIcon from "../../assets/icons/arrowhead-down3.svg";
-import {Button, TableFooter} from "@material-ui/core";
+import {Button, TableFooter, Dialog} from "@material-ui/core";
 
 import ContributorPagination from "../ContributorPagination/ContributorPagination";
 import Contributor from "./Contributor";
@@ -104,26 +104,24 @@ function ContributorModal(props) {
                     
                 }
             }
+            
             setData(contributors);
             setFetched(true);
+
+            let errors = [];
+    
+            for(var i = 0; i < contributors.length; i++) {
+                if(!contributors[i].toBeCreated.hasOwnProperty("first_name") || !contributors[i].toBeCreated.first_name === "" || !contributors[i].toBeCreated.hasOwnProperty("surname") || !contributors[i].toBeCreated.surname === "" || contributors[i].toBeCreated.affiliations.length < 1) {
+                    errors.push({ value: i + 1 });
+                }
+            }
+    
+            dispatch({type: "setContributorErrors", payload: errors});
         }
 
         fetch();
         handleTempSave();
     }, [props.data, props.open, state.selectedPublication]);
-
-    function checkContributorErrors(contributors) {
-        let errors = 0;
-
-        for(var i = 0; i < contributors.length; i++) {
-            console.log(contributors[i].toBeCreated);
-            if(!contributors[i].toBeCreated.hasOwnProperty("first_name") || !contributors[i].toBeCreated.hasOwnProperty("surname") || !contributors[i].toBeCreated.hasOwnProperty("authorname") || contributors[i].toBeCreated.affiliations.length < 1) {
-                errors++;
-            }
-        }
-
-        dispatch({type: "setContributorErrors", payload: errors});
-    }
 
     function handleClose() {
         props.enqueueSnackbar("Endringer er blitt lagret midlertidig. (Ved åpning av ny publikasjon vil endringer bli mistet)", {
@@ -132,7 +130,7 @@ function ContributorModal(props) {
         props.toggle();
         dispatch({type: "setContributorPage", payload: 0});
         dispatch({type: "setContributorPerPage", payload: 5});
-        checkContributorErrors(data);
+        dispatch({type: "contributors", payload: data});
     }
 
     async function getDuplicateAffiliations(author) {
@@ -156,18 +154,17 @@ function ContributorModal(props) {
         dispatch({type: "setContributorPage", payload: 0});
         dispatch({type: "setContributorPerPage", payload: 5});
         dispatch({type: "contributors", payload: data});
-        checkContributorErrors(data);
     }
 
     async function handleChooseAuthor(author) {
         const toBeCreatedOrder = author.toBeCreated.order;
         
         let copiedAffiliations = JSON.parse(JSON.stringify(author.imported.affiliations));
-        let cleanedAffiliations = await handleChosenAuthorAffiliations(copiedAffiliations);
+        // let cleanedAffiliations = await handleChosenAuthorAffiliations(copiedAffiliations);
 
         let temp = [...data];
         temp[toBeCreatedOrder - 1].toBeCreated.affiliations =
-            cleanedAffiliations;
+            copiedAffiliations;
         temp[toBeCreatedOrder - 1].toBeCreated.first_name =
             author.imported.first_name;
         temp[toBeCreatedOrder - 1].toBeCreated.surname = author.imported.surname;
@@ -180,19 +177,20 @@ function ContributorModal(props) {
         setData(temp);
     }
 
-    async function handleChosenAuthorAffiliations(affil) {
+    // TODO: reimplementer automatisk erstatting av ukjente institusjoner når man trykker på "Lagre Endringer"
+    /* async function handleChosenAuthorAffiliations(affil) {
         let tempArr = [];
         for(var i = 0; i < affil.length; i++) {
             let tempInst = affil[i];
-            if(countries[tempInst.countryCode] === undefined) {
-                if((!affil[i].hasOwnProperty("cristinInstitutionNr")) || affil[i].cristinInstitutionNr === 0 || affil[i].countryCode !== "NO" || affil[i].isCristinInstitution === false) {
+                if(((tempInst.cristinInstitutionNr === 9127 || tempInst.cristinInstitutionNr === 9126 || tempInst.cristinInstitutionNr === 0)) && tempInst.hasOwnProperty("countryCode")){
                     let response = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/country/" + affil[i].countryCode + "?lang=nb",
                         JSON.parse(localStorage.getItem("config")));
                     if(response.data.length > 0) {
                         tempInst.institutionName = (response.data[0].institution_name.hasOwnProperty("nb") ? response.data[0].institution_name.nb : response.data[0].institution_name.en) + " (Ukjent institusjon)"
                         tempInst.unitName = (response.data[0].institution_name.hasOwnProperty("nb") ? response.data[0].institution_name.nb : response.data[0].institution_name.en) + " (Ukjent institusjon)"
+                        tempInst.cristinInstitutionNr = 0;
                     }
-                }
+                
                 countries[tempInst.countryCode] = tempInst;
             } else {
                 tempInst = countries[tempInst.countryCode];
@@ -201,7 +199,7 @@ function ContributorModal(props) {
             
         }
         return tempArr;
-    }
+    } */
 
     function handleTempSave() {
         let temp = {
@@ -473,7 +471,6 @@ function ContributorModal(props) {
                                             updateData={updateContributor}
                                             isOpen={props.open}
                                             deleteContributor={toggle}
-                                            handleSubmitAffiliations={handleChosenAuthorAffiliations}
                                         />
                                         <ClosingDialog
                                             doFunction={removeContributor}
@@ -622,6 +619,7 @@ async function searchContributors(authors) {
         if (authors[i].cristinId !== 0) {
             person = await fetchPerson(authors[i].cristinId);
             person = person.data;
+            console.log(person);
             if (person.hasOwnProperty("affiliations")) {
                 for (let j = 0; j < person.affiliations.length; j++) {
                     affiliations[j] = {
