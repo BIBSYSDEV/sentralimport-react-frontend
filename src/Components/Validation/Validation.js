@@ -220,7 +220,7 @@ export default function Validation(props) {
     }
     dispatch({ type: "setFormErrors", payload: fieldErrors });
   }
-  return state.formErrors.length > 0 ? <div> Kan ikke importere. Dobbeltsjekk alle påkrevde felter </div> : "";
+  return state.formErrors.length > 0 ? <div> Kan ikke importere. Dobbeltsjekk alle påkrevde felter. </div> : "";
 }
 
 Validation.defaultProps = {

@@ -26,6 +26,7 @@ import ButtonGroup from "@material-ui/core/ButtonGroup/ButtonGroup";
 import cloneDeep from 'lodash/cloneDeep';
 import CreateJournalPanel from "../CreateJournalPanel/CreateJournalPanel";
 import {makeStyles} from "@material-ui/styles";
+import ErrorMessage from "../Dialogs/ErrorMessage";
 
 const useStyles = makeStyles({
     doi: {
@@ -408,6 +409,7 @@ function InnerModal(props) {
             }
         );
         props.close();
+        dispatch({type: "setContributorErrors", payload: 0});
     }
 
     function toggleDialog() {
@@ -1009,13 +1011,15 @@ function InnerModal(props) {
                         </Grid>
                     
                      <Button className={`contributorButton`} onClick={openContributorModal} variant="contained">Bidragsytere</Button>
+                     {state.contributorErrors.length >= 1 ? <ErrorMessage /> : ""}
                 </ModalBody>
                 
                 <ModalFooter>
                     <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
+                    {state.contributorErrors.length >= 1 ? <div> Feil i bidragsyterlisten. </div> : ""}
                     <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
                     <Button
-                        disabled={state.formErrors.length >= 1 || props.data.hasOwnProperty("cristin_id")}
+                        disabled={state.formErrors.length >= 1 || props.data.hasOwnProperty("cristin_id") || state.contributorErrors.length >= 1}
                         color="primary"
                         onClick={handleSubmit}
                         variant="contained"
