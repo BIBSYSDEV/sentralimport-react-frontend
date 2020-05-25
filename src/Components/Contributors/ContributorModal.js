@@ -111,7 +111,7 @@ function ContributorModal(props) {
             let errors = [];
     
             for(var i = 0; i < contributors.length; i++) {
-                if(!contributors[i].toBeCreated.hasOwnProperty("first_name") || !contributors[i].toBeCreated.first_name === "" || !contributors[i].toBeCreated.hasOwnProperty("surname") || !contributors[i].toBeCreated.surname === "" || contributors[i].toBeCreated.affiliations.length < 1) {
+                if(!contributors[i].toBeCreated.hasOwnProperty("first_name") || contributors[i].toBeCreated.first_name === "" || !contributors[i].toBeCreated.hasOwnProperty("surname") || contributors[i].toBeCreated.surname === "" || contributors[i].toBeCreated.affiliations.length < 1) {
                     errors.push({ value: i + 1 });
                 }
             }
@@ -619,7 +619,6 @@ async function searchContributors(authors) {
         if (authors[i].cristinId !== 0) {
             person = await fetchPerson(authors[i].cristinId);
             person = person.data;
-            console.log(person);
             if (person.hasOwnProperty("affiliations")) {
                 for (let j = 0; j < person.affiliations.length; j++) {
                     affiliations[j] = {
