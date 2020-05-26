@@ -31,7 +31,8 @@ let initialState = {
     doSave: false,
     allChecked: false,
     param: null,
-    doiFilter: null
+    doiFilter: null,
+    loadingDone: false
 };
 
 let reducer = (state, action) => {
@@ -82,6 +83,8 @@ let reducer = (state, action) => {
             return {...state, param: action.payload};
         case "doiFilter":
             return {...state, doiFilter: action.payload};
+        case "loadingDone":
+            return {...state, loadingDone: action.payload};
         default:
             return state;
     }

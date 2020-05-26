@@ -34,7 +34,7 @@ export default function ConfirmationDialog(props) {
             }
             return {result: null, status: e.response !== undefined ? e.response.status : 500};
         }
-        let title = publication.title.hasOwnProperty("nb") ? publication.title.nb : publication.title.en;
+        let title = publication.title[publication.original_language];
         title = title.length > 50 ? title.substr(0, 49) : title;
         let log = JSON.parse(localStorage.getItem("log"));
         if (log === null)

@@ -49,8 +49,15 @@ function InnerModal(props) {
         async function setFields() {
             let temp = JSON.parse(localStorage.getItem("tempPublication"));
             let workedOn = false;
+            console.log("selected:");
+            console.log(state.selectedPublication);
+            console.log("props:");
+            console.log(props);
+            console.log(temp);
             if (temp !== null && temp.publication.pubId === props.data.pubId && temp.publication.duplicate === props.duplicate)
                 workedOn = true;
+
+            console.log("workedOn: " + workedOn);
 
             setKilde(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_name : "Ingen kilde funnet") : props.data.sourceName);
             setKildeId(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_reference_id : "Ingen kildeId funnet") : props.data.externalId);
@@ -96,9 +103,8 @@ function InnerModal(props) {
                 (props.duplicate ?
                     [
                         {
-                            title: state.selectedPublication.title.hasOwnProperty("nb") ? state.selectedPublication.title.nb : state.selectedPublication.title.en,
-                            lang: state.selectedPublication.title.hasOwnProperty("nb") ? "NB" : "EN",
-                            langName: state.selectedPublication.title.hasOwnProperty("nb") ? "Norsk, bokmål" : "Engelsk",
+                            title: state.selectedPublication.title[state.selectedPublication.original_language],
+                            lang: state.selectedPublication.original_language.toUpperCase(),
                             original: true
                         }
                     ]
@@ -111,9 +117,8 @@ function InnerModal(props) {
                 temp.publication.languages.filter(l => l.original)[0] :
                 (props.duplicate ?
                     {
-                        title: state.selectedPublication.title.hasOwnProperty("nb") ? state.selectedPublication.title.nb : state.selectedPublication.title.en,
-                        lang: state.selectedPublication.title.hasOwnProperty("nb") ? "NB" : "EN",
-                        langName: state.selectedPublication.title.hasOwnProperty("nb") ? "Norsk, bokmål" : "Engelsk",
+                        title: state.selectedPublication.title[state.selectedPublication.original_language],
+                        lang: state.selectedPublication.original_language.toUpperCase(),
                         original: true
                     } :
                         props.data.languages.filter(l => l.original)[0]
@@ -125,7 +130,7 @@ function InnerModal(props) {
                     props.data.yearPublished));
 
             setDoi(workedOn ? temp.publication.doi :
-                (props.duplicate ? state.selectedPublication.links[state.selectedPublication.links.length - 1].url.substring(16, state.selectedPublication.links[0].url.length + 1) :
+                (props.duplicate && state.selectedPublication.links ? state.selectedPublication.links[state.selectedPublication.links.length - 1].url.substring(16, state.selectedPublication.links[0].url.length + 1) :
                     (props.data.doi ? props.data.doi : "Ingen DOI funnet")));
 
             setPublishingDetails(workedOn ? temp.publication.channel :
@@ -149,6 +154,10 @@ function InnerModal(props) {
             );
         }
         setFields();
+        console.log("state.doSave=" + state.doSave);
+        if (state.doSave) {
+            dispatch({type: "loadingDone", payload: true});
+        }
     }, [props.duplicate, state.selectedPublication, props.data]);
 
     const [kilde, setKilde] = React.useState("");
@@ -200,11 +209,13 @@ function InnerModal(props) {
     const firstUpdate = useRef(true);
     useLayoutEffect(() => {
         if (firstUpdate.current) {
+            console.log("XXXXfirstUpdate");
             firstUpdate.current = false;
             return;
         }
+        console.log("savin.." + state.doSave + " adn loading " + state.loadingDone);
         handleTempSave();
-    }, [selectedCategory, selectedJournal, doi, aarstall, selectedLang, publishingDetails, state.doSave]);
+    }, [selectedCategory, selectedJournal, doi, aarstall, selectedLang, publishingDetails, state.doSave, state.loadingDone]);
 
     useEffect(() => {
         async function fetch() {
@@ -241,7 +252,7 @@ function InnerModal(props) {
                 ],
             }
         };
-        if (state.doSave)
+        if (state.doSave && state.loadingDone)
             localStorage.setItem("tempPublication", JSON.stringify(temp));
     }
 

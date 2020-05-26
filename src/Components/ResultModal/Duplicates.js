@@ -197,7 +197,7 @@ export function Duplicates(props) {
     
         (issnChecked ? (doiChecked || publishedChecked || issnChecked ? "&" : "?" ) + "issn=" + issn : "") +
                 
-        "&per_page=5";
+        "&per_page=5&category=ARTICLE";
         
         handleChecks();
         resetValues();

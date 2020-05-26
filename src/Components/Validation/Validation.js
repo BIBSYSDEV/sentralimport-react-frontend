@@ -132,7 +132,7 @@ export default function Validation(props) {
       {
         name: "tittel",
         value: props.duplicate
-          ? props.publication.title.en
+          ? props.publication.title[props.publication.original_language]
           : props.publication.languages[0].title
       },
       {
