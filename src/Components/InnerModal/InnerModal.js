@@ -62,6 +62,8 @@ function InnerModal(props) {
             setKilde(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_name : "Ingen kilde funnet") : props.data.sourceName);
             setKildeId(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_reference_id : "Ingen kildeId funnet") : props.data.externalId);
 
+            console.log("selectedJournal:");
+            console.log(state.selectedPublication.journal);
             setSelectedJournal(workedOn ?
                 {
                     value: temp.publication.channel.cristinTidsskriftNr.toString(),
@@ -69,7 +71,7 @@ function InnerModal(props) {
                 } :
                 (props.duplicate ?
                     {
-                        value: await getJournalId(state.selectedPublication.journal.international_standard_numbers),
+                        value: getJournalId(state.selectedPublication.journal.international_standard_numbers),
                         label: state.selectedPublication.journal.name
                     }
                     :
@@ -154,10 +156,6 @@ function InnerModal(props) {
             );
         }
         setFields();
-        console.log("state.doSave=" + state.doSave);
-        if (state.doSave) {
-            dispatch({type: "loadingDone", payload: true});
-        }
     }, [props.duplicate, state.selectedPublication, props.data]);
 
     const [kilde, setKilde] = React.useState("");
@@ -209,13 +207,11 @@ function InnerModal(props) {
     const firstUpdate = useRef(true);
     useLayoutEffect(() => {
         if (firstUpdate.current) {
-            console.log("XXXXfirstUpdate");
             firstUpdate.current = false;
             return;
         }
-        console.log("savin.." + state.doSave + " adn loading " + state.loadingDone);
         handleTempSave();
-    }, [selectedCategory, selectedJournal, doi, aarstall, selectedLang, publishingDetails, state.doSave, state.loadingDone]);
+    }, [selectedCategory, selectedJournal, doi, aarstall, selectedLang, publishingDetails]);
 
     useEffect(() => {
         async function fetch() {
@@ -226,6 +222,7 @@ function InnerModal(props) {
     }, []);
 
     function handleTempSave() {
+        console.log("saving..." + state.doSave);
         let temp = {
             publication: {
                 cristinResultId: props.duplicate ? props.cristinpub.cristin_result_id : "",
@@ -252,7 +249,8 @@ function InnerModal(props) {
                 ],
             }
         };
-        if (state.doSave && state.loadingDone)
+        console.log(temp);
+        if (state.doSave)
             localStorage.setItem("tempPublication", JSON.stringify(temp));
     }
 
@@ -410,6 +408,7 @@ function InnerModal(props) {
     }
 
     function abortToggle() {
+        dispatch({type: "doSave", payload: false});
         setDialogAbortOpen(false);
         props.toggle();
         props.enqueueSnackbar(
