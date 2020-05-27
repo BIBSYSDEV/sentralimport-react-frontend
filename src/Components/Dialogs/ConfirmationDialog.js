@@ -183,7 +183,10 @@ export default function ConfirmationDialog(props) {
         // filtrerer vekk institusjoner om samme institusjon kommer flere ganger på samme person. f.eks ANDREINST
         contributors = contributors.map(item => ({
             ...item,
-            affiliations: item.affiliations.filter((v, i, a) => a.findIndex(t => (t.institution.cristin_institution_id === v.institution.cristin_institution_id)) === i)
+            affiliations: item.affiliations.filter((v, i, a) => 
+            a.findIndex(t => 
+                ((t.hasOwnProperty("institution") && v.hasOwnProperty("institution") ?  t.institution.cristin_institution_id === v.institution.cristin_institution_id : 
+                t.hasOwnProperty("unit") && v.hasOwnProperty("unit") ? t.unit.cristin_unit_id === v.unit.cristin_unit_id : item))) === i)
         }));
 
         return contributors;
