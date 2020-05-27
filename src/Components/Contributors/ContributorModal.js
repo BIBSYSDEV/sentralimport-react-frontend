@@ -66,7 +66,11 @@ function ContributorModal(props) {
 
                 for (let i = 0; i < Math.max(cristinAuthors.length, imported.length); i++) {
                     if (props.duplicate && state.doSave) {
-                        cristinAuthors[i].affiliations = await getDuplicateAffiliations(state.selectedPublication.authors[i]);
+                        if (i < cristinAuthors.length) {
+                            cristinAuthors[i].affiliations = await getDuplicateAffiliations(state.selectedPublication.authors[i]);
+                        } else {
+                            cristinAuthors[i] = defaultAuthor;
+                        }
                     }
                     contributors[i] = {
                         imported:
@@ -87,8 +91,7 @@ function ContributorModal(props) {
                                     role_code: imported[i].hasOwnProperty("roleCode") ? imported[i].roleCode : "FORFATTER"
                                 }
                                 : defaultAuthor,
-                        cristin:
-                            cristinAuthors.length > i ? cristinAuthors[i] : defaultAuthor,      
+                        cristin: cristinAuthors[i],
                         toBeCreated: defaultAuthor
                     };
 
@@ -127,7 +130,7 @@ function ContributorModal(props) {
             affiliations.push({
                 cristinInstitutionNr: author.affiliations[i].institution.cristin_institution_id,
                 institutionName: await fetchInstitutionName(author.affiliations[i].institution.cristin_institution_id),
-                isCristinInstitution: (author.affiliations[i].institution.hasOwnProperty("isCristinInstitution") && author.affiliations[i].institution.isCristinInstitution === true ? true : false)
+                isCristinInstitution: (author.affiliations[i].institution.hasOwnProperty("isCristinInstitution") && author.affiliations[i].institution.isCristinInstitution === true)
             });
         }
         return affiliations;

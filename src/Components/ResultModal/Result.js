@@ -31,7 +31,7 @@ export function Result({data}) {
                     <div className='content-wrapper'>
                         <p style={titleStyle}>{ data.title[data.original_language] }</p>
                         <div className={`metadata`}>
-                            <p>{data.authors.map((author) => author.surname + ", "  + author.first_name + "; ")}</p>
+                            <p>{data.authors.map((author) => author.surname + ", "  + author.first_name + "; ") + (data.authors.length < data.authorTotalCount ? " et al" : "")}</p>
                             <p className={`active`} >{data.category.name.en}</p>
                             <p className={`italic`} >
                                 {data.hasOwnProperty('international_standard_numbers') ?

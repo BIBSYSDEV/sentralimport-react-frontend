@@ -49,21 +49,12 @@ function InnerModal(props) {
         async function setFields() {
             let temp = JSON.parse(localStorage.getItem("tempPublication"));
             let workedOn = false;
-            console.log("selected:");
-            console.log(state.selectedPublication);
-            console.log("props:");
-            console.log(props);
-            console.log(temp);
             if (temp !== null && temp.publication.pubId === props.data.pubId && temp.publication.duplicate === props.duplicate)
                 workedOn = true;
-
-            console.log("workedOn: " + workedOn);
 
             setKilde(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_name : "Ingen kilde funnet") : props.data.sourceName);
             setKildeId(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_reference_id : "Ingen kildeId funnet") : props.data.externalId);
 
-            console.log("selectedJournal:");
-            console.log(state.selectedPublication.journal);
             setSelectedJournal(workedOn ?
                 {
                     value: temp.publication.channel.cristinTidsskriftNr.toString(),
@@ -164,7 +155,9 @@ function InnerModal(props) {
 
     const [contributorModal, setContributorModal] = React.useState(false);
 
-    const [contributors] = React.useState(props.duplicate ? state.selectedPublication.authors : props.data.authors);
+    const [contributors] = React.useState(props.duplicate ?
+        (state.selectedPublication.authorTotalCount > state.selectedPublication.authors.length ?
+            fetchRestOfAuthors(props.cristinpub.cristin_result_id) : state.selectedPublication.authors) : props.data.authors);
 
     const [aarstall, setAarstall] = React.useState("");
 
@@ -222,7 +215,6 @@ function InnerModal(props) {
     }, []);
 
     function handleTempSave() {
-        console.log("saving..." + state.doSave);
         let temp = {
             publication: {
                 cristinResultId: props.duplicate ? props.cristinpub.cristin_result_id : "",
@@ -249,9 +241,14 @@ function InnerModal(props) {
                 ],
             }
         };
-        console.log(temp);
         if (state.doSave)
             localStorage.setItem("tempPublication", JSON.stringify(temp));
+    }
+
+    function fetchRestOfAuthors(resultId) {
+        if (state.doSave) {
+
+        }
     }
 
     function handleChangeJournal(option) {
@@ -562,7 +559,7 @@ function InnerModal(props) {
     const linkStyle = {
         color: "blue",
         textDecoration: "underline"
-    }
+    };
 
     return (
         <div>
