@@ -63,7 +63,7 @@ function InnerModal(props) {
                 } :
                 (props.duplicate ?
                     {
-                        value: await getJournalId(state.selectedPublication.journal.international_standard_numbers),
+                        value: state.selectedPublication.journal.hasOwnProperty("international_standard_numbers") ? await getJournalId(state.selectedPublication.journal.international_standard_numbers) : null,
                         label: state.selectedPublication.journal.name
                     }
                     :
@@ -236,8 +236,8 @@ function InnerModal(props) {
                 duplicate: props.duplicate,
                 import_sources: [
                     {
-                        source_name: kilde,
-                        source_reference_id: kildeId
+                        source_name: props.data.sourceName,
+                        source_reference_id: props.data.externalId
                     }
                 ],
             }
