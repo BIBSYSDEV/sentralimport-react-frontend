@@ -106,6 +106,7 @@ function ContributorModal(props) {
             }
             
             setData(contributors);
+            dispatch({type: "setContributorsLoaded", payload: true});
             setFetched(true);
 
             let errors = [];
