@@ -54,7 +54,7 @@ function InnerModal(props) {
                 workedOn = true;
 
             if (props.duplicate && !workedOn && !allContributorsFetched) {
-                fetchRestOfAuthors(state.selectedPublication.cristin_result_id);
+                fetchAllAuthors(state.selectedPublication.cristin_result_id);
                 setAllContributorsFetched(true);
             }
 
@@ -145,8 +145,8 @@ function InnerModal(props) {
                     {
                         ...props.data.channel,
                         volume: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume")) ? props.data.channel.volume : "",
-                        pageFrom: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pages")) ? props.data.channel.pages.from : "",
-                        pageTo: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pages")) ? props.data.channel.pages.to : "",
+                        pageFrom: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pageFrom")) ? props.data.channel.pageFrom : "",
+                        pageTo: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pageTo")) ? props.data.channel.pageTo : "",
                         issue: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("issue")) ? props.data.channel.issue : ""
                     }
                 )
@@ -249,18 +249,21 @@ function InnerModal(props) {
             localStorage.setItem("tempPublication", JSON.stringify(temp));
     }
 
-    async function fetchRestOfAuthors(resultId) {
+    async function fetchAllAuthors(resultId) {
         if (state.doSave) {
-            console.log("XXX fetching contributors");
-            let authors = await axios.get(
-                process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/results/" +
-                resultId +
-                "/contributors"
-                , JSON.parse(localStorage.getItem("config")));
-            let tempPub = {...state.selectedPublication, authors: authors.data};
-            console.log(tempPub);
+            let page = 1;
+            let allAuthors = [];
+            while (allAuthors.length < state.selectedPublication.authorTotalCount) {
+                let authors = await axios.get(
+                    process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/results/" +
+                    resultId +
+                    "/contributors?page="+page+"&per_page=500"
+                    , JSON.parse(localStorage.getItem("config")));
+                allAuthors = [...allAuthors, ...authors.data];
+                page++;
+            }
+            let tempPub = {...state.selectedPublication, authors: allAuthors};
             dispatch({type: "setSelectedPublication", payload: tempPub});
-            return authors.data;
         }
     }
 
