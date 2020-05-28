@@ -44,6 +44,7 @@ function InnerModal(props) {
     const { useRef, useLayoutEffect } = React;
     let {state, dispatch} = React.useContext(Context);
     const languageCopy = cloneDeep(props.data.languages.sort((a, b) => a.original - b.original).reverse());
+    const [allContributorsFetched, setAllContributorsFetched] = React.useState(false);
 
     useEffect(() => {
         async function setFields() {
@@ -51,6 +52,11 @@ function InnerModal(props) {
             let workedOn = false;
             if (temp !== null && temp.publication.pubId === props.data.pubId && temp.publication.duplicate === props.duplicate)
                 workedOn = true;
+
+            if (props.duplicate && !workedOn && !allContributorsFetched) {
+                fetchRestOfAuthors(state.selectedPublication.cristin_result_id);
+                setAllContributorsFetched(true);
+            }
 
             setKilde(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_name : "Ingen kilde funnet") : props.data.sourceName);
             setKildeId(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_reference_id : "Ingen kildeId funnet") : props.data.externalId);
@@ -155,9 +161,7 @@ function InnerModal(props) {
 
     const [contributorModal, setContributorModal] = React.useState(false);
 
-    const [contributors] = React.useState(props.duplicate ?
-        (state.selectedPublication.authorTotalCount > state.selectedPublication.authors.length ?
-            fetchRestOfAuthors(props.cristinpub.cristin_result_id) : state.selectedPublication.authors) : props.data.authors);
+    const [contributors] = React.useState(props.duplicate ? state.selectedPublication.authors : props.data.authors);
 
     const [aarstall, setAarstall] = React.useState("");
 
@@ -176,7 +180,7 @@ function InnerModal(props) {
         label: state.selectedPublication.hasOwnProperty("journal") ? state.selectedPublication.journal.name : "Ingen tidsskrift/journal funnet"
     } : (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? {
         value: props.data.channel.cristinTidsskriftNr.toString(),
-        label: props.data.channel.title 
+        label: props.data.channel.title
         } : {
         value: "0",
         label: "Ingen tidsskrift/journal funnet"
@@ -245,9 +249,18 @@ function InnerModal(props) {
             localStorage.setItem("tempPublication", JSON.stringify(temp));
     }
 
-    function fetchRestOfAuthors(resultId) {
+    async function fetchRestOfAuthors(resultId) {
         if (state.doSave) {
-
+            console.log("XXX fetching contributors");
+            let authors = await axios.get(
+                process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/results/" +
+                resultId +
+                "/contributors"
+                , JSON.parse(localStorage.getItem("config")));
+            let tempPub = {...state.selectedPublication, authors: authors.data};
+            console.log(tempPub);
+            dispatch({type: "setSelectedPublication", payload: tempPub});
+            return authors.data;
         }
     }
 
@@ -441,7 +454,7 @@ function InnerModal(props) {
         setSelectedJournal({label: newJournal.title, value: 0, issn: newJournal.issn, eissn: newJournal.eissn });
         dispatch({type: "setSelectedField", payload: "tidsskrift"});
         dispatch({type: "setValidation", payload: newJournal.title});
-       
+
     };
 
     async function getJournals(name) {
@@ -490,7 +503,7 @@ function InnerModal(props) {
         let newDate = new Date(dateString);
         let tempDay = newDate.getDate();
         let tempYear = newDate.getFullYear();
-        
+
         let months = [
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         ];
@@ -498,7 +511,7 @@ function InnerModal(props) {
         let tempMonth = months[newDate.getMonth()];
 
         let formattedDate = tempMonth + " " + tempDay + ", " + tempYear;
-        
+
         return formattedDate;
     }
 
@@ -510,7 +523,7 @@ function InnerModal(props) {
         } else {
             tempString = "";
         }
-        
+
         return tempString;
     }
 
@@ -567,7 +580,7 @@ function InnerModal(props) {
                 <ModalHeader toggle={handleClose}>Import av publikasjon</ModalHeader>
                 <ModalBody>
                         <Grid item container md={12} xs={12} direction="column" justify="center" alignItems="center" style={gridStyle}>
-                            
+
                                 <Grid container item justify="center" direction="row" xs={10}>
                                     <Grid item xs>
                                         <h3>Importpublikasjon</h3>
@@ -576,7 +589,7 @@ function InnerModal(props) {
                                         <h3>Cristin-publikasjon</h3>
                                     </Grid>
                                 </Grid>
-                                
+
                                     <Grid item container justify="center" direction="row" xs={10}>
                                     <Grid item xs>
                                         <TextField
@@ -597,7 +610,7 @@ function InnerModal(props) {
                                         />
                                     </Grid>
                                     </Grid>
-                                
+
                                     <Grid item container justify="center" direction="row" xs={10}>
                                         <Grid item xs>
                                             <TextField
@@ -606,7 +619,7 @@ function InnerModal(props) {
                                                 value={props.data.registered}
                                                 margin="normal"
                                                 disabled
-                                            /> 
+                                            />
                                         </Grid>
                                         <Grid item xs>
                                             <TextField
@@ -618,7 +631,7 @@ function InnerModal(props) {
                                             />
                                         </Grid>
                                     </Grid>
-                               
+
                                     <Grid item container justify="center" direction="row" xs={10}>
                                         <Grid item xs>
                                         <FormControl required={true}>
@@ -642,7 +655,7 @@ function InnerModal(props) {
                                             />
                                         </Grid>
                                     </Grid>
-                               
+
                                     <Grid item container justify="center" direction="row" xs={10}>
                                         <Grid item xs>
                                         <FormControl required={true}>
@@ -666,7 +679,7 @@ function InnerModal(props) {
                                             />
                                         </Grid>
                                     </Grid>
-                                
+
                                     <Grid item container justify="center" direction="row" xs={10}>
                                         <Grid item xs>
                                         <TextField
@@ -710,7 +723,7 @@ function InnerModal(props) {
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                               
+
                                     <Grid item container justify="center" direction="row" xs={10}>
                                         <Grid item xs>
                                         {props.data.doi !== undefined ? <a href={"https://doi.org/" + props.data.doi} target="_blank" rel="noopener noreferrer" style={linkStyle}>
@@ -760,7 +773,7 @@ function InnerModal(props) {
                                         </FormControl>
                                         </Grid>
                                     </Grid>
-                                
+
                                     <Grid item container justify="center" direction="row" xs={10}>
                                         <Grid item xs>
                                         <TextField
@@ -784,7 +797,7 @@ function InnerModal(props) {
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                            
+
                                     <Grid item container justify="center" direction="row" xs={10}>
                                         <Grid item xs>
                                         <TextField
@@ -823,7 +836,7 @@ function InnerModal(props) {
                                             />
                                         </Grid>
                                     </Grid>
-                                
+
                                     <Grid item container justify="center" direction="row" xs={10}>
                                         <Grid item xs>
                                         <TextField
@@ -856,7 +869,7 @@ function InnerModal(props) {
                                             />
                                         </Grid>
                                     </Grid>
-                             
+
                                     <Grid item container justify="center" direction="row" xs={10}>
                                         <Grid item xs>
                                         <TextField
@@ -892,7 +905,7 @@ function InnerModal(props) {
                                             </div>
                                         </Grid>
                                     </Grid>
-                                
+
                                     <Grid item container justify="center" direction="row" xs={10}>
                                         <Grid item xs>
                                         <TextField
@@ -981,7 +994,7 @@ function InnerModal(props) {
                                         </div>
                                         </Grid>
                                         <Grid item>
-                                            
+
                                         {props.data.hasOwnProperty("channel") && parseData(props.data.channel.pageFrom) === parseData(publishingDetails.pageFrom) && parseData(props.data.channel.pageTo) === parseData(publishingDetails.pageTo) ? (
                                             <IconButton color="primary" style={tittelButtonStyle}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
@@ -990,7 +1003,7 @@ function InnerModal(props) {
                                             <IconButton color="secondary" style={tittelButtonStyle} onClick={copyPages} disabled={!(props.data.hasOwnProperty("channel") && (props.data.channel.hasOwnProperty("pageFrom") || props.data.channel.hasOwnProperty("pageTo")))}> <div hidden={true}> Ulik </div>
                                                 <TrendingFlatIcon />
                                             </IconButton>
-                                        )} 
+                                        )}
                                         </Grid>
                                        </Grid>
                                        <Grid item xs>
@@ -1012,12 +1025,12 @@ function InnerModal(props) {
                                         </div>
                                        </Grid>
                                     </Grid>
-                                
+
                         </Grid>
-                    
+
                      <Button className={`contributorButton`} onClick={openContributorModal} variant="contained">Bidragsytere</Button>
                 </ModalBody>
-                
+
                 <ModalFooter>
                     <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
                     <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
