@@ -43,6 +43,7 @@ export default function ConfirmationDialog(props) {
             log.shift();
         log.push({id: id, title: title});
         localStorage.setItem("log", JSON.stringify(log));
+        dispatch({type: "setContributorsLoaded", payload: false});
         return {result: {id: id, title: title}, status: 200};
     }
 
@@ -61,6 +62,7 @@ export default function ConfirmationDialog(props) {
             return {result: null, status: e.response !== undefined ? e.response.status : 500};
         }
         let title = (publication.title.en.length > 14 || publication.title.nb.length > 14) ? (publication.title.hasOwnProperty("en") ? publication.title.en.substr(0, 15) : publication.title.nb.substr(0, 15)) : publication.title.hasOwnProperty("en") ? publication.title.en : publication.title.nb;
+        dispatch({type: "setContributorsLoaded", payload: false});
         return {result: {id: publication.cristinResultId, title: title}, status: 200};
     }
 
@@ -183,7 +185,10 @@ export default function ConfirmationDialog(props) {
         // filtrerer vekk institusjoner om samme institusjon kommer flere ganger på samme person. f.eks ANDREINST
         contributors = contributors.map(item => ({
             ...item,
-            affiliations: item.affiliations.filter((v, i, a) => a.findIndex(t => (t.institution.cristin_institution_id === v.institution.cristin_institution_id)) === i)
+            affiliations: item.affiliations.filter((v, i, a) => 
+            a.findIndex(t => 
+                ((t.hasOwnProperty("institution") && v.hasOwnProperty("institution") ?  t.institution.cristin_institution_id === v.institution.cristin_institution_id : 
+                t.hasOwnProperty("unit") && v.hasOwnProperty("unit") ? t.unit.cristin_unit_id === v.unit.cristin_unit_id : item))) === i)
         }));
 
         return contributors;
