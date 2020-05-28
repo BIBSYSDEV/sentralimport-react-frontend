@@ -410,6 +410,7 @@ function InnerModal(props) {
         );
         props.close();
         dispatch({type: "setContributorErrors", payload: 0});
+        dispatch({type: "setContributorsLoaded", payload: false});
     }
 
     function toggleDialog() {
@@ -1017,9 +1018,10 @@ function InnerModal(props) {
                 <ModalFooter>
                     <Validation publication={props.duplicate ? state.selectedPublication : props.data} duplicate={props.duplicate} />
                     {state.contributorErrors.length >= 1 ? <div> Feil i bidragsyterlisten. </div> : ""}
+                    {!state.contributorsLoaded ? <div> Henter bidragsytere. </div> : ""}
                     <Button onClick={handleClose} variant="contained" color="secondary">Avbryt</Button>
                     <Button
-                        disabled={state.formErrors.length >= 1 || props.data.hasOwnProperty("cristin_id") || state.contributorErrors.length >= 1}
+                        disabled={state.formErrors.length >= 1 || props.data.hasOwnProperty("cristin_id") || state.contributorErrors.length >= 1 || !state.contributorsLoaded}
                         color="primary"
                         onClick={handleSubmit}
                         variant="contained"
