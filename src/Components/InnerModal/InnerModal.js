@@ -69,8 +69,8 @@ function InnerModal(props) {
                 } :
                 (props.duplicate ?
                     {
-                        value: getJournalId(state.selectedPublication.journal.international_standard_numbers),
-                        label: state.selectedPublication.journal.name
+                        value: state.selectedPublication.journal.hasOwnProperty("international_standard_numbers") ? getJournalId(state.selectedPublication.journal.international_standard_numbers) : "0",
+                        label: state.selectedPublication.journal.hasOwnProperty("international_standard_numbers") ? state.selectedPublication.journal.name : "Ingen tidsskrift funnet"
                     }
                     :
                     {
@@ -476,7 +476,7 @@ function InnerModal(props) {
 
     async function getJournalId(issn) {
         if (issn === null || issn === "")
-            return null;
+            return "0";
 
         let journal;
         try {
@@ -485,7 +485,7 @@ function InnerModal(props) {
             console.log("There was an error while getting the journal id");
         }
 
-        return journal.data.length > 0 ? journal.data[0].id : null;
+        return journal.data.length > 0 ? journal.data[0].id : "0";
     }
 
     async function getCategories() {

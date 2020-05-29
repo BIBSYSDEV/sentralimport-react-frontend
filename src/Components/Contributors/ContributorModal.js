@@ -68,6 +68,7 @@ function ContributorModal(props) {
                     if (props.duplicate && state.doSave) {
                         if (i < cristinAuthors.length) {
                             cristinAuthors[i].affiliations = await getDuplicateAffiliations(state.selectedPublication.authors[i]);
+                            cristinAuthors[i].identified_cristin_person = await identifyCristinPerson(i);
                         } else {
                             cristinAuthors[i] = defaultAuthor;
                         }
@@ -135,6 +136,12 @@ function ContributorModal(props) {
         dispatch({type: "setContributorPage", payload: 0});
         dispatch({type: "setContributorPerPage", payload: 5});
         dispatch({type: "contributors", payload: data});
+    }
+
+    async function identifyCristinPerson(index) {
+        if (i < state.contributorPerPage * state.contributorPage) {
+
+        }
     }
 
     async function getDuplicateAffiliations(author) {
@@ -401,7 +408,7 @@ function ContributorModal(props) {
                                 <TableCell style={{width: '40%'}}>
                                     <div className={`result contributor`}>
                                         <div className="image-wrapper person">
-                                            <img src={row.cristin.hasOwnProperty("cristin_person_id") && row.cristin.cristin_person_id !== null ? getMainImage() : getInactiveImage()} alt="person"/>
+                                            <img src={row.cristin.hasOwnProperty("cristin_person_id") && row.cristin.cristin_person_id !== null && row.cristin.identified_cristin_person ? getMainImage() : getInactiveImage()} alt="person"/>
                                         </div>
                                         <div className="content-wrapper">
                                             <h6>
@@ -434,7 +441,7 @@ function ContributorModal(props) {
                                 <TableCell>
                                     <div className={`result contributor`}>
                                         <div className="image-wrapper person">
-                                            {row.toBeCreated.hasOwnProperty("cristin_person_id") && row.toBeCreated.cristin_person_id ?
+                                            {row.toBeCreated.hasOwnProperty("cristin_person_id") && row.toBeCreated.cristin_person_id && row.cristin.identified_cristin_person?
                                                 <img src={getMainImage()} alt="person"/> :
                                                 <img src={getInactiveImage()} alt="inaktiv person"/>}
                                         </div>
@@ -641,7 +648,8 @@ async function searchContributors(authors) {
                 affiliations: affiliations.filter((item, index) => affiliations.indexOf(item) === index),
                 url: process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" + person.cristin_person_id + "?lang=nb",
                 isEditing: false,
-                order: i + 1
+                order: i + 1,
+                identified_cristin_person: person.identified_cristin_person
             };
         }
         suggestedAuthors[i] = person;

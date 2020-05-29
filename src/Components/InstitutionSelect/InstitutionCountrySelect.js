@@ -9,7 +9,7 @@ export default function InstitutionCountrySelect(props) {
     const [institutions, setInstitutions] = React.useState("");
     const [units, setUnits] = React.useState("");
     let {state, dispatch} = React.useContext(Context);
-    const [places, setPlaces] = React.useState("");
+    const [places, setPlaces] = React.useState([]);
     const [groupOptions, setGroupOptions] = React.useState([{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}]);
     const [inputValue, setInputValue] = React.useState("");
 
@@ -19,9 +19,9 @@ export default function InstitutionCountrySelect(props) {
         }
 
         fetch();
-        var temp = [{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}];
+        let temp = [{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}];
         setGroupOptions(temp);
-    }, []);
+    }, [places]);
 
 
     useEffect(() => {
@@ -30,7 +30,7 @@ export default function InstitutionCountrySelect(props) {
         }
 
         fetchPlaces();
-        var temp = [{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}];
+        let temp = [{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}];
         setGroupOptions(temp);
     }, [inputValue]);
 
@@ -95,17 +95,15 @@ export default function InstitutionCountrySelect(props) {
       
         if(props.institution.cristinInstitutionNr) {
             let temp = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/units?parent_unit_id=" + props.institution.cristinInstitutionNr + ".0.0.0&per_page=900&lang=nb", JSON.parse(localStorage.getItem("config")));
-            console.log(temp);
             let units = [];
             for (let i = 0; i < temp.data.length; i++) {
-                if(temp.data[i].hasOwnProperty("unit_name") && (temp.data[i].unit_name.nb || temp.data[i].unit_name.en)) {
-                units.push({
-                    label: temp.data[i].unit_name.nb || temp.data[i].unit_name.en,
-                    value: temp.data[i].cristin_unit_id
-                });
+                    if(temp.data[i].hasOwnProperty("unit_name") && (temp.data[i].unit_name.nb || temp.data[i].unit_name.en)) {
+                    units.push({
+                        label: temp.data[i].unit_name.nb || temp.data[i].unit_name.en,
+                        value: temp.data[i].cristin_unit_id
+                    });
+                }
             }
-            }
-            console.log(units);
             setUnits(units);
         }
     }
