@@ -320,6 +320,7 @@ function InnerModal(props) {
     }
 
     function handleSubmit() {
+        handleTempSave();
         if (state.contributors === null) {
             dispatch({type: "contributors", payload: contributors});
         }
