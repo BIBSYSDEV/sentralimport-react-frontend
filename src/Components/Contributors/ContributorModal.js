@@ -164,7 +164,7 @@ function ContributorModal(props) {
         const toBeCreatedOrder = author.toBeCreated.order;
         
         let copiedAffiliations = JSON.parse(JSON.stringify(author.imported.affiliations));
-        // let cleanedAffiliations = await handleChosenAuthorAffiliations(copiedAffiliations);
+        let cleanedAffiliations = await handleChosenAuthorAffiliations(copiedAffiliations);
 
         let temp = [...data];
         temp[toBeCreatedOrder - 1].toBeCreated.affiliations =
@@ -181,12 +181,11 @@ function ContributorModal(props) {
         setData(temp);
     }
 
-    // TODO: reimplementer automatisk erstatting av ukjente institusjoner når man trykker på "Lagre Endringer"
-    /* async function handleChosenAuthorAffiliations(affil) {
+    async function handleChosenAuthorAffiliations(affil) {
         let tempArr = [];
         for(var i = 0; i < affil.length; i++) {
             let tempInst = affil[i];
-                if(((tempInst.cristinInstitutionNr === 9127 || tempInst.cristinInstitutionNr === 9126 || tempInst.cristinInstitutionNr === 0)) && tempInst.hasOwnProperty("countryCode")){
+                if(tempInst.hasOwnProperty("countryCode") && (tempInst.cristinInstitutionNr === 9127 || tempInst.cristinInstitutionNr === 9126 || tempInst.cristinInstitutionNr === 0 || tempInst.countryCode !== "NO")){
                     let response = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/country/" + affil[i].countryCode + "?lang=nb",
                         JSON.parse(localStorage.getItem("config")));
                     if(response.data.length > 0) {
@@ -197,13 +196,14 @@ function ContributorModal(props) {
                 
                 countries[tempInst.countryCode] = tempInst;
             } else {
-                tempInst = countries[tempInst.countryCode];
+                if(tempInst.isCristinInstitution !== true) {
+                    tempInst = countries[tempInst.countryCode];
+                }
             }
             tempArr.push(tempInst);
-            
         }
         return tempArr;
-    } */
+    }
 
     function handleTempSave() {
         let temp = {
@@ -475,6 +475,7 @@ function ContributorModal(props) {
                                             updateData={updateContributor}
                                             isOpen={props.open}
                                             deleteContributor={toggle}
+                                            cleanUnknownInstitutions={handleChosenAuthorAffiliations}
                                         />
                                         <ClosingDialog
                                             doFunction={removeContributor}
