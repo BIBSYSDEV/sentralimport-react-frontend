@@ -45,6 +45,7 @@ function InnerModal(props) {
     const { useRef, useLayoutEffect } = React;
     let {state, dispatch} = React.useContext(Context);
     const languageCopy = cloneDeep(props.data.languages.sort((a, b) => a.original - b.original).reverse());
+    const [allContributorsFetched, setAllContributorsFetched] = React.useState(false);
 
     useEffect(() => {
         async function setFields() {
@@ -52,6 +53,11 @@ function InnerModal(props) {
             let workedOn = false;
             if (temp !== null && temp.publication.pubId === props.data.pubId && temp.publication.duplicate === props.duplicate)
                 workedOn = true;
+
+            if (props.duplicate && !workedOn && !allContributorsFetched) {
+                fetchAllAuthors(state.selectedPublication.cristin_result_id);
+                setAllContributorsFetched(true);
+            }
 
             setKilde(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_name : "Ingen kilde funnet") : props.data.sourceName);
             setKildeId(props.duplicate ? (state.selectedPublication.hasOwnProperty("import_sources") ? state.selectedPublication.import_sources[0].source_reference_id : "Ingen kildeId funnet") : props.data.externalId);
@@ -63,7 +69,7 @@ function InnerModal(props) {
                 } :
                 (props.duplicate ?
                     {
-                        value: state.selectedPublication.journal.hasOwnProperty("international_standard_numbers") ? await getJournalId(state.selectedPublication.journal.international_standard_numbers) : null,
+                        value: getJournalId(state.selectedPublication.journal.international_standard_numbers),
                         label: state.selectedPublication.journal.name
                     }
                     :
@@ -97,9 +103,8 @@ function InnerModal(props) {
                 (props.duplicate ?
                     [
                         {
-                            title: state.selectedPublication.title.hasOwnProperty("nb") ? state.selectedPublication.title.nb : state.selectedPublication.title.en,
-                            lang: state.selectedPublication.title.hasOwnProperty("nb") ? "NB" : "EN",
-                            langName: state.selectedPublication.title.hasOwnProperty("nb") ? "Norsk, bokmål" : "Engelsk",
+                            title: state.selectedPublication.title[state.selectedPublication.original_language],
+                            lang: state.selectedPublication.original_language.toUpperCase(),
                             original: true
                         }
                     ]
@@ -112,9 +117,8 @@ function InnerModal(props) {
                 temp.publication.languages.filter(l => l.original)[0] :
                 (props.duplicate ?
                     {
-                        title: state.selectedPublication.title.hasOwnProperty("nb") ? state.selectedPublication.title.nb : state.selectedPublication.title.en,
-                        lang: state.selectedPublication.title.hasOwnProperty("nb") ? "NB" : "EN",
-                        langName: state.selectedPublication.title.hasOwnProperty("nb") ? "Norsk, bokmål" : "Engelsk",
+                        title: state.selectedPublication.title[state.selectedPublication.original_language],
+                        lang: state.selectedPublication.original_language.toUpperCase(),
                         original: true
                     } :
                         props.data.languages.filter(l => l.original)[0]
@@ -126,7 +130,7 @@ function InnerModal(props) {
                     props.data.yearPublished));
 
             setDoi(workedOn ? temp.publication.doi :
-                (props.duplicate ? state.selectedPublication.links[state.selectedPublication.links.length - 1].url.substring(16, state.selectedPublication.links[0].url.length + 1) :
+                (props.duplicate && state.selectedPublication.links ? state.selectedPublication.links[state.selectedPublication.links.length - 1].url.substring(16, state.selectedPublication.links[0].url.length + 1) :
                     (props.data.doi ? props.data.doi : "Ingen DOI funnet")));
 
             setPublishingDetails(workedOn ? temp.publication.channel :
@@ -142,8 +146,8 @@ function InnerModal(props) {
                     {
                         ...props.data.channel,
                         volume: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("volume")) ? props.data.channel.volume : "",
-                        pageFrom: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pages")) ? props.data.channel.pages.from : "",
-                        pageTo: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pages")) ? props.data.channel.pages.to : "",
+                        pageFrom: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pageFrom")) ? props.data.channel.pageFrom : "",
+                        pageTo: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("pageTo")) ? props.data.channel.pageTo : "",
                         issue: (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("issue")) ? props.data.channel.issue : ""
                     }
                 )
@@ -177,7 +181,7 @@ function InnerModal(props) {
         label: state.selectedPublication.hasOwnProperty("journal") ? state.selectedPublication.journal.name : "Ingen tidsskrift/journal funnet"
     } : (props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? {
         value: props.data.channel.cristinTidsskriftNr.toString(),
-        label: props.data.channel.title 
+        label: props.data.channel.title
         } : {
         value: "0",
         label: "Ingen tidsskrift/journal funnet"
@@ -205,7 +209,7 @@ function InnerModal(props) {
             return;
         }
         handleTempSave();
-    }, [selectedCategory, selectedJournal, doi, aarstall, selectedLang, publishingDetails, state.doSave]);
+    }, [selectedCategory, selectedJournal, doi, aarstall, selectedLang, publishingDetails]);
 
     useEffect(() => {
         async function fetch() {
@@ -244,6 +248,24 @@ function InnerModal(props) {
         };
         if (state.doSave)
             localStorage.setItem("tempPublication", JSON.stringify(temp));
+    }
+
+    async function fetchAllAuthors(resultId) {
+        if (state.doSave) {
+            let page = 1;
+            let allAuthors = [];
+            while (allAuthors.length < state.selectedPublication.authorTotalCount) {
+                let authors = await axios.get(
+                    process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/results/" +
+                    resultId +
+                    "/contributors?page="+page+"&per_page=500"
+                    , JSON.parse(localStorage.getItem("config")));
+                allAuthors = [...allAuthors, ...authors.data];
+                page++;
+            }
+            let tempPub = {...state.selectedPublication, authors: allAuthors};
+            dispatch({type: "setSelectedPublication", payload: tempPub});
+        }
     }
 
     function handleChangeJournal(option) {
@@ -400,6 +422,7 @@ function InnerModal(props) {
     }
 
     function abortToggle() {
+        dispatch({type: "doSave", payload: false});
         setDialogAbortOpen(false);
         props.toggle();
         props.enqueueSnackbar(
@@ -437,7 +460,7 @@ function InnerModal(props) {
         setSelectedJournal({label: newJournal.title, value: 0, issn: newJournal.issn, eissn: newJournal.eissn });
         dispatch({type: "setSelectedField", payload: "tidsskrift"});
         dispatch({type: "setValidation", payload: newJournal.title});
-       
+
     };
 
     async function getJournals(name) {
@@ -555,7 +578,7 @@ function InnerModal(props) {
     const linkStyle = {
         color: "blue",
         textDecoration: "underline"
-    }
+    };
 
     return (
         <div>

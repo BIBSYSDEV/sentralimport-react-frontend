@@ -197,7 +197,7 @@ export function Duplicates(props) {
     
         (issnChecked ? (doiChecked || publishedChecked || issnChecked ? "&" : "?" ) + "issn=" + issn : "") +
                 
-        "&per_page=5";
+        "&per_page=5&category=ARTICLE";
         
         handleChecks();
         resetValues();
@@ -330,9 +330,10 @@ async function fetchDuplicates(searchTerms) {
         let authors = await axios.get(
             process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/results/" +
             results[i].data.cristin_result_id +
-            "/contributors"
+            "/contributors?per_page=10"
         , JSON.parse(localStorage.getItem("config")));
         results[i].data.authors = authors.data;
+        results[i].data.authorTotalCount = authors.headers["x-total-count"];
     }
 
     return results;
