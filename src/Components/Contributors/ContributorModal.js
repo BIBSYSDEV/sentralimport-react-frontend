@@ -185,7 +185,7 @@ function ContributorModal(props) {
         let tempArr = [];
         for(var i = 0; i < affil.length; i++) {
             let tempInst = affil[i];
-                if(tempInst.hasOwnProperty("countryCode") && (tempInst.countryCode !== "NO" || tempInst.cristinInstitutionNr === 9127 || tempInst.cristinInstitutionNr === 9126 || tempInst.cristinInstitutionNr === 0)){
+                if(tempInst.hasOwnProperty("countryCode") && (tempInst.cristinInstitutionNr === 9127 || tempInst.cristinInstitutionNr === 9126 || tempInst.cristinInstitutionNr === 0 || tempInst.countryCode !== "NO")){
                     let response = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/country/" + affil[i].countryCode + "?lang=nb",
                         JSON.parse(localStorage.getItem("config")));
                     if(response.data.length > 0) {
