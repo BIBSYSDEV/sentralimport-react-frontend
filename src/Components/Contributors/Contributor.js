@@ -49,10 +49,14 @@ function Contributor(props) {
   }
 
   async function handleSubmit() {
-    let temp = data;
+    let temp = JSON.parse(JSON.stringify(data));
     temp.isEditing = false;
 
-    props.updateData(temp, rowIndex);
+    let cleanedAffiliations = await props.cleanUnknownInstitutions(temp.toBeCreated.affiliations);
+    
+    temp.toBeCreated.affiliations = cleanedAffiliations;
+
+    await props.updateData(temp, rowIndex);
     setSetSelectedInstitution({
       value: "",
       cristinInstitutionNr: 0
