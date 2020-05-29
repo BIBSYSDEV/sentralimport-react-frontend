@@ -136,7 +136,6 @@ function Contributor(props) {
     }
     if(duplicate < 1){
       affiliationCopy.push({
-        countryCode: "test",
         institutionName: selectedInstitution.label,
         cristinInstitutionNr: selectedInstitution.cristinInstitutionNr,
         isCristinInstitution: true
