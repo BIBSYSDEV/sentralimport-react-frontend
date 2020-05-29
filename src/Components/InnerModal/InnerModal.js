@@ -420,6 +420,7 @@ function InnerModal(props) {
             );
         }
         props.close();
+        dispatch({type: "importDone", payload: !state.importDone});
     }
 
     function abortToggle() {

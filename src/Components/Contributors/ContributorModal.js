@@ -358,19 +358,25 @@ function ContributorModal(props) {
                 order: temp.length + 1,
                 affiliations: [],
                 first_name: "",
-                surname: ""
+                surname: "",
+                cristin_person_id: 0,
+                role_code: "FORFATTER"
             },
             cristin: {
                 order: temp.length + 1,
                 affiliations: [],
                 first_name: "",
-                surname: ""
+                surname: "",
+                cristin_person_id: 0,
+                role_code: "FORFATTER"
             },
             toBeCreated: {
                 order: temp.length + 1,
                 affiliations: [],
                 first_name: "",
-                surname: ""
+                surname: "",
+                cristin_person_id: 0,
+                role_code: "FORFATTER"
             }
         };
         temp.push(newContributor);
