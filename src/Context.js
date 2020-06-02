@@ -33,7 +33,9 @@ let initialState = {
     param: null,
     doiFilter: null,
     contributorsLoaded: false,
-    contributorErrors: 0
+    contributorErrors: 0,
+    identified: [],
+    identifiedImported: []
 };
 
 let reducer = (state, action) => {
@@ -88,6 +90,10 @@ let reducer = (state, action) => {
             return {...state, contributorErrors: action.payload};
         case "setContributorsLoaded":
             return {...state, contributorsLoaded: action.payload};
+        case "identified":
+            return {...state, identified: action.payload};
+        case "identifiedImported":
+            return {...state, identifiedImported: action.payload};
         default:
             return state;
     }
