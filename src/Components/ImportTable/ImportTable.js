@@ -422,11 +422,11 @@ export default function EnhancedTable() {
         });
     }
 
-    function removeFromList() {
+    useEffect(() => {
         setTimeout(function () {
             getRows();
-        }, 200);
-    }
+        }, 500);
+    }, [state.importDone]);
 
     function checkAll(status) {
         let temp = [...checked];
@@ -657,7 +657,6 @@ export default function EnhancedTable() {
                     open={open}
                     data={modalData}
                     handleClose={handleClose.bind(this)}
-                    removeFromList={removeFromList.bind(this)}
                 />
                 <ListModal
                     title={"Forfatterliste"}

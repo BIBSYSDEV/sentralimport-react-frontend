@@ -36,7 +36,7 @@ export default function ResultModal(props) {
     } else if (state.selected === "false") {
       setNotRelevant();
       props.handleClose();
-      props.removeFromList();
+      dispatch({type: "importDone", payload: !state.importDone});
     } else {
       dispatch({type: "doSave", payload: true});
       setDuplicate(true);
