@@ -51,6 +51,7 @@ function ContributorModal(props) {
 
             let contributors = [];
             let cristinAuthors = [];
+            let identified = [];
 
             let temp = JSON.parse(localStorage.getItem("tempContributors"));
             if (temp !== null && temp.pubId === props.data.pubId && temp.duplicate === props.duplicate) {
@@ -72,6 +73,7 @@ function ContributorModal(props) {
                             cristinAuthors[i] = defaultAuthor;
                         }
                     }
+                    identified[i] = cristinAuthors[i].identified_cristin_person;
                     contributors[i] = {
                         imported:
                             imported.length > i
@@ -110,6 +112,8 @@ function ContributorModal(props) {
             
             setData(contributors);
             dispatch({type: "setContributorsLoaded", payload: true});
+            dispatch({type: "identified", payload: identified});
+            dispatch({type: "identifiedImported", payload: identified});
             setFetched(true);
 
             let errors = [];
@@ -135,6 +139,36 @@ function ContributorModal(props) {
         dispatch({type: "setContributorPage", payload: 0});
         dispatch({type: "setContributorPerPage", payload: 5});
         dispatch({type: "contributors", payload: data});
+    }
+
+    useEffect(() => {
+        if (!props.duplicate)
+            return;
+
+        identifyCristinPerson();
+    }, [state.contributorPerPage, state.contributorPage, data]);
+
+    async function identifyCristinPerson() {
+        if (!fetched) {
+            return;
+        }
+        let identified = [];
+        let identifiedImported = [];
+        let start = state.contributorPage * state.contributorPerPage;
+        for (let i = start; i < start + state.contributorPerPage; i++) {
+            if (!data[i].imported.hasOwnProperty("identified_cristin_person") && data[i].imported.cristin_person_id !== null
+                && data[i].imported.cristin_person_id !== 0 && i <= data.length) {
+                let person = await fetchPerson(data[i].imported.cristin_person_id);
+                identifiedImported[i] = person.data.identified_cristin_person;
+            }
+            if (!data[i].toBeCreated.hasOwnProperty("identified_cristin_person") && props.duplicate) {
+                let person = await fetchPerson(data[i].toBeCreated.cristin_person_id);
+                identified[i] = person.data.identified_cristin_person;
+
+            }
+        }
+        dispatch({type: "identifiedImported", payload: identifiedImported});
+        dispatch({type: "identified", payload: identified});
     }
 
     async function getDuplicateAffiliations(author) {
@@ -407,7 +441,7 @@ function ContributorModal(props) {
                                 <TableCell style={{width: '40%'}}>
                                     <div className={`result contributor`}>
                                         <div className="image-wrapper person">
-                                            <img src={row.cristin.hasOwnProperty("cristin_person_id") && row.cristin.cristin_person_id !== null ? getMainImage() : getInactiveImage()} alt="person"/>
+                                            <img src={state.identifiedImported[(row.imported.order - 1)] ? getMainImage() : getInactiveImage()} alt="person"/>
                                         </div>
                                         <div className="content-wrapper">
                                             <h6>
@@ -440,7 +474,7 @@ function ContributorModal(props) {
                                 <TableCell>
                                     <div className={`result contributor`}>
                                         <div className="image-wrapper person">
-                                            {row.toBeCreated.hasOwnProperty("cristin_person_id") && row.toBeCreated.cristin_person_id ?
+                                            {state.identified[row.toBeCreated.order - 1] === true ?
                                                 <img src={getMainImage()} alt="person"/> :
                                                 <img src={getInactiveImage()} alt="inaktiv person"/>}
                                         </div>
@@ -648,7 +682,8 @@ async function searchContributors(authors) {
                 affiliations: affiliations.filter((item, index) => affiliations.indexOf(item) === index),
                 url: process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" + person.cristin_person_id + "?lang=nb",
                 isEditing: false,
-                order: i + 1
+                order: i + 1,
+                identified_cristin_person: person.identified_cristin_person
             };
         }
         suggestedAuthors[i] = person;
@@ -659,6 +694,7 @@ async function searchContributors(authors) {
 
 const defaultAuthor = {
     cristin_person_id: null,
+    identified_cristin_person: false,
     first_name: "",
     surname: "",
     order: 0,

@@ -9,7 +9,7 @@ export default function InstitutionCountrySelect(props) {
     const [institutions, setInstitutions] = React.useState("");
     const [units, setUnits] = React.useState("");
     let {state, dispatch} = React.useContext(Context);
-    const [places, setPlaces] = React.useState("");
+    const [places, setPlaces] = React.useState([]);
     const [groupOptions, setGroupOptions] = React.useState([{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}]);
     const [inputValue, setInputValue] = React.useState("");
 
@@ -19,9 +19,9 @@ export default function InstitutionCountrySelect(props) {
         }
 
         fetch();
-        var temp = [{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}];
+        let temp = [{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}];
         setGroupOptions(temp);
-    }, []);
+    }, [places]);
 
 
     useEffect(() => {
@@ -30,7 +30,7 @@ export default function InstitutionCountrySelect(props) {
         }
 
         fetchPlaces();
-        var temp = [{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}];
+        let temp = [{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}];
         setGroupOptions(temp);
     }, [inputValue]);
 
