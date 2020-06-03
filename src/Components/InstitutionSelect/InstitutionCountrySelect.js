@@ -97,7 +97,7 @@ export default function InstitutionCountrySelect(props) {
             let temp = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/units?parent_unit_id=" + props.institution.cristinInstitutionNr + ".0.0.0&per_page=900&lang=nb", JSON.parse(localStorage.getItem("config")));
             let units = [];
             for (let i = 0; i < temp.data.length; i++) {
-                    if(temp.data[i].hasOwnProperty("unit_name") && (temp.data[i].unit_name.nb || temp.data[i].unit_name.en)) {
+                if(temp.data[i].hasOwnProperty("unit_name") && (temp.data[i].unit_name.nb || temp.data[i].unit_name.en)) {
                     units.push({
                         label: temp.data[i].unit_name.nb || temp.data[i].unit_name.en,
                         value: temp.data[i].cristin_unit_id

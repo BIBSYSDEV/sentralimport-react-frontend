@@ -35,7 +35,8 @@ let initialState = {
     contributorsLoaded: false,
     contributorErrors: 0,
     identified: [],
-    identifiedImported: []
+    identifiedImported: [],
+    importDone: false
 };
 
 let reducer = (state, action) => {
@@ -90,6 +91,8 @@ let reducer = (state, action) => {
             return {...state, contributorErrors: action.payload};
         case "setContributorsLoaded":
             return {...state, contributorsLoaded: action.payload};
+        case "importDone":
+            return {...state, importDone: action.payload};
         case "identified":
             return {...state, identified: action.payload};
         case "identifiedImported":
