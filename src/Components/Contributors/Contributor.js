@@ -200,7 +200,7 @@ function Contributor(props) {
   async function retrySearch(data) {
     try {
     let authorResults = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" +
-                                        (data.imported.cristin_person_id !== 0 ? "?id=" + data.imported.cristin_person_id : "?name=" + data.imported.first_name.substr(0, 1) + " " + data.imported.surname)
+                                        (data.imported.hasOwnProperty("cristin_person_id") && data.imported.cristin_person_id !== 0 ? "?id=" + data.imported.cristin_person_id : "?name=" + data.toBeCreated.first_name + " " + data.toBeCreated.surname)
                                         , JSON.parse(localStorage.getItem("config"))); 
                   
     if(authorResults.data.length > 0) {   
@@ -358,12 +358,10 @@ function Contributor(props) {
               Lagre endringer
             </Button>
 
-            {data.imported.cristin_person_id === 0 ?
-                <Button onClick={() => retrySearch(data)}>
-                  Søk igjen
-                </Button>
-                : ""
-            }
+            <Button onClick={() => retrySearch(data)} disabled={data.toBeCreated.first_name === "" || data.toBeCreated.surname === ""}>
+              Søk igjen
+            </Button>
+          
 
             <ContributorSearchPanel collapsed={open} data={searchResults} handleChoose={handleSelect} handleAbort={handleClose} />
 
