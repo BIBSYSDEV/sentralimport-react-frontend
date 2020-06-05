@@ -275,7 +275,7 @@ export default function EnhancedTable() {
             fetchString =
                 fetchString +
                 ("&institution=" +
-                    state.currentInstitution.value +
+                    state.currentInstitution.cristinInstitutionNr +
                     "&copublication=" +
                     state.isSampublikasjon);
             if (state.currentImportStatus !== "ikke aktuelle") {
