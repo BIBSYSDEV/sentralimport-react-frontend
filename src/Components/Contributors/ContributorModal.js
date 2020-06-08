@@ -650,7 +650,9 @@ async function fetchInstitutions(affiliations) {
                 inst = countries[inst.countryCode];
             }
         }
-        arr.push(inst);
+        if(inst !== null) {
+            arr.push(inst);
+        }
     }
     return arr;
 }
