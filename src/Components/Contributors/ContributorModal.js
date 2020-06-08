@@ -650,7 +650,7 @@ async function fetchInstitutions(affiliations) {
                 inst = countries[inst.countryCode];
             }
         }
-        if(!(inst.hasOwnProperty("unitName") ? inst.institutionName === null && inst.unitName === null : inst.institutionName === null)) {
+        if(inst !== null) {
             arr.push(inst);
         }
     }
