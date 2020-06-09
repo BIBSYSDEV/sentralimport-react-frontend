@@ -53,8 +53,9 @@ function Contributor(props) {
     temp.isEditing = false;
 
     let cleanedAffiliations = await props.cleanUnknownInstitutions(temp.toBeCreated.affiliations);
+    let duplicatesRemoved = await filterInstitutions(cleanedAffiliations);
     
-    temp.toBeCreated.affiliations = cleanedAffiliations;
+    temp.toBeCreated.affiliations = duplicatesRemoved;
 
     await props.updateData(temp, rowIndex);
     setSetSelectedInstitution({
@@ -112,6 +113,7 @@ function Contributor(props) {
     for(var i = 0; i < affiliations.length - 1; i++) {
       if (affiliations[i].cristinInstitutionNr === affiliations[i + 1].cristinInstitutionNr) {
         affiliations.splice(i, 1);
+        i--;
       }
     }
 
@@ -216,7 +218,7 @@ function Contributor(props) {
             tempAffiliation.isCristinInstitution = true;
             fetchedAffilations.push(tempAffiliation);
           }
-          fetchedAuthor.data.affiliations = fetchedAffilations;
+          fetchedAuthor.data.affiliations = await filterInstitutions(fetchedAffilations);
           fetchedAuthors.push(fetchedAuthor.data);
         }
         props.enqueueSnackbar("Fant " + fetchedAuthors.length + " bidragsytere", {variant: "success"});
