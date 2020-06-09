@@ -233,7 +233,7 @@ function ContributorModal(props) {
                     tempInst = countries[tempInst.countryCode];
                 }
             }
-            if(tempInst !== null) {
+            if(tempInst !== null && tempInst !== undefined) {
                 tempArr.push(tempInst);
             }
         }
