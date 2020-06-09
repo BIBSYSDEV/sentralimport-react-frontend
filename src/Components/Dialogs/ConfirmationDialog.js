@@ -129,7 +129,8 @@ export default function ConfirmationDialog(props) {
             pages: {
                 from: temp.publication.channel.pageFrom,
                 to: temp.publication.channel.pageTo,
-                count: temp.publication.channel.pageTo !== null && temp.publication.channel.pageFrom !== null ?
+                count: temp.publication.channel.pageTo !== null && temp.publication.channel.pageFrom !== null
+                    && !isNaN(temp.publication.channel.pageTo) && !isNaN(temp.publication.channel.pageFrom) ?
                     (temp.publication.channel.pageTo - temp.publication.channel.pageFrom).toString() :
                     "0"
             },

@@ -186,7 +186,7 @@ function Contributor(props) {
     const authorName =
       property === "authorName"
         ? event.target.value
-        : obj.toBeCreated.authorname;
+        : obj.toBeCreated.authorName;
 
     if (property === "first") {
       obj.toBeCreated.first_name = firstName;

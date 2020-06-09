@@ -81,11 +81,11 @@ function ContributorModal(props) {
                                     cristin_person_id: imported[i].cristinId,
                                     first_name: imported[i].hasOwnProperty("firstname")
                                         ? imported[i].firstname
-                                        : imported[i].authorName.split(" ")[1],
+                                        : imported[i].authorName.split(" ")[1].replace(",", ""),
                                     surname: imported[i].hasOwnProperty("surname")
                                         ? imported[i].surname
-                                        : imported[i].authorName.split(" ")[0],
-                                    authorname: imported[i].hasOwnProperty("authorName")
+                                        : imported[i].authorName.split(" ")[0].replace(",", ""),
+                                    authorName: imported[i].hasOwnProperty("authorName")
                                         ? imported[i].authorName
                                         : "",
                                     order: imported[i].sequenceNr,
@@ -157,14 +157,13 @@ function ContributorModal(props) {
         let start = state.contributorPage * state.contributorPerPage;
         for (let i = start; i < start + state.contributorPerPage; i++) {
             if (!data[i].imported.hasOwnProperty("identified_cristin_person") && data[i].imported.cristin_person_id !== null
-                && data[i].imported.cristin_person_id !== 0 && i <= data.length) {
+                && data[i].imported.cristin_person_id !== 0 && i < data.length) {
                 let person = await fetchPerson(data[i].imported.cristin_person_id);
                 identifiedImported[i] = person.data.identified_cristin_person;
             }
             if (!data[i].toBeCreated.hasOwnProperty("identified_cristin_person") && props.duplicate) {
                 let person = await fetchPerson(data[i].toBeCreated.cristin_person_id);
                 identified[i] = person.data.identified_cristin_person;
-
             }
         }
         dispatch({type: "identifiedImported", payload: identifiedImported});
@@ -206,8 +205,8 @@ function ContributorModal(props) {
         temp[toBeCreatedOrder - 1].toBeCreated.first_name =
             author.imported.first_name;
         temp[toBeCreatedOrder - 1].toBeCreated.surname = author.imported.surname;
-        temp[toBeCreatedOrder - 1].toBeCreated.authorname =
-            author.imported.authorname;
+        temp[toBeCreatedOrder - 1].toBeCreated.authorName =
+            author.imported.authorName;
         temp[toBeCreatedOrder - 1].toBeCreated.cristin_person_id = author.cristin.hasOwnProperty("cristin_person_id") && author.cristin.cristin_person_id !== null ? author.cristin.cristin_person_id : 
             author.imported.cristin_person_id;
         temp[toBeCreatedOrder - 1].isEditing = false;
