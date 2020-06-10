@@ -48,7 +48,6 @@ function InnerModal(props) {
     const [allContributorsFetched, setAllContributorsFetched] = React.useState(false);
 
     useEffect(() => {
-        console.log(props.data);
         async function setFields() {
             let temp = JSON.parse(localStorage.getItem("tempPublication"));
             let workedOn = false;
