@@ -48,6 +48,7 @@ function InnerModal(props) {
     const [allContributorsFetched, setAllContributorsFetched] = React.useState(false);
 
     useEffect(() => {
+        console.log(props.data);
         async function setFields() {
             let temp = JSON.parse(localStorage.getItem("tempPublication"));
             let workedOn = false;
@@ -698,7 +699,7 @@ function InnerModal(props) {
                                             multiline
                                             disabled
                                         />
-                                        {props.data.hasOwnProperty("channel") && selectedJournal.value === (props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "") ? (
+                                        {props.data.hasOwnProperty("channel") && selectedJournal.label === (props.data.channel.hasOwnProperty("title") ? props.data.channel.title : "") ? (
                                             <IconButton color="primary" style={tittelButtonStyle} disabled={!(props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("title"))}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
