@@ -258,7 +258,7 @@ function InnerModal(props) {
                 let authors = await axios.get(
                     process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/results/" +
                     resultId +
-                    "/contributors?page="+page+"&per_page=500"
+                    "/contributors?page="+page+"&per_page=500&lang=nb"
                     , JSON.parse(localStorage.getItem("config")));
                 allAuthors = [...allAuthors, ...authors.data];
                 page++;
