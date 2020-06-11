@@ -176,7 +176,7 @@ function ContributorModal(props) {
             let index = affiliations.findIndex(id => id.cristinInstitutionNr === author.affiliations[i].institution.cristin_institution_id);
             if (index >= 0 && i !== index) {
                 affiliations[index].units.push({
-                    unitId: author.affiliations[i].unit.cristin_unit_id,
+                    unitNr: author.affiliations[i].unit.cristin_unit_id,
                     unitName: author.affiliations[i].unit.unit_name["nb"]
                 });
             } else {
@@ -187,7 +187,7 @@ function ContributorModal(props) {
                     units: [
                         author.affiliations[i].hasOwnProperty("unit") ?
                         {
-                            unitId: author.affiliations[i].unit.cristin_unit_id,
+                            unitNr: author.affiliations[i].unit.cristin_unit_id,
                             unitName: author.affiliations[i].unit.unit_name["nb"]
                         } : null
                     ]
