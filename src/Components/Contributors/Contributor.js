@@ -11,6 +11,7 @@ import "../../assets/styles/common.scss"
 function Contributor(props) {
   
   let {state} = React.useContext(Context);
+  const [addDisabled, setAddDisabled] = React.useState(false);
 
   useEffect(() => {
     setRowIndex(props.index);
@@ -121,6 +122,7 @@ function Contributor(props) {
   }
 
   async function addInstitution() {
+    setAddDisabled(true);
     let affiliationCopy = [...data.toBeCreated.affiliations];
     let fetchedInstitution = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + selectedInstitution.cristinInstitutionNr + "?lang=nb", JSON.parse(localStorage.getItem("config")));
     
@@ -152,6 +154,7 @@ function Contributor(props) {
     temp.toBeCreated.affiliations = await filterInstitutions(affiliationCopy);
 
     props.updateData(temp, rowIndex);
+    setAddDisabled(false);
   }
 
   function addUnit(affiliationCopy) {
@@ -338,7 +341,7 @@ function Contributor(props) {
             <Button
               onClick={() => addInstitution()}
               disabled={
-                selectedInstitution.cristinInstitutionNr === 0 ||
+                addDisabled || selectedInstitution.cristinInstitutionNr === 0 ||
                 (data.toBeCreated.affiliations.filter(instNr => {
                   return (
                     parseInt(selectedInstitution.cristinInstitutionNr) === parseInt(instNr.cristinInstitutionNr)
