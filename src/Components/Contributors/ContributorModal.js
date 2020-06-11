@@ -457,7 +457,7 @@ function ContributorModal(props) {
                                             <div className={`metadata`}>
                                                 {row.imported.affiliations.map((inst, j) => (
                                                     <p className={`italic`} key={j}>
-                                                        {inst.unitName}
+                                                        {inst.hasOwnProperty("countryCode") ? inst.unitName + "  (" + inst.countryCode + ")" : inst.unitName}
                                                     </p>
                                                 ))}
                                             </div>
