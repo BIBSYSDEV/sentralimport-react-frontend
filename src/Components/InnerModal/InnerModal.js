@@ -69,7 +69,7 @@ function InnerModal(props) {
                 } :
                 (props.duplicate ?
                     {
-                        value: state.selectedPublication.journal.hasOwnProperty("international_standard_numbers") ? getJournalId(state.selectedPublication.journal.international_standard_numbers) : "0",
+                        value: state.selectedPublication.journal.hasOwnProperty("international_standard_numbers") ? await getJournalId(state.selectedPublication.journal.international_standard_numbers) : "0",
                         label: state.selectedPublication.journal.hasOwnProperty("international_standard_numbers") ? state.selectedPublication.journal.name : "Ingen tidsskrift funnet"
                     }
                     :
@@ -698,7 +698,7 @@ function InnerModal(props) {
                                             multiline
                                             disabled
                                         />
-                                        {props.data.hasOwnProperty("channel") && selectedJournal.label === (props.data.channel.hasOwnProperty("title") ? props.data.channel.title : "") ? (
+                                        {props.data.hasOwnProperty("channel") && selectedJournal.value === (props.data.channel.hasOwnProperty("cristinTidsskriftNr") ? props.data.channel.cristinTidsskriftNr.toString() : "") ? (
                                             <IconButton color="primary" style={tittelButtonStyle} disabled={!(props.data.hasOwnProperty("channel") && props.data.channel.hasOwnProperty("title"))}> <div hidden={true}> Lik </div>
                                                 <DragHandleIcon />
                                             </IconButton>
