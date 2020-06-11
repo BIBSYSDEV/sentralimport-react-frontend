@@ -155,15 +155,15 @@ function ContributorModal(props) {
         let identified = [];
         let identifiedImported = [];
         let start = state.contributorPage * state.contributorPerPage;
-        for (let i = start; i < start + state.contributorPerPage; i++) {
+        for (let i = start; i < Math.min(start + state.contributorPerPage, data.length); i++) {
             if (!data[i].imported.hasOwnProperty("identified_cristin_person") && data[i].imported.cristin_person_id !== null
                 && data[i].imported.cristin_person_id !== 0 && i < data.length) {
                 let person = await fetchPerson(data[i].imported.cristin_person_id);
-                identifiedImported[i] = person.data.identified_cristin_person;
+                identifiedImported[i] = person !== undefined ? person.data.identified_cristin_person : false;
             }
             if (!data[i].toBeCreated.hasOwnProperty("identified_cristin_person") && props.duplicate) {
                 let person = await fetchPerson(data[i].toBeCreated.cristin_person_id);
-                identified[i] = person.data.identified_cristin_person;
+                identified[i] = person !== undefined ? person.data.identified_cristin_person : false;
             }
         }
         dispatch({type: "identifiedImported", payload: identifiedImported});
@@ -173,11 +173,26 @@ function ContributorModal(props) {
     async function getDuplicateAffiliations(author) {
         let affiliations = [];
         for (let i = 0; i < author.affiliations.length; i++) {
-            affiliations.push({
-                cristinInstitutionNr: author.affiliations[i].institution.cristin_institution_id,
-                institutionName: await fetchInstitutionName(author.affiliations[i].institution.cristin_institution_id),
-                isCristinInstitution: (author.affiliations[i].institution.hasOwnProperty("isCristinInstitution") && author.affiliations[i].institution.isCristinInstitution === true)
-            });
+            let index = affiliations.findIndex(id => id.cristinInstitutionNr === author.affiliations[i].institution.cristin_institution_id);
+            if (index >= 0 && i !== index) {
+                affiliations[index].units.push({
+                    unitId: author.affiliations[i].unit.cristin_unit_id,
+                    unitName: author.affiliations[i].unit.unit_name["nb"]
+                });
+            } else {
+                affiliations.push({
+                    cristinInstitutionNr: author.affiliations[i].institution.cristin_institution_id,
+                    institutionName: await fetchInstitutionName(author.affiliations[i].institution.cristin_institution_id),
+                    isCristinInstitution: (author.affiliations[i].institution.hasOwnProperty("isCristinInstitution") && author.affiliations[i].institution.isCristinInstitution === true),
+                    units: [
+                        author.affiliations[i].hasOwnProperty("unit") ?
+                        {
+                            unitId: author.affiliations[i].unit.cristin_unit_id,
+                            unitName: author.affiliations[i].unit.unit_name["nb"]
+                        } : null
+                    ]
+                });
+            }
         }
         return affiliations;
 
@@ -355,7 +370,6 @@ function ContributorModal(props) {
             }
         }
         for (let j = 0; j < rowIndex; j++) {
-            console.log("rowIndex: " + rowIndex);
             if (
                 temp[j].imported.order === rowIndex &&
                 temp[j].imported.order !== temp[j].toBeCreated.order

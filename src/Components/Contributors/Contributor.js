@@ -155,7 +155,7 @@ function Contributor(props) {
   }
 
   function addUnit(affiliationCopy) {
-    for(var i = 0; i < affiliationCopy.length; i++){
+    for(let i = 0; i < affiliationCopy.length; i++){
     if(parseInt(affiliationCopy[i].cristinInstitutionNr) === parseInt(selectedInstitution.cristinInstitutionNr)) {
       if(affiliationCopy[i].hasOwnProperty("units")) {
         affiliationCopy[i].units.push({
@@ -207,10 +207,10 @@ function Contributor(props) {
                   
     if(authorResults.data.length > 0) {   
         let fetchedAuthors = [];
-        for(var i = 0; i < authorResults.data.length; i++) {
+        for(let i = 0; i < authorResults.data.length; i++) {
           let fetchedAuthor = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" + authorResults.data[i].cristin_person_id, JSON.parse(localStorage.getItem("config")));
           let fetchedAffilations = [];
-          for(var h = 0; h < fetchedAuthor.data.affiliations.length; h++) {
+          for(let h = 0; h < fetchedAuthor.data.affiliations.length; h++) {
             let fetchedAffilation = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + fetchedAuthor.data.affiliations[h].institution.cristin_institution_id + "?lang=nb", JSON.parse(localStorage.getItem("config")))
             let tempAffiliation = new Object();
             tempAffiliation.institutionName = fetchedAffilation.data.institution_name.en ||  fetchedAffilation.data.institution_name.nb;
@@ -319,7 +319,7 @@ function Contributor(props) {
                   data.toBeCreated.affiliations.indexOf(item) === index).map((inst, j) => (
                 <div key={j}>
                 <p className={`italic`}>
-                  {inst.hasOwnProperty("unitName") ? inst.unitName : inst.institutionName}
+                  {inst.institutionName}
                   {createEditButton(inst)}
                   <Button
                     size="small"
@@ -329,7 +329,7 @@ function Contributor(props) {
                     Fjern tilknytning
                   </Button>
                 </p>
-                { inst.hasOwnProperty("units") ? inst.units.map((unit, g) => <p className={'italic'} style={unitStyle} key={g}> &bull; {unit.unitName} <Button onClick={() => removeUnit(j, g)}> Fjern enhet </Button></p>) : ""}
+                { inst.hasOwnProperty("units") ? inst.units.map((unit, g) => (unit.unitName !== inst.institutionName ? <p className={'italic'} style={unitStyle} key={g}> &bull; {unit.unitName} <Button onClick={() => removeUnit(j, g)}> Fjern enhet </Button></p> : "")) : ""}
                 </div>
                 
               ))}
@@ -384,9 +384,9 @@ function Contributor(props) {
             {data.toBeCreated.affiliations.map((inst, j) => (
               <div key={j}>
               <p className={`italic`} key={j}>
-                {inst.hasOwnProperty("unitName") ? inst.unitName : inst.institutionName}
+                {inst.institutionName}
               </p>
-              { inst.hasOwnProperty("units") ? inst.units.map((unit, g) => <p className={'italic'} style={unitStyle} key={g}> &bull; {unit.unitName} </p>) : ""}
+              { inst.hasOwnProperty("units") ? inst.units.map((unit, g) => (unit.unitName !== inst.institutionName ? <p className={'italic'} style={unitStyle} key={g}> &bull; {unit.unitName} </p> : "")) : ""}
               </div>
             ))}
           </div>
