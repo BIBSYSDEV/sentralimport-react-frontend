@@ -159,7 +159,7 @@ export default function ConfirmationDialog(props) {
                         {...temp.contributors[i].toBeCreated.affiliations[j].institution, role_code: temp.contributors[i].imported.role_code}
                         :
                         {
-                            cristin_institution_id: temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString(),
+                            cristin_institution_id: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("cristinInstitutionNr") && (temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr !== undefined || null) ? temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString() : "0",
                         },
                      }
                 } else { 
@@ -168,7 +168,7 @@ export default function ConfirmationDialog(props) {
                             role_code: temp.contributors[i].imported.role_code,
                             unit: 
                                 {
-                                    cristin_unit_id: temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr.toString(),
+                                    cristin_unit_id: temp.contributors[i].toBeCreated.affiliations[j].units[h].hasOwnProperty("unitNr") && (temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr !== undefined || null) ? temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr.toString() : "0",
                                 },
                         };
                      count++;
