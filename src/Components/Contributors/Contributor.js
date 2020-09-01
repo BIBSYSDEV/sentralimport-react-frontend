@@ -250,7 +250,6 @@ async function fetchUnitName(unitId) {
                 unitNr:  fetchedAuthor.data.affiliations[h].hasOwnProperty("unit") ? fetchedAuthor.data.affiliations[h].unit.cristin_unit_id : ""
               }]
             }
-            console.log(tempAffiliations[h]);
           } 
           fetchedAuthor.data.affiliations = await filterInstitutions(tempAffiliations);
           fetchedAuthors.push(fetchedAuthor.data);
