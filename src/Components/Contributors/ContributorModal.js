@@ -641,6 +641,20 @@ async function fetchInstitutionName(institutionId) {
     return institutionNames[institutionId];
 }
 
+let unitNames = {};
+async function fetchUnitName(unitId) {
+    if (unitId === "0") return " ";
+    if(unitNames[unitId] === undefined) {
+        let unit = await axios.get(
+            process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/units/" + unitId + "?lang=nb", JSON.parse(localStorage.getItem("config"))
+        );
+        unitNames[unitId] = unit.data.unit_name.hasOwnProperty("nb")
+            ? unit.data.unit_name.nb
+            : unit.data.unit_name.en;
+    }
+    return unitNames[unitId];
+}
+
 let countries = {};
 async function fetchInstitutions(affiliations) {
     let arr = [];
@@ -680,13 +694,18 @@ async function searchContributors(authors) {
         let affiliations = [];
         if (authors[i].cristinId !== 0) {
             person = await fetchPerson(authors[i].cristinId);
+            console.log(person);
             person = person.data;
             if (person.hasOwnProperty("affiliations")) {
                 for (let j = 0; j < person.affiliations.length; j++) {
                     affiliations[j] = {
                         cristinInstitutionNr: person.affiliations[j].institution.cristin_institution_id,
                         institutionName: await fetchInstitutionName(person.affiliations[j].institution.cristin_institution_id),
-                        isCristinInstitution: true
+                        isCristinInstitution: true,
+                        units: [{ 
+                            unitName: person.affiliations[j].hasOwnProperty("unit") ? await fetchUnitName(person.affiliations[j].unit.cristin_unit_id) : "",
+                            unitNr:  person.affiliations[j].hasOwnProperty("unit") ? person.affiliations[j].unit.cristin_unit_id : ""
+                        }]
                     }
                 }
             } else {
