@@ -286,6 +286,12 @@ async function fetchUnitName(unitId) {
     temp.cristin.order = rowIndex + 1;
 
     temp.toBeCreated = author;
+    if (temp.toBeCreated.hasOwnProperty("first_name_preferred")) {
+      temp.toBeCreated.first_name = temp.toBeCreated.first_name_preferred;
+    }
+    if (temp.toBeCreated.hasOwnProperty("surname_preferred")) {
+      temp.toBeCreated.surname = temp.toBeCreated.surname_preferred;
+    }
     temp.toBeCreated.isEditing = false;
     temp.toBeCreated.order = rowIndex + 1;
 
