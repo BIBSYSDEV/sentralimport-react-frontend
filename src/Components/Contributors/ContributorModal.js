@@ -694,8 +694,8 @@ async function searchContributors(authors) {
             }
             person = {
                 cristin_person_id: person.cristin_person_id,
-                first_name: person.first_name,
-                surname: person.surname,
+                first_name: person.hasOwnProperty("first_name_preferred") ? person.first_name_preferred : person.first_name,
+                surname: person.hasOwnProperty("surname_preferred") ? person.surname_preferred : person.surname,
                 affiliations: affiliations.filter((item, index) => affiliations.indexOf(item) === index),
                 url: process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" + person.cristin_person_id + "?lang=nb",
                 isEditing: false,

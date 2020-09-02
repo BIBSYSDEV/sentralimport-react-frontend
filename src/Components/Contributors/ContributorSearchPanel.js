@@ -11,7 +11,10 @@ export default function ContributorSearchPanel(props) {
                 <div>
                     {props.data.map((author, i) => (
                         <span key={i}> 
-                            <div className="author"> {author.first_name + " " + author.surname} </div>
+                            <div className="author">
+                                {(author.hasOwnProperty("first_name_preferred") ? author.first_name_preferred : author.first_name)
+                                + " " +
+                                (author.hasOwnProperty("surname_preferred") ? author.surname_preferred : author.surname)} </div>
                             {author.affiliations.map((affiliation, h) => (
                                 <div key={h} className="affiliations"> {affiliation.institutionName} </div>
                             ))}
