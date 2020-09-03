@@ -202,26 +202,56 @@ function Contributor(props) {
     props.updateData(obj, rowIndex);
   }
 
+let institutionNames = {};
+async function fetchInstitutionName(institutionId) {
+    if (institutionId === "0") return " ";
+    if (institutionNames[institutionId] === undefined) {
+        let institution = await axios.get(
+            process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + institutionId + "?lang=nb", JSON.parse(localStorage.getItem("config"))
+        );
+        institutionNames[institutionId] = institution.data.institution_name.hasOwnProperty("nb")
+            ? institution.data.institution_name.nb
+            : institution.data.institution_name.en;
+    }
+    return institutionNames[institutionId];
+}
+
+let unitNames = {};
+async function fetchUnitName(unitId) {
+    if (unitId === "0") return " ";
+    if(unitNames[unitId] === undefined) {
+        let unit = await axios.get(
+            process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/units/" + unitId + "?lang=nb", JSON.parse(localStorage.getItem("config"))
+        );
+        unitNames[unitId] = unit.data.unit_name.hasOwnProperty("nb")
+            ? unit.data.unit_name.nb
+            : unit.data.unit_name.en;
+    }
+    return unitNames[unitId];
+}
+  
   async function retrySearch(data) {
     try {
     let authorResults = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" +
                                         (data.imported.hasOwnProperty("cristin_person_id") && data.imported.cristin_person_id !== 0 ? "?id=" + data.imported.cristin_person_id : "?name=" + data.toBeCreated.first_name + " " + data.toBeCreated.surname)
                                         , JSON.parse(localStorage.getItem("config"))); 
-                  
     if(authorResults.data.length > 0) {   
         let fetchedAuthors = [];
+        let tempAffiliations = [];
         for(let i = 0; i < authorResults.data.length; i++) {
           let fetchedAuthor = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" + authorResults.data[i].cristin_person_id, JSON.parse(localStorage.getItem("config")));
-          let fetchedAffilations = [];
           for(let h = 0; h < fetchedAuthor.data.affiliations.length; h++) {
-            let fetchedAffilation = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + fetchedAuthor.data.affiliations[h].institution.cristin_institution_id + "?lang=nb", JSON.parse(localStorage.getItem("config")))
-            let tempAffiliation = new Object();
-            tempAffiliation.institutionName = fetchedAffilation.data.institution_name.en ||  fetchedAffilation.data.institution_name.nb;
-            tempAffiliation.cristinInstitutionNr = fetchedAffilation.data.cristin_institution_id;
-            tempAffiliation.isCristinInstitution = true;
-            fetchedAffilations.push(tempAffiliation);
-          }
-          fetchedAuthor.data.affiliations = await filterInstitutions(fetchedAffilations);
+            tempAffiliations[h] = {
+              institutionName: await fetchInstitutionName(fetchedAuthor.data.affiliations[h].institution.cristin_institution_id),
+              cristinInstitutionNr: fetchedAuthor.data.affiliations[h].institution.cristin_institution_id,
+              isCristinInstitution: true,
+              units: [{ 
+                unitName: fetchedAuthor.data.affiliations[h].hasOwnProperty("unit") ? await fetchUnitName(fetchedAuthor.data.affiliations[h].unit.cristin_unit_id) : "",
+                unitNr:  fetchedAuthor.data.affiliations[h].hasOwnProperty("unit") ? fetchedAuthor.data.affiliations[h].unit.cristin_unit_id : ""
+              }]
+            }
+          } 
+          fetchedAuthor.data.affiliations = await filterInstitutions(tempAffiliations);
           fetchedAuthors.push(fetchedAuthor.data);
         }
         props.enqueueSnackbar("Fant " + fetchedAuthors.length + " bidragsytere", {variant: "success"});

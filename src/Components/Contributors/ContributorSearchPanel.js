@@ -16,7 +16,11 @@ export default function ContributorSearchPanel(props) {
                                 + " " +
                                 (author.hasOwnProperty("surname_preferred") ? author.surname_preferred : author.surname)} </div>
                             {author.affiliations.map((affiliation, h) => (
-                                <div key={h} className="affiliations"> {affiliation.institutionName} </div>
+                                <div key={h} className="affiliations"> {affiliation.institutionName} 
+                                    {affiliation.hasOwnProperty("units") ? affiliation.units.map((unit, i) => (
+                                        <div key={i} className="units"> &bull; {unit.unitName} </div>
+                                    )) : ""}
+                                </div>
                             ))}
                             <Button key={i} onClick={() => props.handleChoose(author)} className="select-button"> Velg denne </Button>
                             <hr />
