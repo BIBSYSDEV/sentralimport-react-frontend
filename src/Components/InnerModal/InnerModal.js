@@ -421,6 +421,7 @@ function InnerModal(props) {
         }
         props.close();
         dispatch({type: "importDone", payload: !state.importDone});
+        dispatch({type: "setContributorsLoaded", payload: false});
     }
 
     function abortToggle() {

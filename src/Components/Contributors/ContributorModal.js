@@ -112,6 +112,14 @@ function ContributorModal(props) {
             
             setData(contributors);
             dispatch({type: "setContributorsLoaded", payload: true});
+            if(localStorage.getItem("tempContributors").pubId !== props.data.pubId) {
+                let tempCon = {
+                    pubId: props.data.pubId,
+                    contributors: contributors,
+                    duplicate: props.duplicate
+                }
+                localStorage.setItem("tempContributors", JSON.stringify(tempCon));
+            }
             dispatch({type: "identified", payload: identified});
             dispatch({type: "identifiedImported", payload: identified});
             setFetched(true);

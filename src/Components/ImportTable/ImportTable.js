@@ -344,6 +344,7 @@ export default function EnhancedTable() {
     function handleClose() {
         setOpen(false);
         if (openSeveral.length > 1) {
+            dispatch({type: "setContributorsLoaded", payload: false});
             let index = rows.findIndex(id => id.pubId === openSeveral[1]);
             let temp = [...openSeveral];
             temp.splice(0, 1);
@@ -351,6 +352,7 @@ export default function EnhancedTable() {
             setModalData(rows[index]);
             setOpen(true);
         } else {
+            dispatch({type: "setContributorsLoaded", payload: false});
             checkAll(false);
             dispatch({type: "setSelected", payload: "false"});
             dispatch({type: "allChecked", payload: false});
