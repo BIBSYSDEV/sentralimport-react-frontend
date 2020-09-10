@@ -90,7 +90,7 @@ function ContributorModal(props) {
                                         : "",
                                     order: imported[i].sequenceNr,
                                     affiliations: imported[i].institutions,
-                                    role_code: imported[i].hasOwnProperty("roleCode") ? imported[i].roleCode : "FORFATTER"
+                                    role_code: imported[i].hasOwnProperty("roleCode") ? ((imported[i].roleCode === "FORFATTER") ? "AUTHOR" : imported[i].roleCode) : "AUTHOR"
                                 }
                                 : defaultAuthor,
                         cristin: cristinAuthors[i],
@@ -417,7 +417,7 @@ function ContributorModal(props) {
                 first_name: "",
                 surname: "",
                 cristin_person_id: 0,
-                role_code: "FORFATTER"
+                role_code: "AUTHOR"
             },
             cristin: {
                 order: temp.length + 1,
@@ -425,7 +425,7 @@ function ContributorModal(props) {
                 first_name: "",
                 surname: "",
                 cristin_person_id: 0,
-                role_code: "FORFATTER"
+                role_code: "AUTHOR"
             },
             toBeCreated: {
                 order: temp.length + 1,
@@ -433,7 +433,7 @@ function ContributorModal(props) {
                 first_name: "",
                 surname: "",
                 cristin_person_id: 0,
-                role_code: "FORFATTER"
+                role_code: "AUTHOR"
             }
         };
         temp.push(newContributor);
