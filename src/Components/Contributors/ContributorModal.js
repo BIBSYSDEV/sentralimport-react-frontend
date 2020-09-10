@@ -112,7 +112,7 @@ function ContributorModal(props) {
             
             setData(contributors);
             dispatch({type: "setContributorsLoaded", payload: true});
-            if(localStorage.getItem("tempContributors").pubId !== props.data.pubId) {
+            if(localStorage.getItem("tempContributors") === null || localStorage.getItem("tempContributors").pubId !== props.data.pubId) {
                 let tempCon = {
                     pubId: props.data.pubId,
                     contributors: contributors,
