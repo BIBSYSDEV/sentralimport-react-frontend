@@ -141,7 +141,7 @@ export default function ConfirmationDialog(props) {
         if (props.duplicate)
             pub.cristinResultId = temp.publication.cristinResultId;
         if (annotation !== null)
-            pub.annotaion = annotation;
+            pub.annotation = annotation;
         return pub;
     }
 
