@@ -464,7 +464,8 @@ function ContributorModal(props) {
                                 <TableCell style={{width: '40%'}}>
                                     <div className={`result contributor`}>
                                         <div className="image-wrapper person">
-                                            <img src={state.identifiedImported[(row.imported.order - 1)] ? getMainImage() : getInactiveImage()} alt="person"/>
+                                            <img src={row.cristin.identified_cristin_person ? getMainImage() : getInactiveImage()}
+                                                 alt={row.cristin.identified_cristin_person ? "person identifisert i Cristin" : "person ikke identifisert i Cristin"} />
                                         </div>
                                         <div className="content-wrapper">
                                             <h6>
@@ -497,9 +498,9 @@ function ContributorModal(props) {
                                 <TableCell>
                                     <div className={`result contributor`}>
                                         <div className="image-wrapper person">
-                                            {state.identified[row.toBeCreated.order - 1] === true ?
-                                                <img src={getMainImage()} alt="person"/> :
-                                                <img src={getInactiveImage()} alt="inaktiv person"/>}
+                                            {row.toBeCreated.hasOwnProperty("identified_cristin_person") ?
+                                                <img src={getMainImage()} alt="person identifisert i Cristin"/> :
+                                                <img src={getInactiveImage()} alt="person ikke identifisert i Cristin"/>}
                                         </div>
                                         <div className={`orderButtons`}>
                                             {row.toBeCreated.order > 1 &&
