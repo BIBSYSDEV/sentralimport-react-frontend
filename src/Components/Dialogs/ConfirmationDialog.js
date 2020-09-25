@@ -95,7 +95,7 @@ export default function ConfirmationDialog(props) {
 
         let journal = {
             name: temp.publication.channel.title,
-            journal_id: temp.publication.channel.cristinTidsskriftNr !== 0 ? temp.publication.channel.cristinTidsskriftNr : null,
+            cristin_journal_id: temp.publication.channel.cristinTidsskriftNr !== 0 ? temp.publication.channel.cristinTidsskriftNr : null,
             international_standard_numbers: [
                 {
                     type: "printed",
@@ -141,7 +141,7 @@ export default function ConfirmationDialog(props) {
         if (props.duplicate)
             pub.cristinResultId = temp.publication.cristinResultId;
         if (annotation !== null)
-            pub.annotaion = annotation;
+            pub.annotation = annotation;
         return pub;
     }
 
