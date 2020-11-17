@@ -239,15 +239,15 @@ function ContributorModal(props) {
 
     async function handleChosenAuthorAffiliations(affil) {
         let tempArr = [];
-        for(var i = 0; i < affil.length; i++) {
+        for(let i = 0; i < affil.length; i++) {
             let tempInst = affil[i];
                 if(tempInst.hasOwnProperty("countryCode") && (tempInst.cristinInstitutionNr === 9127 || tempInst.cristinInstitutionNr === 9126 || tempInst.cristinInstitutionNr === 0 || tempInst.countryCode !== "NO")){
                     let response = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/country/" + affil[i].countryCode + "?lang=nb",
                         JSON.parse(localStorage.getItem("config")));
                     if(response.data.length > 0) {
-                        tempInst.institutionName = (response.data[0].institution_name.hasOwnProperty("nb") ? response.data[0].institution_name.nb : response.data[0].institution_name.en) + " (Ukjent institusjon)"
-                        tempInst.unitName = (response.data[0].institution_name.hasOwnProperty("nb") ? response.data[0].institution_name.nb : response.data[0].institution_name.en) + " (Ukjent institusjon)"
-                        tempInst.cristinInstitutionNr = 0;
+                        tempInst.institutionName = (response.data[0].institution_name.hasOwnProperty("nb") ? response.data[0].institution_name.nb : response.data[0].institution_name.en) + " (Ukjent institusjon)";
+                        tempInst.unitName = (response.data[0].institution_name.hasOwnProperty("nb") ? response.data[0].institution_name.nb : response.data[0].institution_name.en) + " (Ukjent institusjon)";
+                        tempInst.cristinInstitutionNr = response.data[0].hasOwnProperty("cristin_institution_id") ? response.data[0].cristin_institution_id : 0;
                     }
                 
                 countries[tempInst.countryCode] = tempInst;
@@ -703,7 +703,6 @@ async function searchContributors(authors) {
         let affiliations = [];
         if (authors[i].cristinId !== 0) {
             person = await fetchPerson(authors[i].cristinId);
-            console.log(person);
             person = person.data;
             if (person.hasOwnProperty("affiliations")) {
                 for (let j = 0; j < person.affiliations.length; j++) {
