@@ -152,23 +152,27 @@ export default function ConfirmationDialog(props) {
             let affiliations = [];
             for (let j = 0; j < temp.contributors[i].toBeCreated.affiliations.length; j++) {
                 let count = 0;
-                if(!temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("units")) { 
-                affiliations[j + count] = {
-                    role_code: temp.contributors[i].imported.role_code === "FORFATTER" ? "AUTHOR" : temp.contributors[i].imported.role_code,
-                    institution: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("institution") ?
-                        {...temp.contributors[i].toBeCreated.affiliations[j].institution, role_code: temp.contributors[i].imported.role_code}
-                        :
-                        {
-                            cristin_institution_id: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("cristinInstitutionNr") && (temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr !== undefined || null) ? temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString() : "0",
-                        },
-                     }
+                if(!temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("units")) {
+                    affiliations[j + count] = {
+                        role_code: temp.contributors[i].imported.role_code === "FORFATTER" ? "AUTHOR" : temp.contributors[i].imported.role_code,
+                        institution: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("institution") ?
+                            {...temp.contributors[i].toBeCreated.affiliations[j].institution, role_code: temp.contributors[i].imported.role_code}
+                            :
+                            {
+                                cristin_institution_id: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("cristinInstitutionNr") &&
+                                (temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr !== undefined ||
+                                    temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr !== null) ? temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString() : "0",
+                            },
+                         }
                 } else { 
                     for(let h = 0; h < temp.contributors[i].toBeCreated.affiliations[j].units.length; h++) {
                         affiliations[j + count] = {
                             role_code: temp.contributors[i].imported.role_code === "FORFATTER" ? "AUTHOR" : temp.contributors[i].imported.role_code,
                             unit: 
                                 {
-                                    cristin_unit_id: temp.contributors[i].toBeCreated.affiliations[j].units[h].hasOwnProperty("unitNr") && (temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr !== undefined || null) ? temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr.toString() : "0",
+                                    cristin_unit_id: temp.contributors[i].toBeCreated.affiliations[j].units[h].hasOwnProperty("unitNr") &&
+                                    (temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr !== undefined ||
+                                        temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr !== null) ? temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr.toString() : "0",
                                 },
                         };
                      count++;
