@@ -1,0 +1,62 @@
+$color-red: #dd3737;
+$color-blue: #05346d;
+$color-black: #353333;
+$color-grey: #424242;
+$color-purple: #76559a;
+$color-green: #3c8947;
+$color-medium-grey: #525252;
+$color-light-grey: #afafaf;
+$color-very-light-grey: #f5f5f5f5;
+$color-white: white;
+
+.login {
+  text-align: center;
+}
+
+.login-grid {
+  min-height: 50vh;
+}
+
+.login-card {
+  width: 300px;
+  height: 150px;
+}
+
+.feide-login-button {
+  font-weight: bold;
+}
+
+.feide-login-icon {
+  height: 50px;
+}
+
+.cristin-logo {
+  width: 500px;
+}
+
+.MuiPaper-root.MuiPaper-elevation1.MuiCard-root.jss190.MuiPaper-rounded {
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+.MuiPaper-root.MuiPaper-elevation1.MuiCard-root.makeStyles-card-190.MuiPaper-rounded {
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+.contributor-suggestions {
+  .author {
+    color: $color-green;
+    margin-top: 10px;
+    margin-left: 10px;
+  }
+
+  .affiliations {
+    font-style: italic;
+    margin-left: 10px;
+  }
+
+  .select-button {
+    justify-self: flex-end;
+  }
+}
