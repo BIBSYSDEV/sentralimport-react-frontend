@@ -90,7 +90,7 @@ function ContributorModal(props) {
                                         : "",
                                     order: imported[i].sequenceNr,
                                     affiliations: imported[i].institutions,
-                                    role_code: imported[i].hasOwnProperty("roleCode") ? imported[i].roleCode : "FORFATTER"
+                                    role_code: imported[i].hasOwnProperty("roleCode") ? ((imported[i].roleCode === "FORFATTER") ? "AUTHOR" : imported[i].roleCode) : "AUTHOR"
                                 }
                                 : defaultAuthor,
                         cristin: cristinAuthors[i],
@@ -112,6 +112,14 @@ function ContributorModal(props) {
             
             setData(contributors);
             dispatch({type: "setContributorsLoaded", payload: true});
+            if(localStorage.getItem("tempContributors") === null || localStorage.getItem("tempContributors").pubId !== props.data.pubId) {
+                let tempCon = {
+                    pubId: props.data.pubId,
+                    contributors: contributors,
+                    duplicate: props.duplicate
+                }
+                localStorage.setItem("tempContributors", JSON.stringify(tempCon));
+            }
             dispatch({type: "identified", payload: identified});
             dispatch({type: "identifiedImported", payload: identified});
             setFetched(true);
@@ -409,7 +417,7 @@ function ContributorModal(props) {
                 first_name: "",
                 surname: "",
                 cristin_person_id: 0,
-                role_code: "FORFATTER"
+                role_code: "AUTHOR"
             },
             cristin: {
                 order: temp.length + 1,
@@ -417,7 +425,7 @@ function ContributorModal(props) {
                 first_name: "",
                 surname: "",
                 cristin_person_id: 0,
-                role_code: "FORFATTER"
+                role_code: "AUTHOR"
             },
             toBeCreated: {
                 order: temp.length + 1,
@@ -425,7 +433,7 @@ function ContributorModal(props) {
                 first_name: "",
                 surname: "",
                 cristin_person_id: 0,
-                role_code: "FORFATTER"
+                role_code: "AUTHOR"
             }
         };
         temp.push(newContributor);
@@ -456,7 +464,8 @@ function ContributorModal(props) {
                                 <TableCell style={{width: '40%'}}>
                                     <div className={`result contributor`}>
                                         <div className="image-wrapper person">
-                                            <img src={state.identifiedImported[(row.imported.order - 1)] ? getMainImage() : getInactiveImage()} alt="person"/>
+                                            <img src={row.cristin.identified_cristin_person ? getMainImage() : getInactiveImage()}
+                                                 alt={row.cristin.identified_cristin_person ? "person identifisert i Cristin" : "person ikke identifisert i Cristin"} />
                                         </div>
                                         <div className="content-wrapper">
                                             <h6>
@@ -489,9 +498,9 @@ function ContributorModal(props) {
                                 <TableCell>
                                     <div className={`result contributor`}>
                                         <div className="image-wrapper person">
-                                            {state.identified[row.toBeCreated.order - 1] === true ?
-                                                <img src={getMainImage()} alt="person"/> :
-                                                <img src={getInactiveImage()} alt="inaktiv person"/>}
+                                            {row.toBeCreated.hasOwnProperty("identified_cristin_person") ?
+                                                <img src={getMainImage()} alt="person identifisert i Cristin"/> :
+                                                <img src={getInactiveImage()} alt="person ikke identifisert i Cristin"/>}
                                         </div>
                                         <div className={`orderButtons`}>
                                             {row.toBeCreated.order > 1 &&
@@ -713,8 +722,8 @@ async function searchContributors(authors) {
             }
             person = {
                 cristin_person_id: person.cristin_person_id,
-                first_name: person.first_name,
-                surname: person.surname,
+                first_name: person.hasOwnProperty("first_name_preferred") ? person.first_name_preferred : person.first_name,
+                surname: person.hasOwnProperty("surname_preferred") ? person.surname_preferred : person.surname,
                 affiliations: affiliations.filter((item, index) => affiliations.indexOf(item) === index),
                 url: process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" + person.cristin_person_id + "?lang=nb",
                 isEditing: false,

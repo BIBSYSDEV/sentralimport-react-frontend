@@ -95,7 +95,7 @@ export default function ConfirmationDialog(props) {
 
         let journal = {
             name: temp.publication.channel.title,
-            journal_id: temp.publication.channel.cristinTidsskriftNr !== 0 ? temp.publication.channel.cristinTidsskriftNr : null,
+            cristin_journal_id: temp.publication.channel.cristinTidsskriftNr !== 0 ? temp.publication.channel.cristinTidsskriftNr : null,
             international_standard_numbers: [
                 {
                     type: "printed",
@@ -141,7 +141,7 @@ export default function ConfirmationDialog(props) {
         if (props.duplicate)
             pub.cristinResultId = temp.publication.cristinResultId;
         if (annotation !== null)
-            pub.annotaion = annotation;
+            pub.annotation = annotation;
         return pub;
     }
 
@@ -154,7 +154,7 @@ export default function ConfirmationDialog(props) {
                 let count = 0;
                 if(!temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("units")) { 
                 affiliations[j + count] = {
-                    role_code: temp.contributors[i].imported.role_code,
+                    role_code: temp.contributors[i].imported.role_code === "FORFATTER" ? "AUTHOR" : temp.contributors[i].imported.role_code,
                     institution: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("institution") ?
                         {...temp.contributors[i].toBeCreated.affiliations[j].institution, role_code: temp.contributors[i].imported.role_code}
                         :
@@ -165,7 +165,7 @@ export default function ConfirmationDialog(props) {
                 } else { 
                     for(let h = 0; h < temp.contributors[i].toBeCreated.affiliations[j].units.length; h++) {
                         affiliations[j + count] = {
-                            role_code: temp.contributors[i].imported.role_code,
+                            role_code: temp.contributors[i].imported.role_code === "FORFATTER" ? "AUTHOR" : temp.contributors[i].imported.role_code,
                             unit: 
                                 {
                                     cristin_unit_id: temp.contributors[i].toBeCreated.affiliations[j].units[h].hasOwnProperty("unitNr") && (temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr !== undefined || null) ? temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr.toString() : "0",
