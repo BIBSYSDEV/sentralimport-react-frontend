@@ -6,15 +6,11 @@ import preval from "preval.macro";
 export default function Footer() {
     const { version } = require('../../../package.json');
 
-    let dateTimeStamp = preval`module.exports = new Date().toLocaleString();`
-
-    const date = new Date(dateTimeStamp);
-
-    dateTimeStamp = date.getUTCDate() + "-" + (date.getUTCMonth() + 1) + "-" + date.getFullYear();
+    let dateTimeStamp = preval`module.exports = new Date().toLocaleString('no', {year: 'numeric', month: '2-digit', day: '2-digit'});`;
 
     const footerStyle = {
         marginTop: "10px"
-    }
+    };
     
     return (
         <Navbar expand="sm" bg="light" variant="dark" style={footerStyle}>
