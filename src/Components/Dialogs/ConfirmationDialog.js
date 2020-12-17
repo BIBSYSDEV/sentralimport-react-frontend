@@ -152,23 +152,27 @@ export default function ConfirmationDialog(props) {
             let affiliations = [];
             for (let j = 0; j < temp.contributors[i].toBeCreated.affiliations.length; j++) {
                 let count = 0;
-                if(!temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("units")) { 
-                affiliations[j + count] = {
-                    role_code: temp.contributors[i].imported.role_code === "FORFATTER" ? "AUTHOR" : temp.contributors[i].imported.role_code,
-                    institution: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("institution") ?
-                        {...temp.contributors[i].toBeCreated.affiliations[j].institution, role_code: temp.contributors[i].imported.role_code}
-                        :
-                        {
-                            cristin_institution_id: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("cristinInstitutionNr") && (temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr !== undefined || null) ? temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString() : "0",
-                        },
-                     }
+                if(!temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("units")) {
+                    affiliations[j + count] = {
+                        role_code: temp.contributors[i].imported.role_code === "FORFATTER" ? "AUTHOR" : temp.contributors[i].imported.role_code,
+                        institution: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("institution") ?
+                            {...temp.contributors[i].toBeCreated.affiliations[j].institution, role_code: temp.contributors[i].imported.role_code}
+                            :
+                            {
+                                cristin_institution_id: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty("cristinInstitutionNr") &&
+                                (temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr !== undefined ||
+                                    temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr !== null) ? temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString() : "0",
+                            },
+                         }
                 } else { 
                     for(let h = 0; h < temp.contributors[i].toBeCreated.affiliations[j].units.length; h++) {
                         affiliations[j + count] = {
                             role_code: temp.contributors[i].imported.role_code === "FORFATTER" ? "AUTHOR" : temp.contributors[i].imported.role_code,
                             unit: 
                                 {
-                                    cristin_unit_id: temp.contributors[i].toBeCreated.affiliations[j].units[h].hasOwnProperty("unitNr") && (temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr !== undefined || null) ? temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr.toString() : "0",
+                                    cristin_unit_id: temp.contributors[i].toBeCreated.affiliations[j].units[h].hasOwnProperty("unitNr") &&
+                                    (temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr !== undefined ||
+                                        temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr !== null) ? temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr.toString() : "0",
                                 },
                         };
                      count++;
@@ -186,10 +190,15 @@ export default function ConfirmationDialog(props) {
         // filtrerer vekk institusjoner om samme institusjon kommer flere ganger på samme person. f.eks ANDREINST
         contributors = contributors.map(item => ({
             ...item,
-            affiliations: item.affiliations.filter((v, i, a) => 
-            a.findIndex(t => 
-                ((t.hasOwnProperty("institution") && v.hasOwnProperty("institution") ?  t.institution.cristin_institution_id === v.institution.cristin_institution_id : 
-                t.hasOwnProperty("unit") && v.hasOwnProperty("unit") ? t.unit.cristin_unit_id === v.unit.cristin_unit_id : item))) === i)
+            affiliations: item.affiliations.filter((v, i, a) =>
+                a.findIndex(t => {
+                    if (t.hasOwnProperty("institution") && v.hasOwnProperty("institution")) {
+                        return t.institution.cristin_institution_id === v.institution.cristin_institution_id;
+                    } else if (t.hasOwnProperty("unit") && v.hasOwnProperty("unit")) {
+                        return t.unit.cristin_unit_id === v.unit.cristin_unit_id;
+                    }
+                    return false;
+                }) === i)
         }));
 
         return contributors;
