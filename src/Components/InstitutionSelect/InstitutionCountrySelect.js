@@ -50,14 +50,14 @@ export default function InstitutionCountrySelect(props) {
     async function getPlaces() {
         if (inputValue !== "") {
             let temp = await axios.get(
-                process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions?cristin_institution=false&lang=nb&name=" + inputValue, JSON.parse(localStorage.getItem("config"))
+                process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions?cristin_institution=false&lang=nb,en&name=" + inputValue, JSON.parse(localStorage.getItem("config"))
             );
 
             let places = [];
             for (let i = 0; i < temp.data.length; i++) {
                 places.push({
                     value: temp.data[i].acronym,
-                    label: temp.data[i].institution_name.nb,
+                    label: (temp.data[i].institution_name.hasOwnProperty("en")) ? temp.data[i].institution_name.nb + " / " + temp.data[i].institution_name.en : temp.data[i].institution_name.nb,
                     cristinInstitutionNr: temp.data[i].cristin_institution_id
                 });
             }
