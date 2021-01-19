@@ -13,7 +13,7 @@ For å starte applikasjonen kjør `npm start`. Applikasjonen vil da starte i dev
 2. Logg inn på aws på det miljøet du vil legge ut ny versjon.
 3. Gå til S3 (kan søke øverst)
 4. Trykk på sentralimport-frontend. Om det er fler som heter det så sjekk at filene som ligger der er de samme som i build mappen din
-5. Slett alle filene på sentralimport-frontend i S3 og last opp filene på nytt fra din build mappe
+5. Slett alle filene på sentralimport-frontend i S3 og last opp filene på nytt fra din build mappe (drag and drop)
 7. Gå til CloudFront
 8. Trykk på ID'en til sentralimport-frontend 
 9. Trykk på 'Invalidations'
