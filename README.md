@@ -4,69 +4,19 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Dette er en prototype for en reactapplikasjon for sentralimport til CRISTIN.
 
-## Available Scripts
+## Starte applikasjonen
+For å starte applikasjonen kjør `npm start`. Applikasjonen vil da starte i development mode på [http://localhost:3000](http://localhost:3000) 
 
-In the project directory, you can run:
+## Legge ut ny versjon på aws
 
-### `npm start`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+1. Bygg prosjektet. Dette gjøres ved å kjøre `npm run build` for prod og `npm run build:{miljø}` for de andre miljøene f.eks `npm run build:test`. Det ferdigbygde prosjektet vil da legge seg i build mappen.
+2. Logg inn på aws på det miljøet du vil legge ut ny versjon.
+3. Gå til S3 (kan søke øverst)
+4. Trykk på sentralimport-frontend. Om det er fler som heter det så sjekk at filene som ligger der er de samme som i build mappen din
+5. Slett alle filene på sentralimport-frontend i S3 og last opp filene på nytt fra din build mappe
+7. Gå til CloudFront
+8. Trykk på ID'en til sentralimport-frontend 
+9. Trykk på 'Invalidations'
+10. Trykk på 'Create Invalidation'
+11. Skriv `/*` i Object Paths-feltet og trykk 'Invalidate'
+12. Når invalideringen er ferdig er den nye versjonen lagt ut. Du kan sjekke at det er blitt riktig ved å se på versjonsnummer og Sist oppdatert dato nederst til høyre på nettsiden.
