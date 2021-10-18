@@ -1,16 +1,15 @@
-import React, { useEffect } from "react";
-import { Button, FormGroup, TextField, Collapse, Card } from "@material-ui/core";
-import InstitutionCountrySelect from "../InstitutionSelect/InstitutionCountrySelect";
-import ContributorSearchPanel from "./ContributorSearchPanel";
-import { Form } from "reactstrap";
-import { Context } from "../../Context";
-import axios from "axios";
-import { withSnackbar } from "notistack";
-import "../../assets/styles/common.scss"
+import React, { useEffect } from 'react';
+import { Button, FormGroup, TextField } from '@material-ui/core';
+import InstitutionCountrySelect from '../InstitutionSelect/InstitutionCountrySelect';
+import ContributorSearchPanel from './ContributorSearchPanel';
+import { Form } from 'reactstrap';
+import { Context } from '../../Context';
+import axios from 'axios';
+import { withSnackbar } from 'notistack';
+import '../../assets/styles/common.scss';
 
 function Contributor(props) {
-  
-  let {state} = React.useContext(Context);
+  let { state } = React.useContext(Context);
   const [addDisabled, setAddDisabled] = React.useState(false);
 
   useEffect(() => {
@@ -19,8 +18,8 @@ function Contributor(props) {
   }, [props.author]);
 
   useEffect(() => {
-    setSelectedUnit("");
-    setSetSelectedInstitution("");
+    setSelectedUnit('');
+    setSetSelectedInstitution('');
   }, [state.contributorPage]);
 
   const [data, setData] = React.useState(props.author);
@@ -28,18 +27,18 @@ function Contributor(props) {
   const [rowIndex, setRowIndex] = React.useState(props.index);
 
   const [selectedInstitution, setSetSelectedInstitution] = React.useState({
-    value: "",
-    cristinInstitutionNr: 0
+    value: '',
+    cristinInstitutionNr: 0,
   });
 
-  const [selectedUnit, setSelectedUnit] = React.useState("");
+  const [selectedUnit, setSelectedUnit] = React.useState('');
 
-  const [searchResults, setSearchResults] = React.useState("");
+  const [searchResults, setSearchResults] = React.useState('');
 
   const [open, setOpen] = React.useState(false);
 
   const unitStyle = {
-    marginLeft: "0px"
+    marginLeft: '0px',
   };
 
   function updateEditing() {
@@ -55,13 +54,13 @@ function Contributor(props) {
 
     let cleanedAffiliations = await props.cleanUnknownInstitutions(temp.toBeCreated.affiliations);
     let duplicatesRemoved = await filterInstitutions(cleanedAffiliations);
-    
+
     temp.toBeCreated.affiliations = duplicatesRemoved;
 
     await props.updateData(temp, rowIndex);
     setSetSelectedInstitution({
-      value: "",
-      cristinInstitutionNr: 0
+      value: '',
+      cristinInstitutionNr: 0,
     });
   }
 
@@ -71,7 +70,7 @@ function Contributor(props) {
 
   function handleInstitutionChange(institution) {
     setSetSelectedInstitution(institution);
-    setSelectedUnit("");
+    setSelectedUnit('');
   }
 
   function removeInstitution(index) {
@@ -95,11 +94,11 @@ function Contributor(props) {
   function checkForUnit() {
     let affiliationCopy = [...data.toBeCreated.affiliations];
     let duplicate = 0;
-    if(selectedUnit){
-      for(let i = 0; i < affiliationCopy.length; i++) {
-        if(affiliationCopy[i].hasOwnProperty("units")) {
-          for(let h = 0; h < affiliationCopy[i].units.length; h++) {
-            if(affiliationCopy[i].units[h].unitNr === selectedUnit.value) {
+    if (selectedUnit) {
+      for (let i = 0; i < affiliationCopy.length; i++) {
+        if (affiliationCopy[i].hasOwnProperty('units')) {
+          for (let h = 0; h < affiliationCopy[i].units.length; h++) {
+            if (affiliationCopy[i].units[h].unitNr === selectedUnit.value) {
               duplicate++;
             }
           }
@@ -111,7 +110,7 @@ function Contributor(props) {
   }
 
   async function filterInstitutions(affiliations) {
-    for(var i = 0; i < affiliations.length - 1; i++) {
+    for (var i = 0; i < affiliations.length - 1; i++) {
       if (affiliations[i].cristinInstitutionNr === affiliations[i + 1].cristinInstitutionNr) {
         affiliations.splice(i, 1);
         i--;
@@ -124,29 +123,33 @@ function Contributor(props) {
   async function addInstitution() {
     setAddDisabled(true);
     let affiliationCopy = [...data.toBeCreated.affiliations];
-    let fetchedInstitution = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + selectedInstitution.cristinInstitutionNr + "?lang=nb", JSON.parse(localStorage.getItem("config")));
-    
+    let fetchedInstitution = await axios.get(
+      process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
+        '/institutions/' +
+        selectedInstitution.cristinInstitutionNr +
+        '?lang=nb',
+      JSON.parse(localStorage.getItem('config'))
+    );
+
     let duplicate = 0;
-    for(let i = 0; i < affiliationCopy.length; i++){
-      if(parseInt(affiliationCopy[i].cristinInstitutionNr) === parseInt(selectedInstitution.cristinInstitutionNr)){
-        
+    for (let i = 0; i < affiliationCopy.length; i++) {
+      if (parseInt(affiliationCopy[i].cristinInstitutionNr) === parseInt(selectedInstitution.cristinInstitutionNr)) {
         duplicate++;
-        
-        if(affiliationCopy[i].unitName !== fetchedInstitution.data.institution_name.nb) {
+
+        if (affiliationCopy[i].unitName !== fetchedInstitution.data.institution_name.nb) {
           affiliationCopy[i].unitName = fetchedInstitution.data.institution_name.nb;
-          
         }
       }
     }
-    if(duplicate < 1){
+    if (duplicate < 1) {
       affiliationCopy.push({
         institutionName: selectedInstitution.label,
         cristinInstitutionNr: selectedInstitution.cristinInstitutionNr,
-        isCristinInstitution: true
+        isCristinInstitution: true,
       });
     }
 
-    if(selectedUnit) {
+    if (selectedUnit) {
       affiliationCopy = addUnit(affiliationCopy);
     }
 
@@ -158,42 +161,37 @@ function Contributor(props) {
   }
 
   function addUnit(affiliationCopy) {
-    for(let i = 0; i < affiliationCopy.length; i++){
-    if(parseInt(affiliationCopy[i].cristinInstitutionNr) === parseInt(selectedInstitution.cristinInstitutionNr)) {
-      if(affiliationCopy[i].hasOwnProperty("units")) {
-        affiliationCopy[i].units.push({
-          unitName: selectedUnit.label,
-          unitNr: selectedUnit.value
-        });
-      } else {
-        affiliationCopy[i].units = [];
-        affiliationCopy[i].units.push({
-          unitName: selectedUnit.label,
-          unitNr: selectedUnit.value
-        });
+    for (let i = 0; i < affiliationCopy.length; i++) {
+      if (parseInt(affiliationCopy[i].cristinInstitutionNr) === parseInt(selectedInstitution.cristinInstitutionNr)) {
+        if (affiliationCopy[i].hasOwnProperty('units')) {
+          affiliationCopy[i].units.push({
+            unitName: selectedUnit.label,
+            unitNr: selectedUnit.value,
+          });
+        } else {
+          affiliationCopy[i].units = [];
+          affiliationCopy[i].units.push({
+            unitName: selectedUnit.label,
+            unitNr: selectedUnit.value,
+          });
+        }
       }
     }
-  }
     return affiliationCopy;
   }
 
   function handleChange(event, obj, property) {
-    if(!obj.hasOwnProperty("authorName")) {
-      obj.authorName = "";
+    if (!obj.hasOwnProperty('authorName')) {
+      obj.authorName = '';
     }
-    
-    const firstName =
-      property === "first" ? event.target.value : obj.toBeCreated.first_name;
-    const lastName =
-      property === "last" ? event.target.value : obj.toBeCreated.surname;
-    const authorName =
-      property === "authorName"
-        ? event.target.value
-        : obj.toBeCreated.authorName;
 
-    if (property === "first") {
+    const firstName = property === 'first' ? event.target.value : obj.toBeCreated.first_name;
+    const lastName = property === 'last' ? event.target.value : obj.toBeCreated.surname;
+    const authorName = property === 'authorName' ? event.target.value : obj.toBeCreated.authorName;
+
+    if (property === 'first') {
       obj.toBeCreated.first_name = firstName;
-    } else if (property === "last") {
+    } else if (property === 'last') {
       obj.toBeCreated.surname = lastName;
     } else {
       obj.toBeCreated.authorName = authorName;
@@ -202,68 +200,82 @@ function Contributor(props) {
     props.updateData(obj, rowIndex);
   }
 
-let institutionNames = {};
-async function fetchInstitutionName(institutionId) {
-    if (institutionId === "0") return " ";
+  let institutionNames = {};
+  async function fetchInstitutionName(institutionId) {
+    if (institutionId === '0') return ' ';
     if (institutionNames[institutionId] === undefined) {
-        let institution = await axios.get(
-            process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions/" + institutionId + "?lang=nb", JSON.parse(localStorage.getItem("config"))
-        );
-        institutionNames[institutionId] = institution.data.institution_name.hasOwnProperty("nb")
-            ? institution.data.institution_name.nb
-            : institution.data.institution_name.en;
+      let institution = await axios.get(
+        process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/institutions/' + institutionId + '?lang=nb',
+        JSON.parse(localStorage.getItem('config'))
+      );
+      institutionNames[institutionId] = institution.data.institution_name.hasOwnProperty('nb')
+        ? institution.data.institution_name.nb
+        : institution.data.institution_name.en;
     }
     return institutionNames[institutionId];
-}
+  }
 
-let unitNames = {};
-async function fetchUnitName(unitId) {
-    if (unitId === "0") return " ";
-    if(unitNames[unitId] === undefined) {
-        let unit = await axios.get(
-            process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/units/" + unitId + "?lang=nb", JSON.parse(localStorage.getItem("config"))
-        );
-        unitNames[unitId] = unit.data.unit_name.hasOwnProperty("nb")
-            ? unit.data.unit_name.nb
-            : unit.data.unit_name.en;
+  let unitNames = {};
+  async function fetchUnitName(unitId) {
+    if (unitId === '0') return ' ';
+    if (unitNames[unitId] === undefined) {
+      let unit = await axios.get(
+        process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/units/' + unitId + '?lang=nb',
+        JSON.parse(localStorage.getItem('config'))
+      );
+      unitNames[unitId] = unit.data.unit_name.hasOwnProperty('nb') ? unit.data.unit_name.nb : unit.data.unit_name.en;
     }
     return unitNames[unitId];
-}
-  
+  }
+
   async function retrySearch(data) {
     try {
-    let authorResults = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" +
-                                        (data.imported.hasOwnProperty("cristin_person_id") && data.imported.cristin_person_id !== 0 ? "?id=" + data.imported.cristin_person_id : "?name=" + data.toBeCreated.first_name + " " + data.toBeCreated.surname)
-                                        , JSON.parse(localStorage.getItem("config"))); 
-    if(authorResults.data.length > 0) {   
+      let authorResults = await axios.get(
+        process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
+          '/persons/' +
+          (data.imported.hasOwnProperty('cristin_person_id') && data.imported.cristin_person_id !== 0
+            ? '?id=' + data.imported.cristin_person_id
+            : '?name=' + data.toBeCreated.first_name + ' ' + data.toBeCreated.surname),
+        JSON.parse(localStorage.getItem('config'))
+      );
+      if (authorResults.data.length > 0) {
         let fetchedAuthors = [];
         let tempAffiliations = [];
-        for(let i = 0; i < authorResults.data.length; i++) {
-          let fetchedAuthor = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/persons/" + authorResults.data[i].cristin_person_id, JSON.parse(localStorage.getItem("config")));
-          for(let h = 0; h < fetchedAuthor.data.affiliations.length; h++) {
+        for (let i = 0; i < authorResults.data.length; i++) {
+          let fetchedAuthor = await axios.get(
+            process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/persons/' + authorResults.data[i].cristin_person_id,
+            JSON.parse(localStorage.getItem('config'))
+          );
+          for (let h = 0; h < fetchedAuthor.data.affiliations.length; h++) {
             tempAffiliations[h] = {
-              institutionName: await fetchInstitutionName(fetchedAuthor.data.affiliations[h].institution.cristin_institution_id),
+              institutionName: await fetchInstitutionName(
+                fetchedAuthor.data.affiliations[h].institution.cristin_institution_id
+              ),
               cristinInstitutionNr: fetchedAuthor.data.affiliations[h].institution.cristin_institution_id,
               isCristinInstitution: true,
-              units: [{ 
-                unitName: fetchedAuthor.data.affiliations[h].hasOwnProperty("unit") ? await fetchUnitName(fetchedAuthor.data.affiliations[h].unit.cristin_unit_id) : "",
-                unitNr:  fetchedAuthor.data.affiliations[h].hasOwnProperty("unit") ? fetchedAuthor.data.affiliations[h].unit.cristin_unit_id : ""
-              }]
-            }
-          } 
+              units: [
+                {
+                  unitName: fetchedAuthor.data.affiliations[h].hasOwnProperty('unit')
+                    ? await fetchUnitName(fetchedAuthor.data.affiliations[h].unit.cristin_unit_id)
+                    : '',
+                  unitNr: fetchedAuthor.data.affiliations[h].hasOwnProperty('unit')
+                    ? fetchedAuthor.data.affiliations[h].unit.cristin_unit_id
+                    : '',
+                },
+              ],
+            };
+          }
           fetchedAuthor.data.affiliations = await filterInstitutions(tempAffiliations);
           fetchedAuthors.push(fetchedAuthor.data);
         }
-        props.enqueueSnackbar("Fant " + fetchedAuthors.length + " bidragsytere", {variant: "success"});
+        props.enqueueSnackbar('Fant ' + fetchedAuthors.length + ' bidragsytere', { variant: 'success' });
         setSearchResults(fetchedAuthors);
         handleOpen();
       } else {
-        props.enqueueSnackbar("Fant ingen bidragsytere", { variant: "error" });
+        props.enqueueSnackbar('Fant ingen bidragsytere', { variant: 'error' });
       }
-    }
-  
-    catch {
-      props.enqueueSnackbar("Noe gikk galt med søket, prøv igjen", {variant: "error"});
+    } catch {
+      props.enqueueSnackbar('Noe gikk galt med søket, prøv igjen', { variant: 'error' });
     }
   }
 
@@ -273,23 +285,23 @@ async function fetchUnitName(unitId) {
 
   function handleClose() {
     setOpen(false);
-    if(searchResults !== "") {
-      setSearchResults("");
+    if (searchResults !== '') {
+      setSearchResults('');
     }
   }
 
   function handleSelect(author) {
     let temp = data;
-            
+
     temp.cristin = author;
     temp.cristin.isEditing = false;
     temp.cristin.order = rowIndex + 1;
 
     temp.toBeCreated = author;
-    if (temp.toBeCreated.hasOwnProperty("first_name_preferred")) {
+    if (temp.toBeCreated.hasOwnProperty('first_name_preferred')) {
       temp.toBeCreated.first_name = temp.toBeCreated.first_name_preferred;
     }
-    if (temp.toBeCreated.hasOwnProperty("surname_preferred")) {
+    if (temp.toBeCreated.hasOwnProperty('surname_preferred')) {
       temp.toBeCreated.surname = temp.toBeCreated.surname_preferred;
     }
     temp.toBeCreated.isEditing = false;
@@ -297,7 +309,6 @@ async function fetchUnitName(unitId) {
 
     temp.isEditing = false;
 
-   
     setOpen(false);
     props.updateData(temp, rowIndex);
   }
@@ -306,16 +317,21 @@ async function fetchUnitName(unitId) {
     let tempInst = {
       value: inst.cristinInstitutionNr,
       label: inst.institutionName,
-      cristinInstitutionNr: inst.cristinInstitutionNr
+      cristinInstitutionNr: inst.cristinInstitutionNr,
     };
     handleInstitutionChange(tempInst);
   }
 
   function createEditButton(inst) {
-    if(inst.hasOwnProperty("isCristinInstitution") && inst.isCristinInstitution === true) {
-      return <Button size="small" onClick={() => editInstitution(inst)}> Rediger tilknytning </Button>
+    if (inst.hasOwnProperty('isCristinInstitution') && inst.isCristinInstitution === true) {
+      return (
+        <Button size="small" onClick={() => editInstitution(inst)}>
+          {' '}
+          Rediger tilknytning{' '}
+        </Button>
+      );
     } else {
-      return "";
+      return '';
     }
   }
 
@@ -326,72 +342,86 @@ async function fetchUnitName(unitId) {
           <Form>
             <FormGroup>
               <TextField
-                id={"firstName" + props.index}
+                id={'firstName' + props.index}
                 label="Fornavn"
                 value={data.toBeCreated.first_name}
                 margin="normal"
-                onChange={e => handleChange(e, data, "first")}
+                onChange={(e) => handleChange(e, data, 'first')}
                 required
               />
             </FormGroup>
             <FormGroup>
               <TextField
-                id={"lastName" + props.index}
+                id={'lastName' + props.index}
                 label="Etternavn"
                 value={data.toBeCreated.surname}
                 margin="normal"
-                onChange={e => handleChange(e, data, "last")}
+                onChange={(e) => handleChange(e, data, 'last')}
                 required
               />
             </FormGroup>
             <FormGroup>
               <TextField
-                id={"authorName" + props.index}
+                id={'authorName' + props.index}
                 label="Forfatternavn"
-                value={data.toBeCreated.hasOwnProperty("authorName") ? data.toBeCreated.authorName : data.toBeCreated.surname + ", " + data.toBeCreated.first_name}
+                value={
+                  data.toBeCreated.hasOwnProperty('authorName')
+                    ? data.toBeCreated.authorName
+                    : data.toBeCreated.surname + ', ' + data.toBeCreated.first_name
+                }
                 margin="normal"
-                onChange={e => handleChange(e, data, "authorName")}
+                onChange={(e) => handleChange(e, data, 'authorName')}
               />
             </FormGroup>
             <div className={`metadata`}>
-              {data.toBeCreated.affiliations.filter((item, index) =>
-                  data.toBeCreated.affiliations.indexOf(item) === index).map((inst, j) => (
-                <div key={j}>
-                <p className={`italic`}>
-                  {inst.institutionName}
-                  {createEditButton(inst)}
-                  <Button
-                    size="small"
-                    color="primary"
-                    onClick={() => removeInstitution(j)}
-                  >
-                    Fjern tilknytning
-                  </Button>
-                </p>
-                { inst.hasOwnProperty("units") ? inst.units.map((unit, g) => (unit.unitName !== inst.institutionName ? <p className={'italic'} style={unitStyle} key={g}> &bull; {unit.unitName} <Button onClick={() => removeUnit(j, g)}> Fjern enhet </Button></p> : "")) : ""}
-                </div>
-                
-              ))}
+              {data.toBeCreated.affiliations
+                .filter((item, index) => data.toBeCreated.affiliations.indexOf(item) === index)
+                .map((inst, j) => (
+                  <div key={j}>
+                    <p className={`italic`}>
+                      {inst.institutionName}
+                      {createEditButton(inst)}
+                      <Button size="small" color="primary" onClick={() => removeInstitution(j)}>
+                        Fjern tilknytning
+                      </Button>
+                    </p>
+                    {inst.hasOwnProperty('units')
+                      ? inst.units.map((unit, g) =>
+                          unit.unitName !== inst.institutionName ? (
+                            <p className={'italic'} style={unitStyle} key={g}>
+                              {' '}
+                              &bull; {unit.unitName} <Button onClick={() => removeUnit(j, g)}> Fjern enhet </Button>
+                            </p>
+                          ) : (
+                            ''
+                          )
+                        )
+                      : ''}
+                  </div>
+                ))}
             </div>
-            <InstitutionCountrySelect onChange={handleInstitutionChange} handleChange={handleUnitChange} aria-label={"Institusjonsvelger " + props.index} institution={selectedInstitution} unit={selectedUnit}/>
+            <InstitutionCountrySelect
+              onChange={handleInstitutionChange}
+              handleChange={handleUnitChange}
+              aria-label={'Institusjonsvelger ' + props.index}
+              institution={selectedInstitution}
+              unit={selectedUnit}
+            />
             <Button
               onClick={() => addInstitution()}
               disabled={
-                addDisabled || selectedInstitution.cristinInstitutionNr === 0 ||
-                (data.toBeCreated.affiliations.filter(instNr => {
-                  return (
-                    parseInt(selectedInstitution.cristinInstitutionNr) === parseInt(instNr.cristinInstitutionNr)
-                  );
-                }).length > 0 && (!selectedUnit)) || (selectedUnit !== "" ? checkForUnit() : null)
-              }
-            >
+                addDisabled ||
+                selectedInstitution.cristinInstitutionNr === 0 ||
+                (data.toBeCreated.affiliations.filter((instNr) => {
+                  return parseInt(selectedInstitution.cristinInstitutionNr) === parseInt(instNr.cristinInstitutionNr);
+                }).length > 0 &&
+                  !selectedUnit) ||
+                (selectedUnit !== '' ? checkForUnit() : null)
+              }>
               Add
             </Button>
 
-            <Button
-              color="secondary"
-              onClick={() => props.deleteContributor(rowIndex)}
-            >
+            <Button color="secondary" onClick={() => props.deleteContributor(rowIndex)}>
               Slett person
             </Button>
 
@@ -399,13 +429,18 @@ async function fetchUnitName(unitId) {
               Lagre endringer
             </Button>
 
-            <Button onClick={() => retrySearch(data)} disabled={data.toBeCreated.first_name === "" || data.toBeCreated.surname === ""}>
+            <Button
+              onClick={() => retrySearch(data)}
+              disabled={data.toBeCreated.first_name === '' || data.toBeCreated.surname === ''}>
               Søk igjen
             </Button>
-          
 
-            <ContributorSearchPanel collapsed={open} data={searchResults} handleChoose={handleSelect} handleAbort={handleClose} />
-
+            <ContributorSearchPanel
+              collapsed={open}
+              data={searchResults}
+              handleChoose={handleSelect}
+              handleAbort={handleClose}
+            />
           </Form>
         </div>
       </div>
@@ -416,25 +451,31 @@ async function fetchUnitName(unitId) {
     <div className="content-wrapper">
       {data.isEditing === false ? (
         <div>
-          <h6>
-            {data.toBeCreated.surname + ", " + data.toBeCreated.first_name}
-          </h6>
+          <h6>{data.toBeCreated.surname + ', ' + data.toBeCreated.first_name}</h6>
           <div className={`metadata`}>
             {data.toBeCreated.affiliations.map((inst, j) => (
               <div key={j}>
-              <p className={`italic`} key={j}>
-                {inst.institutionName}
-              </p>
-              { inst.hasOwnProperty("units") ? inst.units.map((unit, g) => (unit.unitName !== inst.institutionName ? <p className={'italic'} style={unitStyle} key={g}> &bull; {unit.unitName} </p> : "")) : ""}
+                <p className={`italic`} key={j}>
+                  {inst.institutionName}
+                </p>
+                {inst.hasOwnProperty('units')
+                  ? inst.units.map((unit, g) =>
+                      unit.unitName !== inst.institutionName ? (
+                        <p className={'italic'} style={unitStyle} key={g}>
+                          {' '}
+                          &bull; {unit.unitName}{' '}
+                        </p>
+                      ) : (
+                        ''
+                      )
+                    )
+                  : ''}
               </div>
             ))}
           </div>
           <Button onClick={() => updateEditing()}>Rediger</Button>
 
-          <Button
-            color="secondary"
-            onClick={() => props.deleteContributor(rowIndex)}
-          >
+          <Button color="secondary" onClick={() => props.deleteContributor(rowIndex)}>
             Slett person
           </Button>
         </div>

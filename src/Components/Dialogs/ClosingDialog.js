@@ -1,29 +1,15 @@
-import React from "react";
-import {
-  Dialog,
-  Button,
-  DialogTitle,
-  DialogActions,
-  DialogContent,
-  DialogContentText
-} from "@material-ui/core";
-import {Context} from "../../Context";
+import React from 'react';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
+import { Context } from '../../Context';
 
 export default function ClosingDialog(props) {
-  let {state} = React.useContext(Context);
+  let { state } = React.useContext(Context);
 
   return (
-    <Dialog
-      open={props.open}
-      onClose={props.handleClose}
-      disableBackdropClick
-      disableEscapeKeyDown
-    >
+    <Dialog open={props.open} onClose={props.handleClose} disableBackdropClick disableEscapeKeyDown>
       <DialogTitle>{props.title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          {props.text}
-        </DialogContentText>
+        <DialogContentText>{props.text}</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button color="secondary" onClick={props.handleCloseDialog}>
@@ -34,8 +20,7 @@ export default function ClosingDialog(props) {
           onClick={() => {
             props.doFunction(state.param);
             props.handleClose();
-          }}
-        >
+          }}>
           Ja
         </Button>
       </DialogActions>
