@@ -122,7 +122,8 @@ function CreateJournalPanel(props) {
                   error={title.length > 0 && title.length <= 6}
                   label={'Tittel'}
                   value={title}
-                  onChange={(e) => handleChangeTitle(e)}></TextField>
+                  onChange={(e) => handleChangeTitle(e)}
+                />
               </FormGroup>
               <FormGroup>
                 <TextField
@@ -130,7 +131,8 @@ function CreateJournalPanel(props) {
                   error={issn.length > 0 && !issn.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)}
                   label={'ISSN'}
                   value={issn}
-                  onChange={(e) => handleChangeIssn(e)}></TextField>
+                  onChange={(e) => handleChangeIssn(e)}
+                />
               </FormGroup>
 
               <FormGroup>
@@ -139,19 +141,22 @@ function CreateJournalPanel(props) {
                   error={eissn.length > 0 && !eissn.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)}
                   label={'E-ISSN'}
                   value={eissn}
-                  onChange={(e) => handleChangeEissn(e)}></TextField>
+                  onChange={(e) => handleChangeEissn(e)}
+                />
                 <TextField
                   error={url.length > 0 && url.length < 10}
                   label={'URL'}
                   id="URL"
                   value={url}
-                  onChange={(e) => handleChangeUrl(e)}></TextField>
+                  onChange={(e) => handleChangeUrl(e)}
+                />
                 <TextField
                   error={publisher.length > 0 && publisher.length < 2}
                   label={'Utgiver (Landkode)'}
                   id="Landkode"
                   value={publisher}
-                  onChange={(e) => handleChangePublisher(e)}></TextField>
+                  onChange={(e) => handleChangePublisher(e)}
+                />
               </FormGroup>
               <br />
               <Grid container spacing={6}>

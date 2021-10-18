@@ -585,7 +585,7 @@ function ContributorModal(props) {
           {state.contributorPage + 1 >= data.length / state.contributorPerPage ? (
             <TableRow>
               <TableCell>+</TableCell>
-              <TableCell></TableCell>
+              <TableCell />
               <TableCell>
                 <Button onClick={() => addContributor()}>Legg til bidragsyter</Button>
               </TableCell>
@@ -630,8 +630,8 @@ function ContributorModal(props) {
           {createBody()}
           <TableFooter>
             <TableRow>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
+              <TableCell />
+              <TableCell />
 
               <TableCell align="right">
                 <Button variant="contained" color="primary" onClick={() => handleSave()}>
