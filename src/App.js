@@ -1,26 +1,24 @@
-import React from "react";
-import "./App.css";
-import Panel from "./Components/Panel/ImportPanel";
-import ImportTable from "./Components/ImportTable/ImportTable";
-import Grid from "@material-ui/core/Grid/Grid";
-import FilterForm from "./Components/FilterForm/FilterForm";
-import DropdownPanel from "./Components/DropdownPanel/DropdownPanel";
-import Header from "./Components/Header/Header";
-import { Box } from "@material-ui/core";
-import "./assets/styles/buttons.scss";
-import {useHistory} from "react-router-dom";
-import Login from "./Components/Login/Login";
-import Log from "./Components/Log/Log"
-import Footer from "./Components/Footer/Footer";
+import React from 'react';
+import './App.css';
+import Panel from './Components/Panel/ImportPanel';
+import ImportTable from './Components/ImportTable/ImportTable';
+import Grid from '@material-ui/core/Grid/Grid';
+import FilterForm from './Components/FilterForm/FilterForm';
+import DropdownPanel from './Components/DropdownPanel/DropdownPanel';
+import Header from './Components/Header/Header';
+import { Box } from '@material-ui/core';
+import './assets/styles/buttons.scss';
+import { useHistory } from 'react-router-dom';
+import Login from './Components/Login/Login';
+import Log from './Components/Log/Log';
+import Footer from './Components/Footer/Footer';
 
 export default function App() {
-    let history = useHistory();
+  let history = useHistory();
 
-  if (!localStorage.getItem("authorized"))
-      history.push("login");
+  if (!localStorage.getItem('authorized')) history.push('login');
 
-  return localStorage.getItem("authorized") &&
-    localStorage.getItem("authorized") === "true" ? (
+  return localStorage.getItem('authorized') && localStorage.getItem('authorized') === 'true' ? (
     <div className="App">
       <Header />
       <Grid container spacing={3}>
@@ -44,9 +42,11 @@ export default function App() {
           <ImportTable />
         </Grid>
       </Grid>
-      <Footer/>
+      <Footer />
     </div>
-  )
-      : (<div><Login location={"login"}/></div>
+  ) : (
+    <div>
+      <Login location={'login'} />
+    </div>
   );
 }

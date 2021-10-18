@@ -1,39 +1,27 @@
-import React from "react";
-import { Collapse, Button } from "react-bootstrap";
-import {
-  Card,
-  CardContent,
-  FormGroup,
-  TextField,
-  Grid
-} from "@material-ui/core";
-import "../../assets/styles/buttons.scss";
+import React from 'react';
+import { Button, Collapse } from 'react-bootstrap';
+import { Card, CardContent, FormGroup, Grid, TextField } from '@material-ui/core';
+import '../../assets/styles/buttons.scss';
 
 function CreateJournalPanel(props) {
   const [open, setOpen] = React.useState(false);
 
-  const [issn, setIssn] = React.useState("");
-  const [title, setTitle] = React.useState("");
-  const [eissn, setEissn] = React.useState("");
-  const [url, setUrl] = React.useState("");
-  const [publisher, setPublisher] = React.useState("");
+  const [issn, setIssn] = React.useState('');
+  const [title, setTitle] = React.useState('');
+  const [eissn, setEissn] = React.useState('');
+  const [url, setUrl] = React.useState('');
+  const [publisher, setPublisher] = React.useState('');
 
-  const [formHasErrors] = React.useState([
-    { value: 1 },
-    { value: 0 },
-    { value: 0 },
-    { value: 1 },
-    { value: 1 }
-  ]);
+  const [formHasErrors] = React.useState([{ value: 1 }, { value: 0 }, { value: 0 }, { value: 1 }, { value: 1 }]);
 
   const [totalFormErrors, setTotalFormErrors] = React.useState(5);
 
   function emptyAllFields() {
-    setTitle("");
-    setIssn("");
-    setEissn("");
-    setUrl("");
-    setPublisher("");
+    setTitle('');
+    setIssn('');
+    setEissn('');
+    setUrl('');
+    setPublisher('');
   }
 
   function handleOpen() {
@@ -83,10 +71,7 @@ function CreateJournalPanel(props) {
     setTitle(event.target.value);
   }
   function handleChangeIssn(event) {
-    if (
-      event.target.value.length > 0 &&
-      !event.target.value.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)
-    ) {
+    if (event.target.value.length > 0 && !event.target.value.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)) {
       formHasErrors[1].value = 1;
     } else {
       formHasErrors[1].value = 0;
@@ -95,10 +80,7 @@ function CreateJournalPanel(props) {
     setIssn(event.target.value);
   }
   function handleChangeEissn(event) {
-    if (
-      event.target.value.length > 0 &&
-      !event.target.value.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)
-    ) {
+    if (event.target.value.length > 0 && !event.target.value.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)) {
       formHasErrors[2].value = 1;
     } else {
       formHasErrors[2].value = 0;
@@ -127,63 +109,49 @@ function CreateJournalPanel(props) {
 
   return (
     <div>
-      <Button className={"createJournalButton"} onClick={() => handleOpen()}>
+      <Button className={'createJournalButton'} onClick={() => handleOpen()}>
         Nytt tidsskrift
       </Button>
       <Collapse in={open}>
-        <div className={"createJournalCard"}>
+        <div className={'createJournalCard'}>
           <Card>
             <CardContent>
               <FormGroup>
                 <TextField
-                id="Tittel"
+                  id="Tittel"
                   error={title.length > 0 && title.length <= 6}
-                  label={"Tittel"}
-                 
+                  label={'Tittel'}
                   value={title}
-                  onChange={e => handleChangeTitle(e)}
-                ></TextField>
-                </FormGroup>
-                <FormGroup>
+                  onChange={(e) => handleChangeTitle(e)}></TextField>
+              </FormGroup>
+              <FormGroup>
                 <TextField
-                id="ISSN"
-                  error={
-                    issn.length > 0 &&
-                    !issn.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)
-                  }
-                  label={"ISSN"}
-                  
+                  id="ISSN"
+                  error={issn.length > 0 && !issn.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)}
+                  label={'ISSN'}
                   value={issn}
-                  onChange={e => handleChangeIssn(e)}
-                ></TextField>
-                </FormGroup>
+                  onChange={(e) => handleChangeIssn(e)}></TextField>
+              </FormGroup>
 
-                <FormGroup>
+              <FormGroup>
                 <TextField
-                id="E-ISSN"
-                  error={
-                    eissn.length > 0 &&
-                    !eissn.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)
-                  }
-                  label={"E-ISSN"}
-                  
+                  id="E-ISSN"
+                  error={eissn.length > 0 && !eissn.match(/([0-9]{4})[-]([0-9]{3})[0-9X]/g)}
+                  label={'E-ISSN'}
                   value={eissn}
-                  onChange={e => handleChangeEissn(e)}
-                ></TextField>
+                  onChange={(e) => handleChangeEissn(e)}></TextField>
                 <TextField
                   error={url.length > 0 && url.length < 10}
-                  label={"URL"}
+                  label={'URL'}
                   id="URL"
                   value={url}
-                  onChange={e => handleChangeUrl(e)}
-                ></TextField>
+                  onChange={(e) => handleChangeUrl(e)}></TextField>
                 <TextField
                   error={publisher.length > 0 && publisher.length < 2}
-                  label={"Utgiver (Landkode)"}
+                  label={'Utgiver (Landkode)'}
                   id="Landkode"
                   value={publisher}
-                  onChange={e => handleChangePublisher(e)}
-                ></TextField>
+                  onChange={(e) => handleChangePublisher(e)}></TextField>
               </FormGroup>
               <br />
               <Grid container spacing={6}>
@@ -196,8 +164,7 @@ function CreateJournalPanel(props) {
                   <Button
                     variant="success"
                     onClick={() => handleSubmit()}
-                    disabled={totalFormErrors > 0 && totalFormErrors !== null}
-                  >
+                    disabled={totalFormErrors > 0 && totalFormErrors !== null}>
                     Opprett
                   </Button>
                 </Grid>

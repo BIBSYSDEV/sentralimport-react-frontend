@@ -1,19 +1,19 @@
-import React from "react";
-import DropdownSelect from "../DropdownSelect/DropdownSelect";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import { Typography } from "@material-ui/core";
+import React from 'react';
+import DropdownSelect from '../DropdownSelect/DropdownSelect';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import { Typography } from '@material-ui/core';
 
 export default function DropdownPanel() {
   const useStyles = {
-    overflow: "visible",
+    overflow: 'visible',
     marginTop: 25,
     height: 148,
-    marginLeft: 10
+    marginLeft: 10,
   };
 
   const divStyle = {
-    marginTop: 25
+    marginTop: 25,
   };
 
   return (
