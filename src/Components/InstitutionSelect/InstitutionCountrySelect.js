@@ -6,7 +6,6 @@ import { Context } from '../../Context';
 import { Card } from '@material-ui/core';
 
 export default function InstitutionCountrySelect(props) {
-  const [institutions, setInstitutions] = React.useState('');
   const [units, setUnits] = React.useState('');
   let { state, dispatch } = React.useContext(Context);
   const [places, setPlaces] = React.useState([]);
@@ -98,10 +97,8 @@ export default function InstitutionCountrySelect(props) {
           cristinInstitutionNr: temp[i].cristin_institution_id,
         });
       }
-      setInstitutions(institutions);
       await dispatch({ type: 'institutions', payload: institutions });
     } else {
-      setInstitutions(state.institutions);
     }
   }
 

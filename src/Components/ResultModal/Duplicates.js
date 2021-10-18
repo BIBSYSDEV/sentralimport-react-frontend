@@ -19,7 +19,7 @@ import '../../assets/styles/Results.scss';
 import { useSnackbar } from 'notistack';
 
 export function Duplicates(props) {
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
   const [duplicate, setDuplicate] = React.useState([]);
   const [isOpen, setIsOpen] = React.useState(false);
   const [doi, setDoi] = React.useState(props.publication.hasOwnProperty('doi') ? props.publication.doi : '');

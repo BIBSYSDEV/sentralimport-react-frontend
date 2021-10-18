@@ -23,7 +23,6 @@ import ClosingDialog from '../Dialogs/ClosingDialog';
 function ContributorModal(props) {
   const { useRef, useLayoutEffect } = React;
   const [data, setData] = React.useState([]);
-  const [searchResults, setSearchResults] = React.useState(null);
   const [fetched, setFetched] = React.useState(false);
   const [dialog, setDialog] = React.useState(false);
 
@@ -244,7 +243,6 @@ function ContributorModal(props) {
     const toBeCreatedOrder = author.toBeCreated.order;
 
     let copiedAffiliations = JSON.parse(JSON.stringify(author.imported.affiliations));
-    let cleanedAffiliations = await handleChosenAuthorAffiliations(copiedAffiliations);
 
     let temp = [...data];
     temp[toBeCreatedOrder - 1].toBeCreated.affiliations = copiedAffiliations;

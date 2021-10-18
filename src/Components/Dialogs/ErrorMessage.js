@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent } from '@material-ui/core';
 import { Context } from '../../Context';
 
-export default function ErrorMessage(props) {
+export default function ErrorMessage() {
   let { state } = React.useContext(Context);
 
   const errorMessageCard = {
