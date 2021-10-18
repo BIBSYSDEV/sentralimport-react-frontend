@@ -2,10 +2,23 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Beskrivelse
 
-Dette er en prototype for en reactapplikasjon for sentralimport til CRISTIN.
+Dette er en reactapplikasjon for sentralimport til CRISTIN.
+
 
 ## Starte applikasjonen
-For å starte applikasjonen kjør `npm start`. Applikasjonen vil da starte i development mode på [http://localhost:3000](http://localhost:3000) 
+
+Sett opp en ".env.local"-fil med innhold som kan kjøres lokalt.fex :
+
+    REACT_APP_CRISREST_GATEKEEPER_URL="https://crisrest-utv.dataporten-api.no"
+    REACT_APP_PIAREST_GATEKEEPER_URL="https://piarest-utv.dataporten-api.no"
+    REACT_APP_REDIRECT_URL="http://localhost:3000/login"
+    REACT_APP_LINK_URL="https://app.cristin-test.uio.no"
+    REACT_APP_CLIENT_ID="ab940329-87f9-40dc-a129-bf9d4ae07917"
+    REACT_APP_PIAREST_GATEWAY_SCOPE="gk_piarest-utv"
+    REACT_APP_CRISREST_GATEWAY_SCOPE="gk_crisrest-utv"
+
+For å starte applikasjonen kjør `npm start`. Applikasjonen vil da starte i development mode på [http://localhost:3000](http://localhost:3000)
+
 
 ## Legge ut ny versjon på aws
 
