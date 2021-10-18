@@ -36,8 +36,8 @@ function CreateJournalPanel(props) {
   }
 
   function checkFormErrors() {
-    var errorsFound = 0;
-    for (var i = 0; i < formHasErrors.length; i++) {
+    let errorsFound = 0;
+    for (let i = 0; i < formHasErrors.length; i++) {
       if (formHasErrors[i].value === 1) {
         errorsFound++;
       }

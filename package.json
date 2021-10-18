@@ -1,5 +1,5 @@
 {
-  "name": "prototype-app",
+  "name": "sentralimport-frontend",
   "version": "1.2-SNAPSHOT",
   "private": true,
   "dependencies": {
@@ -44,9 +44,6 @@
     "build": "react-scripts build",
     "build:test": "env-cmd -f .env.test react-scripts build",
     "build:sandbox": "env-cmd -f .env.sandbox react-scripts build"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [

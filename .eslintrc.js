@@ -12,7 +12,6 @@ module.exports = {
     'no-use-before-define': 'off',
     'no-console': 'off',
     'no-empty': 'off',
-    '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     'react-hooks/exhaustive-deps': 'off',
     'no-debugger': 'warn',

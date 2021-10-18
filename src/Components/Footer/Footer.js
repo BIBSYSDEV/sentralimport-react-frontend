@@ -2,10 +2,9 @@ import React from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
 import logo from '../Header/logo.svg';
 import preval from 'preval.macro';
+import { version } from '../../../package.json';
 
 export default function Footer() {
-  const { version } = require('../../../package.json');
-
   let dateTimeStamp = preval`module.exports = new Date().toLocaleString('no', {year: 'numeric', month: '2-digit', day: '2-digit'});`;
 
   const footerStyle = {

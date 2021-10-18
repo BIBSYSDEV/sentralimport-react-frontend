@@ -133,7 +133,7 @@ function ContributorModal(props) {
 
       let errors = [];
 
-      for (var i = 0; i < contributors.length; i++) {
+      for (let i = 0; i < contributors.length; i++) {
         if (
           !contributors[i].toBeCreated.hasOwnProperty('first_name') ||
           contributors[i].toBeCreated.first_name === '' ||
@@ -440,8 +440,8 @@ function ContributorModal(props) {
   };
 
   function addContributor() {
-    var temp = [...data];
-    var newContributor = {
+    const temp = [...data];
+    const newContributor = {
       imported: {
         order: temp.length + 1,
         affiliations: [],
