@@ -12,11 +12,9 @@ module.exports = {
     'no-use-before-define': 'off',
     'no-console': 'off',
     'no-empty': 'off',
-    '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/no-empty-function': 'error',
     'react-hooks/exhaustive-deps': 'off',
     'no-debugger': 'warn',
     'prettier/prettier': 'error',
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
   },
 };

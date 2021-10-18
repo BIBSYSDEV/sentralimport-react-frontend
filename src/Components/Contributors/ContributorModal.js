@@ -39,8 +39,6 @@ function ContributorModal(props) {
     handleTempSave();
   }, [data]);
 
-  useEffect(() => {}, [state.contributorPage]);
-
   // const updatePersons = useRef(true);
   useLayoutEffect(() => {
     async function fetch() {
