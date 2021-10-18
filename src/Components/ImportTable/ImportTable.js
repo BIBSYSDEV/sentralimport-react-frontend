@@ -222,7 +222,7 @@ export default function EnhancedTable() {
   ]);
 
   useEffect(() => {
-    getRows();
+    getRows().then();
     window.scroll({ top: 0, left: 0, behavior: 'smooth' });
   }, [
     state.currentImportYear,
@@ -410,7 +410,7 @@ export default function EnhancedTable() {
 
   useEffect(() => {
     setTimeout(function () {
-      getRows();
+      getRows().then();
     }, 500);
   }, [state.importDone]);
 

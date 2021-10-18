@@ -53,9 +53,7 @@ function Contributor(props) {
     temp.isEditing = false;
 
     let cleanedAffiliations = await props.cleanUnknownInstitutions(temp.toBeCreated.affiliations);
-    let duplicatesRemoved = await filterInstitutions(cleanedAffiliations);
-
-    temp.toBeCreated.affiliations = duplicatesRemoved;
+    temp.toBeCreated.affiliations = await filterInstitutions(cleanedAffiliations);
 
     await props.updateData(temp, rowIndex);
     setSetSelectedInstitution({

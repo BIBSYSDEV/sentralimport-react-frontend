@@ -19,8 +19,7 @@ export default function InstitutionCountrySelect(props) {
     async function fetch() {
       await getInstitutions();
     }
-
-    fetch();
+    fetch().then();
     let temp = [
       { label: 'Cristin-institusjoner', options: state.institutions },
       { label: 'Annet', options: places },
@@ -32,8 +31,7 @@ export default function InstitutionCountrySelect(props) {
     async function fetchPlaces() {
       await getPlaces();
     }
-
-    fetchPlaces();
+    fetchPlaces().then();
     let temp = [
       { label: 'Cristin-institusjoner', options: state.institutions },
       { label: 'Annet', options: places },
@@ -42,7 +40,7 @@ export default function InstitutionCountrySelect(props) {
   }, [inputValue]);
 
   useEffect(() => {
-    getUnits();
+    getUnits().then();
   }, [props.institution]);
 
   const cardStyle = {
@@ -98,7 +96,6 @@ export default function InstitutionCountrySelect(props) {
         });
       }
       await dispatch({ type: 'institutions', payload: institutions });
-    } else {
     }
   }
 

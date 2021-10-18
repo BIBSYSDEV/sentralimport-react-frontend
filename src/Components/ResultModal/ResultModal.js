@@ -38,7 +38,7 @@ export default function ResultModal(props) {
       setDuplicate(false);
       setInnerModal(true);
     } else if (state.selected === 'false') {
-      setNotRelevant();
+      setNotRelevant().then();
       props.handleClose();
       dispatch({ type: 'importDone', payload: !state.importDone });
     } else {

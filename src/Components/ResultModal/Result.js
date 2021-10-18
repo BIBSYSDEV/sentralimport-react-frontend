@@ -22,7 +22,7 @@ export function Result({ data }) {
   return (
     <div>
       <li className={`card-horiz basic-background card-horiz-hover result`} key={data.cristin_result_id}>
-        <Radio value={data.cristin_result_id} aria-label="Duplikat"></Radio>
+        <Radio value={data.cristin_result_id} aria-label="Duplikat" />
         <a
           className={`result result`}
           href={process.env.REACT_APP_LINK_URL + '/results/show.jsf?id=' + data.cristin_result_id}

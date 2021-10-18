@@ -102,7 +102,7 @@ export default function Login(props) {
       ) : (
         <Grid container justify="center" direction="row" className={'login-grid'}>
           <Grid item xs={12}>
-            <img src={logo} className={'cristin-logo'} title="CRISTIN-logo" alt="CRISTIN-logo"></img>
+            <img src={logo} className={'cristin-logo'} title="CRISTIN-logo" alt="CRISTIN-logo" />
           </Grid>
           <Grid item xs={12}>
             <h1> CRISTIN Sentralimport</h1>
@@ -116,7 +116,7 @@ export default function Login(props) {
                 <Button onClick={handleLogin} color="primary" variant="contained">
                   <Grid container alignContent="center" spacing={2}>
                     <Grid item xs={2}>
-                      <img src={loginIcon} className={'feide-login-icon'} title="Feide Login" alt="Feide Login"></img>
+                      <img src={loginIcon} className={'feide-login-icon'} title="Feide Login" alt="Feide Login" />
                     </Grid>
                     <Grid item container xs={10} alignItems="center" justify="center">
                       <div>

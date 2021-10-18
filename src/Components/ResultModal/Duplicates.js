@@ -48,7 +48,7 @@ export function Duplicates(props) {
   useEffect(() => {
     async function fetch() {
       state.selected = 'true';
-      let searchString = '';
+      let searchString;
       let published = publication.yearPublished;
       if (publication.hasOwnProperty('doi')) {
         console.log('DOI exists. Looking for duplicates');
@@ -72,7 +72,7 @@ export function Duplicates(props) {
       await fetchDuplicates(searchString).then((response) => setDuplicate(response));
     }
 
-    fetch();
+    fetch().then();
   }, [publication]);
 
   useEffect(() => {
@@ -200,9 +200,7 @@ export function Duplicates(props) {
 
   async function retrySearch() {
     setIsOpen(false);
-    let searchString = '';
-
-    searchString =
+    let searchString =
       (doiChecked ? '?doi=' + doi : '') +
       (titleChecked
         ? (doiChecked ? '&' : '?') + 'title=' + title + (authorChecked ? '&contributor=' + author : '')
@@ -256,11 +254,7 @@ export function Duplicates(props) {
                       label="DOI"
                     />
                     {doiChecked ? (
-                      <TextField
-                        disabled={!doiChecked}
-                        multiline
-                        value={doi}
-                        onChange={(e) => handleChangeDoi(e)}></TextField>
+                      <TextField disabled={!doiChecked} multiline value={doi} onChange={(e) => handleChangeDoi(e)} />
                     ) : (
                       ''
                     )}
@@ -278,16 +272,14 @@ export function Duplicates(props) {
                           disabled={!titleChecked}
                           multiline
                           value={title}
-                          onChange={(e) => handleChangeTitle(e)}></TextField>
+                          onChange={(e) => handleChangeTitle(e)}
+                        />
                         <FormControlLabel
                           control={<Checkbox checked={authorChecked} onClick={() => handleAuthor()} />}
                           label="Søk med forfatter"
                         />
                         {authorChecked ? (
-                          <TextField
-                            disabled={!authorChecked}
-                            value={author}
-                            onChange={(e) => handleChangeAuthor(e)}></TextField>
+                          <TextField disabled={!authorChecked} value={author} onChange={(e) => handleChangeAuthor(e)} />
                         ) : (
                           ''
                         )}
@@ -305,10 +297,7 @@ export function Duplicates(props) {
                           label="ISSN"
                         />
                         {issnChecked ? (
-                          <TextField
-                            disabled={!issnChecked}
-                            value={issn}
-                            onChange={(e) => handleChangeIssn(e)}></TextField>
+                          <TextField disabled={!issnChecked} value={issn} onChange={(e) => handleChangeIssn(e)} />
                         ) : (
                           ''
                         )}
@@ -327,7 +316,8 @@ export function Duplicates(props) {
                       <TextField
                         disabled={!publishedChecked}
                         value={published}
-                        onChange={(e) => handleChangePublished(e)}></TextField>
+                        onChange={(e) => handleChangePublished(e)}
+                      />
                     ) : (
                       ''
                     )}
