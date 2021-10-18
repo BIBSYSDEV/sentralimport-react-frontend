@@ -17,9 +17,9 @@ import {
   TextField,
 } from '@material-ui/core';
 import { Context } from '../../Context';
-import DownloadIcon from './download-green.png';
-import ExportIcon from './export-purple.png';
-import X2Icon from './x2-red.png';
+import DownloadIcon from '../../assets/icons/download-green.png';
+import ExportIcon from '../../assets/icons/export-purple.png';
+import X2Icon from '../../assets/icons/x2-red.png';
 import ClearIcon from '@material-ui/icons/Clear';
 
 const useStyles = makeStyles((theme) => ({
