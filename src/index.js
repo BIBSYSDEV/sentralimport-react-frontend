@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-table/react-table.css';
 import { SnackbarProvider } from 'notistack';
 import { createBrowserHistory } from 'history';
 import { Router } from 'react-router-dom';
