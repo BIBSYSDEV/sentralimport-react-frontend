@@ -13,8 +13,7 @@ export default function Validation(props) {
   }, [props.publication]);
 
   function updateErrors(error) {
-    if (state.formErrors.indexOf(error) > -1) {
-    } else {
+    if (state.formErrors.indexOf(error) < 0) {
       const erray = [];
       erray.push(error);
       const tempArr = state.formErrors.concat(erray);
@@ -45,51 +44,37 @@ export default function Validation(props) {
       case 'tittel':
         const tittelValid = state.validation.length >= 6;
         const tittelError = 'Tittel er for kort/mangler';
-
         tittelValid ? removeError(tittelError) : updateErrors(tittelError);
-
         break;
       case 'doi':
         const doiValid = state.validation.match(/^([0-9]{2})[.]([0-9]{4,5})[/]([\w-.]{1,})/i);
         const doiError = 'Doi har galt format';
-
         doiValid ? removeError(doiError) : updateErrors(doiError);
-
         break;
       case 'kilde':
         const kildeValid = state.validation.length >= 3;
         const kildeError = 'Kilde mangler/ har feil';
-
         kildeValid ? removeError(kildeError) : updateErrors(kildeError);
-
         break;
       case 'tidsskrift':
         const tidsskriftValid = state.validation.length > 3;
         const tidsskriftError = 'Ingen tidsskrift valgt';
-
         tidsskriftValid ? removeError(tidsskriftError) : updateErrors(tidsskriftError);
-
         break;
       case 'aarstall':
         const aarstallValid = state.validation > 999 && state.validation <= new Date().getFullYear();
         const aarstallError = 'Årstall er galt/over grensen';
-
         aarstallValid ? removeError(aarstallError) : updateErrors(aarstallError);
-
         break;
       case 'kategori':
         const kategoriValid = state.validation.length > 3;
         const kategoriError = 'Kategori er for kort';
-
         kategoriValid ? removeError(kategoriError) : updateErrors(kategoriError);
-
         break;
       case 'spraak':
         const spraakValid = state.validation.length === 2;
         const spraakError = 'Språkkode har galt format';
-
         spraakValid ? removeError(spraakError) : updateErrors(spraakError);
-
         break;
       default:
         break;
@@ -146,53 +131,39 @@ export default function Validation(props) {
         case 'tittel':
           const tittelValid = data[i].value.length >= 6;
           const tittelError = 'Tittelen er for kort/mangler';
-
           !tittelValid ? fieldErrors.push(tittelError) : fieldErrors.push();
-
           break;
         case 'doi':
           const doiValid = data[i].value.match(/^([0-9]{2})[.]([0-9]{4,5})[/]([a-z0-9-.]{1,})/i);
           const doiError = 'Doi har galt format';
-
           !doiValid ? fieldErrors.push(doiError) : fieldErrors.push();
-
           break;
         case 'utgivelse':
           const utgivelseValid = data[i].value.match(
             /^(Volum)[ ]([0-9a-z-:]{1,})[ ]([(]([0-9]{1,6})[-]([0-9]{1,6})[)])([\w-., ]{0,})/i
           );
           const utgivelseError = 'Utgivelsesdata har galt format';
-
           !utgivelseValid ? fieldErrors.push(utgivelseError) : fieldErrors.push();
-
           break;
         case 'tidsskrift':
           const tidsskriftValid = data[i].value.length > 3;
           const tidsskriftError = 'Ingen tidsskrift valgt';
-
           !tidsskriftValid ? fieldErrors.push(tidsskriftError) : fieldErrors.push();
-
           break;
         case 'aarstall':
           const aarstallValid = data[i].value > 999 && data[i].value <= new Date().getFullYear();
           const aarstallError = 'Årstall er galt/over grensen';
-
           !aarstallValid ? fieldErrors.push(aarstallError) : fieldErrors.push();
-
           break;
         case 'kategori':
           const kategoriValid = data[i].value.length > 3;
           const kategoriError = 'Kategori er for kort';
-
           !kategoriValid ? fieldErrors.push(kategoriError) : fieldErrors.push();
-
           break;
         case 'spraak':
           const spraakValid = data[i].value.length === 2;
           const spraakError = 'Språkkode har galt format';
-
           !spraakValid ? fieldErrors.push(spraakError) : fieldErrors.push();
-
           break;
         default:
           break;

@@ -397,14 +397,15 @@ function ContributorModal(props) {
         temp[i].imported.order = temp[i].imported.order - 1;
         temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
       } else {
-        if (temp[i].imported.order === rowIndex) {
-        } else if (temp[i].imported.order > rowIndex) {
-          if (temp[i].imported.order > 0) {
-            if (temp[i].imported.order < temp[i].toBeCreated.order) {
+        if (temp[i].imported.order !== rowIndex) {
+          if (temp[i].imported.order > rowIndex) {
+            if (temp[i].imported.order > 0) {
+              if (temp[i].imported.order < temp[i].toBeCreated.order) {
+                temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
+              }
+            } else {
               temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
             }
-          } else {
-            temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
           }
         }
       }
