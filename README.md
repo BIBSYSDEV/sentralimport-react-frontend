@@ -19,6 +19,13 @@ Sett opp en ".env.local"-fil med innhold som kan kjøres lokalt.fex :
 
 For å starte applikasjonen kjør `npm start`. Applikasjonen vil da starte i development mode på [http://localhost:3000](http://localhost:3000)
 
+## Biblioteker
+
+Følgende biblioteker er ikke oppgradert pr okt 2021:
+
+* bootstrap - medfører endringer i layout
+* materialui - oppgradering fra 4 til 5 er en større jobb
+* notistack - v2  er basert på materialui 5
 
 ## Legge ut ny versjon på aws
 
