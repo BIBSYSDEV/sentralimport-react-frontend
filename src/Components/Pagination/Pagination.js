@@ -9,8 +9,8 @@ export default function Pagination(props) {
   const [pageValues, setPageValues] = React.useState([]);
 
   useEffect(() => {
-    var values = [];
-    for (var i = 0; i < state.totalCount / state.currentPerPage.value; i++) {
+    const values = [];
+    for (let i = 0; i < state.totalCount / state.currentPerPage.value; i++) {
       values.push({ value: i, label: i + 1 });
     }
     setPageValues(values);
@@ -63,8 +63,8 @@ export default function Pagination(props) {
           value={state.currentPerPage}
         />
       </TableCell>
-      <TableCell></TableCell>
-      <TableCell></TableCell>
+      <TableCell />
+      <TableCell />
       <TableCell align="right" overflow="visible">
         {state.currentPageNr * state.currentPerPage.value + 1} -{' '}
         {(state.currentPageNr + 1) * state.currentPerPage.value < state.totalCount
@@ -83,7 +83,7 @@ export default function Pagination(props) {
       </TableCell>
 
       <TableCell align="right">
-        <Button onClick={decrementPage} disabled={state.currentPageNr > 0 ? false : true}>
+        <Button onClick={decrementPage} disabled={state.currentPageNr <= 0}>
           {'< Forrige'}
         </Button>
       </TableCell>

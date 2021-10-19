@@ -12,8 +12,7 @@ export default function InstitutionSelect(props) {
     async function fetch() {
       await getInstitutions();
     }
-
-    fetch();
+    fetch().then();
   }, []);
 
   async function getInstitutions() {

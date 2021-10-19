@@ -53,9 +53,7 @@ function Contributor(props) {
     temp.isEditing = false;
 
     let cleanedAffiliations = await props.cleanUnknownInstitutions(temp.toBeCreated.affiliations);
-    let duplicatesRemoved = await filterInstitutions(cleanedAffiliations);
-
-    temp.toBeCreated.affiliations = duplicatesRemoved;
+    temp.toBeCreated.affiliations = await filterInstitutions(cleanedAffiliations);
 
     await props.updateData(temp, rowIndex);
     setSetSelectedInstitution({
@@ -110,7 +108,7 @@ function Contributor(props) {
   }
 
   async function filterInstitutions(affiliations) {
-    for (var i = 0; i < affiliations.length - 1; i++) {
+    for (let i = 0; i < affiliations.length - 1; i++) {
       if (affiliations[i].cristinInstitutionNr === affiliations[i + 1].cristinInstitutionNr) {
         affiliations.splice(i, 1);
         i--;

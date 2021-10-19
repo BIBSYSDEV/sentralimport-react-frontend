@@ -7,17 +7,13 @@ module.exports = {
     'plugin:prettier/recommended', // Enables eslint-plugin-prettier and eslint-config-prettier. This will display Prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
   ],
   rules: {
-    'no-case-declarations': 'off',
-    'no-prototype-builtins': 'off',
-    'no-use-before-define': 'off',
-    'no-console': 'off',
-    'no-empty': 'off',
-    '@typescript-eslint/no-var-requires': 'off',
-    '@typescript-eslint/no-empty-function': 'off',
-    'react-hooks/exhaustive-deps': 'off',
+    'no-use-before-define': 'off', //TODO: oppgrader biblioteker. skyldes problemer med react-versjon mot eslint
+    'no-case-declarations': 'off', //TODO: løsning: Use {} pr case to create the block scope with case
+    'no-prototype-builtins': 'off', //pga bruk av hasOwnProperty
+    'no-console': 'off', //TODO: bør fikses. Brukes for å logge flere steder, ofte eneste logikk i catch
+    'react-hooks/exhaustive-deps': 'off', //TODO: bør fikses, men kan medføre uønskede løkker.
     'no-debugger': 'warn',
     'prettier/prettier': 'error',
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off', //TODO: burde hatt noen typer
   },
 };

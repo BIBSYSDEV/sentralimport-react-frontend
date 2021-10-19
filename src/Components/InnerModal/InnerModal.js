@@ -568,14 +568,9 @@ function InnerModal(props) {
     let newDate = new Date(dateString);
     let tempDay = newDate.getDate();
     let tempYear = newDate.getFullYear();
-
     let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
     let tempMonth = months[newDate.getMonth()];
-
-    let formattedDate = tempMonth + ' ' + tempDay + ', ' + tempYear;
-
-    return formattedDate;
+    return tempMonth + ' ' + tempDay + ', ' + tempYear;
   }
 
   function parseData(data) {

@@ -155,7 +155,7 @@ const useToolbarStyles = makeStyles((theme) => ({
   },
 }));
 
-const EnhancedTableToolbar = (props) => {
+const EnhancedTableToolbar = () => {
   const classes = useToolbarStyles();
 
   return (
@@ -222,7 +222,7 @@ export default function EnhancedTable() {
   ]);
 
   useEffect(() => {
-    getRows();
+    getRows().then();
     window.scroll({ top: 0, left: 0, behavior: 'smooth' });
   }, [
     state.currentImportYear,
@@ -379,11 +379,11 @@ export default function EnhancedTable() {
     }
   }
 
-  function handleOnFocus(event, row) {
+  function handleOnFocus(event) {
     event.target.className = event.target.className + ' focused';
   }
 
-  function handleOnBlur(event, row) {
+  function handleOnBlur(event) {
     event.target.className = event.target.className.split(' focused')[0];
   }
 
@@ -410,7 +410,7 @@ export default function EnhancedTable() {
 
   useEffect(() => {
     setTimeout(function () {
-      getRows();
+      getRows().then();
     }, 500);
   }, [state.importDone]);
 

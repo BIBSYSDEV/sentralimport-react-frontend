@@ -13,11 +13,10 @@ export default function Validation(props) {
   }, [props.publication]);
 
   function updateErrors(error) {
-    if (state.formErrors.indexOf(error) > -1) {
-    } else {
-      var erray = [];
+    if (state.formErrors.indexOf(error) < 0) {
+      const erray = [];
       erray.push(error);
-      var tempArr = state.formErrors.concat(erray);
+      const tempArr = state.formErrors.concat(erray);
       dispatch({
         type: 'setFormErrors',
         payload: tempArr,
@@ -27,11 +26,11 @@ export default function Validation(props) {
 
   function removeError(error) {
     if (state.formErrors.length === 1 && state.formErrors[0] === error) {
-      var emptyArr = state.formErrors;
+      const emptyArr = state.formErrors;
       emptyArr.pop();
       dispatch({ type: 'setFormErrors', payload: emptyArr });
     } else if (state.formErrors.indexOf(error) > -1) {
-      var newErrors = state.formErrors;
+      const newErrors = state.formErrors;
       newErrors.splice(newErrors.indexOf(error), 1);
       dispatch({
         type: 'setFormErrors',
@@ -43,53 +42,39 @@ export default function Validation(props) {
   function validateField() {
     switch (state.selectedField) {
       case 'tittel':
-        var tittelValid = state.validation.length >= 6;
-        var tittelError = 'Tittel er for kort/mangler';
-
+        const tittelValid = state.validation.length >= 6;
+        const tittelError = 'Tittel er for kort/mangler';
         tittelValid ? removeError(tittelError) : updateErrors(tittelError);
-
         break;
       case 'doi':
-        var doiValid = state.validation.match(/^([0-9]{2})[.]([0-9]{4,5})[/]([\w-.]{1,})/i);
-        var doiError = 'Doi har galt format';
-
+        const doiValid = state.validation.match(/^([0-9]{2})[.]([0-9]{4,5})[/]([\w-.]{1,})/i);
+        const doiError = 'Doi har galt format';
         doiValid ? removeError(doiError) : updateErrors(doiError);
-
         break;
       case 'kilde':
-        var kildeValid = state.validation.length >= 3;
-        var kildeError = 'Kilde mangler/ har feil';
-
+        const kildeValid = state.validation.length >= 3;
+        const kildeError = 'Kilde mangler/ har feil';
         kildeValid ? removeError(kildeError) : updateErrors(kildeError);
-
         break;
       case 'tidsskrift':
-        var tidsskriftValid = state.validation.length > 3;
-        var tidsskriftError = 'Ingen tidsskrift valgt';
-
+        const tidsskriftValid = state.validation.length > 3;
+        const tidsskriftError = 'Ingen tidsskrift valgt';
         tidsskriftValid ? removeError(tidsskriftError) : updateErrors(tidsskriftError);
-
         break;
       case 'aarstall':
-        var aarstallValid = state.validation > 999 && state.validation <= new Date().getFullYear();
-        var aarstallError = 'Årstall er galt/over grensen';
-
+        const aarstallValid = state.validation > 999 && state.validation <= new Date().getFullYear();
+        const aarstallError = 'Årstall er galt/over grensen';
         aarstallValid ? removeError(aarstallError) : updateErrors(aarstallError);
-
         break;
       case 'kategori':
-        var kategoriValid = state.validation.length > 3;
-        var kategoriError = 'Kategori er for kort';
-
+        const kategoriValid = state.validation.length > 3;
+        const kategoriError = 'Kategori er for kort';
         kategoriValid ? removeError(kategoriError) : updateErrors(kategoriError);
-
         break;
       case 'spraak':
-        var spraakValid = state.validation.length === 2;
-        var spraakError = 'Språkkode har galt format';
-
+        const spraakValid = state.validation.length === 2;
+        const spraakError = 'Språkkode har galt format';
         spraakValid ? removeError(spraakError) : updateErrors(spraakError);
-
         break;
       default:
         break;
@@ -97,9 +82,9 @@ export default function Validation(props) {
   }
 
   function checkAllFields() {
-    var fieldErrors = [];
+    const fieldErrors = [];
 
-    var data = [
+    const data = [
       {
         name: 'tidsskrift',
         value: props.duplicate
@@ -141,58 +126,44 @@ export default function Validation(props) {
         value: props.duplicate ? props.publication.original_language : props.publication.languages[0].lang,
       },
     ];
-    for (var i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       switch (data[i].name) {
         case 'tittel':
-          var tittelValid = data[i].value.length >= 6;
-          var tittelError = 'Tittelen er for kort/mangler';
-
+          const tittelValid = data[i].value.length >= 6;
+          const tittelError = 'Tittelen er for kort/mangler';
           !tittelValid ? fieldErrors.push(tittelError) : fieldErrors.push();
-
           break;
         case 'doi':
-          var doiValid = data[i].value.match(/^([0-9]{2})[.]([0-9]{4,5})[/]([a-z0-9-.]{1,})/i);
-          var doiError = 'Doi har galt format';
-
+          const doiValid = data[i].value.match(/^([0-9]{2})[.]([0-9]{4,5})[/]([a-z0-9-.]{1,})/i);
+          const doiError = 'Doi har galt format';
           !doiValid ? fieldErrors.push(doiError) : fieldErrors.push();
-
           break;
         case 'utgivelse':
-          var utgivelseValid = data[i].value.match(
+          const utgivelseValid = data[i].value.match(
             /^(Volum)[ ]([0-9a-z-:]{1,})[ ]([(]([0-9]{1,6})[-]([0-9]{1,6})[)])([\w-., ]{0,})/i
           );
-          var utgivelseError = 'Utgivelsesdata har galt format';
-
+          const utgivelseError = 'Utgivelsesdata har galt format';
           !utgivelseValid ? fieldErrors.push(utgivelseError) : fieldErrors.push();
-
           break;
         case 'tidsskrift':
-          var tidsskriftValid = data[i].value.length > 3;
-          var tidsskriftError = 'Ingen tidsskrift valgt';
-
+          const tidsskriftValid = data[i].value.length > 3;
+          const tidsskriftError = 'Ingen tidsskrift valgt';
           !tidsskriftValid ? fieldErrors.push(tidsskriftError) : fieldErrors.push();
-
           break;
         case 'aarstall':
-          var aarstallValid = data[i].value > 999 && data[i].value <= new Date().getFullYear();
-          var aarstallError = 'Årstall er galt/over grensen';
-
+          const aarstallValid = data[i].value > 999 && data[i].value <= new Date().getFullYear();
+          const aarstallError = 'Årstall er galt/over grensen';
           !aarstallValid ? fieldErrors.push(aarstallError) : fieldErrors.push();
-
           break;
         case 'kategori':
-          var kategoriValid = data[i].value.length > 3;
-          var kategoriError = 'Kategori er for kort';
-
+          const kategoriValid = data[i].value.length > 3;
+          const kategoriError = 'Kategori er for kort';
           !kategoriValid ? fieldErrors.push(kategoriError) : fieldErrors.push();
-
           break;
         case 'spraak':
-          var spraakValid = data[i].value.length === 2;
-          var spraakError = 'Språkkode har galt format';
-
+          const spraakValid = data[i].value.length === 2;
+          const spraakError = 'Språkkode har galt format';
           !spraakValid ? fieldErrors.push(spraakError) : fieldErrors.push();
-
           break;
         default:
           break;

@@ -23,7 +23,6 @@ import ClosingDialog from '../Dialogs/ClosingDialog';
 function ContributorModal(props) {
   const { useRef, useLayoutEffect } = React;
   const [data, setData] = React.useState([]);
-  const [searchResults, setSearchResults] = React.useState(null);
   const [fetched, setFetched] = React.useState(false);
   const [dialog, setDialog] = React.useState(false);
 
@@ -40,9 +39,11 @@ function ContributorModal(props) {
     handleTempSave();
   }, [data]);
 
-  useEffect(() => {}, [state.contributorPage]);
+  // useEffect(() => {
+  //   return;
+  // }, [state.contributorPage]);
+  //TODO: MULIG KODE FOR Å TVINGE RENDRING
 
-  // const updatePersons = useRef(true);
   useLayoutEffect(() => {
     async function fetch() {
       setFetched(false);
@@ -134,7 +135,7 @@ function ContributorModal(props) {
 
       let errors = [];
 
-      for (var i = 0; i < contributors.length; i++) {
+      for (let i = 0; i < contributors.length; i++) {
         if (
           !contributors[i].toBeCreated.hasOwnProperty('first_name') ||
           contributors[i].toBeCreated.first_name === '' ||
@@ -244,7 +245,6 @@ function ContributorModal(props) {
     const toBeCreatedOrder = author.toBeCreated.order;
 
     let copiedAffiliations = JSON.parse(JSON.stringify(author.imported.affiliations));
-    let cleanedAffiliations = await handleChosenAuthorAffiliations(copiedAffiliations);
 
     let temp = [...data];
     temp[toBeCreatedOrder - 1].toBeCreated.affiliations = copiedAffiliations;
@@ -401,14 +401,15 @@ function ContributorModal(props) {
         temp[i].imported.order = temp[i].imported.order - 1;
         temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
       } else {
-        if (temp[i].imported.order === rowIndex) {
-        } else if (temp[i].imported.order > rowIndex) {
-          if (temp[i].imported.order > 0) {
-            if (temp[i].imported.order < temp[i].toBeCreated.order) {
+        if (temp[i].imported.order !== rowIndex) {
+          if (temp[i].imported.order > rowIndex) {
+            if (temp[i].imported.order > 0) {
+              if (temp[i].imported.order < temp[i].toBeCreated.order) {
+                temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
+              }
+            } else {
               temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
             }
-          } else {
-            temp[i].toBeCreated.order = temp[i].toBeCreated.order - 1;
           }
         }
       }
@@ -442,8 +443,8 @@ function ContributorModal(props) {
   };
 
   function addContributor() {
-    var temp = [...data];
-    var newContributor = {
+    const temp = [...data];
+    const newContributor = {
       imported: {
         order: temp.length + 1,
         affiliations: [],
@@ -587,7 +588,7 @@ function ContributorModal(props) {
           {state.contributorPage + 1 >= data.length / state.contributorPerPage ? (
             <TableRow>
               <TableCell>+</TableCell>
-              <TableCell></TableCell>
+              <TableCell />
               <TableCell>
                 <Button onClick={() => addContributor()}>Legg til bidragsyter</Button>
               </TableCell>
@@ -620,6 +621,7 @@ function ContributorModal(props) {
   return (
     <Modal isOpen={props.open} className={`contributorModal`}>
       <ModalHeader toggle={handleClose}>Bidragsytere</ModalHeader>
+      <h1>PCB</h1>
       <ModalBody>
         <Table>
           <TableHead>
@@ -632,8 +634,8 @@ function ContributorModal(props) {
           {createBody()}
           <TableFooter>
             <TableRow>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
+              <TableCell />
+              <TableCell />
 
               <TableCell align="right">
                 <Button variant="contained" color="primary" onClick={() => handleSave()}>
