@@ -39,7 +39,11 @@ function ContributorModal(props) {
     handleTempSave();
   }, [data]);
 
-  // const updatePersons = useRef(true);
+  // useEffect(() => {
+  //   return;
+  // }, [state.contributorPage]);
+  //TODO: MULIG KODE FOR Å TVINGE RENDRING
+
   useLayoutEffect(() => {
     async function fetch() {
       setFetched(false);
@@ -617,6 +621,7 @@ function ContributorModal(props) {
   return (
     <Modal isOpen={props.open} className={`contributorModal`}>
       <ModalHeader toggle={handleClose}>Bidragsytere</ModalHeader>
+      <h1>PCB</h1>
       <ModalBody>
         <Table>
           <TableHead>
