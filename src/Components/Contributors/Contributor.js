@@ -399,40 +399,42 @@ function Contributor(props) {
                 ))}
             </div>
             <InstitutionCountrySelect
-              onChange={handleInstitutionChange}
-              handleChange={handleUnitChange}
+              handleInstitutionChange={handleInstitutionChange}
+              handleUnitChange={handleUnitChange}
               aria-label={'Institusjonsvelger ' + props.index}
               institution={selectedInstitution}
               unit={selectedUnit}
             />
-            <Button
-              onClick={() => addInstitution()}
-              disabled={
-                addDisabled ||
-                selectedInstitution.cristinInstitutionNr === 0 ||
-                (data.toBeCreated.affiliations.filter((instNr) => {
-                  return parseInt(selectedInstitution.cristinInstitutionNr) === parseInt(instNr.cristinInstitutionNr);
-                }).length > 0 &&
-                  !selectedUnit) ||
-                (selectedUnit !== '' ? checkForUnit() : null)
-              }>
-              Add
-            </Button>
+            <div>
+              <Button
+                onClick={() => addInstitution()}
+                disabled={
+                  addDisabled ||
+                  selectedInstitution.cristinInstitutionNr === 0 ||
+                  (data.toBeCreated.affiliations.filter((instNr) => {
+                    return parseInt(selectedInstitution.cristinInstitutionNr) === parseInt(instNr.cristinInstitutionNr);
+                  }).length > 0 &&
+                    !selectedUnit) ||
+                  (selectedUnit !== '' ? checkForUnit() : null)
+                }>
+                Legg til valgt institusjon
+              </Button>
+            </div>
+            <div>
+              <Button color="secondary" onClick={() => props.deleteContributor(rowIndex)}>
+                Slett person
+              </Button>
 
-            <Button color="secondary" onClick={() => props.deleteContributor(rowIndex)}>
-              Slett person
-            </Button>
+              <Button color="primary" onClick={() => handleSubmit()}>
+                Lagre endringer
+              </Button>
 
-            <Button color="primary" onClick={() => handleSubmit()}>
-              Lagre endringer
-            </Button>
-
-            <Button
-              onClick={() => retrySearch(data)}
-              disabled={data.toBeCreated.first_name === '' || data.toBeCreated.surname === ''}>
-              Søk igjen
-            </Button>
-
+              <Button
+                onClick={() => retrySearch(data)}
+                disabled={data.toBeCreated.first_name === '' || data.toBeCreated.surname === ''}>
+                Søk igjen
+              </Button>
+            </div>
             <ContributorSearchPanel
               collapsed={open}
               data={searchResults}
