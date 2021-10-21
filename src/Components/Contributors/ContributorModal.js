@@ -621,7 +621,6 @@ function ContributorModal(props) {
   return (
     <Modal isOpen={props.open} className={`contributorModal`}>
       <ModalHeader toggle={handleClose}>Bidragsytere</ModalHeader>
-      <h1>PCB</h1>
       <ModalBody>
         <Table>
           <TableHead>
