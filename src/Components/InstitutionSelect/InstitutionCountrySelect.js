@@ -2,7 +2,16 @@ import React, { useContext, useEffect, useState } from 'react';
 import Select from 'react-select';
 import axios from 'axios';
 import { Context } from '../../Context';
-import { Card, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Typography } from '@material-ui/core';
+import {
+  Card,
+  CircularProgress,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  Typography,
+} from '@material-ui/core';
 
 const cardStyle = {
   overflow: 'visible',
@@ -25,6 +34,7 @@ export default function InstitutionCountrySelect(props) {
   const [selectedLanguage, setSelectedLanguage] = useState(langCodes.EN);
   const [places, setPlaces] = useState([]);
   const [inputValue, setInputValue] = useState('');
+  const [searchingForPlaces, setSearchingForPlaces] = useState(false);
   const [groupOptions, setGroupOptions] = useState([
     { label: 'Cristin-institusjoner', options: state.institutions },
     { label: 'Annet', options: places },
@@ -64,7 +74,7 @@ export default function InstitutionCountrySelect(props) {
   }, [selectedLanguage]);
 
   useEffect(() => {
-    const getUnits = async () => {
+    const fetchUnits = async () => {
       if (props.institution.cristinInstitutionNr) {
         let response = await axios.get(
           process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
@@ -89,11 +99,13 @@ export default function InstitutionCountrySelect(props) {
 
     const fetchPlaces = async () => {
       if (inputValue !== '') {
+        setSearchingForPlaces(true);
         let response = await axios.get(
           process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
             `/institutions?cristin_institution=false&lang=${selectedLanguage}&name=${inputValue}`,
           JSON.parse(localStorage.getItem('config'))
         );
+        setSearchingForPlaces(false);
         let places = [];
         for (let i = 0; i < response.data.length; i++) {
           places.push({
@@ -103,23 +115,25 @@ export default function InstitutionCountrySelect(props) {
           });
         }
         setPlaces(places);
+        setGroupOptions([
+          { label: 'Cristin-institusjoner', options: state.institutions },
+          { label: 'Annet', options: places },
+        ]);
       }
     };
 
     fetchPlaces().then();
-
-    getUnits().then();
-    setGroupOptions([
-      { label: 'Cristin-institusjoner', options: state.institutions },
-      { label: 'Annet', options: places },
-    ]);
+    fetchUnits().then();
   }, [inputValue, selectedLanguage]);
 
   return (
     <Card variant="outlined" style={cardStyle}>
-      <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} gutterBottom>
-        Søk etter institusjon:
-      </Typography>
+      <div style={{ display: 'flex', justifyConent: 'space-between' }}>
+        <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} gutterBottom>
+          Søk etter institusjon:
+        </Typography>
+        {searchingForPlaces && <CircularProgress size={'1rem'} />}
+      </div>
       <FormControl component="fieldset">
         <FormLabel component="legend">Søkespråk</FormLabel>
         <RadioGroup
