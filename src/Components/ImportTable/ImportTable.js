@@ -339,7 +339,6 @@ export default function EnhancedTable() {
     } else {
       dispatch({ type: 'setContributorsLoaded', payload: false });
       checkAll(false);
-      dispatch({ type: 'setSelected', payload: 'false' });
       dispatch({ type: 'allChecked', payload: false });
     }
   }
