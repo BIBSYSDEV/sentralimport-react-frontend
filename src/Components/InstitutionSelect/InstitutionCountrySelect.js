@@ -3,7 +3,6 @@ import Select from 'react-select';
 import axios from 'axios';
 import { Context } from '../../Context';
 import {
-  Card,
   CircularProgress,
   FormControl,
   FormControlLabel,
@@ -12,12 +11,6 @@ import {
   RadioGroup,
   Typography,
 } from '@material-ui/core';
-
-const cardStyle = {
-  overflow: 'visible',
-  padding: '0.5rem',
-  marginTop: '0.5rem',
-};
 
 const unitSelectStyle = {
   marginTop: '10px',
@@ -96,7 +89,12 @@ export default function InstitutionCountrySelect(props) {
         setUnits(units);
       }
     };
+    console.log('søker units på nytt');
+    setUnits([]);
+    fetchUnits().then();
+  }, [inputValue, selectedLanguage]);
 
+  useEffect(() => {
     const fetchPlaces = async () => {
       if (inputValue !== '') {
         setSearchingForPlaces(true);
@@ -121,13 +119,11 @@ export default function InstitutionCountrySelect(props) {
         ]);
       }
     };
-
     fetchPlaces().then();
-    fetchUnits().then();
   }, [inputValue, selectedLanguage]);
 
   return (
-    <Card variant="outlined" style={cardStyle}>
+    <div>
       <div style={{ display: 'flex', justifyConent: 'space-between' }}>
         <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} gutterBottom>
           Søk etter institusjon:
@@ -163,7 +159,7 @@ export default function InstitutionCountrySelect(props) {
         aria-label="Institusjonsvelger"
         value={props.institution}
       />
-      {props.institution.value && units.length > 0 && (
+      {units.length > 0 && (
         <div style={unitSelectStyle}>
           <Select
             placeholder="Søk på enheter"
@@ -175,6 +171,6 @@ export default function InstitutionCountrySelect(props) {
           />
         </div>
       )}
-    </Card>
+    </div>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, FormGroup, TextField } from '@material-ui/core';
+import { Button, Card, FormGroup, TextField, Typography } from '@material-ui/core';
 import InstitutionCountrySelect from '../InstitutionSelect/InstitutionCountrySelect';
 import ContributorSearchPanel from './ContributorSearchPanel';
 import { Form } from 'reactstrap';
@@ -36,10 +36,6 @@ function Contributor(props) {
   const [searchResults, setSearchResults] = React.useState('');
 
   const [open, setOpen] = React.useState(false);
-
-  const unitStyle = {
-    marginLeft: '0px',
-  };
 
   function updateEditing() {
     let temp = data;
@@ -323,13 +319,10 @@ function Contributor(props) {
   function createEditButton(inst) {
     if (inst.hasOwnProperty('isCristinInstitution') && inst.isCristinInstitution === true) {
       return (
-        <Button size="small" onClick={() => editInstitution(inst)}>
-          {' '}
-          Rediger tilknytning{' '}
+        <Button color="primary" style={{ marginLeft: '0.5rem' }} size="small" onClick={() => editInstitution(inst)}>
+          Rediger tilknytning
         </Button>
       );
-    } else {
-      return '';
     }
   }
 
@@ -373,41 +366,56 @@ function Contributor(props) {
             </FormGroup>
             <div className={`metadata`}>
               {data.toBeCreated.affiliations
-                .filter((item, index) => data.toBeCreated.affiliations.indexOf(item) === index)
-                .map((inst, j) => (
-                  <div key={j}>
-                    <p className={`italic`}>
-                      {inst.institutionName}
+                .filter((item, number) => data.toBeCreated.affiliations.indexOf(item) === number)
+                .map((inst, index) => (
+                  <Card variant="outlined" key={index} style={{ padding: '0.5rem', marginBottom: '0.5rem' }}>
+                    <Typography style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>{inst.institutionName}</Typography>
+                    {inst.hasOwnProperty('units') && (
+                      <ul style={{ marginBottom: 0 }}>
+                        {inst.units.map(
+                          (unit, unitIndex) =>
+                            unit.unitName !== inst.institutionName && (
+                              <li key={unitIndex}>
+                                {unit.unitName}
+                                <Button
+                                  style={{ marginLeft: '0.5rem' }}
+                                  color="secondary"
+                                  size="small"
+                                  onClick={() => removeUnit(index, unitIndex)}>
+                                  Fjern enhet
+                                </Button>
+                              </li>
+                            )
+                        )}
+                      </ul>
+                    )}
+                    <div style={{ float: 'right' }}>
                       {createEditButton(inst)}
-                      <Button size="small" color="primary" onClick={() => removeInstitution(j)}>
+                      <Button
+                        style={{ marginLeft: '0.5rem' }}
+                        size="small"
+                        color="secondary"
+                        onClick={() => removeInstitution(index)}>
                         Fjern tilknytning
                       </Button>
-                    </p>
-                    {inst.hasOwnProperty('units')
-                      ? inst.units.map((unit, g) =>
-                          unit.unitName !== inst.institutionName ? (
-                            <p className={'italic'} style={unitStyle} key={g}>
-                              {' '}
-                              &bull; {unit.unitName} <Button onClick={() => removeUnit(j, g)}> Fjern enhet </Button>
-                            </p>
-                          ) : (
-                            ''
-                          )
-                        )
-                      : ''}
-                  </div>
+                    </div>
+                  </Card>
                 ))}
             </div>
-            <InstitutionCountrySelect
-              handleInstitutionChange={handleInstitutionChange}
-              handleUnitChange={handleUnitChange}
-              aria-label={'Institusjonsvelger ' + props.index}
-              institution={selectedInstitution}
-              unit={selectedUnit}
-            />
-            <div>
+            <Card variant="outlined" style={{ overflow: 'visible', padding: '0.5rem', marginTop: '0.5rem' }}>
+              <InstitutionCountrySelect
+                handleInstitutionChange={handleInstitutionChange}
+                handleUnitChange={handleUnitChange}
+                aria-label={'Institusjonsvelger ' + props.index}
+                institution={selectedInstitution}
+                unit={selectedUnit}
+              />
               <Button
+                style={{ marginTop: '0.5rem' }}
                 onClick={() => addInstitution()}
+                variant="outlined"
+                color="primary"
+                size="small"
                 disabled={
                   addDisabled ||
                   selectedInstitution.cristinInstitutionNr === 0 ||
@@ -417,10 +425,10 @@ function Contributor(props) {
                     !selectedUnit) ||
                   (selectedUnit !== '' ? checkForUnit() : null)
                 }>
-                Legg til valgt institusjon
+                OK
               </Button>
-            </div>
-            <div>
+            </Card>
+            <div style={{ marginTop: '1rem', float: 'right' }}>
               <Button color="secondary" onClick={() => props.deleteContributor(rowIndex)}>
                 Slett person
               </Button>
@@ -453,15 +461,15 @@ function Contributor(props) {
         <div>
           <h6>{data.toBeCreated.surname + ', ' + data.toBeCreated.first_name}</h6>
           <div className={`metadata`}>
-            {data.toBeCreated.affiliations.map((inst, j) => (
-              <div key={j}>
-                <p className={`italic`} key={j}>
+            {data.toBeCreated.affiliations.map((inst, instIndex) => (
+              <div key={instIndex}>
+                <p className={`italic`} key={instIndex}>
                   {inst.institutionName}
                 </p>
                 {inst.hasOwnProperty('units')
-                  ? inst.units.map((unit, g) =>
+                  ? inst.units.map((unit, unitIndex) =>
                       unit.unitName !== inst.institutionName ? (
-                        <p className={'italic'} style={unitStyle} key={g}>
+                        <p className={'italic'} style={{ marginLeft: '0px' }} key={unitIndex}>
                           {' '}
                           &bull; {unit.unitName}{' '}
                         </p>
