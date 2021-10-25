@@ -2,37 +2,11 @@
   "name": "sentralimport-frontend",
   "version": "1.2-SNAPSHOT",
   "private": true,
-  "dependencies": {
-    "@material-ui/core": "^4.12.3",
-    "@material-ui/icons": "^4.11.2",
-    "@material-ui/lab": "^4.0.0-alpha.60",
-    "@material-ui/styles": "^4.11.4",
-    "autosuggest-highlight": "^3.1.1",
-    "axios": "^0.23.0",
-    "bootstrap": "^4.6.0",
-    "env-cmd": "^10.1.0",
-    "interweave": "^12.9.0",
-    "jsonwebtoken": "^8.5.1",
-    "node-sass": "^6.0.1",
-    "notistack": "^1.0.10",
-    "query-string": "^7.0.1",
-    "react": "^17.0.2",
-    "react-bootstrap": "^1.6.4",
-    "react-dom": "^17.0.2",
-    "react-router": "^5.2.1",
-    "react-router-dom": "^5.3.0",
-    "react-scripts": "^4.0.3",
-    "react-select": "^5.1.0",
-    "reactstrap": "^8.0.1",
-    "prettier": "^2.4.1",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0"
-  },
   "scripts": {
-    "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:sandbox": "env-cmd -f .env.sandbox react-scripts build",
     "build:test": "env-cmd -f .env.test react-scripts build",
-    "build:sandbox": "env-cmd -f .env.sandbox react-scripts build"
+    "start": "react-scripts start"
   },
   "browserslist": {
     "production": [
@@ -45,6 +19,32 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.60",
+    "@material-ui/styles": "^4.11.4",
+    "autosuggest-highlight": "^3.1.1",
+    "axios": "^0.23.0",
+    "bootstrap": "^4.6.0",
+    "env-cmd": "^10.1.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "interweave": "^12.9.0",
+    "jsonwebtoken": "^8.5.1",
+    "node-sass": "^6.0.1",
+    "notistack": "^1.0.10",
+    "prettier": "^2.4.1",
+    "query-string": "^7.0.1",
+    "react": "^17.0.2",
+    "react-bootstrap": "^1.6.4",
+    "react-dom": "^17.0.2",
+    "react-router": "^5.2.1",
+    "react-router-dom": "^5.3.0",
+    "react-scripts": "^4.0.3",
+    "react-select": "^5.1.0",
+    "reactstrap": "^8.0.1"
   },
   "devDependencies": {
     "preval.macro": "^5.0.0"
