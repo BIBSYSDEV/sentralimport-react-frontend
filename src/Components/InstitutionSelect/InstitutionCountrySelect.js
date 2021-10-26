@@ -11,6 +11,7 @@ export default function InstitutionCountrySelect(props) {
   const [units, setUnits] = useState([]);
   const [places, setPlaces] = useState([]);
   const [inputValue, setInputValue] = useState('');
+  const [loadingUnits, setLoadingUnits] = useState(false);
   const [searchingForPlaces, setSearchingForPlaces] = useState(false);
   const [groupOptions, setGroupOptions] = useState([
     { label: 'Cristin-institusjoner', options: state.institutionsEnglish },
@@ -19,26 +20,32 @@ export default function InstitutionCountrySelect(props) {
 
   useEffect(() => {
     const fetchUnits = async () => {
-      console.log(props.selectedInstitution);
       if (props.selectedInstitution.cristinInstitutionNr) {
-        let response = await axios.get(
-          process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
-            `/units?parent_unit_id=${props.selectedInstitution.cristinInstitutionNr}.0.0.0&per_page=900&lang=${searchLanguage}`,
-          JSON.parse(localStorage.getItem('config'))
-        );
-        let units = [];
-        for (let i = 0; i < response.data.length; i++) {
-          if (
-            response.data[i].hasOwnProperty('unit_name') &&
-            (response.data[i].unit_name.en || response.data[i].unit_name.nb)
-          ) {
-            units.push({
-              label: response.data[i].unit_name.en || response.data[i].unit_name.nb,
-              value: response.data[i].cristin_unit_id,
-            });
+        try {
+          setLoadingUnits(true);
+          let response = await axios.get(
+            process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
+              `/units?parent_unit_id=${props.selectedInstitution.cristinInstitutionNr}.0.0.0&per_page=900&lang=${searchLanguage}`,
+            JSON.parse(localStorage.getItem('config'))
+          );
+          let units = [];
+          for (let i = 0; i < response.data.length; i++) {
+            if (
+              response.data[i].hasOwnProperty('unit_name') &&
+              (response.data[i].unit_name.en || response.data[i].unit_name.nb)
+            ) {
+              units.push({
+                label: response.data[i].unit_name.en || response.data[i].unit_name.nb,
+                value: response.data[i].cristin_unit_id,
+              });
+            }
           }
+          setUnits(units);
+        } catch (err) {
+          props.enqueueSnackbar('Kunne ikke laste enheter', { variant: 'error' });
+        } finally {
+          setLoadingUnits(false);
         }
-        setUnits(units);
       }
     };
     setUnits([]);
@@ -94,8 +101,9 @@ export default function InstitutionCountrySelect(props) {
         aria-label="Institusjonsvelger"
         value={props.selectedInstitution}
       />
-      {units.length > 0 && (
-        <div style={{ marginTop: '0.5rem' }}>
+      {loadingUnits && <CircularProgress size={'1rem'} style={{ margin: '0.5rem' }} />}
+      {units.length > 0 ? (
+        <div style={{ marginTop: '0.5rem', marginMottom: '0.5rem' }}>
           <Select
             placeholder="Søk på enheter"
             name="unitSelect"
@@ -105,6 +113,9 @@ export default function InstitutionCountrySelect(props) {
             isClearable
           />
         </div>
+      ) : (
+        props.selectedInstitution &&
+        !loadingUnits && <Typography variant="caption">Institusjonen har ingen enheter</Typography>
       )}
     </div>
   );
