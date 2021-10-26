@@ -20,6 +20,8 @@ import Contributor from './Contributor';
 import Skeleton from '@material-ui/lab/Skeleton';
 import ClosingDialog from '../Dialogs/ClosingDialog';
 
+const searchLanguage = 'en';
+
 function ContributorModal(props) {
   const { useRef, useLayoutEffect } = React;
   const [data, setData] = React.useState([]);
@@ -272,18 +274,18 @@ function ContributorModal(props) {
           tempInst.countryCode !== 'NO')
       ) {
         let response = await axios.get(
-          process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/institutions/country/' + affil[i].countryCode + '?lang=nb',
+          process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
+            '/institutions/country/' +
+            affil[i].countryCode +
+            '?lang=' +
+            searchLanguage,
           JSON.parse(localStorage.getItem('config'))
         );
         if (response.data.length > 0) {
           tempInst.institutionName =
-            (response.data[0].institution_name.hasOwnProperty('nb')
-              ? response.data[0].institution_name.nb
-              : response.data[0].institution_name.en) + ' (Ukjent institusjon)';
+            (response.data[0].institution_name.en || response.data[0].institution_name.nb) + ' (Ukjent institusjon)';
           tempInst.unitName =
-            (response.data[0].institution_name.hasOwnProperty('nb')
-              ? response.data[0].institution_name.nb
-              : response.data[0].institution_name.en) + ' (Ukjent institusjon)';
+            (response.data[0].institution_name.en || response.data[0].institution_name.nb) + ' (Ukjent institusjon)';
           tempInst.cristinInstitutionNr = response.data[0].hasOwnProperty('cristin_institution_id')
             ? response.data[0].cristin_institution_id
             : 0;
@@ -663,12 +665,10 @@ async function fetchInstitutionName(institutionId) {
   if (institutionId === '0') return ' ';
   if (institutionNames[institutionId] === undefined) {
     let institution = await axios.get(
-      process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/institutions/' + institutionId + '?lang=nb',
+      process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/institutions/' + institutionId + '?lang=' + searchLanguage,
       JSON.parse(localStorage.getItem('config'))
     );
-    institutionNames[institutionId] = institution.data.institution_name.hasOwnProperty('nb')
-      ? institution.data.institution_name.nb
-      : institution.data.institution_name.en;
+    institutionNames[institutionId] = institution.data.institution_name.en || institution.data.institution_name.nb;
   }
   return institutionNames[institutionId];
 }
@@ -678,10 +678,10 @@ async function fetchUnitName(unitId) {
   if (unitId === '0') return ' ';
   if (unitNames[unitId] === undefined) {
     let unit = await axios.get(
-      process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/units/' + unitId + '?lang=nb',
+      process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/units/' + unitId + '?lang=' + searchLanguage,
       JSON.parse(localStorage.getItem('config'))
     );
-    unitNames[unitId] = unit.data.unit_name.hasOwnProperty('nb') ? unit.data.unit_name.nb : unit.data.unit_name.en;
+    unitNames[unitId] = unit.data.unit_name.en || unit.data.unit_name.nb;
   }
   return unitNames[unitId];
 }
@@ -697,16 +697,18 @@ async function fetchInstitutions(affiliations) {
     ) {
       if (countries[inst.countryCode] === undefined) {
         let response = await axios.get(
-          process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/institutions/country/' + inst.countryCode + '?lang=nb',
+          process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
+            '/institutions/country/' +
+            inst.countryCode +
+            '?lang=' +
+            searchLanguage,
           JSON.parse(localStorage.getItem('config'))
         );
         if (response.data.length > 0) {
           inst = {
             cristinInstitutionNr: response.data[0].cristin_institution_id,
             institutionName:
-              (response.data[0].institution_name.hasOwnProperty('nb')
-                ? response.data[0].institution_name.nb
-                : response.data[0].institution_name.en) + ' (Ukjent institusjon)',
+              (response.data[0].institution_name.en || response.data[0].institution_name.nb) + ' (Ukjent institusjon)',
             countryCode: response.data[0].country,
             isCristinInstitution: response.data[0].isCristinInstitution,
           };
@@ -759,7 +761,12 @@ async function searchContributors(authors) {
         first_name: person.hasOwnProperty('first_name_preferred') ? person.first_name_preferred : person.first_name,
         surname: person.hasOwnProperty('surname_preferred') ? person.surname_preferred : person.surname,
         affiliations: affiliations.filter((item, index) => affiliations.indexOf(item) === index),
-        url: process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/persons/' + person.cristin_person_id + '?lang=nb',
+        url:
+          process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
+          '/persons/' +
+          person.cristin_person_id +
+          '?lang=' +
+          searchLanguage,
         isEditing: false,
         order: i + 1,
         identified_cristin_person: person.identified_cristin_person,

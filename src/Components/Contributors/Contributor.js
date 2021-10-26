@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, Card, FormGroup, TextField, Typography } from '@material-ui/core';
 import InstitutionCountrySelect from '../InstitutionSelect/InstitutionCountrySelect';
 import ContributorSearchPanel from './ContributorSearchPanel';
@@ -8,9 +8,20 @@ import axios from 'axios';
 import { withSnackbar } from 'notistack';
 import '../../assets/styles/common.scss';
 
+const searchLanguage = 'en';
+
 function Contributor(props) {
-  let { state } = React.useContext(Context);
-  const [addDisabled, setAddDisabled] = React.useState(false);
+  let { state } = useContext(Context);
+  const [addDisabled, setAddDisabled] = useState(false);
+  const [data, setData] = useState(props.author);
+  const [rowIndex, setRowIndex] = useState(props.index);
+  const [selectedUnit, setSelectedUnit] = useState('');
+  const [searchResults, setSearchResults] = useState('');
+  const [open, setOpen] = useState(false);
+  const [selectedInstitution, setSetSelectedInstitution] = useState({
+    value: '',
+    cristinInstitutionNr: 0,
+  });
 
   useEffect(() => {
     setRowIndex(props.index);
@@ -21,21 +32,6 @@ function Contributor(props) {
     setSelectedUnit('');
     setSetSelectedInstitution('');
   }, [state.contributorPage]);
-
-  const [data, setData] = React.useState(props.author);
-
-  const [rowIndex, setRowIndex] = React.useState(props.index);
-
-  const [selectedInstitution, setSetSelectedInstitution] = React.useState({
-    value: '',
-    cristinInstitutionNr: 0,
-  });
-
-  const [selectedUnit, setSelectedUnit] = React.useState('');
-
-  const [searchResults, setSearchResults] = React.useState('');
-
-  const [open, setOpen] = React.useState(false);
 
   function updateEditing() {
     let temp = data;
@@ -121,7 +117,8 @@ function Contributor(props) {
       process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
         '/institutions/' +
         selectedInstitution.cristinInstitutionNr +
-        '?lang=nb',
+        '?lang=' +
+        searchLanguage,
       JSON.parse(localStorage.getItem('config'))
     );
 
@@ -130,8 +127,8 @@ function Contributor(props) {
       if (parseInt(affiliationCopy[i].cristinInstitutionNr) === parseInt(selectedInstitution.cristinInstitutionNr)) {
         duplicate++;
 
-        if (affiliationCopy[i].unitName !== fetchedInstitution.data.institution_name.nb) {
-          affiliationCopy[i].unitName = fetchedInstitution.data.institution_name.nb;
+        if (affiliationCopy[i].unitName !== fetchedInstitution.data.institution_name.en) {
+          affiliationCopy[i].unitName = fetchedInstitution.data.institution_name.en;
         }
       }
     }
@@ -199,12 +196,10 @@ function Contributor(props) {
     if (institutionId === '0') return ' ';
     if (institutionNames[institutionId] === undefined) {
       let institution = await axios.get(
-        process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/institutions/' + institutionId + '?lang=nb',
+        process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/institutions/' + institutionId + '?lang=' + searchLanguage,
         JSON.parse(localStorage.getItem('config'))
       );
-      institutionNames[institutionId] = institution.data.institution_name.hasOwnProperty('nb')
-        ? institution.data.institution_name.nb
-        : institution.data.institution_name.en;
+      institutionNames[institutionId] = institution.data.institution_name.en || institution.data.institution_name.nb;
     }
     return institutionNames[institutionId];
   }
@@ -214,10 +209,10 @@ function Contributor(props) {
     if (unitId === '0') return ' ';
     if (unitNames[unitId] === undefined) {
       let unit = await axios.get(
-        process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/units/' + unitId + '?lang=nb',
+        process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/units/' + unitId + '?lang=en',
         JSON.parse(localStorage.getItem('config'))
       );
-      unitNames[unitId] = unit.data.unit_name.hasOwnProperty('nb') ? unit.data.unit_name.nb : unit.data.unit_name.en;
+      unitNames[unitId] = unit.data.unit_name.en || unit.data.unit_name.nb;
     }
     return unitNames[unitId];
   }
@@ -316,142 +311,137 @@ function Contributor(props) {
     handleInstitutionChange(tempInst);
   }
 
-  function createEditButton(inst) {
-    if (inst.hasOwnProperty('isCristinInstitution') && inst.isCristinInstitution === true) {
-      return (
-        <Button color="primary" style={{ marginLeft: '0.5rem' }} size="small" onClick={() => editInstitution(inst)}>
-          Rediger tilknytning
-        </Button>
-      );
-    }
-  }
-
   function displayAuthorForm() {
     return (
-      <div>
-        <div>
-          <Form>
-            <FormGroup>
-              <TextField
-                id={'firstName' + props.index}
-                label="Fornavn"
-                value={data.toBeCreated.first_name}
-                margin="normal"
-                onChange={(e) => handleChange(e, data, 'first')}
-                required
-              />
-            </FormGroup>
-            <FormGroup>
-              <TextField
-                id={'lastName' + props.index}
-                label="Etternavn"
-                value={data.toBeCreated.surname}
-                margin="normal"
-                onChange={(e) => handleChange(e, data, 'last')}
-                required
-              />
-            </FormGroup>
-            <FormGroup>
-              <TextField
-                id={'authorName' + props.index}
-                label="Forfatternavn"
-                value={
-                  data.toBeCreated.hasOwnProperty('authorName')
-                    ? data.toBeCreated.authorName
-                    : data.toBeCreated.surname + ', ' + data.toBeCreated.first_name
-                }
-                margin="normal"
-                onChange={(e) => handleChange(e, data, 'authorName')}
-              />
-            </FormGroup>
-            <div className={`metadata`}>
-              {data.toBeCreated.affiliations
-                .filter((item, number) => data.toBeCreated.affiliations.indexOf(item) === number)
-                .map((inst, index) => (
-                  <Card variant="outlined" key={index} style={{ padding: '0.5rem', marginBottom: '0.5rem' }}>
-                    <Typography style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>{inst.institutionName}</Typography>
-                    {inst.hasOwnProperty('units') && (
-                      <ul style={{ marginBottom: 0 }}>
-                        {inst.units.map(
-                          (unit, unitIndex) =>
-                            unit.unitName !== inst.institutionName && (
-                              <li key={unitIndex}>
-                                {unit.unitName}
-                                <Button
-                                  style={{ marginLeft: '0.5rem' }}
-                                  color="secondary"
-                                  size="small"
-                                  onClick={() => removeUnit(index, unitIndex)}>
-                                  Fjern enhet
-                                </Button>
-                              </li>
-                            )
-                        )}
-                      </ul>
+      <Form>
+        <FormGroup>
+          <TextField
+            id={'firstName' + props.index}
+            label="Fornavn"
+            value={data.toBeCreated.first_name}
+            margin="normal"
+            onChange={(e) => handleChange(e, data, 'first')}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <TextField
+            id={'lastName' + props.index}
+            label="Etternavn"
+            value={data.toBeCreated.surname}
+            margin="normal"
+            onChange={(e) => handleChange(e, data, 'last')}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <TextField
+            id={'authorName' + props.index}
+            label="Forfatternavn"
+            value={
+              data.toBeCreated.hasOwnProperty('authorName')
+                ? data.toBeCreated.authorName
+                : data.toBeCreated.surname + ', ' + data.toBeCreated.first_name
+            }
+            margin="normal"
+            onChange={(e) => handleChange(e, data, 'authorName')}
+          />
+        </FormGroup>
+        <div className={`metadata`}>
+          {data.toBeCreated.affiliations
+            .filter((item, number) => data.toBeCreated.affiliations.indexOf(item) === number)
+            .map((inst, index) => (
+              <Card variant="outlined" key={index} style={{ padding: '0.5rem', marginBottom: '0.5rem' }}>
+                <Typography style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>{inst.institutionName}</Typography>
+                {inst.hasOwnProperty('units') && (
+                  <ul style={{ marginBottom: 0 }}>
+                    {inst.units.map(
+                      (unit, unitIndex) =>
+                        unit.unitName !== inst.institutionName && (
+                          <li key={unitIndex}>
+                            {unit.unitName}
+                            <Button
+                              style={{ marginLeft: '0.5rem' }}
+                              color="secondary"
+                              size="small"
+                              onClick={() => removeUnit(index, unitIndex)}>
+                              Fjern enhet
+                            </Button>
+                          </li>
+                        )
                     )}
-                    <div style={{ float: 'right' }}>
-                      {createEditButton(inst)}
-                      <Button
-                        style={{ marginLeft: '0.5rem' }}
-                        size="small"
-                        color="secondary"
-                        onClick={() => removeInstitution(index)}>
-                        Fjern tilknytning
-                      </Button>
-                    </div>
-                  </Card>
-                ))}
-            </div>
-            <Card variant="outlined" style={{ overflow: 'visible', padding: '0.5rem', marginTop: '0.5rem' }}>
-              <InstitutionCountrySelect
-                handleInstitutionChange={handleInstitutionChange}
-                handleUnitChange={handleUnitChange}
-                aria-label={'Institusjonsvelger ' + props.index}
-                institution={selectedInstitution}
-                unit={selectedUnit}
-              />
-              <Button
-                style={{ marginTop: '0.5rem' }}
-                onClick={() => addInstitution()}
-                variant="outlined"
-                color="primary"
-                size="small"
-                disabled={
-                  addDisabled ||
-                  selectedInstitution.cristinInstitutionNr === 0 ||
-                  (data.toBeCreated.affiliations.filter((instNr) => {
-                    return parseInt(selectedInstitution.cristinInstitutionNr) === parseInt(instNr.cristinInstitutionNr);
-                  }).length > 0 &&
-                    !selectedUnit) ||
-                  (selectedUnit !== '' ? checkForUnit() : null)
-                }>
-                OK
-              </Button>
-            </Card>
-            <div style={{ marginTop: '1rem', float: 'right' }}>
-              <Button color="secondary" onClick={() => props.deleteContributor(rowIndex)}>
-                Slett person
-              </Button>
-
-              <Button color="primary" onClick={() => handleSubmit()}>
-                Lagre endringer
-              </Button>
-
-              <Button
-                onClick={() => retrySearch(data)}
-                disabled={data.toBeCreated.first_name === '' || data.toBeCreated.surname === ''}>
-                Søk igjen
-              </Button>
-            </div>
-            <ContributorSearchPanel
-              collapsed={open}
-              data={searchResults}
-              handleChoose={handleSelect}
-              handleAbort={handleClose}
-            />
-          </Form>
+                  </ul>
+                )}
+                <div style={{ float: 'right' }}>
+                  {inst.isCristinInstitution === true && (
+                    <Button
+                      color="primary"
+                      style={{ marginLeft: '0.5rem' }}
+                      size="small"
+                      onClick={() => editInstitution(inst)}>
+                      Legg til enhet
+                    </Button>
+                  )}
+                  <Button
+                    style={{ marginLeft: '0.5rem' }}
+                    size="small"
+                    color="secondary"
+                    onClick={() => removeInstitution(index)}>
+                    Fjern tilknytning
+                  </Button>
+                </div>
+              </Card>
+            ))}
         </div>
-      </div>
+        <Card variant="outlined" style={{ overflow: 'visible', padding: '0.5rem', marginTop: '0.5rem' }}>
+          <InstitutionCountrySelect
+            handleInstitutionChange={handleInstitutionChange}
+            handleUnitChange={handleUnitChange}
+            aria-label={'Institusjonsvelger ' + props.index}
+            selectedInstitution={selectedInstitution}
+            unit={selectedUnit}
+          />
+          <Button
+            style={{ marginTop: '0.5rem' }}
+            onClick={() => {
+              console.log('PCB', selectedInstitution.cristinInstitutionNr);
+              addInstitution();
+            }}
+            variant="outlined"
+            color="primary"
+            size="small"
+            disabled={
+              addDisabled ||
+              selectedInstitution.cristinInstitutionNr === 0 ||
+              (data.toBeCreated.affiliations.filter((instNr) => {
+                return parseInt(selectedInstitution.cristinInstitutionNr) === parseInt(instNr.cristinInstitutionNr);
+              }).length > 0 &&
+                !selectedUnit) ||
+              (selectedUnit !== '' ? checkForUnit() : null)
+            }>
+            OK
+          </Button>
+        </Card>
+        <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+          <Button color="secondary" onClick={() => props.deleteContributor(rowIndex)}>
+            Slett person
+          </Button>
+          <Button
+            onClick={() => retrySearch(data)}
+            disabled={data.toBeCreated.first_name === '' || data.toBeCreated.surname === ''}>
+            Søk igjen
+          </Button>
+          <Button color="primary" onClick={() => handleSubmit()}>
+            Lagre endringer
+          </Button>
+        </div>
+        <ContributorSearchPanel
+          collapsed={open}
+          data={searchResults}
+          handleChoose={handleSelect}
+          handleAbort={handleClose}
+        />
+      </Form>
     );
   }
 
@@ -462,30 +452,26 @@ function Contributor(props) {
           <h6>{data.toBeCreated.surname + ', ' + data.toBeCreated.first_name}</h6>
           <div className={`metadata`}>
             {data.toBeCreated.affiliations.map((inst, instIndex) => (
-              <div key={instIndex}>
-                <p className={`italic`} key={instIndex}>
-                  {inst.institutionName}
-                </p>
-                {inst.hasOwnProperty('units')
-                  ? inst.units.map((unit, unitIndex) =>
-                      unit.unitName !== inst.institutionName ? (
-                        <p className={'italic'} style={{ marginLeft: '0px' }} key={unitIndex}>
-                          {' '}
-                          &bull; {unit.unitName}{' '}
-                        </p>
-                      ) : (
-                        ''
-                      )
-                    )
-                  : ''}
+              <div style={{ fontStyle: 'italic' }} key={instIndex}>
+                <p key={instIndex}>{inst.institutionName}</p>
+                <ul style={{ marginBottom: '0.3rem' }}>
+                  {inst.hasOwnProperty('units') &&
+                    inst.units.map(
+                      (unit, unitIndex) =>
+                        unit.unitName !== inst.institutionName && <li key={unitIndex}>{unit.unitName}</li>
+                    )}
+                </ul>
               </div>
             ))}
           </div>
-          <Button onClick={() => updateEditing()}>Rediger</Button>
-
-          <Button color="secondary" onClick={() => props.deleteContributor(rowIndex)}>
-            Slett person
-          </Button>
+          <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+            <Button color="primary" onClick={updateEditing}>
+              Rediger
+            </Button>
+            <Button color="secondary" onClick={() => props.deleteContributor(rowIndex)}>
+              Slett person
+            </Button>
+          </div>
         </div>
       ) : (
         displayAuthorForm()
