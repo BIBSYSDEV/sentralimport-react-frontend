@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CustomizedTables() {
+const QuantityTable = () => {
   const classes = useStyles();
   const [prevYear, setPrevYear] = React.useState(0);
   const [data, setData] = React.useState([]);
@@ -79,7 +79,7 @@ export default function CustomizedTables() {
 
   return (
     <div>
-      <Paper className={classes.root}>
+      <div className={classes.root}>
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
@@ -102,7 +102,8 @@ export default function CustomizedTables() {
             </StyledTableRow>
           </TableBody>
         </Table>
-      </Paper>
+      </div>
     </div>
   );
-}
+};
+export default QuantityTable;

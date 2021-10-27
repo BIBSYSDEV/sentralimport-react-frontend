@@ -481,7 +481,7 @@ export default function EnhancedTable() {
   function createTable(body) {
     return (
       <div className={classes.root}>
-        <Paper className={classes.paper}>
+        <div className={classes.paper}>
           <EnhancedTableToolbar />
           <div className={classes.tableWrapper}>
             <Table className={classes.table}>
@@ -498,7 +498,7 @@ export default function EnhancedTable() {
               </TableFooter>
             </Table>
           </div>
-        </Paper>
+        </div>
       </div>
     );
   }

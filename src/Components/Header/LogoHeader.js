@@ -1,14 +1,15 @@
 import React from 'react';
-import { Nav, Navbar } from 'react-bootstrap';
 import logo from './logo.svg';
 import './logo.css';
-import { Button } from 'reactstrap';
+import { Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
+import { Typography } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid/Grid';
 
 export default function LogoHeader() {
-  let history = useHistory();
+  const history = useHistory();
 
-  function handleLogout() {
+  const logout = () => {
     let id = localStorage.getItem('id_token');
     localStorage.clear();
     window.location.href =
@@ -16,34 +17,36 @@ export default function LogoHeader() {
       process.env.REACT_APP_REDIRECT_URL +
       '&id_token_hint=' +
       id;
-  }
-
-  const style = {
-    marginRight: 20,
   };
 
-  function login() {
+  const login = () => {
     history.push('/login');
-  }
+  };
+
+  const pageHeaderStyle = {
+    backgroundColor: '#f5f5f5',
+    // borderBottom: '1px solid #666666',
+  };
 
   return (
-    <Navbar expand="sm" bg="light" variant="dark">
-      <Nav>
-        <img src={logo} alt="CRISTIN - Current Research Information SysTem In Norway" />
-      </Nav>
-      <Navbar.Collapse>
-        <Nav className="mr-auto" />
-        <Nav>
-          <Nav.Item className="header-title"> Sentralimport &nbsp; </Nav.Item>
-        </Nav>
-        <Nav style={style}>
-          {localStorage.getItem('authorized') && localStorage.getItem('authorized') === 'true' ? (
-            <Button onClick={handleLogout}>Logg ut</Button>
-          ) : (
-            <Button onClick={login}>Logg inn</Button>
-          )}
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
+    <Grid container spacing={3} style={pageHeaderStyle}>
+      <Grid item xs={12} sm={5} style={{ display: 'flex', alignItems: 'center' }}>
+        <img src={logo} style={{ height: '3.5rem' }} alt="CRISTIN - Current Research Information SysTem In Norway" />
+        <Typography style={{ fontSize: '2rem', fontFamily: 'PT Sans, sans-serif', marginLeft: '1rem' }}>
+          Sentralimport
+        </Typography>
+      </Grid>
+      <Grid item xs={12} sm={7} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+        {localStorage.getItem('authorized') === 'true' ? (
+          <Button variant="contained" color="primary" onClick={logout} style={{ marginRight: '1rem' }}>
+            Logg ut
+          </Button>
+        ) : (
+          <Button variant="contained" color="primary" onClick={login} style={{ marginRight: '1rem' }}>
+            Logg inn
+          </Button>
+        )}
+      </Grid>
+    </Grid>
   );
 }

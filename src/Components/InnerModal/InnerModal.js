@@ -250,6 +250,7 @@ function InnerModal(props) {
   const [journals, setJournals] = React.useState();
 
   const firstUpdate = useRef(true);
+
   useLayoutEffect(() => {
     if (firstUpdate.current) {
       firstUpdate.current = false;

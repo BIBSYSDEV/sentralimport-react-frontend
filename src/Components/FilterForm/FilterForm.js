@@ -102,12 +102,10 @@ export default function FilterForm() {
   }
 
   return (
-    <Card className={classes.card}>
-      <CardHeader title="Importstatus" />
-      <hr />
+    <Card className={classes.card} variant="outlined">
       <CardContent>
         <FormControl component="fieldset" className={classes.formControl}>
-          <FormLabel component="legend">Importstatus</FormLabel>
+          <CardHeader title="Importstatus" />
           <RadioGroup
             aria-label="Importstatus"
             name="Importstatus"
@@ -144,21 +142,18 @@ export default function FilterForm() {
             />
           </RadioGroup>
         </FormControl>
-        <hr />
-        <CardHeader title="Institusjoner" />
-        <hr />
+        <CardHeader title="Institusjoner" style={{ marginTop: '2rem' }} />
         <div>
           <FormControlLabel control={<Checkbox onClick={handleCheck} />} label="Sampublikasjoner" />
           <InstitutionSelect onChange={handleChange} />
         </div>
-        <hr />
-        <CardHeader title="DOI" />
-        <hr />
+        <CardHeader title="DOI" style={{ marginTop: '2rem' }} />
         <div>
           <TextField
             id="doiFilter"
             label="Søk på doi"
             fullWidth
+            variant={'outlined'}
             onChange={handleDoiChange}
             value={doi}
             InputProps={{

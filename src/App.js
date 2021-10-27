@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import './App.css';
-import Panel from './Components/Panel/ImportPanel';
+import QuantityTable from './Components/Panel/QuantityTable';
 import ImportTable from './Components/ImportTable/ImportTable';
 import Grid from '@material-ui/core/Grid/Grid';
 import FilterForm from './Components/FilterForm/FilterForm';
@@ -61,7 +61,7 @@ export default function App() {
         </Box>
         <Box clone order={{ xs: 1, md: 2 }}>
           <Grid item xs={12} md={9}>
-            <Panel />
+            <QuantityTable />
           </Grid>
         </Box>
       </Grid>
