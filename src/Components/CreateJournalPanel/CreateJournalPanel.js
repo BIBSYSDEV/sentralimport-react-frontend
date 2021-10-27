@@ -1,20 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Collapse } from 'react-bootstrap';
-import { Card, CardContent, FormGroup, Grid, TextField } from '@material-ui/core';
+import { Card, CardContent, FormGroup, Grid, TextField, Typography } from '@material-ui/core';
 import '../../assets/styles/buttons.scss';
 
 function CreateJournalPanel(props) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const [issn, setIssn] = React.useState('');
-  const [title, setTitle] = React.useState('');
-  const [eissn, setEissn] = React.useState('');
-  const [url, setUrl] = React.useState('');
-  const [publisher, setPublisher] = React.useState('');
+  const [issn, setIssn] = useState('');
+  const [title, setTitle] = useState('');
+  const [eissn, setEissn] = useState('');
+  const [url, setUrl] = useState('');
+  const [publisher, setPublisher] = useState('');
 
-  const [formHasErrors] = React.useState([{ value: 1 }, { value: 0 }, { value: 0 }, { value: 1 }, { value: 1 }]);
+  const [formHasErrors] = useState([{ value: 1 }, { value: 0 }, { value: 0 }, { value: 1 }, { value: 1 }]);
 
-  const [totalFormErrors, setTotalFormErrors] = React.useState(5);
+  const [totalFormErrors, setTotalFormErrors] = useState(5);
+
+  //TODO: YUP, toggleopen, check params - uses only title and issn/eissn, styling
 
   function emptyAllFields() {
     setTitle('');
@@ -45,20 +48,22 @@ function CreateJournalPanel(props) {
     setTotalFormErrors(errorsFound);
   }
 
-  function handleSubmit() {
-    setOpen(false);
-
-    let newJournal = {};
-    newJournal.title = title;
-    newJournal.issn = issn;
-    newJournal.eissn = eissn;
-    newJournal.url = url;
-    newJournal.countryCode = publisher;
-    newJournal.id = 0;
-
-    console.log(newJournal);
-
-    props.handleCreateJournal(newJournal);
+  function handleSubmit(formErrors) {
+    if (formErrors > 0 && formErrors !== null) {
+      setErrorMessage('Det er feil i skjema. Fyll ut alle obligatoriske felt');
+    } else {
+      setOpen(false);
+      const newJournal = {
+        title: title,
+        issn: issn,
+        eissn: eissn,
+        url: url,
+        countryCode: publisher,
+        id: 0,
+      };
+      console.log(newJournal);
+      props.handleCreateJournal(newJournal);
+    }
   }
 
   function handleChangeTitle(event) {
@@ -120,7 +125,7 @@ function CreateJournalPanel(props) {
                 <TextField
                   id="Tittel"
                   error={title.length > 0 && title.length <= 6}
-                  label={'Tittel'}
+                  label={'Tittel *'}
                   value={title}
                   onChange={(e) => handleChangeTitle(e)}
                 />
@@ -134,7 +139,6 @@ function CreateJournalPanel(props) {
                   onChange={(e) => handleChangeIssn(e)}
                 />
               </FormGroup>
-
               <FormGroup>
                 <TextField
                   id="E-ISSN"
@@ -144,32 +148,35 @@ function CreateJournalPanel(props) {
                   onChange={(e) => handleChangeEissn(e)}
                 />
                 <TextField
-                  error={url.length > 0 && url.length < 10}
-                  label={'URL'}
                   id="URL"
+                  error={url.length > 0 && url.length < 10}
+                  label={'URL *'}
                   value={url}
                   onChange={(e) => handleChangeUrl(e)}
                 />
                 <TextField
-                  error={publisher.length > 0 && publisher.length < 2}
-                  label={'Utgiver (Landkode)'}
                   id="Landkode"
+                  error={publisher.length > 0 && publisher.length < 2}
+                  label={'Utgiver (Landkode) *'}
                   value={publisher}
                   onChange={(e) => handleChangePublisher(e)}
                 />
               </FormGroup>
-              <br />
-              <Grid container spacing={6}>
+              <div>
+                {errorMessage && (
+                  <Typography variant="caption" style={{ color: 'red' }}>
+                    {errorMessage}
+                  </Typography>
+                )}
+              </div>
+              <Grid container spacing={6} style={{ marginTop: '0.5rem' }}>
                 <Grid item>
                   <Button variant="danger" onClick={() => handleClose()}>
                     Avbryt
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button
-                    variant="success"
-                    onClick={() => handleSubmit()}
-                    disabled={totalFormErrors > 0 && totalFormErrors !== null}>
+                  <Button variant="success" onClick={() => handleSubmit(totalFormErrors)}>
                     Opprett
                   </Button>
                 </Grid>

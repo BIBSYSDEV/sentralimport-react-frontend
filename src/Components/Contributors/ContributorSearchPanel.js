@@ -28,15 +28,16 @@ export default function ContributorSearchPanel(props) {
                       : ''}
                   </div>
                 ))}
-                <Button key={i} onClick={() => props.handleChoose(author)} className="select-button">
-                  {' '}
-                  Velg denne{' '}
+                <Button key={i} color="primary" onClick={() => props.handleChoose(author)} className="select-button">
+                  Velg denne
                 </Button>
                 <hr />
               </span>
             ))}
           </div>
-          <Button onClick={() => props.handleAbort()}> Lukk </Button>
+          <Button color="primary" onClick={props.handleAbort}>
+            Lukk
+          </Button>
         </Card>
       </Collapse>
     );

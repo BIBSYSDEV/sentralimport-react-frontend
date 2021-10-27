@@ -8,7 +8,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import ResultIcon from '../../assets/icons/result-active.svg';
-import Paper from '@material-ui/core/Paper';
 import axios from 'axios';
 import { Context } from '../../Context';
 import IconButton from '@material-ui/core/IconButton';
@@ -339,7 +338,6 @@ export default function EnhancedTable() {
     } else {
       dispatch({ type: 'setContributorsLoaded', payload: false });
       checkAll(false);
-      dispatch({ type: 'setSelected', payload: 'false' });
       dispatch({ type: 'allChecked', payload: false });
     }
   }
@@ -482,7 +480,7 @@ export default function EnhancedTable() {
   function createTable(body) {
     return (
       <div className={classes.root}>
-        <Paper className={classes.paper}>
+        <div className={classes.paper}>
           <EnhancedTableToolbar />
           <div className={classes.tableWrapper}>
             <Table className={classes.table}>
@@ -499,7 +497,7 @@ export default function EnhancedTable() {
               </TableFooter>
             </Table>
           </div>
-        </Paper>
+        </div>
       </div>
     );
   }

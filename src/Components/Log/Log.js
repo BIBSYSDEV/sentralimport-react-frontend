@@ -49,7 +49,7 @@ export default function Log() {
   }
 
   return (
-    <Card className={classes.card}>
+    <Card className={classes.card} variant="outlined">
       <CardContent>
         <Button color="primary" onClick={toggleLog} variant="contained" style={{ margin: '10px' }}>
           Logg

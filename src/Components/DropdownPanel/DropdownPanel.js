@@ -17,7 +17,7 @@ export default function DropdownPanel() {
   };
 
   return (
-    <Card style={useStyles}>
+    <Card style={useStyles} variant="outlined">
       <CardContent>
         <Typography variant="h5">Velg publiseringsår</Typography>
         <div style={divStyle}>
