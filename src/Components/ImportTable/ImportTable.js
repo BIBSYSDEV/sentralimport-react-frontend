@@ -8,7 +8,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import ResultIcon from '../../assets/icons/result-active.svg';
-import Paper from '@material-ui/core/Paper';
 import axios from 'axios';
 import { Context } from '../../Context';
 import IconButton from '@material-ui/core/IconButton';

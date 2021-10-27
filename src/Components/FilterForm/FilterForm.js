@@ -6,16 +6,7 @@ import CardContent from '@material-ui/core/CardContent';
 import { green, red } from '@material-ui/core/colors';
 import InstitutionSelect from '../InstitutionSelect/InstitutionSelect';
 
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  IconButton,
-  Radio,
-  RadioGroup,
-  TextField,
-} from '@material-ui/core';
+import { Checkbox, FormControl, FormControlLabel, IconButton, Radio, RadioGroup, TextField } from '@material-ui/core';
 import { Context } from '../../Context';
 import DownloadIcon from '../../assets/icons/download-green.png';
 import ExportIcon from '../../assets/icons/export-purple.png';
