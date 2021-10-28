@@ -10,11 +10,10 @@ export default function InstitutionSelect(props) {
       placeholder="Søk på institusjoner"
       name="institutionSelect"
       options={state.institutions}
-      className="basic-multi-select"
-      classNamePrefix="select"
       onChange={props.onChange}
       aria-label="Velg institusjon"
       isClearable
+      menuPortalTarget={document.body}
     />
   );
 }
