@@ -22,6 +22,7 @@ import Skeleton from '@material-ui/lab/Skeleton';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListModal from '../ListModal/ListModal';
 import { Markup } from 'interweave';
+import { PIA_REST_API } from '../../utils/constants';
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -236,40 +237,49 @@ export default function EnhancedTable() {
   ]);
 
   useEffect(() => {
+    if (state.importDone === true) {
+      setTimeout(function () {
+        getRows().then();
+      }, 500);
+    }
+  }, [state.importDone]);
+
+  useEffect(() => {
     handleChangeRowsPerPage(state.currentPerPage);
   }, [state.currentPerPage]);
 
   async function getRows() {
-    let fetchString =
-      process.env.REACT_APP_PIAREST_GATEKEEPER_URL +
-      '/sentralimport/publications?year_published=' +
-      state.currentImportYear.value;
-
-    if (state.doiFilter !== null) {
-      fetchString += '&doi=' + state.doiFilter;
+    let checkedValues = [];
+    for (let i = 0; i < state.currentPerPage.value; i++) {
+      checkedValues.push(false);
     }
+    setChecked(checkedValues);
 
+    let url = PIA_REST_API + '/sentralimport/publications?year_published=' + state.currentImportYear.value;
+    if (state.doiFilter !== null) {
+      url += '&doi=' + state.doiFilter;
+    }
     if (state.currentInstitution.value === null || state.currentInstitution.value === ' ') {
       if (state.isSampublikasjon) {
-        fetchString += '&copublication=' + state.isSampublikasjon;
+        url += '&copublication=' + state.isSampublikasjon;
       }
       if (state.currentImportStatus !== 'ikke aktuelle') {
-        fetchString = fetchString + ('&imported=' + state.currentImportStatus);
+        url = url + ('&imported=' + state.currentImportStatus);
       } else {
-        fetchString = fetchString + '&relevant=false';
+        url = url + '&relevant=false';
       }
     } else {
-      fetchString =
-        fetchString +
+      url =
+        url +
         ('&institution=' + state.currentInstitution.cristinInstitutionNr + '&copublication=' + state.isSampublikasjon);
       if (state.currentImportStatus !== 'ikke aktuelle') {
-        fetchString = fetchString + ('&imported=' + state.currentImportStatus);
+        url = url + ('&imported=' + state.currentImportStatus);
       } else {
-        fetchString = fetchString + '&relevant=false';
+        url = url + '&relevant=false';
       }
     }
-    fetchString =
-      fetchString +
+    url =
+      url +
       '&sort=' +
       state.currentSortValue +
       ' ' +
@@ -279,32 +289,24 @@ export default function EnhancedTable() {
       '&page=' +
       (state.currentPageNr + 1);
 
-    let checkedValues = [];
-    for (let i = 0; i < state.currentPerPage.value; i++) {
-      checkedValues.push(false);
-    }
-    setChecked(checkedValues);
-
-    if (localStorage.getItem('config')) {
-      setFetched(false);
-      try {
-        await axios.get(fetchString, JSON.parse(localStorage.getItem('config'))).then((response) => {
-          handleRows(response.data);
-
-          dispatch({
-            type: 'setTotalCount',
-            payload: response.headers['x-total-count'],
-          });
+    setFetched(false);
+    try {
+      await axios.get(url, JSON.parse(localStorage.getItem('config'))).then((response) => {
+        handleRows(response.data);
+        dispatch({
+          type: 'setTotalCount',
+          payload: response.headers['x-total-count'],
         });
-        setFetched(true);
-      } catch (e) {
+      });
+      setFetched(true);
+    } catch (error) {
+      console.log('ERROR', error);
+      if (!error.hasOwnProperty('response') || error.response.status === 401 || error.response.status === 403) {
         localStorage.setItem('authorized', 'false');
-        if (!e.hasOwnProperty('response') || e.response.status === 401 || e.response.status === 403) {
-          alert('Din sesjon har utgått. Vennligst logg inn på nytt');
-          history.push('/login');
-        } else {
-          history.push('/error');
-        }
+        alert('Din sesjon har utgått. Vennligst logg inn på nytt');
+        history.push('/login');
+      } else {
+        history.push('/error');
       }
     }
   }
@@ -405,12 +407,6 @@ export default function EnhancedTable() {
       return <p key={i}>{name}</p>;
     });
   }
-
-  useEffect(() => {
-    setTimeout(function () {
-      getRows().then();
-    }, 500);
-  }, [state.importDone]);
 
   function checkAll(status) {
     let temp = [...checked];

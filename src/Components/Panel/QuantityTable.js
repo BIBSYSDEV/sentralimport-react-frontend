@@ -8,6 +8,7 @@ import TableRow from '@material-ui/core/TableRow';
 import axios from 'axios';
 import { Context } from '../../Context';
 import { useHistory } from 'react-router-dom';
+import { PIA_REST_API } from '../../utils/constants';
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -54,17 +55,16 @@ const QuantityTable = () => {
     ) {
       await axios
         .get(
-          process.env.REACT_APP_PIAREST_GATEKEEPER_URL +
-            '/sentralimport/publicationCount/' +
-            state.currentImportYear.value,
+          PIA_REST_API + '/sentralimport/publicationCount/' + state.currentImportYear.value,
           JSON.parse(localStorage.getItem('config'))
         )
         .then((response) => {
           setData(response.data);
         })
-        .catch(function (e) {
-          localStorage.setItem('authorized', 'false');
-          if (!e.hasOwnProperty('response') || e.response.status === 401 || e.response.status === 403) {
+        .catch(function (error) {
+          console.log(error);
+          if (!error.hasOwnProperty('response') || error.response.status === 401 || error.response.status === 403) {
+            localStorage.setItem('authorized', 'false');
             alert('Din sesjon har utgått. Vennligst logg inn på nytt');
             history.push('/login');
           } else {

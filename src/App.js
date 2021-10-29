@@ -9,24 +9,22 @@ import Header from './Components/Header/Header';
 import { Box } from '@material-ui/core';
 import './assets/styles/buttons.scss';
 import { useHistory } from 'react-router-dom';
-import Login from './Components/Login/Login';
 import Log from './Components/Log/Log';
 import Footer from './Components/Footer/Footer';
 import axios from 'axios';
 import { Context } from './Context';
+import { CRIST_REST_API, USE_MOCK_DATA } from './utils/constants';
 
 export default function App() {
   let history = useHistory();
   let { dispatch } = useContext(Context);
-
-  if (!localStorage.getItem('authorized')) history.push('login');
+  const isAuthorized = localStorage.getItem('authorized') === 'true' || USE_MOCK_DATA;
 
   //fetches instututions to populate drop-down lists
   useEffect(() => {
     const getInstitutions = async () => {
       let response = await axios.get(
-        process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
-          `/institutions?cristin_institution=true&per_page=500&lang=nb,en`,
+        CRIST_REST_API + `/institutions?cristin_institution=true&per_page=500&lang=nb,en`,
         JSON.parse(localStorage.getItem('config'))
       );
       response = response.data.filter((i) => i.cristin_user_institution);
@@ -47,10 +45,14 @@ export default function App() {
       await dispatch({ type: 'institutions', payload: institutionsNorwegian });
       await dispatch({ type: 'institutionsEnglish', payload: institutionsEnglish });
     };
-    getInstitutions().then();
-  }, []);
+    isAuthorized && getInstitutions().then();
+  }, [isAuthorized]);
 
-  return localStorage.getItem('authorized') && localStorage.getItem('authorized') === 'true' ? (
+  if (!isAuthorized) {
+    history.push('login');
+  }
+
+  return isAuthorized ? (
     <div className="App">
       <Header />
       <Grid container spacing={3}>
@@ -77,8 +79,6 @@ export default function App() {
       <Footer />
     </div>
   ) : (
-    <div>
-      <Login location={'login'} />
-    </div>
+    <></>
   );
 }

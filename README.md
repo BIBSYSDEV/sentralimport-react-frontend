@@ -1,8 +1,7 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Beskrivelse
 
-Dette er en reactapplikasjon for sentralimport til CRISTIN.
+Dette er en applikasjon for sentralimport til CRISTIN skrevet med React
 
 
 ## Starte applikasjonen
@@ -23,7 +22,7 @@ For å starte applikasjonen kjør `npm start`. Applikasjonen vil da starte i dev
 
 Følgende biblioteker er ikke oppgradert pr okt 2021:
 
-* bootstrap - medfører endringer i layout
+* bootstrap - oppgradering medfører endringer i layout
 * materialui - oppgradering fra 4 til 5 er en større jobb
 * notistack - v2  er basert på materialui 5
 
@@ -40,3 +39,6 @@ Følgende biblioteker er ikke oppgradert pr okt 2021:
 10. Trykk på 'Create Invalidation'
 11. Skriv `/*` i Object Paths-feltet og trykk 'Invalidate'
 12. Når invalideringen er ferdig er den nye versjonen lagt ut. Du kan sjekke at det er blitt riktig ved å se på versjonsnummer og Sist oppdatert dato nederst til høyre på nettsiden.
+
+---
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

@@ -4,6 +4,7 @@ import { Context } from '../../Context';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
+import { CRIST_REST_API, PIA_REST_API } from '../../utils/constants';
 
 export default function ConfirmationDialog(props) {
   let { dispatch } = React.useContext(Context);
@@ -66,7 +67,7 @@ export default function ConfirmationDialog(props) {
 
   async function postPublication(publication) {
     let response = await axios.post(
-      process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/results',
+      CRIST_REST_API + '/results',
       publication,
       JSON.parse(localStorage.getItem('config'))
     );
@@ -75,7 +76,7 @@ export default function ConfirmationDialog(props) {
 
   async function patchPublication(publication) {
     await axios.patch(
-      process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/results/' + publication.cristinResultId,
+      CRIST_REST_API + '/results/' + publication.cristinResultId,
       publication,
       JSON.parse(localStorage.getItem('config'))
     );
@@ -83,7 +84,7 @@ export default function ConfirmationDialog(props) {
 
   async function patchPiaPublication(id, pubId) {
     await axios.patch(
-      process.env.REACT_APP_PIAREST_GATEKEEPER_URL + '/sentralimport/publication/' + pubId,
+      PIA_REST_API + '/sentralimport/publication/' + pubId,
       JSON.stringify({ cristin_id: id }),
       JSON.parse(localStorage.getItem('config'))
     );
@@ -237,8 +238,8 @@ export default function ConfirmationDialog(props) {
         <TextField
           placeholder="Om du ønsker å legge ved en merknad, skriv den inn her før du importerer"
           multiline
-          rows={3}
-          rowsMax={6}
+          minRows={3}
+          maxRows={6}
           margin="normal"
           onChange={handleChange}
           fullWidth

@@ -3,6 +3,7 @@ import Select from 'react-select';
 import axios from 'axios';
 import { CircularProgress, Typography } from '@material-ui/core';
 import { Context } from '../../Context';
+import { CRIST_REST_API } from '../../utils/constants';
 
 const searchLanguage = 'en';
 
@@ -24,7 +25,7 @@ export default function InstitutionCountrySelect(props) {
         try {
           setLoadingUnits(true);
           let response = await axios.get(
-            process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
+            CRIST_REST_API +
               `/units?parent_unit_id=${props.selectedInstitution.cristinInstitutionNr}.0.0.0&per_page=900&lang=${searchLanguage}`,
             JSON.parse(localStorage.getItem('config'))
           );
@@ -57,8 +58,7 @@ export default function InstitutionCountrySelect(props) {
       if (inputValue !== '') {
         setSearchingForPlaces(true);
         let response = await axios.get(
-          process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
-            `/institutions?cristin_institution=false&lang=${searchLanguage}&name=${inputValue}`,
+          CRIST_REST_API + `/institutions?cristin_institution=false&lang=${searchLanguage}&name=${inputValue}`,
           JSON.parse(localStorage.getItem('config'))
         );
         setSearchingForPlaces(false);

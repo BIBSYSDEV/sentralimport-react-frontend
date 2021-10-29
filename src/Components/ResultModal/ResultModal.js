@@ -17,6 +17,7 @@ import '../../assets/styles/Results.scss';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { Markup } from 'interweave';
+import { PIA_REST_API } from '../../utils/constants';
 
 export default function ResultModal(props) {
   const [innerModal, setInnerModal] = React.useState(false);
@@ -57,14 +58,14 @@ export default function ResultModal(props) {
     let relevantStatus = state.currentImportStatus !== 'ikke aktuelle';
     await axios
       .patch(
-        process.env.REACT_APP_PIAREST_GATEKEEPER_URL + '/sentralimport/publication/' + props.data.pubId,
+        PIA_REST_API + '/sentralimport/publication/' + props.data.pubId,
         JSON.stringify({ not_relevant: relevantStatus }),
         JSON.parse(localStorage.getItem('config'))
       )
       .catch(function (e) {
-        localStorage.setItem('authorized', 'false');
         console.log('Patch request failed:', e);
         if (!e.hasOwnProperty('response') || e.response.status === 401 || e.response.status === 403) {
+          localStorage.setItem('authorized', 'false');
           history.push('/login');
         } else {
           history.push('/error');

@@ -7,6 +7,7 @@ import { Context } from '../../Context';
 import axios from 'axios';
 import { withSnackbar } from 'notistack';
 import '../../assets/styles/common.scss';
+import { CRIST_REST_API } from '../../utils/constants';
 
 const searchLanguage = 'en';
 
@@ -114,11 +115,7 @@ function Contributor(props) {
     setAddDisabled(true);
     let affiliationCopy = [...data.toBeCreated.affiliations];
     let fetchedInstitution = await axios.get(
-      process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
-        '/institutions/' +
-        selectedInstitution.cristinInstitutionNr +
-        '?lang=' +
-        searchLanguage,
+      CRIST_REST_API + '/institutions/' + selectedInstitution.cristinInstitutionNr + '?lang=' + searchLanguage,
       JSON.parse(localStorage.getItem('config'))
     );
 
@@ -196,7 +193,7 @@ function Contributor(props) {
     if (institutionId === '0') return ' ';
     if (institutionNames[institutionId] === undefined) {
       let institution = await axios.get(
-        process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/institutions/' + institutionId + '?lang=' + searchLanguage,
+        CRIST_REST_API + '/institutions/' + institutionId + '?lang=' + searchLanguage,
         JSON.parse(localStorage.getItem('config'))
       );
       institutionNames[institutionId] = institution.data.institution_name.en || institution.data.institution_name.nb;
@@ -209,7 +206,7 @@ function Contributor(props) {
     if (unitId === '0') return ' ';
     if (unitNames[unitId] === undefined) {
       let unit = await axios.get(
-        process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/units/' + unitId + '?lang=en',
+        CRIST_REST_API + '/units/' + unitId + '?lang=en',
         JSON.parse(localStorage.getItem('config'))
       );
       unitNames[unitId] = unit.data.unit_name.en || unit.data.unit_name.nb;
@@ -220,7 +217,7 @@ function Contributor(props) {
   async function retrySearch(data) {
     try {
       let authorResults = await axios.get(
-        process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
+        CRIST_REST_API +
           '/persons/' +
           (data.imported.hasOwnProperty('cristin_person_id') && data.imported.cristin_person_id !== 0
             ? '?id=' + data.imported.cristin_person_id
@@ -232,7 +229,7 @@ function Contributor(props) {
         let tempAffiliations = [];
         for (let i = 0; i < authorResults.data.length; i++) {
           let fetchedAuthor = await axios.get(
-            process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/persons/' + authorResults.data[i].cristin_person_id,
+            CRIST_REST_API + '/persons/' + authorResults.data[i].cristin_person_id,
             JSON.parse(localStorage.getItem('config'))
           );
           for (let h = 0; h < fetchedAuthor.data.affiliations.length; h++) {

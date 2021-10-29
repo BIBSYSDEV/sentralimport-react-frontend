@@ -17,6 +17,7 @@ import { ListGroupItem } from 'reactstrap';
 import { Collapse } from 'react-bootstrap';
 import '../../assets/styles/Results.scss';
 import { useSnackbar } from 'notistack';
+import { CRIST_REST_API } from '../../utils/constants';
 
 export function Duplicates(props) {
   const { enqueueSnackbar } = useSnackbar();
@@ -243,9 +244,10 @@ export function Duplicates(props) {
               <p>Søk med parametre: </p>
               <FormGroup>
                 <Grid
+                  container
                   direction="column"
                   alignContent="center"
-                  justify="space-evenly"
+                  justifyContent="space-evenly"
                   spacing={6}
                   className="duplicate-search-grid">
                   <Grid item container direction="column">
@@ -355,7 +357,7 @@ async function fetchDuplicates(searchTerms) {
   let results = [];
   console.log('fetching...');
   const searchResults = await axios.get(
-    process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/results' + searchTerms + '&fields=all&lang=nb',
+    CRIST_REST_API + '/results' + searchTerms + '&fields=all&lang=nb',
     JSON.parse(localStorage.getItem('config'))
   );
   console.log('Found ' + searchResults.data.length + ' results');
@@ -367,10 +369,7 @@ async function fetchDuplicates(searchTerms) {
 
   for (let i = 0; i < results.length; i++) {
     let authors = await axios.get(
-      process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
-        '/results/' +
-        results[i].data.cristin_result_id +
-        '/contributors?per_page=10&lang=nb',
+      CRIST_REST_API + '/results/' + results[i].data.cristin_result_id + '/contributors?per_page=10&lang=nb',
       JSON.parse(localStorage.getItem('config'))
     );
     results[i].data.authors = authors.data;

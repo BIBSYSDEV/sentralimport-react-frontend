@@ -76,6 +76,7 @@ export default function Login(props) {
       localStorage.setItem('access_token', search.access_token.toString());
       localStorage.setItem('expires', jsonToken.exp);
       localStorage.setItem('id_token', search.id_token.toString());
+      //TODO: Lag heller en metode som pakker inn axios-kall og legger på headeren (som authenticatedApiRequest i dlr)
       let config = {
         headers: {
           Authorization: 'Bearer ' + search.access_token.toString(),
@@ -100,14 +101,14 @@ export default function Login(props) {
           {/*<Button onClick={testApi}>Test api</Button>*/}
         </div>
       ) : (
-        <Grid container justify="center" direction="row" className={'login-grid'}>
+        <Grid container justifyContent="center" direction="row" className={'login-grid'}>
           <Grid item xs={12}>
             <img src={logo} className={'cristin-logo'} title="CRISTIN-logo" alt="CRISTIN-logo" />
           </Grid>
           <Grid item xs={12}>
             <h1> CRISTIN Sentralimport</h1>
           </Grid>
-          <Grid container item xs={12} justify="center">
+          <Grid container item xs={12} justifyContent="center">
             <Card className={'login-card'}>
               <CardContent>
                 <Typography variant="body1" component="div" gutterBottom>
@@ -118,7 +119,7 @@ export default function Login(props) {
                     <Grid item xs={2}>
                       <img src={loginIcon} className={'feide-login-icon'} title="Feide Login" alt="Feide Login" />
                     </Grid>
-                    <Grid item container xs={10} alignItems="center" justify="center">
+                    <Grid item container xs={10} alignItems="center" justifyContent="center">
                       <div>
                         Logg inn via <span className={'feide-login-button'}> Feide</span>
                       </div>

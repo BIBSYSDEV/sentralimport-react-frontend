@@ -19,6 +19,7 @@ import ContributorPagination from '../ContributorPagination/ContributorPaginatio
 import Contributor from './Contributor';
 import Skeleton from '@material-ui/lab/Skeleton';
 import ClosingDialog from '../Dialogs/ClosingDialog';
+import { CRIST_REST_API } from '../../utils/constants';
 
 const searchLanguage = 'en';
 
@@ -274,11 +275,7 @@ function ContributorModal(props) {
           tempInst.countryCode !== 'NO')
       ) {
         let response = await axios.get(
-          process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
-            '/institutions/country/' +
-            affil[i].countryCode +
-            '?lang=' +
-            searchLanguage,
+          CRIST_REST_API + '/institutions/country/' + affil[i].countryCode + '?lang=' + searchLanguage,
           JSON.parse(localStorage.getItem('config'))
         );
         if (response.data.length > 0) {
@@ -654,10 +651,7 @@ function ContributorModal(props) {
 async function fetchPerson(personId) {
   if (personId === 0) return;
 
-  return await axios.get(
-    process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/persons/' + personId,
-    JSON.parse(localStorage.getItem('config'))
-  );
+  return await axios.get(CRIST_REST_API + '/persons/' + personId, JSON.parse(localStorage.getItem('config')));
 }
 
 let institutionNames = {};
@@ -665,7 +659,7 @@ async function fetchInstitutionName(institutionId) {
   if (institutionId === '0') return ' ';
   if (institutionNames[institutionId] === undefined) {
     let institution = await axios.get(
-      process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/institutions/' + institutionId + '?lang=' + searchLanguage,
+      CRIST_REST_API + '/institutions/' + institutionId + '?lang=' + searchLanguage,
       JSON.parse(localStorage.getItem('config'))
     );
     institutionNames[institutionId] = institution.data.institution_name.en || institution.data.institution_name.nb;
@@ -678,7 +672,7 @@ async function fetchUnitName(unitId) {
   if (unitId === '0') return ' ';
   if (unitNames[unitId] === undefined) {
     let unit = await axios.get(
-      process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/units/' + unitId + '?lang=' + searchLanguage,
+      CRIST_REST_API + '/units/' + unitId + '?lang=' + searchLanguage,
       JSON.parse(localStorage.getItem('config'))
     );
     unitNames[unitId] = unit.data.unit_name.en || unit.data.unit_name.nb;
@@ -697,11 +691,7 @@ async function fetchInstitutions(affiliations) {
     ) {
       if (countries[inst.countryCode] === undefined) {
         let response = await axios.get(
-          process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
-            '/institutions/country/' +
-            inst.countryCode +
-            '?lang=' +
-            searchLanguage,
+          CRIST_REST_API + '/institutions/country/' + inst.countryCode + '?lang=' + searchLanguage,
           JSON.parse(localStorage.getItem('config'))
         );
         if (response.data.length > 0) {
@@ -761,12 +751,7 @@ async function searchContributors(authors) {
         first_name: person.hasOwnProperty('first_name_preferred') ? person.first_name_preferred : person.first_name,
         surname: person.hasOwnProperty('surname_preferred') ? person.surname_preferred : person.surname,
         affiliations: affiliations.filter((item, index) => affiliations.indexOf(item) === index),
-        url:
-          process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
-          '/persons/' +
-          person.cristin_person_id +
-          '?lang=' +
-          searchLanguage,
+        url: CRIST_REST_API + '/persons/' + person.cristin_person_id + '?lang=' + searchLanguage,
         isEditing: false,
         order: i + 1,
         identified_cristin_person: person.identified_cristin_person,

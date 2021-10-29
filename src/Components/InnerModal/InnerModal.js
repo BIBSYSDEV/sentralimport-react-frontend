@@ -19,6 +19,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import CreateJournalPanel from '../CreateJournalPanel/CreateJournalPanel';
 import { makeStyles } from '@material-ui/styles';
 import ErrorMessage from '../Dialogs/ErrorMessage';
+import { CRIST_REST_API } from '../../utils/constants';
 
 const useStyles = makeStyles({
   doi: {
@@ -303,12 +304,7 @@ function InnerModal(props) {
       let allAuthors = [];
       while (allAuthors.length < state.selectedPublication.authorTotalCount) {
         let authors = await axios.get(
-          process.env.REACT_APP_CRISREST_GATEKEEPER_URL +
-            '/results/' +
-            resultId +
-            '/contributors?page=' +
-            page +
-            '&per_page=500&lang=nb',
+          CRIST_REST_API + '/results/' + resultId + '/contributors?page=' + page + '&per_page=500&lang=nb',
           JSON.parse(localStorage.getItem('config'))
         );
         allAuthors = [...allAuthors, ...authors.data];
@@ -520,7 +516,7 @@ function InnerModal(props) {
     if (name === null || name === '') name = '*';
     await axios
       .get(
-        process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/results/channels?type=journal&query=title_general:' + name,
+        CRIST_REST_API + '/results/channels?type=journal&query=title_general:' + name,
         JSON.parse(localStorage.getItem('config'))
       )
       .then((response) => {
@@ -534,7 +530,7 @@ function InnerModal(props) {
     let journal;
     try {
       journal = await axios.get(
-        process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/results/channels?type=journal&query=issn:' + issn[0].value,
+        CRIST_REST_API + '/results/channels?type=journal&query=issn:' + issn[0].value,
         JSON.parse(localStorage.getItem('config'))
       );
     } catch (e) {
@@ -546,7 +542,7 @@ function InnerModal(props) {
 
   async function getCategories() {
     let fetchedCategories = await axios.get(
-      process.env.REACT_APP_CRISREST_GATEKEEPER_URL + '/results/categories?lang=nb',
+      CRIST_REST_API + '/results/categories?lang=nb',
       JSON.parse(localStorage.getItem('config'))
     );
 
@@ -644,10 +640,10 @@ function InnerModal(props) {
             md={12}
             xs={12}
             direction="column"
-            justify="center"
+            justifyContent="center"
             alignItems="center"
             style={gridStyle}>
-            <Grid container item justify="center" direction="row" xs={10}>
+            <Grid container item justifyContent="center" direction="row" xs={10}>
               <Grid item xs>
                 <h3>Importpublikasjon</h3>
               </Grid>
@@ -656,7 +652,7 @@ function InnerModal(props) {
               </Grid>
             </Grid>
 
-            <Grid item container justify="center" direction="row" xs={10}>
+            <Grid item container justifyContent="center" direction="row" xs={10}>
               <Grid item xs>
                 <TextField id="import-id" label="Pubid" value={props.data.pubId} margin="normal" disabled />
               </Grid>
@@ -671,7 +667,7 @@ function InnerModal(props) {
               </Grid>
             </Grid>
 
-            <Grid item container justify="center" direction="row" xs={10}>
+            <Grid item container justifyContent="center" direction="row" xs={10}>
               <Grid item xs>
                 <TextField
                   id="import-registrert"
@@ -692,7 +688,7 @@ function InnerModal(props) {
               </Grid>
             </Grid>
 
-            <Grid item container justify="center" direction="row" xs={10}>
+            <Grid item container justifyContent="center" direction="row" xs={10}>
               <Grid item xs>
                 <FormControl required={true}>
                   <TextField id="import-kilde" label="Kilde" value={props.data.sourceName} margin="normal" disabled />
@@ -703,7 +699,7 @@ function InnerModal(props) {
               </Grid>
             </Grid>
 
-            <Grid item container justify="center" direction="row" xs={10}>
+            <Grid item container justifyContent="center" direction="row" xs={10}>
               <Grid item xs>
                 <FormControl required={true}>
                   <TextField
@@ -720,7 +716,7 @@ function InnerModal(props) {
               </Grid>
             </Grid>
 
-            <Grid item container justify="center" direction="row" xs={10}>
+            <Grid item container justifyContent="center" direction="row" xs={10}>
               <Grid item xs>
                 <TextField
                   id="import-tidsskrift"
@@ -786,7 +782,7 @@ function InnerModal(props) {
               </Grid>
             </Grid>
 
-            <Grid item container justify="center" direction="row" xs={10}>
+            <Grid item container justifyContent="center" direction="row" xs={10}>
               <Grid item xs>
                 {props.data.doi !== undefined ? (
                   <a
@@ -849,7 +845,7 @@ function InnerModal(props) {
               </Grid>
             </Grid>
 
-            <Grid item container justify="center" direction="row" xs={10}>
+            <Grid item container justifyContent="center" direction="row" xs={10}>
               <Grid item xs>
                 <TextField id="import-lang" label="Språk" value={selectedLang.lang} margin="normal" disabled />
               </Grid>
@@ -876,7 +872,7 @@ function InnerModal(props) {
               </Grid>
             </Grid>
 
-            <Grid item container justify="center" direction="row" xs={10}>
+            <Grid item container justifyContent="center" direction="row" xs={10}>
               <Grid item xs>
                 <TextField
                   aria-label="Import-tittel"
@@ -923,7 +919,7 @@ function InnerModal(props) {
               </Grid>
             </Grid>
 
-            <Grid item container justify="center" direction="row" xs={10}>
+            <Grid item container justifyContent="center" direction="row" xs={10}>
               <Grid item xs>
                 <TextField
                   id="import-aarstall"
@@ -968,7 +964,7 @@ function InnerModal(props) {
               </Grid>
             </Grid>
 
-            <Grid item container justify="center" direction="row" xs={10}>
+            <Grid item container justifyContent="center" direction="row" xs={10}>
               <Grid item xs>
                 <TextField
                   id="import-kategori"
@@ -1015,7 +1011,7 @@ function InnerModal(props) {
               </Grid>
             </Grid>
 
-            <Grid item container justify="center" direction="row" xs={10}>
+            <Grid item container justifyContent="center" direction="row" xs={10}>
               <Grid item xs>
                 <TextField
                   id="import-utgivelsesdata"
@@ -1057,7 +1053,7 @@ function InnerModal(props) {
                 />
               </Grid>
             </Grid>
-            <Grid item container justify="center" direction="row" xs={10}>
+            <Grid item container justifyContent="center" direction="row" xs={10}>
               <Grid item xs>
                 <TextField
                   id="import-hefte"
@@ -1095,7 +1091,7 @@ function InnerModal(props) {
                 />
               </Grid>
             </Grid>
-            <Grid item container justify="center" direction="row" xs={10}>
+            <Grid item container justifyContent="center" direction="row" xs={10}>
               <Grid item container xs>
                 <Grid item>
                   <div>
