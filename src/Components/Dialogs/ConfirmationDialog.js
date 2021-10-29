@@ -41,6 +41,10 @@ export default function ConfirmationDialog(props) {
 
   async function patch() {
     let publication = createPublicationObject();
+    //bugfix (if patch is used, all 3 properties must have a value)
+    if (publication.pages.count === 0 && !(publication.pages.from && publication.pages.to)) {
+      delete publication.pages;
+    }
     setImportDisabled(true);
     try {
       await patchPublication(publication);
@@ -97,30 +101,26 @@ export default function ConfirmationDialog(props) {
     for (let i = 0; i < temp.publication.languages.length; i++) {
       title[temp.publication.languages[i].lang.toLowerCase()] = temp.publication.languages[i].title;
     }
-
-    let contributors = createContributorObject();
-
-    let journal = {
-      name: temp.publication.channel.title,
-      cristin_journal_id:
-        temp.publication.channel.cristinTidsskriftNr !== 0 ? temp.publication.channel.cristinTidsskriftNr : null,
-      international_standard_numbers: [
-        {
-          type: 'printed',
-          value: temp.publication.channel.issn ? temp.publication.channel.issn : null,
-        },
-        {
-          type: 'online',
-          value: temp.publication.channel.eissn ? temp.publication.channel.eissn : null,
-        },
-      ],
-      pia_journal_number: temp.publication.channel.cristinTidsskriftNr,
-    };
-    let pub = {
+    let publication = {
       category: {
         code: temp.publication.category,
       },
-      journal: journal,
+      journal: {
+        name: temp.publication.channel.title,
+        cristin_journal_id:
+          temp.publication.channel.cristinTidsskriftNr !== 0 ? temp.publication.channel.cristinTidsskriftNr : null,
+        international_standard_numbers: [
+          {
+            type: 'printed',
+            value: temp.publication.channel.issn ? temp.publication.channel.issn : null,
+          },
+          {
+            type: 'online',
+            value: temp.publication.channel.eissn ? temp.publication.channel.eissn : null,
+          },
+        ],
+        pia_journal_number: temp.publication.channel.cristinTidsskriftNr,
+      },
       original_language: temp.publication.languages.filter((l) => l.original)[0].lang.toLowerCase(),
       title: title,
       pub_id: temp.publication.pubId,
@@ -146,12 +146,12 @@ export default function ConfirmationDialog(props) {
             : '0',
       },
       contributors: {
-        list: contributors,
+        list: createContributorObject(),
       },
     };
-    if (props.duplicate) pub.cristinResultId = temp.publication.cristinResultId;
-    if (annotation !== null) pub.annotation = annotation;
-    return pub;
+    if (props.duplicate) publication.cristinResultId = temp.publication.cristinResultId;
+    if (annotation !== null) publication.annotation = annotation;
+    return publication;
   }
 
   function createContributorObject() {
