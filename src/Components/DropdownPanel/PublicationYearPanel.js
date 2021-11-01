@@ -4,7 +4,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { Typography } from '@material-ui/core';
 
-export default function DropdownPanel() {
+export default function PublicationYearPanel() {
   const useStyles = {
     overflow: 'visible',
     marginTop: 25,
@@ -17,7 +17,7 @@ export default function DropdownPanel() {
   };
 
   return (
-    <Card style={useStyles} variant="outlined">
+    <Card style={useStyles} variant="outlined" data-testid="publication-year-panel">
       <CardContent>
         <Typography variant="h5">Velg publiseringsår</Typography>
         <div style={divStyle}>

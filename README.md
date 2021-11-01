@@ -27,7 +27,7 @@ Følgende biblioteker er ikke oppgradert pr okt 2021:
 * notistack - v2  er basert på materialui 5
 
 ## Legge ut ny versjon på aws
-
+1.a - UTKOMMENTER ALL KODE I ENV.LOCAL FØR BYGGING
 1. Sørg for at versjonsnummeret har 3 siffer. f.eks 1.2.0. Bygg prosjektet. Dette gjøres ved å kjøre `npm run build` for prod og `npm run build:{miljø}` for de andre miljøene f.eks `npm run build:test`. Det ferdigbygde prosjektet vil da legge seg i build mappen. De forskjellige miljøene har hver sin .env fil hvor det beskrives hvordan de bygges.
 2. Logg inn på relevant Sentralimport AWS konto.
 3. Gå til S3 (kan søke øverst)

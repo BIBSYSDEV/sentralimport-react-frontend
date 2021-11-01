@@ -5,7 +5,7 @@ import preval from 'preval.macro';
 import { version } from '../../../package.json';
 
 export default function Footer() {
-  let dateTimeStamp = preval`module.exports = new Date().toLocaleString('no', {year: 'numeric', month: '2-digit', day: '2-digit'});`;
+  let dateTimeStamp = preval`module.exports = new Date().toLocaleString('no');`;
 
   const footerStyle = {
     marginTop: '10px',

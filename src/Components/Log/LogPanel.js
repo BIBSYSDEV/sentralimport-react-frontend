@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Log() {
+export default function LogPanel() {
   const [visible, setVisible] = React.useState(false);
   const classes = useStyles();
 
@@ -49,7 +49,7 @@ export default function Log() {
   }
 
   return (
-    <Card className={classes.card} variant="outlined">
+    <Card className={classes.card} variant="outlined" data-testid="log-panel">
       <CardContent>
         <Button color="primary" onClick={toggleLog} variant="contained" style={{ margin: '10px' }}>
           Logg

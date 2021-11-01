@@ -3,17 +3,17 @@ import './App.css';
 import QuantityTable from './Components/Panel/QuantityTable';
 import ImportTable from './Components/ImportTable/ImportTable';
 import Grid from '@material-ui/core/Grid/Grid';
-import FilterForm from './Components/FilterForm/FilterForm';
-import DropdownPanel from './Components/DropdownPanel/DropdownPanel';
+import FilterFormPanel from './Components/FilterForm/FilterFormPanel';
 import Header from './Components/Header/Header';
 import { Box } from '@material-ui/core';
 import './assets/styles/buttons.scss';
 import { useHistory } from 'react-router-dom';
-import Log from './Components/Log/Log';
+import LogPanel from './Components/Log/LogPanel';
 import Footer from './Components/Footer/Footer';
 import axios from 'axios';
 import { Context } from './Context';
 import { CRIST_REST_API, USE_MOCK_DATA } from './utils/constants';
+import PublicationYearPanel from './Components/DropdownPanel/PublicationYearPanel';
 
 export default function App() {
   let history = useHistory();
@@ -58,7 +58,7 @@ export default function App() {
       <Grid container spacing={3}>
         <Box clone order={{ xs: 2, md: 1 }}>
           <Grid item xs={12} md={3}>
-            <DropdownPanel />
+            <PublicationYearPanel />
           </Grid>
         </Box>
         <Box clone order={{ xs: 1, md: 2 }}>
@@ -69,8 +69,8 @@ export default function App() {
       </Grid>
       <Grid container spacing={3}>
         <Grid item xs={12} md={3}>
-          <FilterForm />
-          <Log />
+          <FilterFormPanel />
+          <LogPanel />
         </Grid>
         <Grid item xs={12} md={9}>
           <ImportTable />

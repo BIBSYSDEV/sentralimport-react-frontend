@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function FilterForm() {
+export default function FilterFormPanel() {
   const classes = useStyles();
 
   let { state, dispatch } = React.useContext(Context);
@@ -93,7 +93,7 @@ export default function FilterForm() {
   }
 
   return (
-    <Card className={classes.card} variant="outlined">
+    <Card className={classes.card} variant="outlined" data-testid="filter-panel">
       <CardContent>
         <FormControl component="fieldset" className={classes.formControl}>
           <CardHeader title="Importstatus" />
@@ -134,7 +134,7 @@ export default function FilterForm() {
           </RadioGroup>
         </FormControl>
         <CardHeader title="Institusjoner" style={{ marginTop: '2rem' }} />
-        <div>
+        <div data-testid="institution-filter-wrapper">
           <FormControlLabel control={<Checkbox onClick={handleCheck} />} label="Sampublikasjoner" />
           <InstitutionSelect onChange={handleChange} />
         </div>

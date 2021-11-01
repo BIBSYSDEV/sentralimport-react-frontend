@@ -45,63 +45,68 @@ const QuantityTable = () => {
   let history = useHistory();
 
   useEffect(() => {
-    getNumbers();
+    async function getNumbers() {
+      if (
+        state.currentImportYear.value !== prevYear ||
+        (state.totalCount !== prevCount && localStorage.getItem('config'))
+      ) {
+        await axios
+          .get(
+            PIA_REST_API + '/sentralimport/publicationCount/' + state.currentImportYear.value,
+            JSON.parse(localStorage.getItem('config'))
+          )
+          .then((response) => {
+            setData(response.data);
+          })
+          .catch(function (error) {
+            console.log(error);
+            if (!error.hasOwnProperty('response') || error.response.status === 401 || error.response.status === 403) {
+              localStorage.setItem('authorized', 'false');
+              alert('Din sesjon har utgått. Vennligst logg inn på nytt');
+              history.push('/login');
+            } else {
+              history.push('/error');
+            }
+          });
+        setPrevYear(state.currentImportYear.value);
+        setPrevCount(state.totalCount);
+      }
+    }
+    getNumbers().then();
   }, [state.currentImportYear, state.totalCount]);
 
-  async function getNumbers() {
-    if (
-      state.currentImportYear.value !== prevYear ||
-      (state.totalCount !== prevCount && localStorage.getItem('config'))
-    ) {
-      await axios
-        .get(
-          PIA_REST_API + '/sentralimport/publicationCount/' + state.currentImportYear.value,
-          JSON.parse(localStorage.getItem('config'))
-        )
-        .then((response) => {
-          setData(response.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-          if (!error.hasOwnProperty('response') || error.response.status === 401 || error.response.status === 403) {
-            localStorage.setItem('authorized', 'false');
-            alert('Din sesjon har utgått. Vennligst logg inn på nytt');
-            history.push('/login');
-          } else {
-            history.push('/error');
-          }
-        });
-      setPrevYear(state.currentImportYear.value);
-      setPrevCount(state.totalCount);
-    }
-  }
-
   return (
-    <div>
-      <div className={classes.root}>
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell> Kilde</StyledTableCell>
-              <StyledTableCell align="right">Antall&nbsp;</StyledTableCell>
-              <StyledTableCell align="right">Importert&nbsp;</StyledTableCell>
-              <StyledTableCell align="right">Ikke importert&nbsp;</StyledTableCell>
-              <StyledTableCell align="right">Ikke aktuelle&nbsp;</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <StyledTableRow>
-              <StyledTableCell component="th" scope="row">
-                SCOPUS
-              </StyledTableCell>
-              <StyledTableCell align="right">{data.totalCount}</StyledTableCell>
-              <StyledTableCell align="right">{data.importedCount}</StyledTableCell>
-              <StyledTableCell align="right">{data.notImportedCount}</StyledTableCell>
-              <StyledTableCell align="right">{data.notRelevantCount}</StyledTableCell>
-            </StyledTableRow>
-          </TableBody>
-        </Table>
-      </div>
+    <div className={classes.root} data-testid="quantity-table-panel">
+      <Table className={classes.table}>
+        <TableHead>
+          <TableRow>
+            <StyledTableCell> Kilde</StyledTableCell>
+            <StyledTableCell align="right">Antall</StyledTableCell>
+            <StyledTableCell align="right">Importert</StyledTableCell>
+            <StyledTableCell align="right">Ikke importert</StyledTableCell>
+            <StyledTableCell align="right">Ikke aktuelle</StyledTableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <StyledTableRow>
+            <StyledTableCell component="th" scope="row">
+              SCOPUS
+            </StyledTableCell>
+            <StyledTableCell data-testid="quantity-table-total" align="right">
+              {data.totalCount}
+            </StyledTableCell>
+            <StyledTableCell data-testid="quantity-table-imported" align="right">
+              {data.importedCount}
+            </StyledTableCell>
+            <StyledTableCell data-testid="quantity-table-not-imported" align="right">
+              {data.notImportedCount}
+            </StyledTableCell>
+            <StyledTableCell data-testid="quantity-table-not-relevant" align="right">
+              {data.notRelevantCount}
+            </StyledTableCell>
+          </StyledTableRow>
+        </TableBody>
+      </Table>
     </div>
   );
 };

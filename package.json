@@ -6,7 +6,9 @@
     "build": "react-scripts build",
     "build:sandbox": "env-cmd -f .env.sandbox react-scripts build",
     "build:test": "env-cmd -f .env.test react-scripts build",
-    "start": "react-scripts start"
+    "start": "react-scripts start",
+    "test": "cypress run",
+    "test:cypress": "REACT_APP_USE_MOCK=true start-server-and-test http://localhost:3000"
   },
   "browserslist": {
     "production": [
@@ -27,16 +29,12 @@
     "@material-ui/styles": "^4.11.4",
     "autosuggest-highlight": "^3.1.1",
     "axios": "^0.23.0",
-    "axios-mock-adapter": "^1.20.0",
     "bootstrap": "^4.6.0",
     "env-cmd": "^10.1.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
     "interweave": "^12.9.0",
     "jsonwebtoken": "^8.5.1",
     "node-sass": "^6.0.1",
     "notistack": "^1.0.10",
-    "prettier": "^2.4.1",
     "query-string": "^7.0.1",
     "react": "^17.0.2",
     "react-bootstrap": "^1.6.4",
@@ -48,6 +46,18 @@
     "reactstrap": "^8.0.1"
   },
   "devDependencies": {
-    "preval.macro": "^5.0.0"
+    "@cypress/code-coverage": "^3.9.11",
+    "@cypress/instrument-cra": "^1.4.0",
+    "axios-mock-adapter": "^1.20.0",
+    "cypress": "^8.7.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-cypress": "^2.12.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^7.0.4",
+    "prettier": "^2.4.1",
+    "pretty-quick": "^3.1.1",
+    "preval.macro": "^5.0.0",
+    "start-server-and-test": "^1.14.0",
+    "typescript": "~4.4.4"
   }
 }

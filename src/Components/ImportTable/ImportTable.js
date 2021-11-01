@@ -188,7 +188,7 @@ const monsterPostStyle = {
   color: '#e30000',
 };
 
-export default function EnhancedTable() {
+export default function ImportTable() {
   const classes = useStyles();
   let { state, dispatch } = React.useContext(Context);
   const [modalData, setModalData] = React.useState();
@@ -475,7 +475,7 @@ export default function EnhancedTable() {
 
   function createTable(body) {
     return (
-      <div className={classes.root}>
+      <div className={classes.root} data-testid="import-table-panel">
         <div className={classes.paper}>
           <EnhancedTableToolbar />
           <div className={classes.tableWrapper}>
