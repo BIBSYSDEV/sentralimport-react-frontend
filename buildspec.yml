@@ -33,8 +33,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building Node app...
-      - npm run build
-      - npm run test:cypress
+      - npm run build:test
 
   post_build:
     commands:
