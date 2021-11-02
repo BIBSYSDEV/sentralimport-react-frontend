@@ -1169,7 +1169,11 @@ function InnerModal(props) {
             </Grid>
           </Grid>
 
-          <Button className={`contributorButton`} onClick={openContributorModal} variant="contained">
+          <Button
+            data-testid="open-contributors-modal-button"
+            className={`contributorButton`}
+            onClick={openContributorModal}
+            variant="contained">
             Bidragsytere
           </Button>
           {state.contributorErrors.length >= 1 ? <ErrorMessage /> : ''}

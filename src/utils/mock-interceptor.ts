@@ -4,18 +4,27 @@ import { CRIST_REST_API, PIA_REST_API } from './constants';
 import {
   mockAllCategories,
   mockAllJournals,
-  mockCountryInstitutions,
-  mockImportData,
+  mockImportPublication1,
   mockInstitutions,
   mockPerson,
   mockPersonDetailed,
   mockPublicationCount,
   mockSavedPublication,
+  responseCountryInstitutionCN,
+  responseCountryInstitutionIT,
 } from './mockdata';
+
+import mockImportData from './mockImportData.json';
 
 // AXIOS INTERCEPTOR
 export const interceptRequestsOnMock = () => {
   const mock = new MockAdapter(Axios);
+
+  mock
+    .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*&doi=${mockImportPublication1.doi}.*`))
+    .reply(200, [mockImportPublication1], {
+      'x-total-count': 1,
+    });
 
   //get imported
   mock.onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*`)).reply(200, mockImportData, {
@@ -38,7 +47,9 @@ export const interceptRequestsOnMock = () => {
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/categories.*`)).reply(200, mockAllCategories);
 
   //get country institutions
-  mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/country/.*`)).reply(200, mockCountryInstitutions);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/country/CN.*`)).reply(200, [responseCountryInstitutionCN]);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/country/IT.*`)).reply(200, [responseCountryInstitutionIT]);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/country/.*`)).reply(200, [responseCountryInstitutionIT]);
 
   //doi-search
   mock.onGet(new RegExp(`${CRIST_REST_API}/results\\?doi.*`)).reply(200, []);

@@ -22,6 +22,8 @@ import ClosingDialog from '../Dialogs/ClosingDialog';
 import { CRIST_REST_API } from '../../utils/constants';
 
 const searchLanguage = 'en';
+const foreign_educational_institution_generic_code = 9127;
+const other_institutions_generic_code = 9126;
 
 function ContributorModal(props) {
   const { useRef, useLayoutEffect } = React;
@@ -153,7 +155,7 @@ function ContributorModal(props) {
       dispatch({ type: 'setContributorErrors', payload: errors });
     }
 
-    fetch();
+    fetch().then();
     handleTempSave();
   }, [props.data, props.open, state.selectedPublication]);
 
@@ -173,7 +175,7 @@ function ContributorModal(props) {
   useEffect(() => {
     if (!props.duplicate) return;
 
-    identifyCristinPerson();
+    identifyCristinPerson().then();
   }, [state.contributorPerPage, state.contributorPage, data]);
 
   async function identifyCristinPerson() {
@@ -250,6 +252,7 @@ function ContributorModal(props) {
     let copiedAffiliations = JSON.parse(JSON.stringify(author.imported.affiliations));
 
     let temp = [...data];
+    //TODO: kjøre inst-sjekken  - som konverterer ukjente institutusjoner til landkoder
     temp[toBeCreatedOrder - 1].toBeCreated.affiliations = copiedAffiliations;
     temp[toBeCreatedOrder - 1].toBeCreated.first_name = author.imported.first_name;
     temp[toBeCreatedOrder - 1].toBeCreated.surname = author.imported.surname;
@@ -263,19 +266,20 @@ function ContributorModal(props) {
     setData(temp);
   }
 
-  async function handleChosenAuthorAffiliations(affil) {
-    let tempArr = [];
-    for (let i = 0; i < affil.length; i++) {
-      let tempInst = affil[i];
+  async function handleChosenAuthorAffiliations(affiliations) {
+    let tempAffiliations = [];
+    for (let i = 0; i < affiliations.length; i++) {
+      let tempInst = affiliations[i];
+
       if (
         tempInst.hasOwnProperty('countryCode') &&
-        (tempInst.cristinInstitutionNr === 9127 ||
-          tempInst.cristinInstitutionNr === 9126 ||
-          tempInst.cristinInstitutionNr === 0 ||
-          tempInst.countryCode !== 'NO')
+        (tempInst.cristinInstitutionNr === foreign_educational_institution_generic_code ||
+          tempInst.cristinInstitutionNr === other_institutions_generic_code ||
+          tempInst.cristinInstitutionNr === 0)
       ) {
+        //bytter ut institusjon med instkode for nasjonalitet
         let response = await axios.get(
-          CRIST_REST_API + '/institutions/country/' + affil[i].countryCode + '?lang=' + searchLanguage,
+          CRIST_REST_API + '/institutions/country/' + affiliations[i].countryCode + '?lang=' + searchLanguage,
           JSON.parse(localStorage.getItem('config'))
         );
         if (response.data.length > 0) {
@@ -287,18 +291,11 @@ function ContributorModal(props) {
             ? response.data[0].cristin_institution_id
             : 0;
         }
-
         countries[tempInst.countryCode] = tempInst;
-      } else {
-        if (tempInst.isCristinInstitution !== true) {
-          tempInst = countries[tempInst.countryCode];
-        }
       }
-      if (tempInst !== null && tempInst !== undefined) {
-        tempArr.push(tempInst);
-      }
+      tempAffiliations.push(tempInst);
     }
-    return tempArr;
+    return tempAffiliations;
   }
 
   function handleTempSave() {
@@ -686,7 +683,9 @@ async function fetchInstitutions(affiliations) {
   for (let i = 0; i < affiliations.length; i++) {
     let inst = affiliations[i];
     if (
-      (inst.cristinInstitutionNr === 9127 || inst.cristinInstitutionNr === 9126 || inst.cristinInstitutionNr === 0) &&
+      (inst.cristinInstitutionNr === foreign_educational_institution_generic_code ||
+        inst.cristinInstitutionNr === other_institutions_generic_code ||
+        inst.cristinInstitutionNr === 0) &&
       inst.hasOwnProperty('countryCode')
     ) {
       if (countries[inst.countryCode] === undefined) {

@@ -56,111 +56,255 @@ export const mockInstitutions = [
   },
 ];
 
-export const mockImportData = [
-  {
-    pubId: 584092,
-    category: 'ACADEMICREVIEW',
-    categoryName: 'Vitenskapelig oversiktsartikkel/review',
-    registered: 'Jan 6, 2021',
-    doi: '10.1108/IJPSM-04-2020-0096',
-    sourceName: 'Scopus',
-    sourceCode: 'SCOPUS',
-    externalId: '2-s2.0-85098522896',
-    yearPublished: 2021,
-    authors: [
-      {
-        cristinId: 0,
-        roleCode: 'FORFATTER',
-        sequenceNr: 1,
-        surname: 'etternavn1',
-        firstname: 'fornavn1',
-        authorName: 'etternavn1 f.',
-        institutions: [
-          {
-            unitName: 'Department of Management and Business Administration;Gabriele D’Annunzio University',
-            countryCode: 'IT',
-            institutionName: 'Gabriele D’Annunzio University',
-            cristinInstitutionNr: 0,
-            isCristinInstitution: false,
-          },
-        ],
-      },
-      {
-        cristinId: 0,
-        roleCode: 'FORFATTER',
-        sequenceNr: 2,
-        surname: 'etternavn2',
-        firstname: 'fornavn2',
-        authorName: 'etternavn2 f.',
-        institutions: [
-          {
-            unitName: 'Nord University',
-            countryCode: 'NO',
-            institutionName: 'Nord University',
-            acronym: 'NORD',
-            cristinInstitutionNr: 204,
-            isCristinInstitution: true,
-          },
-          {
-            unitName: 'School of Business;Kristianstad University',
-            countryCode: 'SE',
-            institutionName: 'Kristianstad University',
-            cristinInstitutionNr: 10600017,
-            isCristinInstitution: false,
-          },
-          {
-            unitName: 'Kozminski University',
-            countryCode: 'PL',
-            institutionName: 'Kozminski University',
-            cristinInstitutionNr: 0,
-            isCristinInstitution: false,
-          },
-        ],
-      },
-      {
-        cristinId: 0,
-        roleCode: 'FORFATTER',
-        sequenceNr: 3,
-        surname: 'etternavn3',
-        firstname: 'fornavn3',
-        authorName: 'etternavn3 f.',
-        institutions: [
-          {
-            unitName: 'The Open University',
-            countryCode: 'GB',
-            institutionName: 'The Open University',
-            cristinInstitutionNr: 13900060,
-            isCristinInstitution: false,
-          },
-          {
-            unitName: 'University of Milan-Bicocca',
-            countryCode: 'IT',
-            institutionName: 'University of Milan-Bicocca',
-            cristinInstitutionNr: 12300049,
-            isCristinInstitution: false,
-          },
-        ],
-      },
-    ],
-    languages: [
-      {
-        lang: 'EN',
-        langName: 'Engelsk',
-        title: 'Public appointments as a tool for public governance: a systematic literature review',
-        summary:
-          'Purpose: The purpose of this paper is to review previous research on public appointments to systematize existing knowledge, identify gaps and discuss implications for future research in this field. Design/methodology/approach: This paper is based on a systematic literature review, carried out using the Scopus database. We selected academic articles published in journals ranked in the 2018 CABS Academic Journal Guide plus public administration articles in journals classified by Google as falling within the areas of public policy and administration. The papers were analysed according to four categories: geographical area, theoretical framework, research method and organizational setting. Findings: Results show the lack of research regarding areas like Latin America or East Asia; from a theoretical viewpoint, given the lack of explicit theoretical approaches, future research should have more formal and clear theoretical frameworks. Moreover, given the dominance of case study and review/reflection studies, alternative research methods, such as surveys or mixed methods are suggested for future works. Research limitations/implications: We identify a new research agenda to revive the focus on public appointments as a tool for intra- and inter-organizational governance in the public sector. Specifically, we argue that how the process of public appointments is managed has huge democratic implications, and public managers have a key role to play in that respect by designing effective governance systems and organizational procedures. The selection of papers has been limited to articles published in peer- review journals ranked in the 2018 CABS Guide; no distinctions have been made regarding journals\u0027 positioning in the ranking. Moreover, this work takes a managerial and organizational approach, while the research on public appointments is clearly interdisciplinary, with previous contributions coming mainly from political scientists. Originality/value: Despite the relevant body of literature on this topic, this study represents the first manuscript to summarize the state of the art of this theme, providing a research agenda on this very relevant but quite neglected issue in public governance.',
-        original: true,
-      },
-    ],
-    channel: {
-      cristinTidsskriftNr: 29099,
-      title: 'International Journal of Public Sector Management',
-      issn: '0951-3558',
-      eissn: '1758-6666',
-      isbns: [],
+export const mockImportPublication1 = {
+  pubId: 591850,
+  category: 'ARTICLE',
+  categoryName: 'Vitenskapelig artikkel',
+  registered: 'Oct 29, 2021',
+  doi: '10.1038/s41467-021-25510-w',
+  sourceName: 'Scopus',
+  sourceCode: 'SCOPUS',
+  externalId: '2-s2.0-85115431109',
+  yearPublished: 2021,
+  authors: [
+    {
+      cristinId: 0,
+      roleCode: 'FORFATTER',
+      sequenceNr: 1,
+      surname: 'Capriolo',
+      firstname: 'Manfredo',
+      authorName: 'Capriolo M.',
+      institutions: [
+        {
+          unitName: 'Department of Geosciences;University of Padova',
+          countryCode: 'IT',
+          institutionName: 'University of Padova',
+          cristinInstitutionNr: 12300052,
+          isCristinInstitution: false,
+        },
+        {
+          unitName: 'Centre for Earth Evolution and Dynamics;University of Oslo',
+          countryCode: 'NO',
+          institutionName: 'University of Oslo',
+          acronym: 'UiO',
+          cristinInstitutionNr: 185,
+          isCristinInstitution: true,
+        },
+      ],
     },
+    {
+      cristinId: 0,
+      roleCode: 'FORFATTER',
+      sequenceNr: 2,
+      surname: 'Marzoli',
+      firstname: 'Andrea',
+      authorName: 'Marzoli A.',
+      institutions: [
+        {
+          unitName: 'Department of Territory and Agro-Forestry Systems;University of Padova',
+          countryCode: 'IT',
+          institutionName: 'University of Padova',
+          cristinInstitutionNr: 12300052,
+          isCristinInstitution: false,
+        },
+      ],
+    },
+    {
+      cristinId: 0,
+      roleCode: 'FORFATTER',
+      sequenceNr: 3,
+      surname: 'Aradi',
+      firstname: 'László E.',
+      authorName: 'Aradi L.E.',
+      institutions: [
+        {
+          unitName:
+            'Lithosphere Fluid Research Lab;Research and Industrial Relations Center;Faculty of Science;Eötvös Loránd University',
+          countryCode: 'HU',
+          institutionName: 'Eötvös Loránd University',
+          cristinInstitutionNr: 15200015,
+          isCristinInstitution: false,
+        },
+      ],
+    },
+    {
+      cristinId: 0,
+      roleCode: 'FORFATTER',
+      sequenceNr: 4,
+      surname: 'Ackerson',
+      firstname: 'Michael R.',
+      authorName: 'Ackerson M.R.',
+      institutions: [
+        {
+          unitName: 'Department of Mineral Sciences;National Museum of Natural History;Smithsonian Institution',
+          countryCode: 'US',
+          institutionName: 'Smithsonian Institution',
+          cristinInstitutionNr: 9126,
+          isCristinInstitution: false,
+        },
+      ],
+    },
+    {
+      cristinId: 0,
+      roleCode: 'FORFATTER',
+      sequenceNr: 5,
+      surname: 'Bartoli',
+      firstname: 'Omar',
+      authorName: 'Bartoli O.',
+      institutions: [
+        {
+          unitName: 'Department of Geosciences;University of Padova',
+          countryCode: 'IT',
+          institutionName: 'University of Padova',
+          cristinInstitutionNr: 12300052,
+          isCristinInstitution: false,
+        },
+      ],
+    },
+    {
+      cristinId: 0,
+      roleCode: 'FORFATTER',
+      sequenceNr: 6,
+      surname: 'Callegaro',
+      firstname: 'Sara',
+      authorName: 'Callegaro S.',
+      institutions: [
+        {
+          unitName: 'Centre for Earth Evolution and Dynamics;University of Oslo',
+          countryCode: 'NO',
+          institutionName: 'University of Oslo',
+          acronym: 'UiO',
+          cristinInstitutionNr: 185,
+          isCristinInstitution: true,
+        },
+      ],
+    },
+    {
+      cristinId: 0,
+      roleCode: 'FORFATTER',
+      sequenceNr: 7,
+      surname: 'Dal Corso',
+      firstname: 'Jacopo',
+      authorName: 'Dal Corso J.',
+      institutions: [
+        {
+          unitName: 'State Key Laboratory of Biogeology and Environmental Geology;China University of Geosciences',
+          countryCode: 'CN',
+          institutionName: 'China University of Geosciences',
+          cristinInstitutionNr: 48400110,
+          isCristinInstitution: false,
+        },
+      ],
+    },
+    {
+      cristinId: 0,
+      roleCode: 'FORFATTER',
+      sequenceNr: 8,
+      surname: 'Ernesto',
+      firstname: 'Marcia',
+      authorName: 'Ernesto M.',
+      institutions: [
+        {
+          unitName:
+            'Department of Geophysics;Institute of Astronomy;Geophysics and Atmospheric Sciences;University of São Paulo',
+          countryCode: 'BR',
+          institutionName: 'University of São Paulo',
+          cristinInstitutionNr: 71501162,
+          isCristinInstitution: false,
+        },
+      ],
+    },
+    {
+      cristinId: 0,
+      roleCode: 'FORFATTER',
+      sequenceNr: 9,
+      surname: 'Gouvêa Vasconcellos',
+      firstname: 'Eleonora M.',
+      authorName: 'Gouvea Vasconcellos E.M.',
+      institutions: [
+        {
+          unitName: 'Geology Postgraduate Program of the Federal University of Paraná',
+          countryCode: 'BR',
+          institutionName: 'Geology Postgraduate Program of the Federal University of Paraná',
+          cristinInstitutionNr: 71501102,
+          isCristinInstitution: false,
+        },
+      ],
+    },
+    {
+      cristinId: 0,
+      roleCode: 'FORFATTER',
+      sequenceNr: 10,
+      surname: 'De Min',
+      firstname: 'Angelo',
+      authorName: 'De Min A.',
+      institutions: [
+        {
+          unitName: 'Department of Mathematics and Geosciences;University of Trieste',
+          countryCode: 'IT',
+          institutionName: 'University of Trieste',
+          cristinInstitutionNr: 12300068,
+          isCristinInstitution: false,
+        },
+      ],
+    },
+    {
+      cristinId: 0,
+      roleCode: 'FORFATTER',
+      sequenceNr: 11,
+      surname: 'Newton',
+      firstname: 'Robert J.',
+      authorName: 'Newton R.J.',
+      institutions: [
+        {
+          unitName: 'School of Earth and Environment;University of Leeds',
+          countryCode: 'GB',
+          institutionName: 'University of Leeds',
+          cristinInstitutionNr: 13900159,
+          isCristinInstitution: false,
+        },
+      ],
+    },
+    {
+      cristinId: 0,
+      roleCode: 'FORFATTER',
+      sequenceNr: 12,
+      surname: 'Szabó',
+      firstname: 'Csaba',
+      authorName: 'Szabo C.',
+      institutions: [
+        {
+          unitName:
+            'Lithosphere Fluid Research Lab;Research and Industrial Relations Center;Faculty of Science;Eötvös Loránd University',
+          countryCode: 'HU',
+          institutionName: 'Eötvös Loránd University',
+          cristinInstitutionNr: 15200015,
+          isCristinInstitution: false,
+        },
+      ],
+    },
+  ],
+  languages: [
+    {
+      lang: 'EN',
+      langName: 'Engelsk',
+      title:
+        'Massive methane fluxing from magma–sediment interaction in the end-Triassic Central Atlantic Magmatic Province',
+      summary:
+        'Exceptional magmatic events coincided with the largest mass extinctions throughout Earth’s history. Extensive degassing from organic-rich sediments intruded by magmas is a possible driver of the catastrophic environmental changes, which triggered the biotic crises. One of Earth’s largest magmatic events is represented by the Central Atlantic Magmatic Province, which was synchronous with the end-Triassic mass extinction. Here, we show direct evidence for the presence in basaltic magmas of methane, generated or remobilized from the host sedimentary sequence during the emplacement of this Large Igneous Province. Abundant methane-rich fluid inclusions were entrapped within quartz at the end of magmatic crystallization in voluminous (about 1.0 × 10\u003csup\u003e6\u003c/sup\u003e km\u003csup\u003e3\u003c/sup\u003e) intrusions in Brazilian Amazonia, indicating a massive (about 7.2 × 10\u003csup\u003e3\u003c/sup\u003e Gt) fluxing of methane. These micrometre-sized imperfections in quartz crystals attest an extensive release of methane from magma–sediment interaction, which likely contributed to the global climate changes responsible for the end-Triassic mass extinction.',
+      original: true,
+    },
+  ],
+  channel: {
+    cristinTidsskriftNr: 1185296,
+    title: 'Nature Communications',
+    issn: '2041-1723',
+    eissn: '2041-1723',
+    isbns: [],
+    volume: '12',
+    issue: '1',
   },
-];
+};
 
 export const mockPublicationCount = { totalCount: 100, importedCount: 1, notImportedCount: 2, notRelevantCount: 3 };
 
@@ -191,18 +335,27 @@ export const mockAllCategories = [
   },
 ];
 
-export const mockCountryInstitutions = [
-  {
-    cristin_institution_id: '12300000',
-    institution_name: {
-      en: 'Italy',
-    },
-    acronym: 'ITALIA',
-    country: 'IT',
-    cristin_user_institution: false,
-    url: 'null/12300000',
+export const responseCountryInstitutionIT = {
+  cristin_institution_id: '12300000',
+  institution_name: {
+    en: 'Italy',
   },
-];
+  acronym: 'ITALIA',
+  country: 'IT',
+  cristin_user_institution: false,
+  url: 'null/12300000',
+};
+
+export const responseCountryInstitutionCN = {
+  cristin_institution_id: '48400000',
+  institution_name: {
+    en: 'China',
+  },
+  acronym: 'KINA',
+  country: 'CN',
+  cristin_user_institution: false,
+  url: 'null/48400000',
+};
 
 export const mockAllJournals = [
   {

@@ -124,7 +124,7 @@ export default function ResultModal(props) {
         </ListGroup>
       </ModalBody>
       <ModalFooter>
-        <Button style={style} onClick={handleSubmit}>
+        <Button data-testid="result-modal-ok-button" style={style} onClick={handleSubmit}>
           OK
         </Button>
       </ModalFooter>

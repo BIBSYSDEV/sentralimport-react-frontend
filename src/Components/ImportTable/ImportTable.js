@@ -538,6 +538,7 @@ export default function ImportTable() {
         return (
           <TableRow
             hover
+            data-testid={`import-table-row-${labelId}`}
             id={labelId}
             onClick={(event) => handleClick(event, { row })}
             role="checkbox"

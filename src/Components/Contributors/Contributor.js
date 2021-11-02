@@ -101,6 +101,7 @@ function Contributor(props) {
   }
 
   async function filterInstitutions(affiliations) {
+    //TODO: bruk filter isteden
     for (let i = 0; i < affiliations.length - 1; i++) {
       if (affiliations[i].cristinInstitutionNr === affiliations[i + 1].cristinInstitutionNr) {
         affiliations.splice(i, 1);
@@ -310,7 +311,7 @@ function Contributor(props) {
 
   function displayAuthorForm() {
     return (
-      <Form>
+      <Form data-testid={`contributor-form-${props.index}`}>
         <FormGroup>
           <TextField
             id={'firstName' + props.index}
@@ -401,7 +402,6 @@ function Contributor(props) {
           <Button
             style={{ marginTop: '0.5rem' }}
             onClick={() => {
-              console.log('PCB', selectedInstitution.cristinInstitutionNr);
               addInstitution();
             }}
             variant="outlined"
@@ -420,15 +420,19 @@ function Contributor(props) {
           </Button>
         </Card>
         <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
-          <Button color="secondary" onClick={() => props.deleteContributor(rowIndex)}>
+          <Button
+            data-testid={`contributor-delete-button-${props.index}`}
+            color="secondary"
+            onClick={() => props.deleteContributor(rowIndex)}>
             Slett person
           </Button>
           <Button
+            data-testid={`contributor-search-button-${props.index}`}
             onClick={() => retrySearch(data)}
             disabled={data.toBeCreated.first_name === '' || data.toBeCreated.surname === ''}>
             Søk igjen
           </Button>
-          <Button color="primary" onClick={() => handleSubmit()}>
+          <Button data-testid={`contributor-save-button-${props.index}`} color="primary" onClick={() => handleSubmit()}>
             Lagre endringer
           </Button>
         </div>
@@ -444,8 +448,8 @@ function Contributor(props) {
 
   return (
     <div className="content-wrapper">
-      {data.isEditing === false ? (
-        <div>
+      {!data.isEditing ? (
+        <div data-testid={`contributor-for-import-wrapper-${props.index}`}>
           <h6>{data.toBeCreated.surname + ', ' + data.toBeCreated.first_name}</h6>
           <div className={`metadata`}>
             {data.toBeCreated.affiliations.map((inst, instIndex) => (
@@ -462,10 +466,13 @@ function Contributor(props) {
             ))}
           </div>
           <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
-            <Button color="primary" onClick={updateEditing}>
+            <Button data-testid={`contributor-edit-button-${props.index}`} color="primary" onClick={updateEditing}>
               Rediger
             </Button>
-            <Button color="secondary" onClick={() => props.deleteContributor(rowIndex)}>
+            <Button
+              data-testid={`contributor-delete-button-${props.index}`}
+              color="secondary"
+              onClick={() => props.deleteContributor(rowIndex)}>
               Slett person
             </Button>
           </div>

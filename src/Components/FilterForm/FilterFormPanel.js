@@ -141,6 +141,7 @@ export default function FilterFormPanel() {
         <CardHeader title="DOI" style={{ marginTop: '2rem' }} />
         <div>
           <TextField
+            data-testid="doi-filter"
             id="doiFilter"
             label="Søk på doi"
             fullWidth
