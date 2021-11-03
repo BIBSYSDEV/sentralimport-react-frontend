@@ -240,7 +240,7 @@ export function Duplicates(props) {
           </Button>
 
           <Collapse in={isOpen}>
-            <Card className="card-search">
+            <Card className="card-search" variant={'outlined'}>
               <p>Søk med parametre: </p>
               <FormGroup>
                 <Grid
@@ -248,7 +248,7 @@ export function Duplicates(props) {
                   direction="column"
                   alignContent="center"
                   justifyContent="space-evenly"
-                  spacing={6}
+                  spacing={1}
                   className="duplicate-search-grid">
                   <Grid item container direction="column">
                     <FormControlLabel
@@ -267,7 +267,6 @@ export function Duplicates(props) {
                       control={<Checkbox checked={titleChecked} onClick={() => handleTitle()} />}
                       label="Tittel"
                     />
-
                     {titleChecked ? (
                       <Grid item container direction="column">
                         <TextField
@@ -314,38 +313,39 @@ export function Duplicates(props) {
                       control={<Checkbox checked={publishedChecked} onClick={() => handlePublished()} />}
                       label="Publiseringsår"
                     />
-                    {publishedChecked ? (
+                    {publishedChecked && (
                       <TextField
                         disabled={!publishedChecked}
                         value={published}
                         onChange={(e) => handleChangePublished(e)}
                       />
-                    ) : (
-                      ''
                     )}
                   </Grid>
                 </Grid>
               </FormGroup>
               <Button variant="contained" disabled={!(totalChecked >= 1)} color="primary" onClick={() => retrySearch()}>
-                {' '}
-                Søk{' '}
-              </Button>{' '}
+                Søk
+              </Button>
               <Button onClick={() => handleClose()}> Avbryt </Button>
             </Card>
           </Collapse>
           <ListGroupItem>
-            <FormControlLabel
-              value="false"
-              control={<Radio />}
-              label={relevantStatus ? 'Marker som ikke aktuell' : 'Marker som aktuell'}
-              disabled={publication.hasOwnProperty('cristin_id')}
-            />
-            <FormControlLabel
-              value="true"
-              control={<Radio />}
-              label="Opprett ny cristin-publikasjon basert på importpublikasjon"
-              disabled={publication.hasOwnProperty('cristin_id')}
-            />
+            <div>
+              <FormControlLabel
+                value="false"
+                control={<Radio />}
+                label={relevantStatus ? 'Marker som ikke aktuell' : 'Marker som aktuell'}
+                disabled={publication.hasOwnProperty('cristin_id')}
+              />
+            </div>
+            <div>
+              <FormControlLabel
+                value="true"
+                control={<Radio />}
+                label="Opprett ny cristin-publikasjon basert på importpublikasjon"
+                disabled={publication.hasOwnProperty('cristin_id')}
+              />
+            </div>
           </ListGroupItem>
         </RadioGroup>
       </ul>

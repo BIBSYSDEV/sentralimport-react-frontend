@@ -38,6 +38,7 @@ export default function Pagination(props) {
     dispatch({ type: 'setPerPage', payload: option });
   }
 
+  //TODO: flex or grid-layout, please
   return (
     <TableRow overflow="visible">
       <TableCell>

@@ -5,7 +5,7 @@ import preval from 'preval.macro';
 import { version } from '../../../package.json';
 
 export default function Footer() {
-  let dateTimeStamp = preval`module.exports = new Date().toLocaleString('no');`;
+  let dateTimeStamp = preval`module.exports = new Date().toLocaleString('no', { timeZone: 'UTC' });`;
 
   const footerStyle = {
     marginTop: '10px',
@@ -20,8 +20,7 @@ export default function Footer() {
         <Nav className="mr-auto" />
         <Nav>
           <Nav.Item className="footer-title">
-            {' '}
-            Versjon: {version} (Sist oppdatert: {dateTimeStamp})
+            Versjon: {version} (Sist oppdatert: {dateTimeStamp} (UTC))
           </Nav.Item>
         </Nav>
       </Navbar.Collapse>

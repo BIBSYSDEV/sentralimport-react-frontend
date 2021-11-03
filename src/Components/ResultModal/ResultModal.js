@@ -89,7 +89,7 @@ export default function ResultModal(props) {
   }
 
   return (
-    <Modal isOpen={props.open}>
+    <Modal isOpen={props.open} size="lg">
       <ModalHeader toggle={props.handleClose}>Importvalg for resultat</ModalHeader>
       <ModalBody>
         <ListGroup flush>
