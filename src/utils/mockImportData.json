@@ -1,0 +1,564 @@
+[
+  {
+    "pubId": 610220,
+    "category": "ARTICLE",
+    "categoryName": "Vitenskapelig artikkel",
+    "registered": "Oct 30, 2021",
+    "doi": "10.1109/TIM.2021.3115204",
+    "sourceName": "Scopus",
+    "sourceCode": "SCOPUS",
+    "externalId": "2-s2.0-85115694684",
+    "yearPublished": 2021,
+    "authors": [
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 1,
+        "surname": "Jia",
+        "firstname": "Chen",
+        "authorName": "Jia C.",
+        "institutions": [
+          {
+            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
+            "countryCode": "CN",
+            "institutionName": "Tianjin University of Technology",
+            "cristinInstitutionNr": 9127,
+            "isCristinInstitution": false
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 2,
+        "surname": "Shi",
+        "firstname": "Fan",
+        "authorName": "Shi F.",
+        "institutions": [
+          {
+            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
+            "countryCode": "CN",
+            "institutionName": "Tianjin University of Technology",
+            "cristinInstitutionNr": 9127,
+            "isCristinInstitution": false
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 3,
+        "surname": "Zhao",
+        "firstname": "Meng",
+        "authorName": "Zhao M.",
+        "institutions": [
+          {
+            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
+            "countryCode": "CN",
+            "institutionName": "Tianjin University of Technology",
+            "cristinInstitutionNr": 9127,
+            "isCristinInstitution": false
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 4,
+        "surname": "Zhang",
+        "firstname": "Yao",
+        "authorName": "Zhang Y.",
+        "institutions": [
+          {
+            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
+            "countryCode": "CN",
+            "institutionName": "Tianjin University of Technology",
+            "cristinInstitutionNr": 9127,
+            "isCristinInstitution": false
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 5,
+        "surname": "Cheng",
+        "firstname": "Xu",
+        "authorName": "Cheng X.",
+        "institutions": [
+          {
+            "unitName": "Department of Manufacturing and Civil Engineering;Norwegian University of Science and Technology (NTNU)",
+            "countryCode": "NO",
+            "institutionName": "Norwegian University of Science and Technology (NTNU)",
+            "acronym": "NTNU",
+            "cristinInstitutionNr": 194,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 6,
+        "surname": "Wang",
+        "firstname": "Mianzhao",
+        "authorName": "Wang M.",
+        "institutions": [
+          {
+            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
+            "countryCode": "CN",
+            "institutionName": "Tianjin University of Technology",
+            "cristinInstitutionNr": 9127,
+            "isCristinInstitution": false
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 7,
+        "surname": "Chen",
+        "firstname": "Shengyong",
+        "authorName": "Chen S.",
+        "institutions": [
+          {
+            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
+            "countryCode": "CN",
+            "institutionName": "Tianjin University of Technology",
+            "cristinInstitutionNr": 9127,
+            "isCristinInstitution": false
+          }
+        ]
+      }
+    ],
+    "languages": [
+      {
+        "lang": "EN",
+        "langName": "Engelsk",
+        "title": "Semantic Segmentation with Light Field Imaging and Convolutional Neural Networks",
+        "summary": "Semantic segmentation is of great importance and a challenge in computer vision. One of its main problems is how to efficiently obtain rich information (geometric structure) and identify useful features from higher dimensions. A light field camera, due to its special microlens array structure, can completely record the angular-spatial information of scenes, which is attractive and has great potential to improve the performance of semantic segmentation tasks. Inspired by this, we propose an end-to-end semantic segmentation network that can process light field macropixel images robustly and extract their features. In addition, this network can flexibly and efficiently load the different popular deep learning backbones. Furthermore, we propose an efficient angular model, which, to learn the angular features between the different viewpoints of the macropixel image, improves the nonlinearity of angular-spatial features and enhances multichannel semantic correlations. To evaluate the network, we construct a new real scene light field dataset comprising 800 high-quality samples. The quantitative and qualitative results show that the highest mean intersection over union (mIoU) based on our algorithm is greater than 57%. Our algorithm achieves a 10.30% increase compared with state-of-the-art semantic segmentation algorithms. In combination with different backbones or multiscale light field macropixel images, the network can also achieve comparable results. This preliminary work demonstrates that the combination of light field imaging and deep learning technology has potential applications in the future study of semantic segmentation.",
+        "original": true
+      }
+    ],
+    "channel": {
+      "cristinTidsskriftNr": 4271,
+      "title": "IEEE Transactions on Instrumentation and Measurement",
+      "issn": "0018-9456",
+      "eissn": "1557-9662",
+      "isbns": [],
+      "volume": "70"
+    }
+  },
+  {
+    "pubId": 610213,
+    "category": "ARTICLE",
+    "categoryName": "Vitenskapelig artikkel",
+    "registered": "Oct 30, 2021",
+    "doi": "10.3389/fpsyg.2021.702347",
+    "sourceName": "Scopus",
+    "sourceCode": "SCOPUS",
+    "externalId": "2-s2.0-85115002093",
+    "yearPublished": 2021,
+    "authors": [
+      {
+        "cristinId": 46962,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 1,
+        "surname": "Espevik",
+        "firstname": "Roar",
+        "authorName": "Espevik R.",
+        "institutions": [
+          {
+            "unitName": "Royal Norwegian Naval Academy;Norwegian Defence University College",
+            "countryCode": "NO",
+            "institutionName": "Norwegian Defence University College",
+            "acronym": "FFI",
+            "cristinInstitutionNr": 7428,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 53012,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 2,
+        "surname": "Johnsen",
+        "firstname": "Bjørn Helge",
+        "authorName": "Johnsen B.H.",
+        "institutions": [
+          {
+            "unitName": "BI Norwegian Business School;University of Bergen",
+            "countryCode": "NO",
+            "institutionName": "University of Bergen",
+            "acronym": "UiB",
+            "cristinInstitutionNr": 184,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 3,
+        "surname": "Saus",
+        "firstname": "Evelyn Rose",
+        "authorName": "Saus E.R.",
+        "institutions": [
+          {
+            "unitName": "BI Norwegian Business School;University of Bergen",
+            "countryCode": "NO",
+            "institutionName": "University of Bergen",
+            "acronym": "UiB",
+            "cristinInstitutionNr": 184,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 4,
+        "surname": "Sanden",
+        "firstname": "Sverre",
+        "authorName": "Sanden S.",
+        "institutions": [
+          {
+            "unitName": "BI Norwegian Business School;University of Bergen",
+            "countryCode": "NO",
+            "institutionName": "University of Bergen",
+            "acronym": "UiB",
+            "cristinInstitutionNr": 184,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 5,
+        "surname": "Olsen",
+        "firstname": "Olav Kjellevold",
+        "authorName": "Olsen O.K.",
+        "institutions": [
+          {
+            "unitName": "BI Norwegian Business School;University of Bergen",
+            "countryCode": "NO",
+            "institutionName": "University of Bergen",
+            "acronym": "UiB",
+            "cristinInstitutionNr": 184,
+            "isCristinInstitution": true
+          }
+        ]
+      }
+    ],
+    "languages": [
+      {
+        "lang": "EN",
+        "langName": "Engelsk",
+        "title": "Teamwork on Patrol: Investigating Teamwork Processes and Underlaying Coordinating Mechanisms in a Police Training Program",
+        "summary": "The Big Five theory suggests that five components in teamwork are essential for team effectiveness in stressful environments. Furthermore, three coordinating mechanisms are claimed to be decisive to upholding and informing vital teamwork processes. Although much research has been conducted into the Big Five theory and its components, to the best of our knowledge, no study has yet been made of the relative importance of the three mechanisms and their impact on team effectiveness. Also, only a few studies have tried to investigate whether the components and the coordinating mechanisms are trainable. This study aims to make a theoretical contribution to the part of the theory focusing on the coordinating mechanisms. Secondly, it investigates whether training can improve team performance. Working in teams of two, 166 police officers participated in a simulated operational scenario. Correlational analyses indicated that all Big Five teamwork behaviors and coordinating mechanisms relate to external ratings of team performance. Only the mechanisms of Closed Loop Communication (CLC) and Shared Mental Model (SMM) predicted performance indicators, with SMM predicting above and beyond the effect of CLC. No effect of the training program was found. The study provides new evidence in a police situation that the most important coordinating mechanism of the Big Five theory is that of shared mental models, which in turn has consequences for the type of training needed.",
+        "original": true
+      }
+    ],
+    "channel": {
+      "cristinTidsskriftNr": 1596577,
+      "title": "Frontiers in Psychology",
+      "issn": "1664-1078",
+      "eissn": "1664-1078",
+      "isbns": [],
+      "volume": "12"
+    }
+  },
+  {
+    "pubId": 610214,
+    "category": "ARTICLE",
+    "categoryName": "Vitenskapelig artikkel",
+    "registered": "Oct 30, 2021",
+    "sourceName": "Scopus",
+    "sourceCode": "SCOPUS",
+    "externalId": "2-s2.0-85115003480",
+    "yearPublished": 2021,
+    "authors": [
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 1,
+        "surname": "Lei",
+        "firstname": "Guowen",
+        "authorName": "Lei G.",
+        "institutions": [
+          {
+            "unitName": "Department of Geoscience and Petroleum;Norwegian University of Science and Technology",
+            "countryCode": "NO",
+            "institutionName": "Norwegian University of Science and Technology",
+            "acronym": "NTNU",
+            "cristinInstitutionNr": 194,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 2,
+        "surname": "Silva",
+        "firstname": "Thiago Lima",
+        "authorName": "Silva T.L.",
+        "institutions": [
+          {
+            "unitName": "Department of Geoscience and Petroleum;Norwegian University of Science and Technology",
+            "countryCode": "NO",
+            "institutionName": "Norwegian University of Science and Technology",
+            "acronym": "NTNU",
+            "cristinInstitutionNr": 194,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 3,
+        "surname": "Stanko",
+        "firstname": "Milan",
+        "authorName": "Stanko M.",
+        "institutions": [
+          {
+            "unitName": "Department of Geoscience and Petroleum;Norwegian University of Science and Technology",
+            "countryCode": "NO",
+            "institutionName": "Norwegian University of Science and Technology",
+            "acronym": "NTNU",
+            "cristinInstitutionNr": 194,
+            "isCristinInstitution": true
+          }
+        ]
+      }
+    ],
+    "languages": [
+      {
+        "lang": "EN",
+        "langName": "Engelsk",
+        "title": "A mathematical programming approach to determine optimal tieback development concepts of two offshore oil fields in the barents sea",
+        "summary": "In this paper, we present a mathematical programming approach to evaluate the conceptual study of regional integrated development for Alta-Gohta discoveries in the Barents Sea. Two alternative scenarios are investigated, the first considers to tieback Alta-Gohta to a field that is 60 km away, Johan Castberg, and the second to tieback the field to Goliat, another field at 100 km further. A sensitivity analysis in terms of CAPEX and OPEX is performed to assess the trade-off between selecting the host to be Johan Castberg or Goliat. The results indicate that the profitability and host selection for a tieback development plan of Alta-Gohta is highly dependent on the start time and the costs of the project.",
+        "original": true
+      }
+    ],
+    "channel": {
+      "cristinTidsskriftNr": 107322,
+      "title": "ISOPE - International Offshore and Polar Engineering Conference. Proceedings",
+      "issn": "1098-6189",
+      "isbns": [],
+      "pageFrom": "901",
+      "pageTo": "908"
+    }
+  },
+  {
+    "pubId": 610212,
+    "category": "ARTICLE",
+    "categoryName": "Vitenskapelig artikkel",
+    "registered": "Oct 30, 2021",
+    "doi": "10.1115/OMAE2021-62697",
+    "sourceName": "Scopus",
+    "sourceCode": "SCOPUS",
+    "externalId": "2-s2.0-85114983147",
+    "yearPublished": 2021,
+    "authors": [
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 1,
+        "surname": "Lei",
+        "firstname": "Guowen",
+        "authorName": "Lei G.",
+        "institutions": [
+          {
+            "unitName": "Department of Geoscience and Petroleum;Norwegian University of Science and Technology",
+            "countryCode": "NO",
+            "institutionName": "Norwegian University of Science and Technology",
+            "acronym": "NTNU",
+            "cristinInstitutionNr": 194,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 2,
+        "surname": "Stanko",
+        "firstname": "Milan",
+        "authorName": "Stanko M.",
+        "institutions": [
+          {
+            "unitName": "Department of Geoscience and Petroleum;Norwegian University of Science and Technology",
+            "countryCode": "NO",
+            "institutionName": "Norwegian University of Science and Technology",
+            "acronym": "NTNU",
+            "cristinInstitutionNr": 194,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 3,
+        "surname": "Silva",
+        "firstname": "Thiago Lima",
+        "authorName": "Silva T.L.",
+        "institutions": [
+          {
+            "unitName": "Department of Geoscience and Petroleum;Norwegian University of Science and Technology",
+            "countryCode": "NO",
+            "institutionName": "Norwegian University of Science and Technology",
+            "acronym": "NTNU",
+            "cristinInstitutionNr": 194,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 4,
+        "surname": "Widerøe",
+        "firstname": "Tom",
+        "authorName": "Wideroe T.",
+        "institutions": [
+          {
+            "unitName": "Lundin Energy Norway",
+            "countryCode": "NO",
+            "institutionName": "Lundin Energy Norway",
+            "cristinInstitutionNr": 6248,
+            "isCristinInstitution": false
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 5,
+        "surname": "Skogvang",
+        "firstname": "Arnljot",
+        "authorName": "Skogvang A.",
+        "institutions": [
+          {
+            "unitName": "Lundin Energy Norway",
+            "countryCode": "NO",
+            "institutionName": "Lundin Energy Norway",
+            "cristinInstitutionNr": 6248,
+            "isCristinInstitution": false
+          }
+        ]
+      }
+    ],
+    "languages": [
+      {
+        "lang": "EN",
+        "langName": "Engelsk",
+        "title": "The use of mathematical programming to determine optimal production and drilling schedule in an offshore oil field, a case study from the Barents Sea",
+        "summary": "A field with two neighboring reservoirs was discovered in the Barents Sea in 2013 and 2014. After a successful extended well test of an appraisal well in 2018 and initial field planning tasks, a preliminary drilling and production schedule was proposed based on cross-domain collaboration and group work involving several disciplines. In this paper, mathematical programming is employed to model and optimize the economic value of the project in order to determine the best drilling and production schedule for the field. The optimization includes some of the technical constraints considered by the field development team while also considering uncertainties such as reservoir size, productivity of well, and cost. These have been systematically evaluated by using simulation-based optimization (sampling). The results were that the use of mathematical programming allows the field planner to evaluate several scenarios within a reasonable time frame, thereby enabling rapid changes in the decisions to respond to new information and risk considerations in a dynamic environment. This paper illustrates the benefits of utilizing mathematical programming in early field planning to optimize the drilling and production schedule.",
+        "original": true
+      }
+    ]
+  },
+  {
+    "pubId": 610211,
+    "category": "ARTICLE",
+    "categoryName": "Vitenskapelig artikkel",
+    "registered": "Oct 30, 2021",
+    "doi": "10.1016/j.coastaleng.2021.104002",
+    "sourceName": "Scopus",
+    "sourceCode": "SCOPUS",
+    "externalId": "2-s2.0-85114934135",
+    "yearPublished": 2021,
+    "authors": [
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 1,
+        "surname": "Gautam",
+        "firstname": "Shekhar",
+        "authorName": "Gautam S.",
+        "institutions": [
+          {
+            "unitName": "Indian Institute of Technology Kharagpur",
+            "countryCode": "IN",
+            "institutionName": "Indian Institute of Technology Kharagpur",
+            "cristinInstitutionNr": 0,
+            "isCristinInstitution": false
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 2,
+        "surname": "Dutta",
+        "firstname": "Debasish",
+        "authorName": "Dutta D.",
+        "institutions": [
+          {
+            "unitName": "Indian Institute of Technology Kharagpur",
+            "countryCode": "IN",
+            "institutionName": "Indian Institute of Technology Kharagpur",
+            "cristinInstitutionNr": 0,
+            "isCristinInstitution": false
+          }
+        ]
+      },
+      {
+        "cristinId": 29685,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 3,
+        "surname": "Bihs",
+        "firstname": "Hans",
+        "authorName": "Bihs H.",
+        "institutions": [
+          {
+            "unitName": "Norwegian University of Science and Technology",
+            "countryCode": "NO",
+            "institutionName": "Norwegian University of Science and Technology",
+            "acronym": "NTNU",
+            "cristinInstitutionNr": 194,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 4,
+        "surname": "Afzal",
+        "firstname": "Mohammad Saud",
+        "authorName": "Afzal M.S.",
+        "institutions": [
+          {
+            "unitName": "Indian Institute of Technology Kharagpur",
+            "countryCode": "IN",
+            "institutionName": "Indian Institute of Technology Kharagpur",
+            "cristinInstitutionNr": 0,
+            "isCristinInstitution": false
+          }
+        ]
+      }
+    ],
+    "languages": [
+      {
+        "lang": "EN",
+        "langName": "Engelsk",
+        "title": "Three-dimensional Computational Fluid Dynamics modelling of scour around a single pile due to combined action of the waves and current using Level-Set method",
+        "summary": "This paper presents three dimensional (3D) numerical modeling of local scour around a single pile under the combined action of waves and currents. A semi-coupled hydrodynamic and morphological model (REEF3D) is used in this study which solves the Reynolds-averaged Navier–Stokes (RANS) equation with k-ω turbulence model closure. The Exner equation is used to calculate the changes in bed elevation. The use of the Level-Set method is done to capture the changes in the free surface. Realistic scour and deposition calculations are aided with the use of modified critical bed shear stress reduction formulation on a sloping bed supplemented with the use of Sand Slide algorithm in the morphological model. The scouring process is modeled in this study using a reduced-length numerical wave tank with wave generation and wave absorption implemented using active wave absorption method. The model is validated for the numerical modeling of local scour around a single pile in steady current, waves alone, and combined wave–current environment. The validated model is used to analyze the effect of Keulegan–Carpenter (KC) number and combined wave–current parameter (U\u003cinf\u003ecw\u003c/inf\u003e) on normalized equilibrium scour depth. It is found that the normalized equilibrium scour depth for scour under waves alone, waves combined with weak currents, and waves combined with mild current do not significantly differ for flow developed in a low KC number environment. However for waves combined with strong currents the normalized equilibrium scour depth increases significantly. For large KC numbers, the normalized equilibrium scour depth is found to have increased with an increase in KC number as well as combined wave–current parameter (U\u003cinf\u003ecw\u003c/inf\u003e).",
+        "original": true
+      }
+    ],
+    "channel": {
+      "cristinTidsskriftNr": 2588,
+      "title": "Coastal Engineering",
+      "issn": "0378-3839",
+      "eissn": "1872-7379",
+      "isbns": [],
+      "volume": "170"
+    }
+  }
+]

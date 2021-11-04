@@ -1,72 +1,44 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Beskrivelse
 
-Dette er en prototype for en reactapplikasjon for sentralimport til CRISTIN.
+Dette er en applikasjon for sentralimport til CRISTIN skrevet med React
 
-## Available Scripts
 
-In the project directory, you can run:
+## Starte applikasjonen
 
-### `npm start`
+Sett opp en ".env.local"-fil med innhold som kan kjøres lokalt.fex :
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+    REACT_APP_CRISREST_GATEKEEPER_URL="https://crisrest-utv.dataporten-api.no"
+    REACT_APP_PIAREST_GATEKEEPER_URL="https://piarest-utv.dataporten-api.no"
+    REACT_APP_REDIRECT_URL="http://localhost:3000/login"
+    REACT_APP_LINK_URL="https://app.cristin-test.uio.no"
+    REACT_APP_CLIENT_ID="ab940329-87f9-40dc-a129-bf9d4ae07917"
+    REACT_APP_PIAREST_GATEWAY_SCOPE="gk_piarest-utv"
+    REACT_APP_CRISREST_GATEWAY_SCOPE="gk_crisrest-utv"
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+For å starte applikasjonen kjør `npm start`. Applikasjonen vil da starte i development mode på [http://localhost:3000](http://localhost:3000)
 
-### `npm test`
+## Biblioteker
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Følgende biblioteker er ikke oppgradert pr okt 2021:
 
-### `npm run build`
+* bootstrap - oppgradering medfører endringer i layout
+* materialui - oppgradering fra 4 til 5 er en større jobb
+* notistack - v2  er basert på materialui 5
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Legge ut ny versjon på aws
+1.a - UTKOMMENTER ALL KODE I ENV.LOCAL FØR BYGGING
+1. Sørg for at versjonsnummeret har 3 siffer. f.eks 1.2.0. Bygg prosjektet. Dette gjøres ved å kjøre `npm run build` for prod og `npm run build:{miljø}` for de andre miljøene f.eks `npm run build:test`. Det ferdigbygde prosjektet vil da legge seg i build mappen. De forskjellige miljøene har hver sin .env fil hvor det beskrives hvordan de bygges.
+2. Logg inn på relevant Sentralimport AWS konto.
+3. Gå til S3 (kan søke øverst)
+4. Trykk på sentralimport-frontend-{miljø}-importwebsites3bucket. Om det er fler som heter det så sjekk at filene som ligger der er de samme som i build mappen din
+5. Slett alle filene i den bucket'en og last opp filene på nytt fra din build mappe (drag and drop)
+7. Gå til CloudFront
+8. Trykk på ID som er knyttet den bucket hvor du lastet opp den nye versjonen. S3 bucket navn står under “Origin” i Cloudfront Distribusjon
+9. Trykk på 'Invalidations'
+10. Trykk på 'Create Invalidation'
+11. Skriv `/*` i Object Paths-feltet og trykk 'Invalidate'
+12. Når invalideringen er ferdig er den nye versjonen lagt ut. Du kan sjekke at det er blitt riktig ved å se på versjonsnummer og Sist oppdatert dato nederst til høyre på nettsiden.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+---
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

@@ -1,35 +1,30 @@
-import React from "react";
-import Select from "react-select";
-import {Context} from "../../Context";
+import React from 'react';
+import Select from 'react-select';
+import { Context } from '../../Context';
 
 export default function DropdownSelect() {
-    let {state, dispatch} = React.useContext(Context);
+  let { state, dispatch } = React.useContext(Context);
 
-    let years = [];
-    let currentYear = new Date().getFullYear();
-    let currentDate = new Date();
+  let years = [];
+  let currentYear = new Date().getFullYear();
+  let currentDate = new Date();
 
-    // Sjekk om dato er før/etter 1. april. Dersom dato er før, sett importår til årstall - 1 ellers bruk eksisterende årstall
-    if(currentDate.getMonth() < 3) {
-        currentYear = currentYear - 1;
-    }
+  // Sjekk om dato er før/etter 1. april. Dersom dato er før, sett importår til årstall - 1 ellers bruk eksisterende årstall
+  if (currentDate.getMonth() < 3) {
+    currentYear = currentYear - 1;
+  }
 
-    for (let i = currentYear - 10; i <= currentYear; i++) {
-        years.push({value: i, label: i.toString()})
-    }
+  for (let i = currentYear - 10; i <= currentYear; i++) {
+    years.push({ value: i, label: i.toString() });
+  }
 
-    years.reverse();
+  years.reverse();
 
-    function handleChange(option) {
-        dispatch({type: "setImportYear", payload: option});
-    }
+  function handleChange(option) {
+    dispatch({ type: 'setImportYear', payload: option });
+  }
 
-    return (
-        <Select
-            options={years}
-            value={state.currentImportYear}
-            onChange={handleChange}
-            aria-label="Velg publiseringsår"
-        />
-    );
+  return (
+    <Select options={years} value={state.currentImportYear} onChange={handleChange} aria-label="Velg publiseringsår" />
+  );
 }

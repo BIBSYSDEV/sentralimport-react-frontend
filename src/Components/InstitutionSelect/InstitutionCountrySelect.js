@@ -1,128 +1,122 @@
-import React, {useEffect} from "react";
+import React, { useContext, useEffect, useState } from 'react';
+import Select from 'react-select';
+import axios from 'axios';
+import { CircularProgress, Typography } from '@material-ui/core';
+import { Context } from '../../Context';
+import { CRIST_REST_API } from '../../utils/constants';
 
-import Select from "react-select";
-import axios from "axios";
-import {Context} from "../../Context";
-import { Card } from "@material-ui/core";
+const searchLanguage = 'en';
 
 export default function InstitutionCountrySelect(props) {
-    const [institutions, setInstitutions] = React.useState("");
-    const [units, setUnits] = React.useState("");
-    let {state, dispatch} = React.useContext(Context);
-    const [places, setPlaces] = React.useState([]);
-    const [groupOptions, setGroupOptions] = React.useState([{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}]);
-    const [inputValue, setInputValue] = React.useState("");
+  let { state } = useContext(Context);
+  const [units, setUnits] = useState([]);
+  const [places, setPlaces] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [loadingUnits, setLoadingUnits] = useState(false);
+  const [searchingForPlaces, setSearchingForPlaces] = useState(false);
+  const [groupOptions, setGroupOptions] = useState([
+    { label: 'Cristin-institusjoner', options: state.institutionsEnglish },
+    { label: 'Annet', options: places },
+  ]);
 
-    useEffect(() => {
-        async function fetch() {
-            await getInstitutions();
+  useEffect(() => {
+    const fetchUnits = async () => {
+      if (props.selectedInstitution.cristinInstitutionNr) {
+        try {
+          setLoadingUnits(true);
+          let response = await axios.get(
+            CRIST_REST_API +
+              `/units?parent_unit_id=${props.selectedInstitution.cristinInstitutionNr}.0.0.0&per_page=900&lang=${searchLanguage}`,
+            JSON.parse(localStorage.getItem('config'))
+          );
+          let units = [];
+          for (let i = 0; i < response.data.length; i++) {
+            if (
+              response.data[i].hasOwnProperty('unit_name') &&
+              (response.data[i].unit_name.en || response.data[i].unit_name.nb)
+            ) {
+              units.push({
+                label: response.data[i].unit_name.en || response.data[i].unit_name.nb,
+                value: response.data[i].cristin_unit_id,
+              });
+            }
+          }
+          setUnits(units);
+        } catch (err) {
+          props.enqueueSnackbar('Kunne ikke laste enheter', { variant: 'error' });
+        } finally {
+          setLoadingUnits(false);
         }
-
-        fetch();
-        let temp = [{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}];
-        setGroupOptions(temp);
-    }, [places]);
-
-
-    useEffect(() => {
-        async function fetchPlaces() {
-            await getPlaces();
-        }
-
-        fetchPlaces();
-        let temp = [{label: "Cristin-institusjoner", options: state.institutions}, {label: "Annet", options: places}];
-        setGroupOptions(temp);
-    }, [inputValue]);
-
-    useEffect(() => {
-        getUnits();
-    }, [props.institution]);
-
-    const cardStyle = {
-        overflow: "visible",
-        padding: "10px"
+      }
     };
+    setUnits([]);
+    fetchUnits().then();
+  }, [inputValue, searchLanguage, props.selectedInstitution]);
 
-    const unitSelectStyle = {
-        marginTop: "10px"
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      if (inputValue !== '') {
+        setSearchingForPlaces(true);
+        let response = await axios.get(
+          CRIST_REST_API + `/institutions?cristin_institution=false&lang=${searchLanguage}&name=${inputValue}`,
+          JSON.parse(localStorage.getItem('config'))
+        );
+        setSearchingForPlaces(false);
+        let places = [];
+        for (let i = 0; i < response.data.length; i++) {
+          places.push({
+            value: response.data[i].acronym,
+            label: response.data[i].institution_name.en || response.data[i].institution_name.nb,
+            cristinInstitutionNr: response.data[i].cristin_institution_id,
+          });
+        }
+        setPlaces(places);
+        setGroupOptions([
+          { label: 'Cristin-institusjoner', options: state.institutionsEnglish },
+          { label: 'Annet', options: places },
+        ]);
+      }
     };
+    fetchPlaces().then();
+  }, [inputValue, searchLanguage]);
 
-    async function getPlaces() {
-        if (inputValue !== "") {
-            let temp = await axios.get(
-                process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions?cristin_institution=false&lang=nb&name=" + inputValue, JSON.parse(localStorage.getItem("config"))
-            );
-
-            let places = [];
-            for (let i = 0; i < temp.data.length; i++) {
-                places.push({
-                    value: temp.data[i].acronym,
-                    label: temp.data[i].institution_name.nb,
-                    cristinInstitutionNr: temp.data[i].cristin_institution_id
-                });
-            }
-            setPlaces(places);
-        }
-    }
-
-    function handleInput(event) {
-        setInputValue(event);
-    }
-
-    async function getInstitutions() {
-        if (state.institutions === null) {
-            let temp = await axios.get(
-                process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/institutions?cristin_institution=true&lang=nb&per_page=300", JSON.parse(localStorage.getItem("config"))
-            );
-
-            temp = temp.data.filter(i => i.cristin_user_institution);
-            let institutions = [];
-            for (let i = 0; i < temp.length; i++) {
-                institutions.push({
-                    value: temp[i].acronym,
-                    label: temp[i].institution_name.nb,
-                    cristinInstitutionNr: temp[i].cristin_institution_id
-                });
-            }
-            setInstitutions(institutions);
-            await dispatch({type: "institutions", payload: institutions});
-        } else {
-            setInstitutions(state.institutions);
-        }
-    }
-
-    async function getUnits() {
-      
-        if(props.institution.cristinInstitutionNr) {
-            let temp = await axios.get(process.env.REACT_APP_CRISREST_GATEKEEPER_URL + "/units?parent_unit_id=" + props.institution.cristinInstitutionNr + ".0.0.0&per_page=900&lang=nb", JSON.parse(localStorage.getItem("config")));
-            let units = [];
-            for (let i = 0; i < temp.data.length; i++) {
-                if(temp.data[i].hasOwnProperty("unit_name") && (temp.data[i].unit_name.nb || temp.data[i].unit_name.en)) {
-                    units.push({
-                        label: temp.data[i].unit_name.nb || temp.data[i].unit_name.en,
-                        value: temp.data[i].cristin_unit_id
-                    });
-                }
-            }
-            setUnits(units);
-        }
-    }
-
-    return (
-        <Card style={cardStyle}>
-        <Select
-            placeholder="Søk på institusjoner eller sted"
-            name="institutionSelect"
-            options={groupOptions}
-            className="basic-multi-select"
-            classNamePrefix="select"
-            onChange={props.onChange}
-            onInputChange={handleInput}
-            aria-label="Institusjonsvelger"
-            value={props.institution}  
-        />
-
-        {props.institution.value && units.length > 0 ? <div style={unitSelectStyle}><Select placeholder="Søk på enheter" name="unitSelect" options={units} value={props.unit} onChange={props.handleChange} isClearable /></div> : ""}
-        </Card>
-    );
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyConent: 'space-between' }}>
+        <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} gutterBottom>
+          Søk etter institusjon:
+        </Typography>
+        {searchingForPlaces && <CircularProgress size={'1rem'} />}
+      </div>
+      <Select
+        placeholder="Søk på institusjoner eller sted"
+        name="institutionSelect"
+        options={groupOptions}
+        className="basic-multi-select"
+        classNamePrefix="select"
+        onChange={props.handleInstitutionChange}
+        onInputChange={(event) => {
+          setInputValue(event);
+        }}
+        aria-label="Institusjonsvelger"
+        value={props.selectedInstitution}
+      />
+      {loadingUnits && <CircularProgress size={'1rem'} style={{ margin: '0.5rem' }} />}
+      {units.length > 0 ? (
+        <div style={{ marginTop: '0.5rem', marginMottom: '0.5rem' }}>
+          <Select
+            placeholder="Søk på enheter"
+            name="unitSelect"
+            options={units}
+            value={props.unit}
+            onChange={props.handleUnitChange}
+            isClearable
+          />
+        </div>
+      ) : (
+        props.selectedInstitution &&
+        !loadingUnits && <Typography variant="caption">Institusjonen har ingen enheter</Typography>
+      )}
+    </div>
+  );
 }

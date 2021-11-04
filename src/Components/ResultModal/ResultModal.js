@@ -1,18 +1,23 @@
-import React from "react";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import React from 'react';
 import {
+  Button,
   ListGroup,
   ListGroupItem,
   ListGroupItemHeading,
-  ListGroupItemText
-} from "reactstrap";
-import InnerModal from "../InnerModal/InnerModal";
-import { Duplicates } from "./Duplicates";
-import { Context } from "../../Context";
-import "../../assets/styles/Results.scss";
-import axios from "axios";
-import {useHistory} from "react-router-dom";
-import { Markup } from "interweave";
+  ListGroupItemText,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from 'reactstrap';
+import InnerModal from '../InnerModal/InnerModal';
+import { Duplicates } from './Duplicates';
+import { Context } from '../../Context';
+import '../../assets/styles/Results.scss';
+import axios from 'axios';
+import { useHistory } from 'react-router-dom';
+import { Markup } from 'interweave';
+import { PIA_REST_API } from '../../utils/constants';
 
 export default function ResultModal(props) {
   const [innerModal, setInnerModal] = React.useState(false);
@@ -21,24 +26,24 @@ export default function ResultModal(props) {
   let history = useHistory();
 
   const divStyle = {
-    fontWeight: "bold"
+    fontWeight: 'bold',
   };
 
   const style = {
-    background: "green"
+    background: 'green',
   };
 
   function handleSubmit() {
-    if (state.selected === "true") {
-      dispatch({type: "doSave", payload: true});
+    if (state.selected === 'true') {
+      dispatch({ type: 'doSave', payload: true });
       setDuplicate(false);
       setInnerModal(true);
-    } else if (state.selected === "false") {
-      setNotRelevant();
+    } else if (state.selected === 'false') {
+      setNotRelevant().then();
       props.handleClose();
-      dispatch({type: "importDone", payload: !state.importDone});
+      dispatch({ type: 'importDone', payload: !state.importDone });
     } else {
-      dispatch({type: "doSave", payload: true});
+      dispatch({ type: 'doSave', payload: true });
       setDuplicate(true);
       setInnerModal(true);
     }
@@ -50,80 +55,68 @@ export default function ResultModal(props) {
   }
 
   async function setNotRelevant() {
-    let relevantStatus = state.currentImportStatus !== "ikke aktuelle";
-    await axios.patch(
-      process.env.REACT_APP_PIAREST_GATEKEEPER_URL + "/sentralimport/publication/" +
-        props.data.pubId,
-      JSON.stringify({ not_relevant: relevantStatus }), JSON.parse(localStorage.getItem("config"))
-    ).catch(function (e) {
-      localStorage.setItem("authorized", "false");
-      console.log("Patch request failed:", e);
-      if (!e.hasOwnProperty("response") || (e.response.status === 401 || e.response.status === 403)) {
-        history.push("/login");
-      } else {
-        history.push("/error");
-      }
-    });
+    let relevantStatus = state.currentImportStatus !== 'ikke aktuelle';
+    await axios
+      .patch(
+        PIA_REST_API + '/sentralimport/publication/' + props.data.pubId,
+        JSON.stringify({ not_relevant: relevantStatus }),
+        JSON.parse(localStorage.getItem('config'))
+      )
+      .catch(function (e) {
+        console.log('Patch request failed:', e);
+        if (!e.hasOwnProperty('response') || e.response.status === 401 || e.response.status === 403) {
+          localStorage.setItem('authorized', 'false');
+          history.push('/login');
+        } else {
+          history.push('/error');
+        }
+      });
   }
 
   function parseTitle(title) {
     let cleanTitle = title;
-    while(cleanTitle.indexOf("&lt;") !== -1){
-        cleanTitle = cleanTitle.replace("&lt;", "<");
-        cleanTitle = cleanTitle.replace("&gt;", ">");
+    while (cleanTitle.indexOf('&lt;') !== -1) {
+      cleanTitle = cleanTitle.replace('&lt;', '<');
+      cleanTitle = cleanTitle.replace('&gt;', '>');
     }
 
-    if(cleanTitle.indexOf("<inf>") || cleanTitle.indexOf("</inf>") ){
-        cleanTitle = cleanTitle.replace("<inf>", "<sub>");
-        cleanTitle = cleanTitle.replace("</inf>", "</sub>");
+    if (cleanTitle.indexOf('<inf>') || cleanTitle.indexOf('</inf>')) {
+      cleanTitle = cleanTitle.replace('<inf>', '<sub>');
+      cleanTitle = cleanTitle.replace('</inf>', '</sub>');
     }
 
     return cleanTitle;
-}
+  }
 
   return (
-    <Modal isOpen={props.open}>
-      <ModalHeader toggle={props.handleClose}>
-        Importvalg for resultat
-      </ModalHeader>
+    <Modal isOpen={props.open} size="lg">
+      <ModalHeader toggle={props.handleClose}>Importvalg for resultat</ModalHeader>
       <ModalBody>
         <ListGroup flush>
           <ListGroupItem>
             <ListGroupItemHeading>Importpublikasjon:</ListGroupItemHeading>
             <ListGroupItemText>
-              {props.data.authors.slice(0, 5).map(author => (
+              {props.data.authors.slice(0, 5).map((author) => (
                 <span style={divStyle} key={author.sequenceNr}>
-                  {author.authorName};{" "}
+                  {author.authorName};{' '}
                 </span>
               ))}
-              {props.data.authors.length > 5
-                ? "et al (" + props.data.authors.length + ") "
-                : ""}
+              {props.data.authors.length > 5 ? 'et al (' + props.data.authors.length + ') ' : ''}
               <Markup content={parseTitle(props.data.languages[0].title)} />
-              <i>
-                {props.data.hasOwnProperty("channel")
-                  ? " " + props.data.channel.title + " "
-                  : ""}
-              </i>
-              {props.data.yearPublished + ";"}
-              {props.data.hasOwnProperty("channel")
-                ? props.data.channel.volume + ";"
-                : ""}
-              {props.data.hasOwnProperty("channel") &&
-              props.data.channel.hasOwnProperty("pageFrom")
-                ? props.data.channel.pageFrom + "-"
-                : ""}
-              {props.data.hasOwnProperty("channel") &&
-              props.data.channel.hasOwnProperty("pageTo")
+              <i>{props.data.hasOwnProperty('channel') ? ' ' + props.data.channel.title + ' ' : ''}</i>
+              {props.data.yearPublished + ';'}
+              {props.data.hasOwnProperty('channel') ? props.data.channel.volume + ';' : ''}
+              {props.data.hasOwnProperty('channel') && props.data.channel.hasOwnProperty('pageFrom')
+                ? props.data.channel.pageFrom + '-'
+                : ''}
+              {props.data.hasOwnProperty('channel') && props.data.channel.hasOwnProperty('pageTo')
                 ? props.data.channel.pageTo
-                : ""}
-              {props.data.hasOwnProperty("doi") ? " doi:" + props.data.doi : ""}
+                : ''}
+              {props.data.hasOwnProperty('doi') ? ' doi:' + props.data.doi : ''}
             </ListGroupItemText>
           </ListGroupItem>
           <ListGroupItem>
-            <ListGroupItemHeading>
-              Cristinpublikasjoner (Velg korrekt publikasjon fra Cristin):
-            </ListGroupItemHeading>
+            <ListGroupItemHeading>Cristinpublikasjoner (Velg korrekt publikasjon fra Cristin):</ListGroupItemHeading>
             <div>
               <Duplicates publication={props.data} />
             </div>
@@ -131,7 +124,7 @@ export default function ResultModal(props) {
         </ListGroup>
       </ModalBody>
       <ModalFooter>
-        <Button style={style} onClick={handleSubmit}>
+        <Button data-testid="result-modal-ok-button" style={style} onClick={handleSubmit}>
           OK
         </Button>
       </ModalFooter>
@@ -152,27 +145,27 @@ ResultModal.defaultProps = {
   data: {
     authors: [
       {
-        authorName: "default1",
-        sequenceNr: 0
+        authorName: 'default1',
+        sequenceNr: 0,
       },
       {
-        authorName: "default2",
-        sequenceNr: 1
-      }
+        authorName: 'default2',
+        sequenceNr: 1,
+      },
     ],
-    registered: "200",
-    category: "CAT",
+    registered: '200',
+    category: 'CAT',
     languages: [
       {
-        lang: "EN",
-        title: "Title"
-      }
+        lang: 'EN',
+        title: 'Title',
+      },
     ],
     channel: {
-      volume: "100",
-      pageFrom: "1",
-      pageTo: "10"
-    }
+      volume: '100',
+      pageFrom: '1',
+      pageTo: '10',
+    },
   },
-  isOpen: false
+  isOpen: false,
 };
