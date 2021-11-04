@@ -60,7 +60,7 @@ const QuantityTable = () => {
           })
           .catch(function (error) {
             console.log(error);
-            if (!error.hasOwnProperty('response') || error.response.status === 401 || error.response.status === 403) {
+            if (!error.response || error.response.status === 401 || error.response.status === 403) {
               localStorage.setItem('authorized', 'false');
               alert('Din sesjon har utgått. Vennligst logg inn på nytt');
               history.push('/login');
