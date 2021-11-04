@@ -33,7 +33,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building Node app...
-      - npm run build
+      - npm run build:production
 
   post_build:
     commands:
