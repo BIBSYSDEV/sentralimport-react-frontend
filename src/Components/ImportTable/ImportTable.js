@@ -301,7 +301,7 @@ export default function ImportTable() {
       setFetched(true);
     } catch (error) {
       console.log('ERROR', error);
-      if (!error.hasOwnProperty('response') || error.response.status === 401 || error.response.status === 403) {
+      if (!error.response || error.response.status === 401 || error.response.status === 403) {
         localStorage.setItem('authorized', 'false');
         alert('Din sesjon har utgått. Vennligst logg inn på nytt');
         history.push('/login');
