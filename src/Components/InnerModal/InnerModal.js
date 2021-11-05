@@ -7,7 +7,7 @@ import DragHandleIcon from '@material-ui/icons/DragHandle';
 import Select from 'react-select';
 import ConfirmationDialog from '../Dialogs/ConfirmationDialog';
 import ClosingDialog from '../Dialogs/ClosingDialog';
-import Validation from '../Validation/Validation';
+import Validation, { doiMatcher } from '../Validation/Validation';
 import { Context } from '../../Context';
 import axios from 'axios';
 import '../../assets/styles/buttons.scss';
@@ -155,7 +155,7 @@ function InnerModal(props) {
             )
           : props.data.doi
           ? props.data.doi
-          : 'Ingen DOI funnet'
+          : ''
       );
 
       setPublishingDetails(
@@ -735,7 +735,6 @@ function InnerModal(props) {
                     color="primary"
                     style={tittelButtonStyle}
                     disabled={!(props.data.hasOwnProperty('channel') && props.data.channel.hasOwnProperty('title'))}>
-                    {' '}
                     <div hidden={true}> Lik </div>
                     <DragHandleIcon />
                   </IconButton>
@@ -745,7 +744,6 @@ function InnerModal(props) {
                     style={tittelButtonStyle}
                     onClick={copyJournal}
                     disabled={!(props.data.hasOwnProperty('channel') && props.data.channel.hasOwnProperty('title'))}>
-                    {' '}
                     <div hidden={true}> Ulik </div>
                     <TrendingFlatIcon />
                   </IconButton>
@@ -754,8 +752,7 @@ function InnerModal(props) {
               <Grid item container xs direction="row">
                 <Grid item>
                   <FormLabel style={selectStyle} required>
-                    {' '}
-                    Tidsskrift{' '}
+                    Tidsskrift
                   </FormLabel>
                   <div style={cristinSelectStyle}>
                     <Select
@@ -792,6 +789,7 @@ function InnerModal(props) {
                     style={linkStyle}>
                     <TextField
                       id="import-doi"
+                      data-testid="doi-from-import-textfield"
                       label="Doi"
                       value={props.data.doi || 'Ingen DOI funnet'}
                       margin="normal"
@@ -805,6 +803,7 @@ function InnerModal(props) {
                     <TextField
                       id="import-doi"
                       label="Doi"
+                      data-testid="doi-to-be-saved-textfield"
                       value={props.data.doi || 'Ingen DOI funnet'}
                       margin="normal"
                       disabled
@@ -837,9 +836,8 @@ function InnerModal(props) {
                     value={doi}
                     onChange={(event) => handleChangeDoi(event)}
                     margin="normal"
-                    required
-                    error={!doi.match(/^([0-9]{2})[.]([0-9]{4,5})[/]([\w-.]{1,})/i)}
-                    helperText={!doi.match(/^([0-9]{2})[.]([0-9]{4,5})[/]([\w-.]{1,})/i) ? 'Doi har galt format' : ''}
+                    error={!doi.match(doiMatcher)}
+                    helperText={!doi.match(doiMatcher) ? 'Doi har galt format' : ''}
                   />
                 </FormControl>
               </Grid>
@@ -1180,27 +1178,38 @@ function InnerModal(props) {
         </ModalBody>
 
         <ModalFooter>
-          <Validation
-            publication={props.duplicate ? state.selectedPublication : props.data}
-            duplicate={props.duplicate}
-          />
-          {state.contributorErrors.length >= 1 ? <div> Feil i bidragsyterlisten. </div> : ''}
-          {!state.contributorsLoaded ? <div> Henter bidragsytere. </div> : ''}
-          <Button onClick={handleClose} variant="contained" color="secondary">
-            Avbryt
-          </Button>
-          <Button
-            disabled={
-              state.formErrors.length >= 1 ||
-              props.data.hasOwnProperty('cristin_id') ||
-              state.contributorErrors.length >= 1 ||
-              !state.contributorsLoaded
-            }
-            color="primary"
-            onClick={handleSubmit}
-            variant="contained">
-            Importer
-          </Button>
+          <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline">
+            <Grid item>
+              <Validation
+                publication={props.duplicate ? state.selectedPublication : props.data}
+                duplicate={props.duplicate}
+              />
+            </Grid>
+            <Grid item>
+              {state.contributorErrors.length >= 1 ? <div> Feil i bidragsyterlisten. </div> : ''}
+              {!state.contributorsLoaded ? <div> Henter bidragsytere. </div> : ''}
+            </Grid>
+            <Grid item>
+              <Button onClick={handleClose} variant="contained" color="secondary">
+                Avbryt
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                disabled={
+                  state.formErrors.length >= 1 ||
+                  props.data.hasOwnProperty('cristin_id') ||
+                  state.contributorErrors.length >= 1 ||
+                  !state.contributorsLoaded
+                }
+                color="primary"
+                onClick={handleSubmit}
+                variant="contained"
+                data-testid="import-publication-button">
+                Importer
+              </Button>
+            </Grid>
+          </Grid>
         </ModalFooter>
       </Modal>
       <ClosingDialog

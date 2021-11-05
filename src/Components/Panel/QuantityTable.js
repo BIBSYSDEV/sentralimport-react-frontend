@@ -59,10 +59,9 @@ const QuantityTable = () => {
             setData(response.data);
           })
           .catch(function (error) {
-            console.log(error);
+            console.log(error.status);
             if (!error.response || error.response.status === 401 || error.response.status === 403) {
               localStorage.setItem('authorized', 'false');
-              alert('Din sesjon har utgått. Vennligst logg inn på nytt');
               history.push('/login');
             } else {
               history.push('/error');

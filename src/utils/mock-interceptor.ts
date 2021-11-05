@@ -10,8 +10,10 @@ import {
   mockPersonDetailed,
   mockPublicationCount,
   mockSavedPublication,
+  mockUnits,
   responseCountryInstitutionCN,
   responseCountryInstitutionIT,
+  resultInstitutionNTNU,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
@@ -37,19 +39,25 @@ export const interceptRequestsOnMock = () => {
   //patching the publication
   mock.onPatch(new RegExp(`${PIA_REST_API}/sentralimport/publication.*`)).reply(200);
 
+  //get cristin institutions by id
+  mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/([1-9][0-9]*).*`)).reply(200, resultInstitutionNTNU);
+  //crisrest-utv.dataporten-api.no/institutions/7492?lang=en
+
+  //get country institutions
+  mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/country/CN.*`)).reply(200, [responseCountryInstitutionCN]);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/country/IT.*`)).reply(200, [responseCountryInstitutionIT]);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/country/.*`)).reply(200, [responseCountryInstitutionIT]);
   //get cristin institutions
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions\\?cristin_institution=true.*`)).reply(200, mockInstitutions);
+
+  //get institution units
+  mock.onGet(new RegExp(`${CRIST_REST_API}/units/.*`)).reply(200, mockUnits);
 
   //save publication
   mock.onPost(new RegExp(`${CRIST_REST_API}/results`)).reply(200, mockSavedPublication);
 
   //get all categories
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/categories.*`)).reply(200, mockAllCategories);
-
-  //get country institutions
-  mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/country/CN.*`)).reply(200, [responseCountryInstitutionCN]);
-  mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/country/IT.*`)).reply(200, [responseCountryInstitutionIT]);
-  mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/country/.*`)).reply(200, [responseCountryInstitutionIT]);
 
   //doi-search
   mock.onGet(new RegExp(`${CRIST_REST_API}/results\\?doi.*`)).reply(200, []);

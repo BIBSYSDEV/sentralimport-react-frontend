@@ -56,6 +56,54 @@ export const mockInstitutions = [
   },
 ];
 
+export const resultInstitutionNTNU = {
+  cristin_institution_id: '194',
+  institution_name: {
+    en: 'Norwegian University of Science and Technology',
+  },
+  acronym: 'NTNU',
+  country: 'NO',
+  cristin_user_institution: true,
+  corresponding_unit: {
+    cristin_unit_id: '194.0.0.0',
+    url: 'https://api.cristin.no/v2/units/194.0.0.0',
+  },
+};
+
+export const mockUnits = {
+  cristin_unit_id: '194.67.40.0',
+  unit_name: {
+    en: 'Department of Psychology',
+  },
+  institution: {
+    cristin_institution_id: '194',
+    url: 'https://api.cristin.no/v2/institutions/194',
+  },
+  parent_unit: {
+    cristin_unit_id: '194.67.0.0',
+    unit_name: {
+      en: 'Faculty of Social and Educational Sciences',
+    },
+    url: 'https://api.cristin.no/v2/units/194.67.0.0',
+  },
+  parent_units: [
+    {
+      cristin_unit_id: '194.0.0.0',
+      unit_name: {
+        en: 'Norwegian University of Science and Technology',
+      },
+      url: 'https://api.cristin.no/v2/units/194.0.0.0',
+    },
+    {
+      cristin_unit_id: '194.67.0.0',
+      unit_name: {
+        en: 'Faculty of Social and Educational Sciences',
+      },
+      url: 'https://api.cristin.no/v2/units/194.67.0.0',
+    },
+  ],
+};
+
 export const mockImportPublication1 = {
   pubId: 591850,
   category: 'ARTICLE',

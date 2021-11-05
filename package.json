@@ -3,6 +3,7 @@
   "version": "1.2-SNAPSHOT",
   "private": true,
   "scripts": {
+    "audit": " npm audit -production",
     "build": "react-scripts build",
     "build:sandbox": "env-cmd -f .env.sandbox react-scripts build",
     "build:test": "env-cmd -f .env.test react-scripts build",
@@ -41,7 +42,6 @@
     "react-dom": "^17.0.2",
     "react-router": "^5.2.1",
     "react-router-dom": "^5.3.0",
-    "react-scripts": "^4.0.3",
     "react-select": "^5.1.0",
     "reactstrap": "^8.0.1"
   },
@@ -57,6 +57,7 @@
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.1",
     "preval.macro": "^5.0.0",
+    "react-scripts": "^4.0.3",
     "start-server-and-test": "^1.14.0",
     "typescript": "~4.4.4"
   }
