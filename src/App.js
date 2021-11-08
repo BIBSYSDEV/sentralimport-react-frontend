@@ -1,11 +1,8 @@
 import React, { useContext, useEffect } from 'react';
-import './App.css';
-import QuantityTable from './Components/Panel/QuantityTable';
 import ImportTable from './Components/ImportTable/ImportTable';
 import Grid from '@material-ui/core/Grid/Grid';
 import FilterFormPanel from './Components/FilterForm/FilterFormPanel';
 import Header from './Components/Header/Header';
-import { Box } from '@material-ui/core';
 import './assets/styles/buttons.scss';
 import { useHistory } from 'react-router-dom';
 import LogPanel from './Components/Log/LogPanel';
@@ -14,6 +11,25 @@ import axios from 'axios';
 import { Context } from './Context';
 import { CRIST_REST_API, USE_MOCK_DATA } from './utils/constants';
 import PublicationYearPanel from './Components/DropdownPanel/PublicationYearPanel';
+import styled from 'styled-components';
+
+const StyledApp = styled.div`
+  text-align: center;
+  font-family: 'PT Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledBody = styled.div`
+  display: 'flex';
+  width: '100%';
+  flex-grow: '1';
+`;
+
+const StyledGrid = styled(Grid)`
+  max-width: '100%';
+`;
 
 export default function App() {
   let history = useHistory();
@@ -53,31 +69,22 @@ export default function App() {
   }
 
   return isAuthorized ? (
-    <div className="App">
+    <StyledApp>
       <Header />
-      <Grid container spacing={3}>
-        <Box clone order={{ xs: 2, md: 1 }}>
+      <StyledBody>
+        <StyledGrid container spacing={3}>
           <Grid item xs={12} md={3}>
             <PublicationYearPanel />
+            <FilterFormPanel />
+            <LogPanel />
           </Grid>
-        </Box>
-        <Box clone order={{ xs: 1, md: 2 }}>
           <Grid item xs={12} md={9}>
-            <QuantityTable />
+            <ImportTable />
           </Grid>
-        </Box>
-      </Grid>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={3}>
-          <FilterFormPanel />
-          <LogPanel />
-        </Grid>
-        <Grid item xs={12} md={9}>
-          <ImportTable />
-        </Grid>
-      </Grid>
+        </StyledGrid>
+      </StyledBody>
       <Footer />
-    </div>
+    </StyledApp>
   ) : (
     <></>
   );

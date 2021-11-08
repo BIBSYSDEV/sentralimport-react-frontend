@@ -26,6 +26,9 @@ export default function LogoHeader() {
   const pageHeaderStyle = {
     backgroundColor: '#f5f5f5',
     // borderBottom: '1px solid #666666',
+    marginRight: '0',
+    marginLeft: '0',
+    maxWidth: '100%',
   };
 
   return (

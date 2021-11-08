@@ -18,6 +18,7 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { Markup } from 'interweave';
 import { PIA_REST_API } from '../../utils/constants';
+import { parseTitle } from '../../utils/stringUtils';
 
 export default function ResultModal(props) {
   const [innerModal, setInnerModal] = React.useState(false);
@@ -71,21 +72,6 @@ export default function ResultModal(props) {
           history.push('/error');
         }
       });
-  }
-
-  function parseTitle(title) {
-    let cleanTitle = title;
-    while (cleanTitle.indexOf('&lt;') !== -1) {
-      cleanTitle = cleanTitle.replace('&lt;', '<');
-      cleanTitle = cleanTitle.replace('&gt;', '>');
-    }
-
-    if (cleanTitle.indexOf('<inf>') || cleanTitle.indexOf('</inf>')) {
-      cleanTitle = cleanTitle.replace('<inf>', '<sub>');
-      cleanTitle = cleanTitle.replace('</inf>', '</sub>');
-    }
-
-    return cleanTitle;
   }
 
   return (

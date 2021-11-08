@@ -3,6 +3,7 @@ module.exports = {
   extends: [
     'react-app', // Create React App base settings
     'eslint:recommended', // recommended ESLint rules
+    'plugin:cypress/recommended', // avoid showing cypress variables as error
     'plugin:@typescript-eslint/recommended', // recommended rules from @typescript-eslint/eslint-plugin
     'plugin:prettier/recommended', // Enables eslint-plugin-prettier and eslint-config-prettier. This will display Prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
   ],
@@ -14,6 +15,7 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'off', //TODO: bør fikses, men kan medføre uønskede løkker.
     'no-debugger': 'warn',
     'prettier/prettier': 'error',
+    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off', //TODO: burde hatt noen typer
   },
 };
