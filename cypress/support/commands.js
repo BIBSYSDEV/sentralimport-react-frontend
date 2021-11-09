@@ -9,4 +9,6 @@ Cypress.Commands.add('login', () => {
   window.localStorage.setItem('access_token', 'mock-token');
   window.localStorage.setItem('nonce', 'mock-nonce');
   window.localStorage.setItem('expires', epoch);
+  window.localStorage.removeItem('tempContributors');
+  window.localStorage.removeItem('tempPublication');
 });

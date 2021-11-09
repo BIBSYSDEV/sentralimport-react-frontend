@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom';
 import ListModal from '../ListModal/ListModal';
 import { PIA_REST_API } from '../../utils/constants';
 import EnhancedTableHead from './EnhancedTableHead';
-import { ImportData, Order } from '../../types/importTableTypes';
+import { ImportData, Order } from '../../types/PublicationTypes';
 import ImportTableListItem from './ImportTableListItem';
 import PlaceHolderListItem from './PlaceHolderListItem';
 import AuthorList from './AuthorList';

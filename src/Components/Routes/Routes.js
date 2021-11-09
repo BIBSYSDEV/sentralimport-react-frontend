@@ -8,8 +8,8 @@ export default function Routes() {
   return (
     <div>
       <Route exact path="/" component={App} />
-      <Route path="/login" component={Login} />
-      <Route path="/error" component={Error} />
+      <Route exact path="/login" component={Login} />
+      <Route exact path="/error" component={Error} />
     </div>
   );
 }

@@ -62,11 +62,4 @@ context('application', () => {
     cy.get(`[data-testid="contributor-save-button-0"]`).click();
     cy.get(`[data-testid="contributor-for-import-wrapper-0"`).contains('China (Ukjent institusjon');
   });
-
-  it('can open an publication without doi', () => {
-    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
-    cy.get(`[data-testid="result-modal-ok-button"]`).click();
-    cy.get(`[data-testid="doi-to-be-saved-textfield"]`).should('have.value', '');
-    cy.get(`[data-testid="import-publication-button"]`).should('exist').should('not.be.disabled');
-  });
 });

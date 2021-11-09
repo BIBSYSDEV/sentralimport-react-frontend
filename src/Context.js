@@ -3,6 +3,7 @@ import React from 'react';
 let Context = React.createContext();
 let currentYear = new Date().getFullYear();
 let currentDate = new Date();
+//TODO: legg inn type på selectedpublication
 let initialState = {
   currentImportYear:
     currentDate.getMonth() < 3
