@@ -1,5 +1,3 @@
-import Cypress from '../../cypress.json';
-
 Cypress.Commands.add('login', () => {
   const date = new Date();
   date.setDate(date.getDate() + 1);
