@@ -23,6 +23,7 @@ import {
   ImportData,
   Language,
 } from '../../types/PublicationTypes';
+import clone from 'just-clone';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -127,8 +128,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const { enqueueSnackbar } = useSnackbar();
   const { useRef, useLayoutEffect } = React;
   const { state, dispatch } = useContext(Context);
-  const sortedLanguagesFromImportPublication = importPublication.languages
-    ?.sort((a: any, b: any) => a.original - b.original)
+  const sortedLanguagesFromImportPublication = clone(importPublication)
+    .languages?.sort((a: any, b: any) => a.original - b.original)
     .reverse();
   const [languages, setLanguages] = useState(sortedLanguagesFromImportPublication);
   const [selectedLang, setSelectedLang] = useState<Language | undefined>(
