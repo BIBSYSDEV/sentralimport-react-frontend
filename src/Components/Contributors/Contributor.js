@@ -8,6 +8,14 @@ import axios from 'axios';
 import { withSnackbar } from 'notistack';
 import '../../assets/styles/common.scss';
 import { CRIST_REST_API } from '../../utils/constants';
+import {
+  getInstitutionName,
+  getInstitutionUnitNameBasedOnIDAndInstitutionStatus,
+  getPersonDetailById,
+  SearchLanguage,
+  searchPersonDetailById,
+  searchPersonDetailByName,
+} from '../../api/contributorApi';
 
 const searchLanguage = 'en';
 
@@ -87,7 +95,7 @@ function Contributor(props) {
     let duplicate = 0;
     if (selectedUnit) {
       for (let i = 0; i < affiliationCopy.length; i++) {
-        if (affiliationCopy[i].hasOwnProperty('units')) {
+        if (affiliationCopy[i].units) {
           for (let h = 0; h < affiliationCopy[i].units.length; h++) {
             if (affiliationCopy[i].units[h].unitNr === selectedUnit.value) {
               duplicate++;
@@ -152,7 +160,7 @@ function Contributor(props) {
   function addUnit(affiliationCopy) {
     for (let i = 0; i < affiliationCopy.length; i++) {
       if (parseInt(affiliationCopy[i].cristinInstitutionNr) === parseInt(selectedInstitution.cristinInstitutionNr)) {
-        if (affiliationCopy[i].hasOwnProperty('units')) {
+        if (affiliationCopy[i].units) {
           affiliationCopy[i].units.push({
             unitName: selectedUnit.label,
             unitNr: selectedUnit.value,
@@ -170,7 +178,7 @@ function Contributor(props) {
   }
 
   function handleChange(event, obj, property) {
-    if (!obj.hasOwnProperty('authorName')) {
+    if (!obj.authorName) {
       obj.authorName = '';
     }
 
@@ -189,71 +197,47 @@ function Contributor(props) {
     props.updateData(obj, rowIndex);
   }
 
-  let institutionNames = {};
-  async function fetchInstitutionName(institutionId) {
-    if (institutionId === '0') return ' ';
-    if (institutionNames[institutionId] === undefined) {
-      let institution = await axios.get(
-        CRIST_REST_API + '/institutions/' + institutionId + '?lang=' + searchLanguage,
-        JSON.parse(localStorage.getItem('config'))
-      );
-      institutionNames[institutionId] = institution.data.institution_name.en || institution.data.institution_name.nb;
-    }
-    return institutionNames[institutionId];
-  }
-
-  let unitNames = {};
-  async function fetchUnitName(unitId) {
-    if (unitId === '0') return ' ';
-    if (unitNames[unitId] === undefined) {
-      let unit = await axios.get(
-        CRIST_REST_API + '/units/' + unitId + '?lang=en',
-        JSON.parse(localStorage.getItem('config'))
-      );
-      unitNames[unitId] = unit.data.unit_name.en || unit.data.unit_name.nb;
-    }
-    return unitNames[unitId];
-  }
-
   async function retrySearch(data) {
+    let unitNameCache = new Map();
+    let institutionNameCache = new Map();
     try {
-      let authorResults = await axios.get(
-        CRIST_REST_API +
-          '/persons/' +
-          (data.imported.hasOwnProperty('cristin_person_id') && data.imported.cristin_person_id !== 0
-            ? '?id=' + data.imported.cristin_person_id
-            : '?name=' + data.toBeCreated.first_name + ' ' + data.toBeCreated.surname),
-        JSON.parse(localStorage.getItem('config'))
-      );
+      const authorResults =
+        data.imported.cristin_person_id && data.imported.cristin_person_id !== 0
+          ? await searchPersonDetailById(data.imported.cristin_person_id)
+          : await searchPersonDetailByName(`${data.toBeCreated.first_name} ${data.toBeCreated.surname}`);
+
       if (authorResults.data.length > 0) {
         let fetchedAuthors = [];
         let tempAffiliations = [];
         for (let i = 0; i < authorResults.data.length; i++) {
-          let fetchedAuthor = await axios.get(
-            CRIST_REST_API + '/persons/' + authorResults.data[i].cristin_person_id,
-            JSON.parse(localStorage.getItem('config'))
-          );
-          for (let h = 0; h < fetchedAuthor.data.affiliations.length; h++) {
+          const fetchedAuthor = (await getPersonDetailById(authorResults.data[i].cristin_person_id)).data;
+          const activeAffiliations = fetchedAuthor.affiliations.filter((affiliation) => affiliation.active);
+          for (let h = 0; h < activeAffiliations.length; h++) {
+            const institutionNameAndCache = await getInstitutionName(
+              activeAffiliations[h].institution.cristin_institution_id,
+              SearchLanguage.Eng,
+              institutionNameCache
+            );
+            institutionNameCache = institutionNameAndCache.cachedInstitutionResult;
+            const unitNameAndCache = await getInstitutionUnitNameBasedOnIDAndInstitutionStatus(
+              activeAffiliations[h],
+              unitNameCache
+            );
+            unitNameCache = unitNameAndCache.cache;
             tempAffiliations[h] = {
-              institutionName: await fetchInstitutionName(
-                fetchedAuthor.data.affiliations[h].institution.cristin_institution_id
-              ),
-              cristinInstitutionNr: fetchedAuthor.data.affiliations[h].institution.cristin_institution_id,
+              institutionName: institutionNameAndCache.institutionName,
+              cristinInstitutionNr: activeAffiliations[h].institution.cristin_institution_id,
               isCristinInstitution: true,
               units: [
                 {
-                  unitName: fetchedAuthor.data.affiliations[h].hasOwnProperty('unit')
-                    ? await fetchUnitName(fetchedAuthor.data.affiliations[h].unit.cristin_unit_id)
-                    : '',
-                  unitNr: fetchedAuthor.data.affiliations[h].hasOwnProperty('unit')
-                    ? fetchedAuthor.data.affiliations[h].unit.cristin_unit_id
-                    : '',
+                  unitName: unitNameAndCache.unitName,
+                  unitNr: activeAffiliations[h].unit ? activeAffiliations[h].unit.cristin_unit_id : '',
                 },
               ],
             };
           }
-          fetchedAuthor.data.affiliations = await filterInstitutions(tempAffiliations);
-          fetchedAuthors.push(fetchedAuthor.data);
+          fetchedAuthor.affiliations = await filterInstitutions(tempAffiliations);
+          fetchedAuthors.push(fetchedAuthor);
         }
         props.enqueueSnackbar('Fant ' + fetchedAuthors.length + ' bidragsytere', { variant: 'success' });
         setSearchResults(fetchedAuthors);
@@ -285,10 +269,10 @@ function Contributor(props) {
     temp.cristin.order = rowIndex + 1;
 
     temp.toBeCreated = author;
-    if (temp.toBeCreated.hasOwnProperty('first_name_preferred')) {
+    if (temp.toBeCreated.first_name_preferred) {
       temp.toBeCreated.first_name = temp.toBeCreated.first_name_preferred;
     }
-    if (temp.toBeCreated.hasOwnProperty('surname_preferred')) {
+    if (temp.toBeCreated.surname_preferred) {
       temp.toBeCreated.surname = temp.toBeCreated.surname_preferred;
     }
     temp.toBeCreated.isEditing = false;
@@ -337,7 +321,7 @@ function Contributor(props) {
             id={'authorName' + props.index}
             label="Forfatternavn"
             value={
-              data.toBeCreated.hasOwnProperty('authorName')
+              data.toBeCreated.authorName
                 ? data.toBeCreated.authorName
                 : data.toBeCreated.surname + ', ' + data.toBeCreated.first_name
             }
@@ -351,7 +335,7 @@ function Contributor(props) {
             .map((inst, index) => (
               <Card variant="outlined" key={index} style={{ padding: '0.5rem', marginBottom: '0.5rem' }}>
                 <Typography style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>{inst.institutionName}</Typography>
-                {inst.hasOwnProperty('units') && (
+                {inst.units && (
                   <ul style={{ marginBottom: 0 }}>
                     {inst.units.map(
                       (unit, unitIndex) =>
@@ -456,7 +440,7 @@ function Contributor(props) {
               <div style={{ fontStyle: 'italic' }} key={instIndex}>
                 <p key={instIndex}>{inst.institutionName}</p>
                 <ul style={{ marginBottom: '0.3rem' }}>
-                  {inst.hasOwnProperty('units') &&
+                  {inst.units &&
                     inst.units.map(
                       (unit, unitIndex) =>
                         unit.unitName !== inst.institutionName && <li key={unitIndex}>{unit.unitName}</li>
