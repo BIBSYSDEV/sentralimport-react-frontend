@@ -39,30 +39,6 @@ context('application', () => {
     cy.get('[data-testid="import-table-panel"]').contains(mockImportPublication1.languages[0].title);
   });
 
-  it('saves contributor with foreign institution with cristin-id - institution should be kept', () => {
-    cy.get('[data-testid="doi-filter"]').type(mockImportPublication1.doi);
-    cy.get(`[data-testid="import-table-row-${mockImportPublication1.pubId}"]`).click();
-    cy.get(`[data-testid="result-modal-ok-button"]`).click();
-    cy.get(`[data-testid="open-contributors-modal-button"]`).click();
-    //institusjon skal ikke skifte navn
-    cy.get(`[data-testid="contributor-form-0"`).contains(
-      mockImportPublication1.authors[0].institutions[0].institutionName
-    );
-    cy.get(`[data-testid="contributor-save-button-0"]`).click();
-    cy.get(`[data-testid="contributor-for-import-wrapper-0"`).contains(
-      mockImportPublication1.authors[0].institutions[0].institutionName
-    );
-  });
-
-  it('saves contributor with foreign institution without cristin-id - institution should be replaced by nationality', () => {
-    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
-    cy.get(`[data-testid="result-modal-ok-button"]`).click();
-    cy.get(`[data-testid="open-contributors-modal-button"]`).click();
-    cy.get(`[data-testid="contributor-form-0"`).contains('China (Ukjent institusjon');
-    cy.get(`[data-testid="contributor-save-button-0"]`).click();
-    cy.get(`[data-testid="contributor-for-import-wrapper-0"`).contains('China (Ukjent institusjon');
-  });
-
   it('can open an publication without doi', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get(`[data-testid="result-modal-ok-button"]`).click();

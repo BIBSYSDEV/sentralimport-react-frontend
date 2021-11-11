@@ -430,6 +430,8 @@ function Contributor(props) {
     );
   }
 
+  console.log(data);
+
   return (
     <div className="content-wrapper">
       {!data.isEditing ? (
@@ -443,7 +445,13 @@ function Contributor(props) {
                   {inst.units &&
                     inst.units.map(
                       (unit, unitIndex) =>
-                        unit.unitName !== inst.institutionName && <li key={unitIndex}>{unit.unitName}</li>
+                        unit.unitName !== inst.institutionName && (
+                          <li
+                            data-testid={`institution-${inst.cristinInstitutionNr}-unit-${unit.unitNr}-list-item`}
+                            key={unitIndex}>
+                            {unit.unitName}
+                          </li>
+                        )
                     )}
                 </ul>
               </div>
