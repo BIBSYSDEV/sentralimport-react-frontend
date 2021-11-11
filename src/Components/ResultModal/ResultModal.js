@@ -10,7 +10,6 @@ import {
   ModalFooter,
   ModalHeader,
 } from 'reactstrap';
-import InnerModal from '../InnerModal/InnerModal';
 import { Duplicates } from './Duplicates';
 import { Context } from '../../Context';
 import '../../assets/styles/Results.scss';
@@ -18,6 +17,7 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { Markup } from 'interweave';
 import { PIA_REST_API } from '../../utils/constants';
+import ComparePublicationDataModal from '../InnerModal/ComparePublicationDataModal';
 import { parseTitle } from '../../utils/stringUtils';
 
 export default function ResultModal(props) {
@@ -115,13 +115,13 @@ export default function ResultModal(props) {
         </Button>
       </ModalFooter>
 
-      <InnerModal
-        open={innerModal}
-        toggle={handleClose.bind(this)}
-        data={props.data}
-        cristinpub={state.selectedPublication}
-        duplicate={isDuplicate}
-        close={props.handleClose}
+      <ComparePublicationDataModal
+        isModalOpen={innerModal}
+        handleClose={handleClose.bind(this)}
+        importPublication={props.data}
+        cristinPublication={state.selectedPublication}
+        handleClose2={props.handleClose}
+        isDuplicate={isDuplicate}
       />
     </Modal>
   );

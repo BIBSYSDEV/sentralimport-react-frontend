@@ -248,11 +248,12 @@ export default function ConfirmationDialog(props) {
         <DialogContentText>Er du sikker på at du vil importere denne publikasjonen?</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button color="secondary" onClick={props.handleCloseDialog}>
+        <Button color="secondary" onClick={props.handleCloseDialog} variant="outlined">
           Avbryt
         </Button>
         <Button
           color="primary"
+          variant="contained"
           onClick={() => {
             props.duplicate
               ? patch().then((response) => props.handleClose(response))

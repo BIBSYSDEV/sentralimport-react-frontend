@@ -22,20 +22,19 @@ const StyledApp = styled.div`
 `;
 
 const StyledBody = styled.div`
-  display: 'flex';
-  width: '100%';
-  flex-grow: '1';
+  display: flex;
+  width: 100%;
+  flex-grow: 1;
 `;
 
 const StyledGrid = styled(Grid)`
-  max-width: '100%';
+  max-width: 100%;
 `;
 
 export default function App() {
   let history = useHistory();
   let { dispatch } = useContext(Context);
   const isAuthorized = localStorage.getItem('authorized') === 'true' || USE_MOCK_DATA;
-
   //fetches instututions to populate drop-down lists
   useEffect(() => {
     const getInstitutions = async () => {

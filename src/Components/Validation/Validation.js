@@ -177,7 +177,7 @@ export default function Validation(props) {
   return state.formErrors.length > 0 ? (
     <div> Kan ikke importere. Dobbeltsjekk alle påkrevde felter. {state.formErrors} </div>
   ) : (
-    ''
+    <span></span>
   );
 }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Author } from '../../types/importTableTypes';
+import { Author } from '../../types/PublicationTypes';
 import { Typography } from '@material-ui/core';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import styled from 'styled-components';

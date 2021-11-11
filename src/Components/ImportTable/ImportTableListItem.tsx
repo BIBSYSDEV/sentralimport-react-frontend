@@ -6,7 +6,7 @@ import { Markup } from 'interweave';
 import { parseTitle } from '../../utils/stringUtils';
 import IconButton from '@material-ui/core/IconButton';
 import PeopleIcon from '@material-ui/icons/People';
-import { Author, ImportData } from '../../types/importTableTypes';
+import { Author, ImportData } from '../../types/PublicationTypes';
 import ResultIcon from '../../assets/icons/result-active.svg';
 import { Typography } from '@material-ui/core';
 

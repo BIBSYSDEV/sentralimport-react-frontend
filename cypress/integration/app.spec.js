@@ -38,11 +38,4 @@ context('application', () => {
     cy.get('[data-testid="doi-filter"]').type(mockImportPublication1.doi);
     cy.get('[data-testid="import-table-panel"]').contains(mockImportPublication1.languages[0].title);
   });
-
-  it('can open an publication without doi', () => {
-    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
-    cy.get(`[data-testid="result-modal-ok-button"]`).click();
-    cy.get(`[data-testid="doi-to-be-saved-textfield"]`).should('have.value', '');
-    cy.get(`[data-testid="import-publication-button"]`).should('exist').should('not.be.disabled');
-  });
 });
