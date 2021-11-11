@@ -430,8 +430,6 @@ function Contributor(props) {
     );
   }
 
-  console.log(data);
-
   return (
     <div className="content-wrapper">
       {!data.isEditing ? (

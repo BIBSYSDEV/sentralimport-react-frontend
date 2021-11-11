@@ -57,7 +57,6 @@ function ContributorModal(props) {
 
   useLayoutEffect(() => {
     async function fetch() {
-      console.log('contributor model fetch method invoked');
       setFetched(false);
 
       let contributors = [];
