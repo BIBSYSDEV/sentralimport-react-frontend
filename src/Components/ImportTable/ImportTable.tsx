@@ -3,7 +3,7 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import axios from 'axios';
 import { Context } from '../../Context';
-import ResultModal from '../ResultModal/ResultModal';
+import DuplicateCheckModal from '../DuplicateCheck/DuplicateCheckModal';
 import Pagination from '../Pagination/Pagination';
 import '../../assets/styles/Results.scss';
 import '../../assets/styles/Imports.css';
@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom';
 import ListModal from '../ListModal/ListModal';
 import { PIA_REST_API } from '../../utils/constants';
 import EnhancedTableHead from './EnhancedTableHead';
-import { ImportData, Order } from '../../types/PublicationTypes';
+import { emptyImportPublication, ImportData, Order } from '../../types/PublicationTypes';
 import ImportTableListItem from './ImportTableListItem';
 import PlaceHolderListItem from './PlaceHolderListItem';
 import AuthorList from './AuthorList';
@@ -35,11 +35,11 @@ const StyledTableWrapper = styled.div`
 `;
 
 const StyledToolBarTitle = styled.div`
-  flex: '0 0 auto';
+  flex: 0 0 auto;
 `;
 
 const StyledToolBarSpacer = styled.div`
-  flex: '1 1 100%';
+  flex: 1 1 100%;
 `;
 
 const StyledToolBarActions = styled.div`
@@ -81,7 +81,7 @@ const EnhancedTableToolbar = () => {
 
 export default function ImportTable(this: any) {
   const { state, dispatch } = useContext(Context);
-  const [modalData, setModalData] = useState<ImportData>();
+  const [modalData, setModalData] = useState<ImportData>(emptyImportPublication);
   const [order, setOrder] = useState(state.currentSortOrder);
   const [orderBy, setOrderBy] = useState(state.currentSortValue);
   const [page] = useState(state.currentPageNr);
@@ -349,7 +349,11 @@ export default function ImportTable(this: any) {
     return rows.length > 0 ? (
       <div>
         {createTable(body)}
-        <ResultModal open={open} data={modalData} handleClose={handleClose.bind(this)} />
+        <DuplicateCheckModal
+          isDuplicateCheckModalOpen={open}
+          importPublication={modalData}
+          handleDuplicateCheckModalClose={handleClose.bind(this)}
+        />
         <ListModal
           title={'Forfatterliste'}
           open={authorList}

@@ -224,7 +224,9 @@ function ContributorModal(props) {
         });
       } else {
         const institutionNameAndCache = await getInstitutionName(
-          author.affiliations[i].institution.cristin_institution_id
+          author.affiliations[i].institution.cristin_institution_id,
+          SearchLanguage.Eng,
+          institutionNameCache
         );
         institutionNameCache = institutionNameAndCache.cachedInstitutionResult;
         affiliations.push({

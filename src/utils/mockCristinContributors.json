@@ -1,0 +1,62 @@
+[
+  {
+    "cristin_person_id": "1258486",
+    "result_id": "1863452",
+    "first_name": "Diego F.",
+    "surname": "Morales-Briones",
+    "order": 0,
+    "affiliations": [
+      {
+        "role_code": "AUTHOR",
+        "role": {
+          "code": "AUTHOR",
+          "name": {
+            "nb": "Forfatter"
+          }
+        },
+        "institution": {
+          "cristin_institution_id": "68400851",
+          "url": "https://api.cristin.no/v2/institutions/68400851"
+        },
+        "unit": {
+          "cristin_unit_id": "68400851.0.0.0",
+          "unit_name": {
+            "nb": "University of Minnesota at Morris"
+          },
+          "url": "https://api.cristin.no/v2/units/68400851.0.0.0"
+        }
+      }
+    ],
+    "url": "https://api.cristin.no/v2/persons/1258486"
+  },
+  {
+    "cristin_person_id": "1169219",
+    "result_id": "1863452",
+    "first_name": "Berit",
+    "surname": "Gehrke",
+    "order": 1,
+    "affiliations": [
+      {
+        "role_code": "AUTHOR",
+        "role": {
+          "code": "AUTHOR",
+          "name": {
+            "nb": "Forfatter"
+          }
+        },
+        "institution": {
+          "cristin_institution_id": "184",
+          "url": "https://api.cristin.no/v2/institutions/184"
+        },
+        "unit": {
+          "cristin_unit_id": "184.34.40.0",
+          "unit_name": {
+            "nb": "UM, avd. naturhistorie"
+          },
+          "url": "https://api.cristin.no/v2/units/184.34.40.0"
+        }
+      }
+    ],
+    "url": "https://api.cristin.no/v2/persons/1169219"
+  }
+]

@@ -3,7 +3,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import Checkbox from '@material-ui/core/Checkbox';
 import { Markup } from 'interweave';
-import { parseTitle } from '../../utils/stringUtils';
+import { cleanTitleForMarkup } from '../../utils/stringUtils';
 import IconButton from '@material-ui/core/IconButton';
 import PeopleIcon from '@material-ui/icons/People';
 import { Author, ImportData } from '../../types/PublicationTypes';
@@ -111,7 +111,7 @@ export default function ImportTableListItem({
           </div>
           <div className="content-wrapper">
             <h6 className={`result-title`}>
-              <Markup content={parseTitle(filterTitle(importData) ?? '')} />
+              <Markup content={cleanTitleForMarkup(filterTitle(importData) ?? '')} />
             </h6>
             <div className={`metadata`}>
               {importData.authors.slice(0, 5).map((author) => author.authorName + '; ')}

@@ -5,21 +5,30 @@ export enum Order {
 
 export interface ImportData {
   duplicate?: boolean;
-  cristin_id: boolean;
+  externalId: string;
+  cristin_id?: boolean;
   category?: any;
-  externalId?: string;
   pubId: string;
   authors: Author[];
-  yearPublished?: string;
+  yearPublished: string;
   channel: Channel;
   doi?: string;
   categoryName: string;
   sourceName: string;
   registered: string;
-  languages?: Language[];
+  externalCategory: string;
+  languages: Language[];
 }
 
 export interface CristinPublication {
+  authorTotalCount: any;
+  authors: any;
+  international_standard_numbers?: InternationalStandardNumber[];
+  publisher: any;
+  year_published: any;
+  category: any;
+  title: any;
+  original_language?: any;
   created: {
     date: string;
   };
@@ -27,6 +36,8 @@ export interface CristinPublication {
 }
 
 export interface Author {
+  first_name?: string;
+  surname?: string;
   authorName: string;
   sequenceNr: number;
   institutions: institution[];
@@ -34,6 +45,7 @@ export interface Author {
 }
 
 export interface Channel {
+  issns?: any; //?????
   issn?: string;
   eissn?: string;
   cristinTidsskriftNr?: string;
@@ -42,6 +54,11 @@ export interface Channel {
   volume?: string;
   pageFrom?: string;
   pageTo?: string;
+}
+
+export interface InternationalStandardNumber {
+  type: string;
+  value: string;
 }
 
 export interface institution {
@@ -56,6 +73,9 @@ export interface Language {
 }
 
 export const emptyImportPublication: ImportData = {
+  externalCategory: '',
+  externalId: '',
+  yearPublished: '',
   channel: {
     title: '',
   },

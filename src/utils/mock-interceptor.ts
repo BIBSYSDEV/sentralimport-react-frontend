@@ -17,6 +17,11 @@ import {
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
+import mockCristinPublications from './mockCristinPublications.json';
+import mockCristinContributors from './mockCristinContributors.json';
+
+export const mockDoiForEmptyCristinSearch = '123456789';
+export const mockTitleForEmptyCristinSearch = 'this_is_a_mocked_title';
 
 // AXIOS INTERCEPTOR
 export const interceptRequestsOnMock = () => {
@@ -59,19 +64,30 @@ export const interceptRequestsOnMock = () => {
   //get all categories
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/categories.*`)).reply(200, mockAllCategories);
 
-  //doi-search
-  mock.onGet(new RegExp(`${CRIST_REST_API}/results\\?doi.*`)).reply(200, []);
-
   //get all journals
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=title.*`)).reply(200, mockAllJournals);
 
+  //doi-search
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results\\?doi=${mockDoiForEmptyCristinSearch}`)).reply(200, []);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results\\?doi.*`)).reply(200, mockCristinPublications);
+
+  //search with error //TODO
+  //supports this https://crisrest-utv.dataporten-api.no/results&per_page=5&category=ARTICLE&fields=all&lang=nb
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results&.*`)).reply(200, mockCristinPublications);
+
   //search for title
-  mock.onGet(new RegExp(`${CRIST_REST_API}/results\\?title=.*`)).reply(200, []);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results\\?title=${mockTitleForEmptyCristinSearch}.*`)).reply(200, []);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results\\?title=.*`)).reply(200, mockCristinPublications);
+
+  //get contributors for publication
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results/\\d+/contributors.*`)).reply(200, mockCristinContributors, {
+    'x-total-count': 32,
+  });
 
   //search with yearspan
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/results\\?published_since=.*&published_before=.*&category=ARTICLE`))
-    .reply(200, []);
+    .reply(200, mockCristinPublications);
 
   //search persons by name
   mock.onGet(new RegExp(`${CRIST_REST_API}/persons/\\?name.*`)).reply(200, [mockPerson]);

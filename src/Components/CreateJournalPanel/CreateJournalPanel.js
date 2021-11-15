@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Collapse } from 'react-bootstrap';
-import { Card, CardContent, FormGroup, Grid, TextField, Typography } from '@material-ui/core';
+import { Collapse } from 'react-bootstrap';
+import { Button, Card, CardContent, FormGroup, Grid, TextField, Typography } from '@material-ui/core';
 import '../../assets/styles/buttons.scss';
 
 function CreateJournalPanel(props) {
@@ -171,12 +171,12 @@ function CreateJournalPanel(props) {
               </div>
               <Grid container spacing={6} style={{ marginTop: '0.5rem' }}>
                 <Grid item>
-                  <Button variant="danger" onClick={() => handleClose()}>
+                  <Button variant="outlined" color="secondary" onClick={handleClose}>
                     Avbryt
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button variant="success" onClick={() => handleSubmit(totalFormErrors)}>
+                  <Button variant="contained" onClick={() => handleSubmit(totalFormErrors)}>
                     Opprett
                   </Button>
                 </Grid>

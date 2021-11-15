@@ -9,7 +9,7 @@ context('importModal', () => {
 
   it('can open an publication without doi', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
-    cy.get(`[data-testid="result-modal-ok-button"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
 
     cy.wait(500); //To make modal visible (tests works without, but is more difficult to view with cypress open)
     cy.get(`[data-testid="cristindata-doi-textfield"] input`).should('have.value', '');
@@ -18,7 +18,7 @@ context('importModal', () => {
 
   it('can show an importmodal with populated values', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
-    cy.get(`[data-testid="result-modal-ok-button"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
 
     cy.wait(500); //To make modal visible (tests works without, but is more difficult to view with cypress open)
 

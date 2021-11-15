@@ -15,6 +15,7 @@ Sett opp en ".env.local"-fil med innhold som kan kjøres lokalt.fex :
     REACT_APP_CLIENT_ID="ab940329-87f9-40dc-a129-bf9d4ae07917"
     REACT_APP_PIAREST_GATEWAY_SCOPE="gk_piarest-utv"
     REACT_APP_CRISREST_GATEWAY_SCOPE="gk_crisrest-utv"
+    REACT_APP_USE_MOCK=false
 
 For å starte applikasjonen kjør `npm start`. Applikasjonen vil da starte i development mode på [http://localhost:3000](http://localhost:3000)
 

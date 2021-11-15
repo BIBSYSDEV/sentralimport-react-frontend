@@ -16,14 +16,8 @@ import { CRIST_REST_API } from '../../utils/constants';
 import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
 import ActionButtons from './ActionButtons';
-import {
-  Channel,
-  CristinPublication,
-  emptyImportPublication,
-  ImportData,
-  Language,
-} from '../../types/PublicationTypes';
 import clone from 'just-clone';
+import { Channel, CristinPublication, ImportData, Language } from '../../types/PublicationTypes';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -84,7 +78,9 @@ const StyledLineHeader = styled(Typography)`
 const StyledLineLabelTypography: any = styled(Typography)`
   min-width: 10rem;
   width: 10%;
-  font-weight: bold;
+  && {
+    font-weight: bold;
+  }
 `;
 
 const StyledLineImportValue = styled.div`
@@ -106,34 +102,33 @@ interface Category {
 }
 
 interface ComparePublicationDataModalProps {
-  isModalOpen: boolean;
-  handleClose: () => void;
+  isComparePublicationDataModalOpen: boolean;
+  handleComparePublicationDataModalClose: () => void;
   importPublication: ImportData;
   cristinPublication: CristinPublication;
-  handleClose2: () => void;
+  handleDuplicateCheckModalClose: () => void;
   isDuplicate: boolean;
 }
 
-//TODO: erstatt react-select med ny funksjon for oppretting av tidsskrifter (react-creatable) og sett opp select for valg av kategori via dropdown
 //TODO: tidsskrift id er ikke med i duplikat. må derfor matche på issn i stedet?
 
 const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
-  isModalOpen,
-  handleClose,
-  importPublication = emptyImportPublication,
+  isComparePublicationDataModalOpen,
+  handleComparePublicationDataModalClose,
+  importPublication,
   cristinPublication,
-  handleClose2,
+  handleDuplicateCheckModalClose,
   isDuplicate,
 }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { useRef, useLayoutEffect } = React;
   const { state, dispatch } = useContext(Context);
   const sortedLanguagesFromImportPublication = clone(importPublication)
-    .languages?.sort((a: any, b: any) => a.original - b.original)
+    .languages.sort((a: any, b: any) => a.original - b.original)
     .reverse();
   const [languages, setLanguages] = useState(sortedLanguagesFromImportPublication);
   const [selectedLang, setSelectedLang] = useState<Language | undefined>(
-    importPublication.languages?.filter((lang: any) => lang.original)[0]
+    importPublication.languages.filter((lang: any) => lang.original)[0]
   );
   const [allContributorsFetched, setAllContributorsFetched] = useState(false);
   const [kilde, setKilde] = useState('');
@@ -244,8 +239,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       );
 
       setLanguages(
-        workedOn
-          ? publicationFromLocalStorage?.languages
+        workedOn && publicationFromLocalStorage
+          ? publicationFromLocalStorage.languages
           : isDuplicate
           ? [
               {
@@ -259,14 +254,14 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
       setSelectedLang(
         workedOn
-          ? publicationFromLocalStorage?.languages?.filter((language: any) => language.original)[0]
+          ? publicationFromLocalStorage?.languages.filter((language: any) => language.original)[0]
           : isDuplicate
           ? {
               title: state.selectedPublication.title[state.selectedPublication.original_language],
               lang: state.selectedPublication.original_language?.toUpperCase(),
               original: true,
             }
-          : importPublication.languages?.filter((language: any) => language.original)[0]
+          : importPublication.languages.filter((language: any) => language.original)[0]
       );
 
       setAarstall(
@@ -515,7 +510,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   function confirmImportToCristin(result: any) {
     setDialogOpen(false);
-    handleClose();
+    handleComparePublicationDataModalClose();
     if (result.status === 200) {
       enqueueSnackbar(
         'Importerte ny publikasjon med Cristin-id: ' + result.result.id + ' og tittel: ' + result.result.title,
@@ -537,7 +532,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         }
       );
     }
-    handleClose2();
+    handleDuplicateCheckModalClose();
     dispatch({ type: 'importDone', payload: !state.importDone });
     dispatch({ type: 'setContributorsLoaded', payload: false });
   }
@@ -545,11 +540,11 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   function abortToggle() {
     dispatch({ type: 'doSave', payload: false });
     setDialogAbortOpen(false);
-    handleClose();
+    handleComparePublicationDataModalClose();
     // props.enqueueSnackbar('Lukket publikasjon. Endringer har blitt lagret i browseren', {
     //   variant: 'warning',
     // });
-    handleClose2();
+    handleDuplicateCheckModalClose();
     dispatch({ type: 'setContributorErrors', payload: 0 });
     dispatch({ type: 'setContributorsLoaded', payload: false });
   }
@@ -644,7 +639,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   return (
     <div>
-      <StyledModal isOpen={isModalOpen} size="lg">
+      <StyledModal isOpen={isComparePublicationDataModalOpen} size="lg">
         <ModalBody>
           <StyledFormWrapper>
             <StyledHeaderLineWrapper>
@@ -711,7 +706,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                   className={`buttonGroup`}
                   size="small"
                   aria-label="language buttons">
-                  {languages?.map((lang: any, index: number) => (
+                  {languages.map((lang: any, index: number) => (
                     <Button
                       key={index}
                       variant="outlined"

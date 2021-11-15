@@ -1,14 +1,11 @@
-export function parseTitle(title: string) {
-  let cleanTitle = title;
-  while (cleanTitle.indexOf('&lt;') !== -1) {
-    cleanTitle = cleanTitle.replace('&lt;', '<');
-    cleanTitle = cleanTitle.replace('&gt;', '>');
+export function cleanTitleForMarkup(title: string) {
+  while (title.indexOf('&lt;') !== -1) {
+    title = title.replace('&lt;', '<');
+    title = title.replace('&gt;', '>');
   }
-
-  if (cleanTitle.indexOf('<inf>') || cleanTitle.indexOf('</inf>')) {
-    cleanTitle = cleanTitle.replace('<inf>', '<sub>');
-    cleanTitle = cleanTitle.replace('</inf>', '</sub>');
+  if (title.indexOf('<inf>') || title.indexOf('</inf>')) {
+    title = title.replace('<inf>', '<sub>');
+    title = title.replace('</inf>', '</sub>');
   }
-
-  return cleanTitle;
+  return title;
 }
