@@ -225,7 +225,7 @@ function ContributorModal(props) {
       } else {
         const institutionNameAndCache = await getInstitutionName(
           author.affiliations[i].institution.cristin_institution_id,
-          SearchLanguage.Eng,
+          SearchLanguage.En,
           institutionNameCache
         );
         institutionNameCache = institutionNameAndCache.cachedInstitutionResult;
@@ -692,7 +692,7 @@ async function searchContributors(authors) {
         for (let j = 0; j < activeAffiliations.length; j++) {
           const institutionNameAndCache = await getInstitutionName(
             activeAffiliations[j].institution.cristin_institution_id,
-            SearchLanguage.Eng,
+            SearchLanguage.En,
             institutionNameCache
           );
           institutionNameCache = institutionNameAndCache.cachedInstitutionResult;

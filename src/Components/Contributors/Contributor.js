@@ -215,7 +215,7 @@ function Contributor(props) {
           for (let h = 0; h < activeAffiliations.length; h++) {
             const institutionNameAndCache = await getInstitutionName(
               activeAffiliations[h].institution.cristin_institution_id,
-              SearchLanguage.Eng,
+              SearchLanguage.En,
               institutionNameCache
             );
             institutionNameCache = institutionNameAndCache.cachedInstitutionResult;

@@ -1,13 +1,5 @@
 import React, { FC, useState } from 'react';
-import {
-  Button,
-  Checkbox,
-  CircularProgress,
-  FormControlLabel,
-  FormGroup,
-  TextField,
-  Typography,
-} from '@material-ui/core';
+import { Button, Checkbox, FormControlLabel, FormGroup, TextField, Typography } from '@material-ui/core';
 import styled from 'styled-components';
 import { CristinPublication, ImportData } from '../../types/PublicationTypes';
 import { searchChristinPublications } from './SearchChristinPublications';
@@ -38,13 +30,16 @@ const StyledButtonWrapper = styled.div`
 interface SearchPanelProps {
   importPublication: ImportData;
   setDuplicateList: (results: CristinPublication[]) => void;
+  setIsSearching: (value: boolean) => void;
+  setFoundDuplicates: (value: boolean) => void;
 }
 
-const SearchPanel: FC<SearchPanelProps> = ({ importPublication, setDuplicateList }) => {
-  const [isSearching, setIsSearching] = useState(false);
-  const [foundDuplicates, setFoundDuplicates] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
-
+const SearchPanel: FC<SearchPanelProps> = ({
+  importPublication,
+  setDuplicateList,
+  setIsSearching,
+  setFoundDuplicates,
+}) => {
   const [doi, setDoi] = useState(importPublication.doi ?? '');
   const [isDoiChecked, setIsDoiChecked] = useState(false);
   const [title, setTitle] = useState(importPublication.languages && importPublication.languages[0].title);
@@ -94,7 +89,6 @@ const SearchPanel: FC<SearchPanelProps> = ({ importPublication, setDuplicateList
     setIsIssnChecked(false);
     setIsYearPublishedChecked(false);
     setDuplicateList([]);
-    setHasSearched(false);
   }
 
   async function retrySearch() {
@@ -118,7 +112,6 @@ const SearchPanel: FC<SearchPanelProps> = ({ importPublication, setDuplicateList
     if (results.length > 0) {
       setFoundDuplicates(true);
     }
-    setHasSearched(true);
     setIsSearching(false);
     setDuplicateList(results);
   }
@@ -262,18 +255,7 @@ const SearchPanel: FC<SearchPanelProps> = ({ importPublication, setDuplicateList
             onClick={retrySearch}>
             Søk på nytt
           </Button>
-          {isSearching && <CircularProgress style={{ marginLeft: '1rem' }} size={'1.5rem'} />}
         </StyledButtonWrapper>
-
-        {!isSearching &&
-          hasSearched &&
-          (foundDuplicates ? (
-            <Typography style={{ color: 'green' }}>Søket ga følgende treff</Typography>
-          ) : (
-            <Typography style={{ color: 'darkred' }}>
-              Det finnes ingen eksisterende publikasjoner som matcher søket
-            </Typography>
-          ))}
       </FormGroup>
     </StyledFormWrapper>
   );
