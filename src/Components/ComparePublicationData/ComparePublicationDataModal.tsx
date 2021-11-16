@@ -17,6 +17,7 @@ import { useSnackbar } from 'notistack';
 import ActionButtons from './ActionButtons';
 import clone from 'just-clone';
 import { Channel, CristinPublication, ImportData, Language } from '../../types/PublicationTypes';
+import CreateJournalPanel from '../CreateJournalPanel/CreateJournalPanel';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -437,6 +438,12 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     setContributorModal(false);
   }
 
+  const handleNewJournal = (newJournal: any) => {
+    setSelectedJournal({ label: newJournal.title, value: 0, issn: newJournal.issn, eissn: newJournal.eissn });
+    dispatch({ type: 'setSelectedField', payload: 'tidsskrift' });
+    dispatch({ type: 'setValidation', payload: newJournal.title });
+  };
+
   const copyTittel = () => {
     if (languages && importPublication.languages && selectedLang) {
       const originalTitle = importPublication.languages.filter((lang: any) => lang.lang === selectedLang.lang)[0].title;
@@ -783,7 +790,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                     <StyledErrorMessage>Tidsskrift mangler</StyledErrorMessage>
                   )}
                 </>
-                {/* TODO: doesnt work *<CreateJournalPanel handleCreateJournal={handleNewJournal} />*/}
+                <CreateJournalPanel handleCreateJournal={handleNewJournal} />
               </StyledLineCristinValue>
             </StyledLineWrapper>
 

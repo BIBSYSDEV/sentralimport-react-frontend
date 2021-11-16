@@ -45,7 +45,9 @@
     "react-router-dom": "^5.3.0",
     "react-select": "^5.1.0",
     "reactstrap": "^8.0.1",
-    "styled-components": "^5.3.3"
+    "styled-components": "^5.3.3",
+    "yup": "^0.32.11",
+    "formik": "^2.2.9"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.9.11",
