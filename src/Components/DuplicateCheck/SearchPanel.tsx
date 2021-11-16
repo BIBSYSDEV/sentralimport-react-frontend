@@ -51,7 +51,7 @@ const SearchPanel: FC<SearchPanelProps> = ({ importPublication, setDuplicateList
   const [titleChecked, setTitleChecked] = useState(false);
   const [yearPublished, setYearPublished] = useState(+(importPublication.yearPublished ?? 0));
   const [isYearPublishedChecked, setIsYearPublishedChecked] = useState(false);
-  const [issn, setIssn] = useState(importPublication.channel.issns ? importPublication.channel.issns[0] : '');
+  const [issn, setIssn] = useState(importPublication.channel?.issns ? importPublication.channel.issns[0] : '');
   const [isIssnChecked, setIsIssnChecked] = useState(false);
   const [author, setAuthor] = useState(
     importPublication.authors[0].authorName ||
@@ -87,7 +87,7 @@ const SearchPanel: FC<SearchPanelProps> = ({ importPublication, setDuplicateList
         importPublication.authors[0].surname + ', ' + importPublication.authors[0]?.first_name?.substr(0, 1)
     );
     setYearPublished(+(importPublication.yearPublished ?? 0));
-    setIssn(importPublication.channel.issns ? importPublication.channel.issns[0] : '');
+    setIssn(importPublication.channel?.issns ? importPublication.channel.issns[0] : '');
     setIsDoiChecked(false);
     setTitleChecked(false);
     setIsAuthorChecked(false);
@@ -202,7 +202,7 @@ const SearchPanel: FC<SearchPanelProps> = ({ importPublication, setDuplicateList
           />
         </StyledFormElementWrapper>
 
-        {importPublication.channel.issns && (
+        {importPublication.channel?.issns && (
           <StyledFormElementWrapper>
             <StyledFormControlLabel
               control={

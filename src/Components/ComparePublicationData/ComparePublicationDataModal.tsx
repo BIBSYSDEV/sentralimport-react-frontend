@@ -10,7 +10,6 @@ import axios from 'axios';
 import '../../assets/styles/buttons.scss';
 import ContributorModal from '../Contributors/ContributorModal';
 import ButtonGroup from '@material-ui/core/ButtonGroup/ButtonGroup';
-//import CreateJournalPanel from '../CreateJournalPanel/CreateJournalPanel';
 import ErrorMessage from '../Dialogs/ErrorMessage';
 import { CRIST_REST_API } from '../../utils/constants';
 import styled from 'styled-components';
@@ -487,7 +486,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'setSelectedField', payload: 'tidsskrift' });
     dispatch({
       type: 'setValidation',
-      payload: importPublication.channel.title,
+      payload: importPublication.channel?.title,
     });
   };
 
@@ -495,17 +494,17 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     publishingDetails &&
       setPublishingDetails({
         ...publishingDetails,
-        pageFrom: importPublication.channel.pageFrom,
-        pageTo: importPublication.channel.pageTo,
+        pageFrom: importPublication.channel?.pageFrom,
+        pageTo: importPublication.channel?.pageTo,
       });
   };
 
   const copyVolume = () => {
-    publishingDetails && setPublishingDetails({ ...publishingDetails, volume: importPublication.channel.volume });
+    publishingDetails && setPublishingDetails({ ...publishingDetails, volume: importPublication.channel?.volume });
   };
 
   const copyIssue = () => {
-    publishingDetails && setPublishingDetails({ ...publishingDetails, issue: importPublication.channel.issue });
+    publishingDetails && setPublishingDetails({ ...publishingDetails, issue: importPublication.channel?.issue });
   };
 
   function confirmImportToCristin(result: any) {
@@ -762,7 +761,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 isImportAndCristinEqual={
                   selectedJournal.value === importPublication.channel?.cristinTidsskriftNr?.toString()
                 }
-                isCopyBottonDisabled={!importPublication.channel.title}
+                isCopyBottonDisabled={!!importPublication.channel?.title}
                 copyCommand={copyJournal}
               />
               <StyledLineCristinValue>

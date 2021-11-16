@@ -11,7 +11,7 @@ export interface ImportData {
   pubId: string;
   authors: Author[];
   yearPublished: string;
-  channel: Channel;
+  channel?: Channel;
   doi?: string;
   categoryName: string;
   sourceName: string;

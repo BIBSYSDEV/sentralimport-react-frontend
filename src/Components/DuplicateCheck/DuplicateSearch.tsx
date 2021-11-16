@@ -7,6 +7,7 @@ import { CristinPublication, ImportData } from '../../types/PublicationTypes';
 import { searchChristinPublications } from './SearchChristinPublications';
 import SearchPanel from './SearchPanel';
 import styled from 'styled-components';
+import { BooleanString } from '../../types/ContextType';
 
 const StyledRadioGroupWrapper = styled.div`
   margin-top: 1rem;
@@ -24,7 +25,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({ importPublication }) => {
 
   useEffect(() => {
     async function fetch() {
-      state.selected = 'true'; //what?
+      state.selected = BooleanString.true; //what?
 
       let searchString;
       if (importPublication.doi) {
@@ -37,7 +38,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({ importPublication }) => {
           searchString += '&published_since=' + (yearPublished - 1) + '&published_before=' + yearPublished;
         }
 
-        if (importPublication.hasOwnProperty('channel') && importPublication.channel.hasOwnProperty('issns')) {
+        if (importPublication.hasOwnProperty('channel') && importPublication.channel?.issns) {
           const issn = importPublication.channel.issns[0];
           searchString += '&issn=' + issn;
         }
