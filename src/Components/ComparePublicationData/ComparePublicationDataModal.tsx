@@ -577,12 +577,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'setFormErrors', payload: [] });
   }
 
-  // const handleNewJournal = (newJournal) => {
-  //   setSelectedJournal({ label: newJournal.title, value: 0, issn: newJournal.issn, eissn: newJournal.eissn });
-  //   dispatch({ type: 'setSelectedField', payload: 'tidsskrift' });
-  //   dispatch({ type: 'setValidation', payload: newJournal.title });
-  // };
-
   async function getJournals(journalTitle?: string) {
     if (!journalTitle || journalTitle.length === 0) {
       journalTitle = '*';
@@ -770,7 +764,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 isImportAndCristinEqual={
                   selectedJournal.value === importPublication.channel?.cristinTidsskriftNr?.toString()
                 }
-                isCopyBottonDisabled={!!importPublication.channel?.title}
+                isCopyBottonDisabled={!importPublication.channel?.title}
                 copyCommand={copyJournal}
               />
               <StyledLineCristinValue>
