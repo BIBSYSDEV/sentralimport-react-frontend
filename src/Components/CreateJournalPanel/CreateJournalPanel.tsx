@@ -27,9 +27,8 @@ const StyledTextField = styled(TextField)`
   }
 `;
 
-interface CreateJournalPanelProps {
-  handleCreateJournal: any;
-}
+const ISSNCodeFormat = /([0-9]{4})[-]([0-9]{3})[0-9X]/g;
+const emptyFormValues: CreateJournalFormValues = { title: '', issn: '', eissn: '' };
 
 interface CreateJournalFormValues {
   title: string;
@@ -37,8 +36,9 @@ interface CreateJournalFormValues {
   eissn: string;
 }
 
-const ISSNCodeFormat = /([0-9]{4})[-]([0-9]{3})[0-9X]/g;
-const emptyFormValues: CreateJournalFormValues = { title: '', issn: '', eissn: '' };
+interface CreateJournalPanelProps {
+  handleCreateJournal: any;
+}
 
 const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }) => {
   const [expanded, setExpanded] = useState(false);

@@ -149,7 +149,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           label: state.selectedPublication.journal?.name || 'Ingen tidsskrift/journal funnet',
         }
       : {
-          value: importPublication.channel?.cristinTidsskriftNr?.toString() || 0,
+          value: importPublication.channel?.cristinTidsskriftNr?.toString() || '0',
           label: importPublication.channel?.title || 'Ingen tidsskrift/journal funnet',
         }
   );
