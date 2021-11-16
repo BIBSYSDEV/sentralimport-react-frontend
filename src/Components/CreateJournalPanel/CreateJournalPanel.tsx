@@ -12,6 +12,10 @@ const StyledFormWrapper = styled.div`
   background-color: ${Colors.LIGHT_GREY}; ;
 `;
 
+const StyledErrorTypography = styled(Typography)`
+  color: ${Colors.ERROR};
+`;
+
 const StyledCreateJournalPanel = styled.div`
   margin-top: 0.5rem;
 `;
@@ -100,7 +104,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
             validateOnChange={false}
             validateOnBlur={false}
             validationSchema={formValidationSchema}>
-            {({ isValid, isSubmitting }) => (
+            {({ isValid }) => (
               <Form>
                 <Field name="title">
                   {({ field, meta: { error, touched } }: FieldProps) => (
@@ -151,9 +155,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                   </Grid>
                 </Grid>
                 {!isValid && (
-                  <Typography variant="caption" style={{ color: 'red' }}>
-                    Det er feil i tidskrift-skjema.
-                  </Typography>
+                  <StyledErrorTypography variant="caption">Det er feil i tidskrift-skjema.</StyledErrorTypography>
                 )}
               </Form>
             )}

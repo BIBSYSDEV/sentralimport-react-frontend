@@ -3,10 +3,11 @@ import { Context } from '../../Context';
 import { Autocomplete } from '@material-ui/lab';
 import { TextField } from '@material-ui/core';
 import styled from 'styled-components';
+import { Colors } from '../../assets/styles/StyleConstants';
 
 const StyledTextField = styled(TextField)`
   .MuiInputBase-root {
-    background-color: white;
+    background-color: ${Colors.WHITE};
   }
 `;
 

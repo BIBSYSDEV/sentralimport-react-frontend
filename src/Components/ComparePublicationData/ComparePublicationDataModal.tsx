@@ -18,6 +18,7 @@ import ActionButtons from './ActionButtons';
 import clone from 'just-clone';
 import { Channel, CristinPublication, ImportData, Language } from '../../types/PublicationTypes';
 import CreateJournalPanel from '../CreateJournalPanel/CreateJournalPanel';
+import { Colors } from '../../assets/styles/StyleConstants';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -39,7 +40,7 @@ const StyledFormWrapper = styled.div`
 `;
 
 const StyledErrorMessage = styled.div`
-  color: red;
+  color: ${Colors.ERROR};
   font-size: 0.8rem;
   padding-top: 5px;
   padding-bottom: 10px;
@@ -52,12 +53,13 @@ const StyledLineWrapper = styled.div`
   align-items: center;
   padding: 0.5rem;
   :nth-of-type(2n) {
-    background-color: #fafafa;
+    background-color: ${Colors.LIGHT_GREY};
   }
 `;
 
 const StyledHeaderLineWrapper = styled(StyledLineWrapper)`
-  color: #76559a;
+  color: ${Colors.PURPLE};
+
   padding: 0.5rem 0;
   border-bottom: none;
   margin-bottom: 1rem;
