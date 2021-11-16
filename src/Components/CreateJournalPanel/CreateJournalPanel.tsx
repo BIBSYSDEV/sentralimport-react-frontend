@@ -27,49 +27,54 @@ interface CreateJournalPanelProps {
   handleCreateJournal: any;
 }
 
+interface CreateJournalFormValues {
+  title: string;
+  issn: string;
+  eissn: string;
+}
+
+const ISSNCodeFormat = /([0-9]{4})[-]([0-9]{3})[0-9X]/g;
+const emptyFormValues: CreateJournalFormValues = { title: '', issn: '', eissn: '' };
+
 const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }) => {
   const [expanded, setExpanded] = useState(false);
-  const emptyFormValues = { title: '', issn: '', eissn: '' };
 
-  const validationSchema = Yup.object().shape({
-    title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
-    issn: Yup.string()
-      .required('ISSN er et obligatorisk felt')
-      .matches(/([0-9]{4})[-]([0-9]{3})[0-9X]/g, 'ISSN is not in correct format'),
-    eissn: Yup.string()
-      .required('E-ISSN er et obligatorisk felt')
-      .matches(/([0-9]{4})[-]([0-9]{3})[0-9X]/g, 'E-ISSN is not in correct format'),
-  });
-
-  function handleExpand() {
+  const handleExpand = () => {
     if (!expanded) {
-      //emptyAllFields();
       setExpanded(true);
     }
-  }
+  };
 
-  function handleCancel() {
+  const handleCancel = () => {
     setExpanded(false);
-  }
+  };
 
-  function handleSubmit() {
-    // if (totalFormErrors > 0 && totalFormErrors !== null) {
-    //   setErrorMessage('Det er feil i skjema. Fyll ut alle obligatoriske felt');
-    // } else {
-    //   setExpanded(false);
-    //   //todo: nullstill
-    //   const newJournal = {
-    //     title: title,
-    //     issn: issn,
-    //     eissn: eissn,
-    //     url: url,
-    //     countryCode: publisher,
-    //     id: 0,
-    //   };
-    //   console.log(newJournal);
-    //   handleCreateJournal(newJournal);
-    // }
-  }
+  const handleSubmit = (values: CreateJournalFormValues) => {
+    setExpanded(false);
+    //old code :  const newJournal = {title: title,issn: issn,eissn: eissn,url: url,countryCode: publisher,id: 0};
+    handleCreateJournal({ title: values.title, issn: values.issn, eissn: values.issn });
+  };
+
+  const formValidationSchema = Yup.object().shape(
+    {
+      title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
+      issn: Yup.string()
+        .matches(ISSNCodeFormat, 'ISSN er ikke på korrekt format (NNNN-NNNC)')
+        .when('eissn', {
+          is: (eissn: string) => !eissn || eissn.length === 0,
+          then: Yup.string().required('Enten skriv inn ISSN eller e-ISSN'),
+          otherwise: Yup.string(),
+        }),
+      eissn: Yup.string()
+        .matches(ISSNCodeFormat, 'e-ISSN er ikke på korrekt format (NNNN-NNNC)')
+        .when('issn', {
+          is: (issn: string) => !issn || issn.length === 0,
+          then: Yup.string().required('Enten skriv inn ISSN eller e-ISSN)'),
+          otherwise: Yup.string(),
+        }),
+    },
+    [['issn', 'eissn']]
+  );
 
   return (
     <StyledCreateJournalPanel>
@@ -85,17 +90,23 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
       )}
       <Collapse in={expanded} unmountOnExit>
         <StyledFormWrapper>
-          <Typography gutterBottom style={{ fontWeight: 'bold' }}>
-            Registrer nytt tidskrift
+          <Typography style={{ fontWeight: 'bold' }}>Registrer nytt tidskrift</Typography>
+          <Typography gutterBottom variant="caption">
+            Felter merket med * er obligatoriske (ISSN eller e-ISSN må fylles ut)
           </Typography>
-          <Formik onSubmit={handleSubmit} initialValues={emptyFormValues} validationSchema={validationSchema}>
-            {() => (
+          <Formik
+            onSubmit={handleSubmit}
+            initialValues={emptyFormValues}
+            validateOnChange={false}
+            validateOnBlur={false}
+            validationSchema={formValidationSchema}>
+            {({ isValid, isSubmitting }) => (
               <Form>
                 <Field name="title">
                   {({ field, meta: { error, touched } }: FieldProps) => (
                     <StyledTextField
                       fullWidth
-                      label="Tittel"
+                      label="Tittel *"
                       inputProps={{ 'data-testid': 'journal-form-title-input' }}
                       {...field}
                       error={!!error && touched}
@@ -107,7 +118,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                   {({ field, meta: { error, touched } }: FieldProps) => (
                     <StyledTextField
                       fullWidth
-                      label="ISSN"
+                      label="ISSN *"
                       inputProps={{ 'data-testid': 'journal-form-issn-input' }}
                       {...field}
                       error={!!error && touched}
@@ -119,7 +130,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                   {({ field, meta: { error, touched } }: FieldProps) => (
                     <StyledTextField
                       fullWidth
-                      label="E-ISSN"
+                      label="e-ISSN *"
                       inputProps={{ 'data-testid': 'journal-form-eissn-input' }}
                       {...field}
                       error={!!error && touched}
@@ -127,21 +138,26 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                     />
                   )}
                 </Field>
+                <Grid container spacing={3} style={{ marginTop: '0.5rem' }}>
+                  <Grid item>
+                    <Button variant="outlined" color="secondary" onClick={handleCancel}>
+                      Avbryt
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Button variant="contained" color="primary" type="submit">
+                      Opprett
+                    </Button>
+                  </Grid>
+                </Grid>
+                {!isValid && (
+                  <Typography variant="caption" style={{ color: 'red' }}>
+                    Det er feil i tidskrift-skjema.
+                  </Typography>
+                )}
               </Form>
             )}
           </Formik>
-          <Grid container spacing={3}>
-            <Grid item>
-              <Button variant="outlined" color="secondary" onClick={handleCancel}>
-                Avbryt
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button variant="contained" color="primary" onClick={handleSubmit}>
-                Opprett
-              </Button>
-            </Grid>
-          </Grid>
         </StyledFormWrapper>
       </Collapse>
     </StyledCreateJournalPanel>
