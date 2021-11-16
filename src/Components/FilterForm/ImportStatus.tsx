@@ -1,19 +1,11 @@
 import React, { ChangeEvent, useEffect } from 'react';
-import CardHeader from '@material-ui/core/CardHeader';
-import { CardSubtitle } from 'reactstrap';
-import { FormControl, FormControlLabel, Radio, RadioGroup } from '@material-ui/core';
-import ExportIcon from '../../assets/icons/export-purple.png';
-import DownloadIcon from '../../assets/icons/download-green.png';
-import X2Icon from '../../assets/icons/x2-red.png';
+import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Typography } from '@material-ui/core';
 import { Context } from '../../Context';
 import axios from 'axios';
 import { PIA_REST_API } from '../../utils/constants';
 import { useHistory } from 'react-router-dom';
-
-const imgStyle = {
-  height: '22px',
-  marginRight: '0.7rem',
-};
+import styled from 'styled-components';
+import { Colors } from '../../assets/styles/StyleConstants';
 
 const importedStyle = {
   display: 'flex',
@@ -23,6 +15,24 @@ const importedStyle = {
 const labelStyle = {
   display: 'flex',
 };
+
+const StyledFormControl: any = styled(FormControl)`
+  &.MuiFormControl-root {
+    margin-top: 2rem;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+  }
+`;
+
+const StyledTypography = styled(Typography)`
+  color: ${Colors.Text.OPAQUE_87_BLACK};
+`;
+
+const StyledRadioGroup = styled(RadioGroup)`
+  margin-left: 1rem;
+  margin-top: 1rem;
+`;
 
 interface CountData {
   totalCount: string;
@@ -78,10 +88,13 @@ export default function ImportStatus() {
   }, [state.currentImportYear, state.totalCount]);
 
   return (
-    <FormControl component="fieldset">
-      <CardHeader title="Importstatus" />
-      <CardSubtitle data-testid="import-status-total-quantity">Totalt antall: {data.totalCount}</CardSubtitle>
-      <RadioGroup
+    <StyledFormControl component="fieldset">
+      <FormLabel>
+        <StyledTypography data-testid="import-status-total-quantity" variant="body1">
+          Funnet for valgte år: <b>{data.totalCount}</b>
+        </StyledTypography>
+      </FormLabel>
+      <StyledRadioGroup
         aria-label="Importstatus"
         name="Importstatus"
         value={state.currentImportStatus}
@@ -91,8 +104,9 @@ export default function ImportStatus() {
           control={<Radio />}
           label={
             <span style={labelStyle}>
-              <img src={ExportIcon} style={imgStyle} alt="Not imported" />
-              <div data-testid="import-status-not-imported">Ikke importert ({data.notImportedCount})</div>
+              <div data-testid="import-status-not-imported">
+                Ikke importert (<b>{data.notImportedCount}</b>)
+              </div>
             </span>
           }
         />
@@ -101,8 +115,9 @@ export default function ImportStatus() {
           control={<Radio />}
           label={
             <span style={importedStyle}>
-              <img src={DownloadIcon} style={imgStyle} alt="Imported" />
-              <p data-testid="import-status-imported">Importert ({data.importedCount})</p>
+              <p data-testid="import-status-imported">
+                Importert (<b>{data.importedCount}</b>)
+              </p>
             </span>
           }
         />
@@ -111,12 +126,13 @@ export default function ImportStatus() {
           control={<Radio />}
           label={
             <span style={labelStyle}>
-              <img src={X2Icon} style={imgStyle} alt="Not relevant" />
-              <div data-testid="import-status-not-relevant">Ikke aktuelle ({data.notRelevantCount})</div>
+              <div data-testid="import-status-not-relevant">
+                Ikke aktuelle (<b>{data.notRelevantCount}</b>)
+              </div>
             </span>
           }
         />
-      </RadioGroup>
-    </FormControl>
+      </StyledRadioGroup>
+    </StyledFormControl>
   );
 }

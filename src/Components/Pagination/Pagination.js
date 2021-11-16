@@ -4,6 +4,17 @@ import { Context } from '../../Context';
 import Select from 'react-select';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
+import styled from 'styled-components';
+
+const StyledGrid = styled(Grid)`
+  background-color: #f3eff6;
+`;
+
+const StyledButton = styled(Button)`
+  &.MuiButton-root {
+    margin-left: 1rem;
+  }
+`;
 
 export default function Pagination(props) {
   let { state, dispatch } = React.useContext(Context);
@@ -43,17 +54,17 @@ export default function Pagination(props) {
   }
 
   return (
-    <Grid container justifyContent="space-between" alignItems="baseline">
+    <StyledGrid container justifyContent="space-between" alignItems="baseline">
       <Grid item>
         {props.openMore.length > 0 && (
-          <Button variant="contained" color="primary" onClick={(event) => props.handlePress(event, null)}>
+          <StyledButton variant="contained" color="primary" onClick={(event) => props.handlePress(event, null)}>
             {props.openMore.length === 1 ? `Importer publikasjon` : `Importer ${props.openMore.length} publikasjoner`}
-          </Button>
+          </StyledButton>
         )}
       </Grid>
       <Grid item>
         <Grid
-          style={{ marginTop: '1.5rem', marginBottom: '1rem' }}
+          style={{ marginTop: '0.2rem', marginBottom: '0.2rem' }}
           container
           spacing={3}
           justifyContent="flex-end"
@@ -121,6 +132,6 @@ export default function Pagination(props) {
           </Grid>
         </Grid>
       </Grid>
-    </Grid>
+    </StyledGrid>
   );
 }

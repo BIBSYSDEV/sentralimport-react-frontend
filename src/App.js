@@ -10,7 +10,6 @@ import Footer from './Components/Footer/Footer';
 import axios from 'axios';
 import { Context } from './Context';
 import { CRIST_REST_API, USE_MOCK_DATA } from './utils/constants';
-import PublicationYearPanel from './Components/DropdownPanel/PublicationYearPanel';
 import styled from 'styled-components';
 
 const StyledApp = styled.div`
@@ -73,7 +72,6 @@ export default function App() {
       <StyledBody>
         <StyledGrid container spacing={3}>
           <Grid item xs={12} md={3}>
-            <PublicationYearPanel />
             <FilterFormPanel />
             <LogPanel />
           </Grid>

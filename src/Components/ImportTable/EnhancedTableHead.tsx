@@ -5,59 +5,72 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import Checkbox from '@material-ui/core/Checkbox';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
+import { SortValue } from '../../types/ContextType';
+import styled from 'styled-components';
+import { Colors } from '../../assets/styles/StyleConstants';
+import { Order } from '../../types/PublicationTypes';
+
+const StyledTableHead = styled(TableHead)`
+  &.MuiTableHead-root {
+    background-color: ${Colors.LIGHT_PURPLE};
+    border-left: solid ${Colors.LIGHT_PURPLE} 5px;
+  }
+`;
+
+const StyledTableCell = styled(TableCell)`
+  &.MuiTableCell-root {
+    padding-top: 0.2rem;
+    padding-bottom: 0.3rem;
+  }
+`;
 
 const headRows = [
   {
-    id: 'Publikasjon',
+    id: SortValue.Publication,
     numeric: false,
     disablePadding: false,
     label: 'Publikasjon',
   },
-  { id: 'category', numeric: true, disablePadding: false, label: 'Kategori' },
-  { id: 'source', numeric: true, disablePadding: false, label: 'Kilde' },
+  { id: SortValue.Category, numeric: true, disablePadding: false, label: 'Kategori' },
+  { id: SortValue.Source, numeric: true, disablePadding: false, label: 'Kilde' },
   {
-    id: 'date',
+    id: SortValue.Date,
     numeric: true,
     disablePadding: false,
     label: 'Dato opprettet',
   },
   {
-    id: 'Eierinstitusjon',
+    id: SortValue.OwnerInstitution,
     numeric: true,
     disablePadding: false,
     label: 'Eierinstitusjon',
   },
   {
-    id: 'Forfattere',
+    id: SortValue.Authors,
     numeric: true,
     disablePadding: false,
     label: 'Forfatterliste',
   },
 ];
 
-enum Order {
-  asc = 'asc',
-  desc = 'desc',
-}
-
 interface EnhancedTableHeadProps {
   order: Order;
   orderBy: string;
-  onRequestSort: (property: string) => void;
+  onRequestSort: (property: SortValue) => void;
   checkAll: (status: boolean) => void;
 }
 
 export default function EnhancedTableHead(props: EnhancedTableHeadProps) {
   const { order, orderBy, onRequestSort } = props;
-  const createSortHandler = (property: string) => {
+  const createSortHandler = (property: SortValue) => {
     onRequestSort(property);
   };
   const { state, dispatch } = React.useContext(Context);
 
   return (
-    <TableHead>
+    <StyledTableHead>
       <TableRow>
-        <TableCell component="td" scope="row" padding="checkbox">
+        <StyledTableCell component="td" scope="row" padding="checkbox">
           <Checkbox
             key="allPubs"
             checked={state.allChecked}
@@ -71,9 +84,9 @@ export default function EnhancedTableHead(props: EnhancedTableHeadProps) {
               dispatch({ type: 'allChecked', payload: temp });
             }}
           />
-        </TableCell>
+        </StyledTableCell>
         {headRows.map((row) => (
-          <TableCell
+          <StyledTableCell
             key={row.id}
             align={row.numeric ? 'right' : 'left'}
             padding={row.disablePadding ? 'none' : 'normal'}
@@ -85,9 +98,9 @@ export default function EnhancedTableHead(props: EnhancedTableHeadProps) {
               disabled={!(row.id !== 'Eierinstitusjon' && row.id !== 'Publikasjon' && row.id !== 'Forfattere')}>
               {row.label}
             </TableSortLabel>
-          </TableCell>
+          </StyledTableCell>
         ))}
       </TableRow>
-    </TableHead>
+    </StyledTableHead>
   );
 }

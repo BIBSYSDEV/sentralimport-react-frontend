@@ -8,21 +8,20 @@ context('application', () => {
   });
 
   it('shows the main components of the mainpage', () => {
-    cy.get('[data-testid="publication-year-panel"]').should('exist');
     cy.get('[data-testid="filter-panel"]').should('exist');
     cy.get('[data-testid="log-panel"]').should('exist');
     cy.get('[data-testid="import-table-panel"]').should('exist');
   });
 
   it('shows data in the quantity data', () => {
-    cy.get('[data-testid=import-status-total-quantity]').contains('Totalt antall: 100');
+    cy.get('[data-testid=import-status-total-quantity]').contains('Funnet for valgte år: 100');
     cy.get('[data-testid="import-status-imported"]').contains('(1)');
     cy.get('[data-testid="import-status-not-imported"]').contains('(2)');
     cy.get('[data-testid="import-status-not-relevant"]').contains('(3)');
   });
 
   it('institution-filter has data', () => {
-    cy.get('[data-testid="institution-filter-wrapper"] input[type=text]').click();
+    cy.get('[data-testid="insitution-select"]').click();
     cy.contains('SINTEF Narvik');
   });
 

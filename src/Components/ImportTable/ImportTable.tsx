@@ -16,11 +16,12 @@ import ImportTableListItem from './ImportTableListItem';
 import PlaceHolderListItem from './PlaceHolderListItem';
 import AuthorList from './AuthorList';
 import styled from 'styled-components';
+import { SortValue } from '../../types/ContextType';
 
 const StyledRoot = styled.div`
   display: block;
   width: 100%;
-  margin-top: 1.5rem;
+  margin-top: 4rem;
 `;
 
 const StyledPaper = styled.div`
@@ -123,7 +124,7 @@ export default function ImportTable(this: any) {
   ]);
 
   useEffect(() => {
-    if (state.importDone === true) {
+    if (state.importDone) {
       setTimeout(function () {
         getRows().then();
       }, 500);
@@ -204,11 +205,11 @@ export default function ImportTable(this: any) {
     setRows(temp);
   }
 
-  function handleRequestSort(property: string) {
+  function handleRequestSort(property: SortValue) {
     const isDesc = orderBy === property && order === 'desc';
-    setOrder(isDesc ? 'asc' : 'desc');
-    dispatch({ type: 'setSortOrder', payload: isDesc ? 'asc' : 'desc' });
-    setOrderBy(property);
+    setOrder(isDesc ? Order.asc : Order.desc);
+    dispatch({ type: 'setSortOrder', payload: isDesc ? Order.asc : Order.desc });
+    setOrderBy(property as SortValue);
     dispatch({ type: 'setSortValue', payload: property });
   }
 
