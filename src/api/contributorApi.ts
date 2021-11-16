@@ -5,8 +5,8 @@ import { Institution, UnitResponse } from '../types/institutionTypes';
 import { AffiliationResponse, PersonDetailResponse, PersonSearchResponse } from '../types/contributorTypes';
 
 export enum SearchLanguage {
-  Eng = 'en',
-  No = 'no',
+  En = 'en',
+  Nb = 'nb',
 }
 
 export async function getInstitutionName(
@@ -64,7 +64,7 @@ export async function getInstitutionUnitNameBasedOnIDAndInstitutionStatus(
   }
   const unitNameWithCache = await getInstitutionUnitName(
     affiliation.unit?.cristin_unit_id ?? '0',
-    SearchLanguage.Eng,
+    SearchLanguage.En,
     cache
   );
   return {

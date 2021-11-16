@@ -1,6 +1,6 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { Context } from '../../Context';
-import { Divider, FormControlLabel, Radio, RadioGroup } from '@material-ui/core';
+import { CircularProgress, Divider, FormControlLabel, Radio, RadioGroup, Typography } from '@material-ui/core';
 import '../../assets/styles/Results.scss';
 import ResultItem from './ResultItem';
 import { CristinPublication, ImportData } from '../../types/PublicationTypes';
@@ -13,12 +13,23 @@ const StyledRadioGroupWrapper = styled.div`
   margin-top: 1rem;
 `;
 
+const StyledStatusWrapper = styled.div`
+  margin-bottom: 1rem;
+`;
+
+const StyledResultListWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 interface DuplicateSearchProps {
   importPublication: ImportData;
 }
 
 const DuplicateSearch: FC<DuplicateSearchProps> = ({ importPublication }) => {
   const [duplicateList, setDuplicateList] = useState<CristinPublication[]>([]);
+  const [foundDuplicates, setFoundDuplicates] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   const { state, dispatch } = useContext(Context);
   const relevantStatus = state.currentImportStatus !== 'ikke aktuelle';
@@ -68,11 +79,27 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({ importPublication }) => {
 
   return (
     <>
-      <SearchPanel importPublication={importPublication} setDuplicateList={setDuplicateList} />
+      <SearchPanel
+        importPublication={importPublication}
+        setDuplicateList={setDuplicateList}
+        setIsSearching={setIsSearching}
+        setFoundDuplicates={setFoundDuplicates}
+      />
+      <StyledStatusWrapper>
+        {isSearching && <CircularProgress style={{ marginLeft: '1rem' }} size={'1.5rem'} />}
+        {!isSearching &&
+          (foundDuplicates ? (
+            <Typography style={{ color: 'green' }}>Søket ga følgende treff</Typography>
+          ) : (
+            <Typography style={{ color: 'darkred' }}>
+              Det finnes ingen eksisterende publikasjoner som matcher søket
+            </Typography>
+          ))}
+      </StyledStatusWrapper>
       <Divider />
       <StyledRadioGroupWrapper>
         <RadioGroup onChange={handleChange} value={state.selected}>
-          <div data-testid="duplicates-result-list">
+          <StyledResultListWrapper data-testid="duplicates-result-list">
             {duplicateList.length > 0 &&
               duplicateList.map((cristinPublication: any, index: number) => (
                 <FormControlLabel
@@ -81,7 +108,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({ importPublication }) => {
                   label=""
                 />
               ))}
-          </div>
+          </StyledResultListWrapper>
           <div>
             <FormControlLabel
               value="false"
