@@ -1,6 +1,4 @@
-import { mockImportPublication1 } from '../../src/utils/mockdata';
 import mockImportData from '../../src/utils/mockImportData.json';
-import mockCristinPublications from '../../src/utils/mockCristinPublications.json';
 
 context('importModal', () => {
   beforeEach(() => {
