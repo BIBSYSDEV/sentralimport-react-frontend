@@ -761,7 +761,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 isImportAndCristinEqual={
                   selectedJournal.value === importPublication.channel?.cristinTidsskriftNr?.toString()
                 }
-                isCopyBottonDisabled={!!importPublication.channel?.title}
+                isCopyBottonDisabled={!importPublication.channel?.title}
                 copyCommand={copyJournal}
               />
               <StyledLineCristinValue>
