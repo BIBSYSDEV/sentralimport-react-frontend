@@ -1,5 +1,6 @@
 import { mockImportPublication1 } from '../../src/utils/mockdata';
 import mockImportData from '../../src/utils/mockImportData.json';
+import mockCristinPublications from '../../src/utils/mockCristinPublications.json';
 
 context('importModal', () => {
   beforeEach(() => {
@@ -72,4 +73,22 @@ context('importModal', () => {
     cy.get(`[data-testid="import-publication-button"]`).should('exist').should('not.be.disabled');
     cy.get(`[data-testid="import-publication-cancel-button"]`).should('exist').should('not.be.disabled');
   });
+
+  it('can registrate a new Journal', () => {
+    const mockTitle = 'MockJournalTitle';
+    const mockIssn = '12345-12345';
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.wait(500); //To make modal visible (tests works without, but is more difficult to view with cypress open)
+    cy.get(`#cristindata-journal`).contains(mockImportData[0].channel.title);
+    cy.get(`[data-testid="submit-journal-button"]`).should('not.exist');
+    cy.get(`[data-testid="add-journal-button"]`).click();
+    cy.get(`[data-testid="journal-form-title-input"]`).type(mockTitle);
+    cy.get(`[data-testid="journal-form-issn-input"]`).type(mockIssn);
+    cy.get(`[data-testid="submit-journal-button"]`).click();
+    cy.get(`#cristindata-journal`).contains(mockTitle);
+    cy.get(`[data-testid="submit-journal-button"]`).should('not.exist');
+  });
+
+  //TODO: test validation of create-journal
 });

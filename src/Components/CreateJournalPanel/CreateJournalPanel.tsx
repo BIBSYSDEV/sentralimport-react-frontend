@@ -84,7 +84,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
     <StyledCreateJournalPanel>
       {!expanded && (
         <Button
-          data-testid="creator-journal-button"
+          data-testid="add-journal-button"
           startIcon={<AddIcon />}
           variant="outlined"
           color="primary"
@@ -144,12 +144,16 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                 </Field>
                 <Grid container spacing={3} style={{ marginTop: '0.5rem' }}>
                   <Grid item>
-                    <Button variant="outlined" color="secondary" onClick={handleCancel}>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={handleCancel}
+                      data-testid="cancel-journal-button">
                       Avbryt
                     </Button>
                   </Grid>
                   <Grid item>
-                    <Button variant="contained" color="primary" type="submit">
+                    <Button variant="contained" color="primary" type="submit" data-testid="submit-journal-button">
                       Opprett
                     </Button>
                   </Grid>
