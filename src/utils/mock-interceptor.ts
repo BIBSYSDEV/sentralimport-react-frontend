@@ -7,10 +7,13 @@ import {
   mockImportPublication1,
   mockInstitutions,
   mockPerson,
+  mockPerson2,
   mockPersonDetailed,
+  mockPersonDetailedWithoutActiveAffiliations,
   mockPublicationCount,
   mockSavedPublication,
   mockUnits,
+  personWithoutAffiliationCristinId,
   responseCountryInstitutionCN,
   responseCountryInstitutionIT,
   resultInstitutionNTNU,
@@ -90,9 +93,12 @@ export const interceptRequestsOnMock = () => {
     .reply(200, mockCristinPublications);
 
   //search persons by name
-  mock.onGet(new RegExp(`${CRIST_REST_API}/persons/\\?name.*`)).reply(200, [mockPerson]);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/persons/\\?name.*`)).reply(200, [mockPerson, mockPerson2]);
 
   //get person-details by id
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${personWithoutAffiliationCristinId}`))
+    .reply(200, mockPersonDetailedWithoutActiveAffiliations);
   mock.onGet(new RegExp(`${CRIST_REST_API}/persons/\\d+`)).reply(200, mockPersonDetailed);
 
   //search persons by id
