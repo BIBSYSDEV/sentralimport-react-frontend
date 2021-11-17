@@ -5,7 +5,6 @@ import ContributorSearchPanel from './ContributorSearchPanel';
 import { Form } from 'reactstrap';
 import { Context } from '../../Context';
 import axios from 'axios';
-import { withSnackbar } from 'notistack';
 import '../../assets/styles/common.scss';
 import { CRIST_REST_API } from '../../utils/constants';
 import {
@@ -16,6 +15,13 @@ import {
   searchPersonDetailById,
   searchPersonDetailByName,
 } from '../../api/contributorApi';
+import ContributorSearchPanelSkeleton from './ContributorSearchPanelSkeleton';
+import { Colors } from '../../assets/styles/StyleConstants';
+import styled from 'styled-components';
+
+const StyledResultTypography = styled(Typography)`
+  color: ${Colors.Text.OPAQUE_87_BLACK};
+`;
 
 const searchLanguage = 'en';
 
@@ -25,8 +31,10 @@ function Contributor(props) {
   const [data, setData] = useState(props.author);
   const [rowIndex, setRowIndex] = useState(props.index);
   const [selectedUnit, setSelectedUnit] = useState('');
-  const [searchResults, setSearchResults] = useState('');
-  const [open, setOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [searchError, setSearchError] = useState(null);
+  const [openContributorSearchPanel, setOpenContributorSearchPanel] = useState(false);
   const [selectedInstitution, setSetSelectedInstitution] = useState({
     value: '',
     cristinInstitutionNr: 0,
@@ -198,6 +206,8 @@ function Contributor(props) {
   }
 
   async function retrySearch(data) {
+    setSearching(true);
+    setSearchError(null);
     let unitNameCache = new Map();
     let institutionNameCache = new Map();
     try {
@@ -207,9 +217,9 @@ function Contributor(props) {
           : await searchPersonDetailByName(`${data.toBeCreated.first_name} ${data.toBeCreated.surname}`);
 
       if (authorResults.data.length > 0) {
-        let fetchedAuthors = [];
-        let tempAffiliations = [];
+        const fetchedAuthors = [];
         for (let i = 0; i < authorResults.data.length; i++) {
+          let tempAffiliations = [];
           const fetchedAuthor = (await getPersonDetailById(authorResults.data[i].cristin_person_id)).data;
           const activeAffiliations = fetchedAuthor.affiliations.filter((affiliation) => affiliation.active);
           for (let h = 0; h < activeAffiliations.length; h++) {
@@ -239,25 +249,24 @@ function Contributor(props) {
           fetchedAuthor.affiliations = await filterInstitutions(tempAffiliations);
           fetchedAuthors.push(fetchedAuthor);
         }
-        props.enqueueSnackbar('Fant ' + fetchedAuthors.length + ' bidragsytere', { variant: 'success' });
         setSearchResults(fetchedAuthors);
-        handleOpen();
+        setOpenContributorSearchPanel(true);
       } else {
-        props.enqueueSnackbar('Fant ingen bidragsytere', { variant: 'error' });
+        setSearchResults([]);
+        setOpenContributorSearchPanel(true);
       }
-    } catch {
-      props.enqueueSnackbar('Noe gikk galt med søket, prøv igjen', { variant: 'error' });
+    } catch (error) {
+      setSearchError(error);
+      setSearchResults([]);
+    } finally {
+      setSearching(false);
     }
   }
 
-  function handleOpen() {
-    setOpen(true);
-  }
-
-  function handleClose() {
-    setOpen(false);
-    if (searchResults !== '') {
-      setSearchResults('');
+  function handleContributorSearchPanelClose() {
+    setOpenContributorSearchPanel(false);
+    if (searchResults.length > 0) {
+      setSearchResults([]);
     }
   }
 
@@ -280,7 +289,7 @@ function Contributor(props) {
 
     temp.isEditing = false;
 
-    setOpen(false);
+    setOpenContributorSearchPanel(false);
     props.updateData(temp, rowIndex);
   }
 
@@ -420,11 +429,18 @@ function Contributor(props) {
             Lagre endringer
           </Button>
         </div>
+        {!searching && searchError && (
+          <Typography color="error">{searchError.message ?? 'Noe gikk galt med søket, prøv igjen'} </Typography>
+        )}
+        {searching && <ContributorSearchPanelSkeleton />}
+        {openContributorSearchPanel && !searching && (
+          <StyledResultTypography>Fant {searchResults.length} bidragsytere</StyledResultTypography>
+        )}
         <ContributorSearchPanel
-          collapsed={open}
-          data={searchResults}
+          collapsed={openContributorSearchPanel && !searching}
+          searchResult={searchResults}
           handleChoose={handleSelect}
-          handleAbort={handleClose}
+          handleAbort={handleContributorSearchPanelClose}
         />
       </Form>
     );
@@ -474,4 +490,4 @@ function Contributor(props) {
   );
 }
 
-export default withSnackbar(Contributor);
+export default Contributor;

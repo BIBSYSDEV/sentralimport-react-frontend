@@ -456,6 +456,15 @@ export const mockPerson = {
   cristin_person_id: '1234567',
 };
 
+export const personWithoutAffiliationCristinId = '9456892';
+
+export const mockPerson2 = {
+  first_name: 'Arne',
+  surname: 'Benoni',
+  url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
+  cristin_person_id: personWithoutAffiliationCristinId,
+};
+
 export const mockPersonDetailed = {
   cristin_person_id: '1234567',
   first_name: 'Arne',
@@ -487,6 +496,44 @@ export const mockPersonDetailed = {
         url: 'https://api.cristin-test.uio.no/v2/units/7492.5.1.0',
       },
       active: true,
+      position: {
+        en: 'Researcher',
+      },
+    },
+  ],
+};
+
+export const mockPersonDetailedWithoutActiveAffiliations = {
+  cristin_person_id: personWithoutAffiliationCristinId,
+  first_name: 'Arne',
+  surname: 'Benoni',
+  identified_cristin_person: true,
+  cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
+  affiliations: [
+    {
+      institution: {
+        cristin_institution_id: '194',
+        url: 'https://api.cristin-test.uio.no/v2/institutions/194',
+      },
+      unit: {
+        cristin_unit_id: '194.67.40.0',
+        url: 'https://api.cristin-test.uio.no/v2/units/194.67.40.0',
+      },
+      active: false,
+      position: {
+        en: 'Guest',
+      },
+    },
+    {
+      institution: {
+        cristin_institution_id: '7492',
+        url: 'https://api.cristin-test.uio.no/v2/institutions/7492',
+      },
+      unit: {
+        cristin_unit_id: '7492.5.1.0',
+        url: 'https://api.cristin-test.uio.no/v2/units/7492.5.1.0',
+      },
+      active: false,
       position: {
         en: 'Researcher',
       },
