@@ -806,7 +806,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 copyCommand={copyDoi}
               />
               <StyledLineCristinValue>
-                <FormControl required>
+                <FormControl fullWidth>
                   <TextField
                     id="Cristin-doi"
                     placeholder="DOI"
