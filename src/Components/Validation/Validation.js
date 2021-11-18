@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import { Context } from '../../Context';
 
+export const doiMatcher = /^$|^([0-9]{2})[.]([0-9]{4,5})[/]([a-z0-9-.]+)/i;
+const utgivelseMatcher = /^(Volum)[ ]([0-9a-z-:]+)[ ]([(]([0-9]{1,6})[-]([0-9]{1,6})[)])([\w-., ]*)/i;
+
 export default function Validation(props) {
   let { state, dispatch } = React.useContext(Context);
 
@@ -47,7 +50,7 @@ export default function Validation(props) {
         tittelValid ? removeError(tittelError) : updateErrors(tittelError);
         break;
       case 'doi':
-        const doiValid = state.validation.match(/^([0-9]{2})[.]([0-9]{4,5})[/]([\w-.]{1,})/i);
+        const doiValid = state.validation.match(doiMatcher);
         const doiError = 'Doi har galt format';
         doiValid ? removeError(doiError) : updateErrors(doiError);
         break;
@@ -105,7 +108,7 @@ export default function Validation(props) {
               )
             : props.publication.doi
             ? props.publication.doi
-            : 'Ingen DOI funnet',
+            : '',
       },
       {
         name: 'tittel',
@@ -128,27 +131,26 @@ export default function Validation(props) {
     ];
     for (let i = 0; i < data.length; i++) {
       switch (data[i].name) {
+        case 'tidsskrift':
+          const tidsskriftValid = data[i].value.length > 3;
+          const tidsskriftError = 'Ingen tidsskrift valgt';
+          !tidsskriftValid ? fieldErrors.push(tidsskriftError) : fieldErrors.push();
+          break;
         case 'tittel':
           const tittelValid = data[i].value.length >= 6;
           const tittelError = 'Tittelen er for kort/mangler';
           !tittelValid ? fieldErrors.push(tittelError) : fieldErrors.push();
           break;
         case 'doi':
-          const doiValid = data[i].value.match(/^([0-9]{2})[.]([0-9]{4,5})[/]([a-z0-9-.]{1,})/i);
+          const doiValid = data[i].value.match(doiMatcher);
           const doiError = 'Doi har galt format';
           !doiValid ? fieldErrors.push(doiError) : fieldErrors.push();
           break;
         case 'utgivelse':
-          const utgivelseValid = data[i].value.match(
-            /^(Volum)[ ]([0-9a-z-:]{1,})[ ]([(]([0-9]{1,6})[-]([0-9]{1,6})[)])([\w-., ]{0,})/i
-          );
+          //TODO: denne er vel ikke i bruk ? hva er evt utgivelse ?
+          const utgivelseValid = data[i].value.match(utgivelseMatcher);
           const utgivelseError = 'Utgivelsesdata har galt format';
           !utgivelseValid ? fieldErrors.push(utgivelseError) : fieldErrors.push();
-          break;
-        case 'tidsskrift':
-          const tidsskriftValid = data[i].value.length > 3;
-          const tidsskriftError = 'Ingen tidsskrift valgt';
-          !tidsskriftValid ? fieldErrors.push(tidsskriftError) : fieldErrors.push();
           break;
         case 'aarstall':
           const aarstallValid = data[i].value > 999 && data[i].value <= new Date().getFullYear();
@@ -172,7 +174,11 @@ export default function Validation(props) {
     dispatch({ type: 'setFormErrors', payload: fieldErrors });
   }
 
-  return state.formErrors.length > 0 ? <div> Kan ikke importere. Dobbeltsjekk alle påkrevde felter. </div> : '';
+  return state.formErrors.length > 0 ? (
+    <div> Kan ikke importere. Dobbeltsjekk alle påkrevde felter. {state.formErrors} </div>
+  ) : (
+    <span></span>
+  );
 }
 
 Validation.defaultProps = {

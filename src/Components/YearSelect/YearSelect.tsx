@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Select from 'react-select';
 import { Context } from '../../Context';
 
-export default function DropdownSelect() {
-  let { state, dispatch } = React.useContext(Context);
+export default function YearSelect() {
+  const { state, dispatch } = useContext(Context);
 
-  let years = [];
+  const years = [];
   let currentYear = new Date().getFullYear();
-  let currentDate = new Date();
+  const currentDate = new Date();
 
   // Sjekk om dato er før/etter 1. april. Dersom dato er før, sett importår til årstall - 1 ellers bruk eksisterende årstall
   if (currentDate.getMonth() < 3) {
@@ -20,7 +20,7 @@ export default function DropdownSelect() {
 
   years.reverse();
 
-  function handleChange(option) {
+  function handleChange(option: any) {
     dispatch({ type: 'setImportYear', payload: option });
   }
 

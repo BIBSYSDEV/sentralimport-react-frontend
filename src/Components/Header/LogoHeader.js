@@ -5,6 +5,7 @@ import { Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid/Grid';
+import { USE_MOCK_DATA } from '../../utils/constants';
 
 export default function LogoHeader() {
   const history = useHistory();
@@ -26,6 +27,9 @@ export default function LogoHeader() {
   const pageHeaderStyle = {
     backgroundColor: '#f5f5f5',
     // borderBottom: '1px solid #666666',
+    marginRight: '0',
+    marginLeft: '0',
+    maxWidth: '100%',
   };
 
   return (
@@ -35,6 +39,7 @@ export default function LogoHeader() {
         <Typography style={{ fontSize: '2rem', fontFamily: 'PT Sans, sans-serif', marginLeft: '1rem' }}>
           Sentralimport
         </Typography>
+        {USE_MOCK_DATA && <Typography style={{ color: 'darkred' }}>MOCK</Typography>}
       </Grid>
       <Grid item xs={12} sm={7} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
         {localStorage.getItem('authorized') === 'true' ? (

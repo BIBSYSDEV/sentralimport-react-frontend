@@ -1,23 +1,25 @@
-import React from 'react';
+import React, { Dispatch } from 'react';
+import { BooleanString, ContextType, SortValue } from './types/ContextType';
+import { Order } from './types/PublicationTypes';
 
-let Context = React.createContext();
-let currentYear = new Date().getFullYear();
-let currentDate = new Date();
-let initialState = {
+const currentYear = new Date().getFullYear();
+const currentDate = new Date();
+const initialState: ContextType = {
   currentImportYear:
     currentDate.getMonth() < 3
       ? { value: currentYear.valueOf() - 1, label: (currentYear - 1).toString() }
       : { value: currentYear, label: currentYear.toString() },
-  currentImportStatus: 'false',
+  currentImportStatus: 'false' as BooleanString,
   currentInstitution: { value: null, label: 'Ingen filtrering' },
   isSampublikasjon: false,
   currentPageNr: 0,
   currentPerPage: { value: 5, label: '5' },
-  currentSortValue: 'date',
-  currentSortOrder: 'desc',
+  currentSortValue: SortValue.Date,
+  currentSortOrder: Order.desc,
   selectedField: '',
-  selected: 'false',
+  selected: BooleanString.false,
   selectedPublication: {
+    cristin_result_id: '0',
     journal: { name: 'none' },
     import_sources: [{ source_name: 'test' }],
     title: { en: 'title' },
@@ -37,13 +39,18 @@ let initialState = {
   param: null,
   doiFilter: null,
   contributorsLoaded: false,
-  contributorErrors: 0,
+  contributorErrors: [],
   identified: [],
   identifiedImported: [],
   importDone: false,
 };
 
-let reducer = (state, action) => {
+const Context = React.createContext<{ state: ContextType; dispatch: Dispatch<any> }>({
+  state: initialState,
+  dispatch: () => null,
+});
+
+const reducer = (state: ContextType, action: { type: string; payload: any }) => {
   switch (action.type) {
     case 'reset':
       return initialState;
@@ -108,13 +115,12 @@ let reducer = (state, action) => {
   }
 };
 
-const ContextProvider = (props) => {
-  let [state, dispatch] = React.useReducer(reducer, initialState);
-  let value = { state, dispatch };
+const ContextProvider = (props: any) => {
+  const [state, dispatch] = React.useReducer(reducer, initialState);
 
-  return <Context.Provider value={value}>{props.children}</Context.Provider>;
+  return <Context.Provider value={{ state, dispatch }}> {props.children} </Context.Provider>;
 };
 
-let ContextConsumer = Context.Consumer;
+const ContextConsumer = Context.Consumer;
 
 export { Context, ContextProvider, ContextConsumer };

@@ -12,11 +12,12 @@ export default function ClosingDialog(props) {
         <DialogContentText>{props.text}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button color="secondary" onClick={props.handleCloseDialog}>
+        <Button color="secondary" onClick={props.handleCloseDialog} variant="outlined">
           Nei
         </Button>
         <Button
           color="primary"
+          variant="contained"
           onClick={() => {
             props.doFunction(state.param);
             props.handleClose();
