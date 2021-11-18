@@ -1,4 +1,9 @@
 export interface Institution {
+  url: string;
+  cristin_user_institution: boolean;
+  country: string;
+  cristin_institution_id: string;
+  acronym: string;
   institution_name: {
     en?: string;
     nb: string;

@@ -1,14 +1,27 @@
 import React, { useContext } from 'react';
 import { Context } from '../../Context';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete, FilterOptionsState } from '@material-ui/lab';
 import { TextField } from '@material-ui/core';
 import styled from 'styled-components';
+import { Institution } from '../../types/ContextType';
 
 const StyledTextField = styled(TextField)`
   .MuiInputBase-root {
     background-color: white;
   }
 `;
+
+//this function exists so that typing institution acronyms, also get their label. Ex. typing "ntnu", returns "norges tekninske naturvitenskapelige universitet"
+function filterByInstitutionNameAndAcronym(
+  options: Institution[],
+  state: FilterOptionsState<Institution>
+): Institution[] {
+  return options.filter(
+    (option) =>
+      option.label.toLowerCase().includes(state.inputValue.toLowerCase()) ||
+      option.value.toLowerCase().includes(state.inputValue.toLowerCase())
+  );
+}
 
 export default function InstitutionSelect() {
   const { state, dispatch } = useContext(Context);
@@ -27,17 +40,24 @@ export default function InstitutionSelect() {
       <Autocomplete
         fullWidth
         id="institution-select"
+        noOptionsText="fant ingen institusjon"
         data-testid="insitution-select"
+        filterOptions={(options: Institution[], state) => filterByInstitutionNameAndAcronym(options, state)}
         options={state.institutions
           .slice()
           .sort((institutionA, institutionB) => institutionA.label.localeCompare(institutionB.label))}
         getOptionLabel={(option) => option.label}
         onChange={(_event, value) => {
-          console.log(value);
           handleChange(value);
         }}
         renderInput={(params) => (
-          <StyledTextField {...params} multiline label="Filtrer på institusjoner" variant="outlined" />
+          <StyledTextField
+            {...params}
+            data-testid="filter-institution-select"
+            multiline
+            label="Filtrer på institusjoner"
+            variant="outlined"
+          />
         )}
       />
     );

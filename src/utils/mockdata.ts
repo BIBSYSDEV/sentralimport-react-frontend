@@ -54,6 +54,28 @@ export const mockInstitutions = [
     cristin_user_institution: true,
     url: 'https://api.cristin-test.uio.no/v2/institutions/5932',
   },
+  {
+    cristin_institution_id: '7403',
+    institution_name: {
+      nb: 'NTNU Samfunnsforskning AS',
+      en: 'NTNU Social Research',
+    },
+    acronym: 'SAMFORSK',
+    country: 'NO',
+    cristin_user_institution: true,
+    url: 'https://api.cristin.no/v2/institutions/7403',
+  },
+  {
+    cristin_institution_id: '194',
+    institution_name: {
+      nb: 'Norges teknisk-naturvitenskapelige universitet',
+      en: 'Norwegian University of Science and Technology',
+    },
+    acronym: 'NTNU',
+    country: 'NO',
+    cristin_user_institution: true,
+    url: 'https://api.cristin.no/v2/institutions/194',
+  },
 ];
 
 export const resultInstitutionNTNU = {
