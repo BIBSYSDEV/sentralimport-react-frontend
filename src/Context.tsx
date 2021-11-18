@@ -17,7 +17,6 @@ const initialState: ContextType = {
   currentSortValue: SortValue.Date,
   currentSortOrder: Order.desc,
   selectedField: '',
-  selected: BooleanString.false,
   selectedPublication: {
     cristin_result_id: '0',
     journal: { name: 'none' },
@@ -72,8 +71,6 @@ const reducer = (state: ContextType, action: { type: string; payload: any }) => 
       return { ...state, currentSortOrder: action.payload };
     case 'setSelectedField':
       return { ...state, selectedField: action.payload };
-    case 'setSelected':
-      return { ...state, selected: action.payload };
     case 'setSelectedPublication':
       return { ...state, selectedPublication: action.payload };
     case 'setValidation':
