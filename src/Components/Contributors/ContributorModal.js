@@ -19,13 +19,9 @@ import ContributorPagination from '../ContributorPagination/ContributorPaginatio
 import Contributor from './Contributor';
 import ClosingDialog from '../Dialogs/ClosingDialog';
 import { CRIST_REST_API } from '../../utils/constants';
-import {
-  getInstitutionName,
-  getInstitutionUnitNameBasedOnIDAndInstitutionStatus,
-  getPersonDetailById,
-  SearchLanguage,
-} from '../../api/contributorApi';
+import { getInstitutionName, getPersonDetailById, SearchLanguage } from '../../api/contributorApi';
 import ContributorSkeleton from './ContributorSkeleton';
+import { getAffiliationDetails } from '../../utils/contributorUtils';
 
 const searchLanguage = 'en';
 const foreign_educational_institution_generic_code = 9127;
@@ -689,31 +685,15 @@ async function searchContributors(authors) {
       person = (await getPersonDetailById(authors[i].cristinId)).data;
       if (person.affiliations) {
         const activeAffiliations = person.affiliations.filter((affiliation) => affiliation.active);
-        for (let j = 0; j < activeAffiliations.length; j++) {
-          const institutionNameAndCache = await getInstitutionName(
-            activeAffiliations[j].institution.cristin_institution_id,
-            SearchLanguage.En,
+        for (const activeAffiliation of activeAffiliations) {
+          const detailedAffiliationAndCache = await getAffiliationDetails(
+            activeAffiliation,
+            unitNameCache,
             institutionNameCache
           );
-          institutionNameCache = institutionNameAndCache.cachedInstitutionResult;
-
-          const unitNameAndCache = await getInstitutionUnitNameBasedOnIDAndInstitutionStatus(
-            activeAffiliations[j],
-            unitNameCache
-          );
-          unitNameCache = unitNameAndCache.cache;
-
-          affiliations[j] = {
-            cristinInstitutionNr: activeAffiliations[j].institution.cristin_institution_id,
-            institutionName: institutionNameAndCache.institutionName,
-            isCristinInstitution: true,
-            units: [
-              {
-                unitName: unitNameAndCache.unitName,
-                unitNr: activeAffiliations[j].unit ? activeAffiliations[j].unit.cristin_unit_id : '',
-              },
-            ],
-          };
+          unitNameCache = detailedAffiliationAndCache.unitNameCache;
+          institutionNameCache = detailedAffiliationAndCache.institutionNameCache;
+          affiliations.push(detailedAffiliationAndCache.affiliation);
         }
       } else {
         affiliations = await fetchInstitutions(authors[i].institutions);
