@@ -26,7 +26,6 @@ const StyledAffiliationsWrapper = styled.div`
 `;
 
 export default function ContributorSearchPanel(props: ContributorSearchPanelProps) {
-  console.log(props.searchResult);
   if (props.searchResult.length > 0) {
     return (
       <Collapse in={props.collapsed}>
