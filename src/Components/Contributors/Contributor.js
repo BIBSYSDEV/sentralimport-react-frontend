@@ -20,8 +20,6 @@ const StyledResultTypography = styled(Typography)`
   color: ${Colors.Text.OPAQUE_87_BLACK};
 `;
 
-const searchLanguage = 'en';
-
 function Contributor(props) {
   const { state } = useContext(Context);
   const [addDisabled, setAddDisabled] = useState(false);
