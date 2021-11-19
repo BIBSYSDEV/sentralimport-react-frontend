@@ -30,7 +30,6 @@ interface ContributorSearchPanelProps {
 }
 
 export default function ContributorSearchPanel(props: ContributorSearchPanelProps) {
-  console.log('ContributorSearchPanel, props.searchResult', props.searchResult);
   if (props.searchResult.length > 0) {
     return (
       <Collapse in={props.collapsed}>
