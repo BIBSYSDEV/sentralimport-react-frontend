@@ -87,6 +87,7 @@ export async function getPersonDetailById(person: PersonSearchResponse): Promise
     ) {
       return {
         cristinId: person.cristin_person_id,
+        cristin_person_id: person.cristin_person_id,
         first_name: person.first_name,
         surname: person.surname,
         identified_cristin_person: true,

@@ -20,8 +20,9 @@ import {
   cristinIDWithoutAffiliationAttribute,
   mockPersonDetailedWithoutAffiliationAttribute,
   mockPerson,
-  cristinIdClassifiedPerson,
+  cristinIdForbiddenPerson,
   mockNotAuthorizedForThisPersonDetail,
+  mockForbiddenPerson,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
@@ -100,11 +101,16 @@ export const interceptRequestsOnMock = () => {
   //search persons by name
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/\\?name.*`))
-    .reply(200, [mockPerson, mockPersonWithoutActiveAffiliation, mockPersonWithoutAffiliationAttribute]);
+    .reply(200, [
+      mockPerson,
+      mockPersonWithoutActiveAffiliation,
+      mockPersonWithoutAffiliationAttribute,
+      mockForbiddenPerson,
+    ]);
 
   //get person-details by id
   mock
-    .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIdClassifiedPerson}`))
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIdForbiddenPerson}`))
     .reply(403, mockNotAuthorizedForThisPersonDetail);
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIDWithoutActiveAffiliation}`))

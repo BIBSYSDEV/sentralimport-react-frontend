@@ -30,6 +30,7 @@ interface ContributorSearchPanelProps {
 }
 
 export default function ContributorSearchPanel(props: ContributorSearchPanelProps) {
+  console.log('ContributorSearchPanel, props.searchResult', props.searchResult);
   if (props.searchResult.length > 0) {
     return (
       <Collapse in={props.collapsed}>
@@ -53,7 +54,7 @@ export default function ContributorSearchPanel(props: ContributorSearchPanelProp
                 ))}
                 {author.affiliations.length === 0 && author.require_higher_authorization && (
                   <StyledAffiliationsWrapper>
-                    <StyledTypography color="error">
+                    <StyledTypography data-testid={`person-limited-access-${author.cristin_person_id}`} color="error">
                       Kan ikke hente inn institusjoner for denne bidragsyteren.
                     </StyledTypography>
                   </StyledAffiliationsWrapper>

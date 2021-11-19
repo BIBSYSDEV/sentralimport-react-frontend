@@ -480,7 +480,7 @@ export const mockPerson = {
 
 export const cristinIDWithoutActiveAffiliation = '9456892';
 export const cristinIDWithoutAffiliationAttribute = '89754123';
-export const cristinIdClassifiedPerson = '1235412375';
+export const cristinIdForbiddenPerson = '1235412375';
 
 export const mockNotAuthorizedForThisPersonDetail = {
   status: 403,
@@ -502,11 +502,11 @@ export const mockPersonWithoutAffiliationAttribute = {
   cristin_person_id: cristinIDWithoutAffiliationAttribute,
 };
 
-export const mockClassifiedPerson = {
+export const mockForbiddenPerson = {
   first_name: 'Arne',
   surname: 'Benoni',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
-  cristin_person_id: cristinIdClassifiedPerson,
+  cristin_person_id: cristinIdForbiddenPerson,
 };
 
 export const mockPersonDetailed = {

@@ -6,6 +6,7 @@ import {
   mockUnits,
   cristinIDWithoutActiveAffiliation,
   cristinIDWithoutAffiliationAttribute,
+  cristinIdForbiddenPerson,
 } from '../../src/utils/mockdata';
 import mockImportData from '../../src/utils/mockImportData.json';
 
@@ -80,5 +81,9 @@ context('contributor', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid=contributor-search-button-2]').click();
+    cy.get(`[data-testid=person-limited-access-${cristinIdForbiddenPerson}]`).should(
+      'have.text',
+      'Kan ikke hente inn institusjoner for denne bidragsyteren.'
+    );
   });
 });

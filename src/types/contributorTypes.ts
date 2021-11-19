@@ -6,6 +6,7 @@ export interface Person {
   surname: string;
   tel?: string;
   cristinId: number;
+  cristin_person_id?: number;
   cristin_profile_url?: string;
   picture_url?: string;
   require_higher_authorization?: boolean;
