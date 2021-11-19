@@ -59,26 +59,11 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
     handleCreateJournal({ title: values.title, issn: values.issn, eissn: values.issn });
   };
 
-  const formValidationSchema = Yup.object().shape(
-    {
-      title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
-      issn: Yup.string()
-        .matches(ISSNCodeFormat, 'ISSN er ikke på korrekt format (NNNN-NNNC)')
-        .when('eissn', {
-          is: (eissn: string) => !eissn || eissn.length === 0,
-          then: Yup.string().required('Enten skriv inn ISSN eller e-ISSN'),
-          otherwise: Yup.string(),
-        }),
-      eissn: Yup.string()
-        .matches(ISSNCodeFormat, 'e-ISSN er ikke på korrekt format (NNNN-NNNC)')
-        .when('issn', {
-          is: (issn: string) => !issn || issn.length === 0,
-          then: Yup.string().required('Enten skriv inn ISSN eller e-ISSN)'),
-          otherwise: Yup.string(),
-        }),
-    },
-    [['issn', 'eissn']]
-  );
+  const formValidationSchema = Yup.object().shape({
+    title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
+    issn: Yup.string().matches(ISSNCodeFormat, 'ISSN er ikke på korrekt format (NNNN-NNNC)'),
+    eissn: Yup.string().matches(ISSNCodeFormat, 'e-ISSN er ikke på korrekt format (NNNN-NNNC)'),
+  });
 
   return (
     <StyledCreateJournalPanel>
@@ -122,7 +107,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                   {({ field, meta: { error, touched } }: FieldProps) => (
                     <StyledTextField
                       fullWidth
-                      label="ISSN *"
+                      label="ISSN "
                       inputProps={{ 'data-testid': 'journal-form-issn-input' }}
                       {...field}
                       error={!!error && touched}
@@ -134,7 +119,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                   {({ field, meta: { error, touched } }: FieldProps) => (
                     <StyledTextField
                       fullWidth
-                      label="e-ISSN *"
+                      label="e-ISSN "
                       inputProps={{ 'data-testid': 'journal-form-eissn-input' }}
                       {...field}
                       error={!!error && touched}

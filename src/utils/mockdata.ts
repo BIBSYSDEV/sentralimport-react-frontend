@@ -666,7 +666,7 @@ export const mockSavedPublication = {
         type: 'printed',
       },
       {
-        type: 'online',
+        type: 'electronic',
       },
     ],
     pia_journal_number: '116',

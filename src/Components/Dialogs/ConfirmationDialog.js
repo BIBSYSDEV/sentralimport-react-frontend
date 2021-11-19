@@ -117,7 +117,7 @@ export default function ConfirmationDialog(props) {
                   value: publication.channel.issn ? publication.channel.issn : null,
                 },
                 {
-                  type: 'online',
+                  type: 'electronic',
                   value: publication.channel.eissn ? publication.channel.eissn : null,
                 },
               ],
