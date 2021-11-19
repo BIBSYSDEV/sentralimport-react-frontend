@@ -38,7 +38,7 @@ export interface AffiliationResponse {
 export interface PersonSearchResponse {
   first_name: string;
   surname: string;
-  url: string;
+  url?: string;
   cristin_person_id: number;
 }
 

@@ -73,7 +73,7 @@ export async function getInstitutionUnitNameBasedOnIDAndInstitutionStatus(
 export async function getPersonDetailById(person: PersonSearchResponse): Promise<PersonDetailResponse> {
   try {
     const personDetailResponse = (await authenticatedApiRequest({
-      url: encodeURI(`${CRIST_REST_API}/persons/${person.cristin_person_id}`),
+      url: encodeURI(`${CRIST_REST_API}/persons/${person.cristin_person_id ?? person}`),
     })) as AxiosResponse<PersonDetailResponse>;
     return personDetailResponse.data;
   } catch (error) {

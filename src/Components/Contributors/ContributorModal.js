@@ -194,12 +194,12 @@ function ContributorModal(props) {
         data[i].imported.cristin_person_id !== 0 &&
         i < data.length
       ) {
-        let person = await getPersonDetailById(data[i].imported.cristin_person_id);
-        identifiedImported[i] = person !== undefined ? person.data.identified_cristin_person : false;
+        let person = await getPersonDetailById(data[i].imported);
+        identifiedImported[i] = person !== undefined ? person.identified_cristin_person : false;
       }
       if (!data[i].toBeCreated.identified_cristin_person && props.duplicate) {
-        let person = await getPersonDetailById(data[i].toBeCreated.cristin_person_id);
-        identified[i] = person !== undefined ? person.data.identified_cristin_person : false;
+        let person = await getPersonDetailById(data[i].toBeCreated);
+        identified[i] = person !== undefined ? person.identified_cristin_person : false;
       }
     }
     dispatch({ type: 'identifiedImported', payload: identifiedImported });
@@ -682,7 +682,13 @@ async function searchContributors(authors) {
     let person = defaultAuthor;
     let affiliations = [];
     if (authors[i].cristinId !== 0) {
-      person = (await getPersonDetailById(authors[i].cristinId)).data;
+      //This is bad. Some places cristin_personal_id is called cristinId. Apparently this stems from the backend.
+      //TODO: Make the datamodel consistent, (will require massaging data).
+      person = await getPersonDetailById({
+        first_name: authors[i].first_name ?? '',
+        surname: authors[i].surname ?? '',
+        cristin_person_id: authors[i].cristinId,
+      });
       if (person.affiliations) {
         const activeAffiliations = person.affiliations.filter((affiliation) => affiliation.active);
         for (const activeAffiliation of activeAffiliations) {
