@@ -27,7 +27,7 @@ const StyledTextField = styled(TextField)`
   }
 `;
 
-const ISSNCodeFormat = /([0-9]{4})[-]([0-9]{3})[0-9X]/g;
+const ISSNCodeFormat = /^[0-9]{4}-[0-9]{3}[0-9xX]$/g;
 const emptyFormValues: CreateJournalFormValues = { title: '', issn: '', eissn: '' };
 
 interface CreateJournalFormValues {
@@ -56,7 +56,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
   const handleSubmit = (values: CreateJournalFormValues) => {
     setExpanded(false);
     //old code :  const newJournal = {title: title,issn: issn,eissn: eissn,url: url,countryCode: publisher,id: 0};
-    handleCreateJournal({ title: values.title, issn: values.issn, eissn: values.issn });
+    handleCreateJournal({ title: values.title, issn: values.issn, eissn: values.eissn });
   };
 
   const formValidationSchema = Yup.object().shape({
@@ -83,12 +83,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
           <Typography gutterBottom variant="caption">
             Felter merket med * er obligatoriske (ISSN eller e-ISSN må fylles ut)
           </Typography>
-          <Formik
-            onSubmit={handleSubmit}
-            initialValues={emptyFormValues}
-            validateOnChange={false}
-            validateOnBlur={false}
-            validationSchema={formValidationSchema}>
+          <Formik onSubmit={handleSubmit} initialValues={emptyFormValues} validationSchema={formValidationSchema}>
             {({ isValid }) => (
               <Form>
                 <Field name="title">
