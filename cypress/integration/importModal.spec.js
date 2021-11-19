@@ -1,4 +1,3 @@
-import { mockImportPublication1 } from '../../src/utils/mockdata';
 import mockImportData from '../../src/utils/mockImportData.json';
 
 context('importModal', () => {
@@ -11,7 +10,6 @@ context('importModal', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
 
-    cy.wait(500); //To make modal visible (tests works without, but is more difficult to view with cypress open)
     cy.get(`[data-testid="cristindata-doi-textfield"] input`).should('have.value', '');
     cy.get(`[data-testid="import-publication-button"]`).should('exist').should('not.be.disabled');
   });
@@ -19,8 +17,6 @@ context('importModal', () => {
   it('can show an importmodal with populated values', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
-
-    cy.wait(500); //To make modal visible (tests works without, but is more difficult to view with cypress open)
 
     cy.get(`[data-testid="importdata-pubid"]`).contains(mockImportData[0].pubId);
     cy.get(`[data-testid="cristindata-id"]`).contains('Ingen Cristin-Id');
