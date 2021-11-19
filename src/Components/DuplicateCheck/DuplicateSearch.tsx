@@ -7,7 +7,7 @@ import { CristinPublication, ImportData } from '../../types/PublicationTypes';
 import { searchChristinPublications } from './SearchChristinPublications';
 import SearchPanel from './SearchPanel';
 import styled from 'styled-components';
-import { BooleanString } from '../../types/ContextType';
+import { SelectValues } from './DuplicateCheckModal';
 
 const StyledRadioGroupWrapper = styled.div`
   margin-top: 1rem;
@@ -24,9 +24,15 @@ const StyledResultListWrapper = styled.div`
 
 interface DuplicateSearchProps {
   importPublication: ImportData;
+  selectedRadioButton: string;
+  setSelectedRadioButton: (value: string) => void;
 }
 
-const DuplicateSearch: FC<DuplicateSearchProps> = ({ importPublication }) => {
+const DuplicateSearch: FC<DuplicateSearchProps> = ({
+  importPublication,
+  selectedRadioButton,
+  setSelectedRadioButton,
+}) => {
   const [duplicateList, setDuplicateList] = useState<CristinPublication[]>([]);
   const [foundDuplicates, setFoundDuplicates] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -36,8 +42,6 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({ importPublication }) => {
 
   useEffect(() => {
     async function fetch() {
-      state.selected = BooleanString.true; //what?
-
       let searchString;
       if (importPublication.doi) {
         searchString = '?doi=' + importPublication.doi;
@@ -49,7 +53,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({ importPublication }) => {
           searchString += '&published_since=' + (yearPublished - 1) + '&published_before=' + yearPublished;
         }
 
-        if (importPublication.hasOwnProperty('channel') && importPublication.channel?.issns) {
+        if (importPublication.channel?.issns) {
           const issn = importPublication.channel.issns[0];
           searchString += '&issn=' + issn;
         }
@@ -57,20 +61,21 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({ importPublication }) => {
       searchString += '&per_page=5';
       setDuplicateList(await searchChristinPublications(searchString));
     }
+    setSelectedRadioButton(SelectValues.CREATE_NEW);
     fetch().then();
   }, [importPublication]);
 
   useEffect(() => {
-    if (importPublication.hasOwnProperty('cristin_id') && duplicateList.length > 0) {
-      dispatch({ type: 'setSelected', payload: duplicateList[0].cristin_result_id });
+    if (importPublication.cristin_id && duplicateList.length > 0) {
+      setSelectedRadioButton(duplicateList[0].cristin_result_id);
       dispatch({ type: 'setSelectedPublication', payload: duplicateList[0] });
     }
   }, [duplicateList]);
 
-  function handleChange(event: any) {
-    dispatch({ type: 'setSelected', payload: event.target.value });
-    event.target.value !== 'true' &&
-      event.target.value !== 'false' &&
+  function handleRadioGroupChange(event: any) {
+    setSelectedRadioButton(event.target.value);
+    event.target.value !== SelectValues.CREATE_NEW &&
+      event.target.value !== SelectValues.TOGGLE_RELEVANT &&
       dispatch({
         type: 'setSelectedPublication',
         payload: duplicateList.find((element: any) => element.cristin_result_id === event.target.value),
@@ -98,7 +103,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({ importPublication }) => {
       </StyledStatusWrapper>
       <Divider />
       <StyledRadioGroupWrapper>
-        <RadioGroup onChange={handleChange} value={state.selected}>
+        <RadioGroup onChange={handleRadioGroupChange} value={selectedRadioButton}>
           <StyledResultListWrapper data-testid="duplicates-result-list">
             {duplicateList.length > 0 &&
               duplicateList.map((cristinPublication: any, index: number) => (
@@ -111,7 +116,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({ importPublication }) => {
           </StyledResultListWrapper>
           <div>
             <FormControlLabel
-              value="false"
+              value={SelectValues.TOGGLE_RELEVANT}
               control={<Radio />}
               label={relevantStatus ? 'Marker som ikke aktuell' : 'Marker som aktuell'}
               disabled={importPublication.cristin_id}
@@ -119,7 +124,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({ importPublication }) => {
           </div>
           <div>
             <FormControlLabel
-              value="true"
+              value={SelectValues.CREATE_NEW}
               control={<Radio />}
               label="Opprett ny cristin-publikasjon basert på importpublikasjon"
               disabled={importPublication.cristin_id}

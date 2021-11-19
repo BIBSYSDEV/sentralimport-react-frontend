@@ -26,6 +26,12 @@ const StyledBodyWrapper = styled.div`
   padding: 1rem;
 `;
 
+export enum SelectValues {
+  TOGGLE_RELEVANT = 'toggle_relevant',
+  CREATE_NEW = 'create_new',
+  //could also be a cristinId
+}
+
 interface DuplicateCheckModalProps {
   isDuplicateCheckModalOpen: boolean;
   handleDuplicateCheckModalClose: () => void;
@@ -41,14 +47,15 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
   const history = useHistory();
   const [isComparePublicationDataModalOpen, setIsComparePublicationDataModalOpen] = useState(false);
   const [isDuplicate, setDuplicate] = useState(false);
+  const [selectedRadioButton, setSelectedRadioButton] = useState<string>(SelectValues.CREATE_NEW);
 
   function handleClickOkButton() {
-    if (state.selected === 'true') {
+    if (selectedRadioButton === SelectValues.CREATE_NEW) {
       dispatch({ type: 'doSave', payload: true });
       setDuplicate(false);
       setIsComparePublicationDataModalOpen(true);
-    } else if (state.selected === 'false') {
-      setNotRelevant().then();
+    } else if (selectedRadioButton === SelectValues.TOGGLE_RELEVANT) {
+      toggleRelavantStatus().then();
       handleDuplicateCheckModalClose();
       dispatch({ type: 'importDone', payload: !state.importDone });
     } else {
@@ -63,7 +70,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
     setIsComparePublicationDataModalOpen(false);
   }
 
-  async function setNotRelevant() {
+  async function toggleRelavantStatus() {
     const relevantStatus = state.currentImportStatus !== 'ikke aktuelle';
     await axios
       .patch(
@@ -89,7 +96,11 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
         <StyledBodyWrapper>
           <ImportPublicationPresentation importPublication={importPublication} />
           <Divider />
-          <DuplicateSearch importPublication={importPublication} />
+          <DuplicateSearch
+            importPublication={importPublication}
+            setSelectedRadioButton={setSelectedRadioButton}
+            selectedRadioButton={selectedRadioButton}
+          />
         </StyledBodyWrapper>
       </ModalBody>
       <ModalFooter>

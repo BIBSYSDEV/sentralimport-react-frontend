@@ -1,4 +1,4 @@
-import { mockImportPublication1 } from '../../src/utils/mockdata';
+import { mockImportPublication1, mockInstitutions } from '../../src/utils/mockdata';
 import mockImportData from '../../src/utils/mockImportData.json';
 
 context('application', () => {
@@ -36,5 +36,14 @@ context('application', () => {
   it('can search post with doi', () => {
     cy.get('[data-testid="doi-filter"]').type(mockImportPublication1.doi);
     cy.get('[data-testid="import-table-panel"]').contains(mockImportPublication1.languages[0].title);
+  });
+
+  it('is possible to search for acronyms in filter institutions', () => {
+    console.log('meh');
+    cy.get('[data-testid=filter-institution-select]').type('ntnu');
+    cy.get(`#institution-select-option-0`).should('have.text', mockInstitutions[6].institution_name.nb);
+    cy.get(`#institution-select-option-1`).should('have.text', mockInstitutions[5].institution_name.nb);
+    cy.get(`#institution-select-option-0`).click();
+    cy.get('#institution-select').should('have.value', mockInstitutions[6].institution_name.nb);
   });
 });

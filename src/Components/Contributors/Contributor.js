@@ -7,17 +7,11 @@ import { Context } from '../../Context';
 import axios from 'axios';
 import '../../assets/styles/common.scss';
 import { CRIST_REST_API } from '../../utils/constants';
-import {
-  getInstitutionName,
-  getInstitutionUnitNameBasedOnIDAndInstitutionStatus,
-  getPersonDetailById,
-  SearchLanguage,
-  searchPersonDetailById,
-  searchPersonDetailByName,
-} from '../../api/contributorApi';
+import { getPersonDetailById, searchPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
 import ContributorSearchPanelSkeleton from './ContributorSearchPanelSkeleton';
 import { Colors } from '../../assets/styles/StyleConstants';
 import styled from 'styled-components';
+import { getAffiliationDetails } from '../../utils/contributorUtils';
 
 const StyledResultTypography = styled(Typography)`
   color: ${Colors.Text.OPAQUE_87_BLACK};
@@ -26,10 +20,9 @@ const StyledResultTypography = styled(Typography)`
 const searchLanguage = 'en';
 
 function Contributor(props) {
-  let { state } = useContext(Context);
+  const { state } = useContext(Context);
   const [addDisabled, setAddDisabled] = useState(false);
-  const [data, setData] = useState(props.author);
-  const [rowIndex, setRowIndex] = useState(props.index);
+  const [authorData, setAuthorData] = useState(props.author);
   const [selectedUnit, setSelectedUnit] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
@@ -41,8 +34,7 @@ function Contributor(props) {
   });
 
   useEffect(() => {
-    setRowIndex(props.index);
-    setData(props.author);
+    setAuthorData(props.author);
   }, [props.author]);
 
   useEffect(() => {
@@ -51,20 +43,20 @@ function Contributor(props) {
   }, [state.contributorPage]);
 
   function updateEditing() {
-    let temp = data;
+    const temp = authorData;
     temp.isEditing = true;
 
-    props.updateData(temp, rowIndex);
+    props.updateData(temp, props.index);
   }
 
   async function handleSubmit() {
-    let temp = JSON.parse(JSON.stringify(data));
+    const temp = JSON.parse(JSON.stringify(authorData));
     temp.isEditing = false;
 
-    let cleanedAffiliations = await props.cleanUnknownInstitutions(temp.toBeCreated.affiliations);
-    temp.toBeCreated.affiliations = await filterInstitutions(cleanedAffiliations);
+    const cleanedAffiliations = await props.cleanUnknownInstitutions(temp.toBeCreated.affiliations);
+    temp.toBeCreated.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(cleanedAffiliations);
 
-    await props.updateData(temp, rowIndex);
+    await props.updateData(temp, props.index);
     setSetSelectedInstitution({
       value: '',
       cristinInstitutionNr: 0,
@@ -81,25 +73,25 @@ function Contributor(props) {
   }
 
   function removeInstitution(index) {
-    let affiliationCopy = [...data.toBeCreated.affiliations];
+    let affiliationCopy = [...authorData.toBeCreated.affiliations];
     affiliationCopy.splice(index, 1);
-    let temp = data;
+    let temp = authorData;
     temp.toBeCreated.affiliations = affiliationCopy;
 
-    props.updateData(temp, rowIndex);
+    props.updateData(temp, props.index);
   }
 
   function removeUnit(instIndex, unitIndex) {
-    let affiliationCopy = [...data.toBeCreated.affiliations];
+    let affiliationCopy = [...authorData.toBeCreated.affiliations];
     affiliationCopy[instIndex].units.splice(unitIndex, 1);
-    let temp = data;
+    let temp = authorData;
     temp.toBeCreated.affiliations = affiliationCopy;
 
-    props.updateData(temp, rowIndex);
+    props.updateData(temp, props.index);
   }
 
   function checkForUnit() {
-    let affiliationCopy = [...data.toBeCreated.affiliations];
+    let affiliationCopy = [...authorData.toBeCreated.affiliations];
     let duplicate = 0;
     if (selectedUnit) {
       for (let i = 0; i < affiliationCopy.length; i++) {
@@ -116,21 +108,18 @@ function Contributor(props) {
     }
   }
 
-  async function filterInstitutions(affiliations) {
-    //TODO: bruk filter isteden
-    for (let i = 0; i < affiliations.length - 1; i++) {
-      if (affiliations[i].cristinInstitutionNr === affiliations[i + 1].cristinInstitutionNr) {
-        affiliations.splice(i, 1);
-        i--;
-      }
-    }
-
-    return affiliations;
+  function removeInstitutionsDuplicatesBasedOnCristinId(affiliations) {
+    const cristinIdSet = new Set();
+    return affiliations.filter((affiliation) => {
+      if (cristinIdSet.has(affiliation.cristinInstitutionNr)) return false;
+      cristinIdSet.add(affiliation.cristinInstitutionNr);
+      return true;
+    });
   }
 
   async function addInstitution() {
     setAddDisabled(true);
-    let affiliationCopy = [...data.toBeCreated.affiliations];
+    let affiliationCopy = [...authorData.toBeCreated.affiliations];
     let fetchedInstitution = await axios.get(
       CRIST_REST_API + '/institutions/' + selectedInstitution.cristinInstitutionNr + '?lang=' + searchLanguage,
       JSON.parse(localStorage.getItem('config'))
@@ -158,10 +147,10 @@ function Contributor(props) {
       affiliationCopy = addUnit(affiliationCopy);
     }
 
-    let temp = data;
-    temp.toBeCreated.affiliations = await filterInstitutions(affiliationCopy);
+    let temp = authorData;
+    temp.toBeCreated.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(affiliationCopy);
 
-    props.updateData(temp, rowIndex);
+    props.updateData(temp, props.index);
     setAddDisabled(false);
   }
 
@@ -202,51 +191,41 @@ function Contributor(props) {
       obj.toBeCreated.authorName = authorName;
     }
 
-    props.updateData(obj, rowIndex);
+    props.updateData(obj, props.index);
   }
 
-  async function retrySearch(data) {
+  async function retrySearch(authorData) {
     setSearching(true);
     setSearchError(null);
     let unitNameCache = new Map();
     let institutionNameCache = new Map();
     try {
       const authorResults =
-        data.imported.cristin_person_id && data.imported.cristin_person_id !== 0
-          ? await searchPersonDetailById(data.imported.cristin_person_id)
-          : await searchPersonDetailByName(`${data.toBeCreated.first_name} ${data.toBeCreated.surname}`);
+        authorData.imported.cristin_person_id && authorData.imported.cristin_person_id !== 0
+          ? await searchPersonDetailById(authorData.imported.cristin_person_id)
+          : await searchPersonDetailByName(`${authorData.toBeCreated.first_name} ${authorData.toBeCreated.surname}`);
 
       if (authorResults.data.length > 0) {
         const fetchedAuthors = [];
         for (let i = 0; i < authorResults.data.length; i++) {
-          let tempAffiliations = [];
+          const resultAffiliations = [];
           const fetchedAuthor = (await getPersonDetailById(authorResults.data[i].cristin_person_id)).data;
-          const activeAffiliations = fetchedAuthor.affiliations.filter((affiliation) => affiliation.active);
-          for (let h = 0; h < activeAffiliations.length; h++) {
-            const institutionNameAndCache = await getInstitutionName(
-              activeAffiliations[h].institution.cristin_institution_id,
-              SearchLanguage.En,
-              institutionNameCache
-            );
-            institutionNameCache = institutionNameAndCache.cachedInstitutionResult;
-            const unitNameAndCache = await getInstitutionUnitNameBasedOnIDAndInstitutionStatus(
-              activeAffiliations[h],
-              unitNameCache
-            );
-            unitNameCache = unitNameAndCache.cache;
-            tempAffiliations[h] = {
-              institutionName: institutionNameAndCache.institutionName,
-              cristinInstitutionNr: activeAffiliations[h].institution.cristin_institution_id,
-              isCristinInstitution: true,
-              units: [
-                {
-                  unitName: unitNameAndCache.unitName,
-                  unitNr: activeAffiliations[h].unit ? activeAffiliations[h].unit.cristin_unit_id : '',
-                },
-              ],
-            };
+          if (fetchedAuthor.affiliations) {
+            const activeAffiliations = fetchedAuthor.affiliations.filter((affiliation) => affiliation.active);
+            for (const activeAffiliation of activeAffiliations) {
+              const detailedAffiliationAndCache = await getAffiliationDetails(
+                activeAffiliation,
+                unitNameCache,
+                institutionNameCache
+              );
+              unitNameCache = detailedAffiliationAndCache.unitNameCache;
+              institutionNameCache = detailedAffiliationAndCache.institutionNameCache;
+              resultAffiliations.push(detailedAffiliationAndCache.affiliation);
+            }
+            fetchedAuthor.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(resultAffiliations);
+          } else {
+            fetchedAuthor.affiliations = [];
           }
-          fetchedAuthor.affiliations = await filterInstitutions(tempAffiliations);
           fetchedAuthors.push(fetchedAuthor);
         }
         setSearchResults(fetchedAuthors);
@@ -271,11 +250,11 @@ function Contributor(props) {
   }
 
   function handleSelect(author) {
-    let temp = data;
+    let temp = authorData;
 
     temp.cristin = author;
     temp.cristin.isEditing = false;
-    temp.cristin.order = rowIndex + 1;
+    temp.cristin.order = props.index + 1;
 
     temp.toBeCreated = author;
     if (temp.toBeCreated.first_name_preferred) {
@@ -285,12 +264,12 @@ function Contributor(props) {
       temp.toBeCreated.surname = temp.toBeCreated.surname_preferred;
     }
     temp.toBeCreated.isEditing = false;
-    temp.toBeCreated.order = rowIndex + 1;
+    temp.toBeCreated.order = props.index + 1;
 
     temp.isEditing = false;
 
     setOpenContributorSearchPanel(false);
-    props.updateData(temp, rowIndex);
+    props.updateData(temp, props.index);
   }
 
   function editInstitution(inst) {
@@ -309,9 +288,9 @@ function Contributor(props) {
           <TextField
             id={'firstName' + props.index}
             label="Fornavn"
-            value={data.toBeCreated.first_name}
+            value={authorData.toBeCreated.first_name}
             margin="normal"
-            onChange={(e) => handleChange(e, data, 'first')}
+            onChange={(e) => handleChange(e, authorData, 'first')}
             required
           />
         </FormGroup>
@@ -319,9 +298,9 @@ function Contributor(props) {
           <TextField
             id={'lastName' + props.index}
             label="Etternavn"
-            value={data.toBeCreated.surname}
+            value={authorData.toBeCreated.surname}
             margin="normal"
-            onChange={(e) => handleChange(e, data, 'last')}
+            onChange={(e) => handleChange(e, authorData, 'last')}
             required
           />
         </FormGroup>
@@ -330,17 +309,17 @@ function Contributor(props) {
             id={'authorName' + props.index}
             label="Forfatternavn"
             value={
-              data.toBeCreated.authorName
-                ? data.toBeCreated.authorName
-                : data.toBeCreated.surname + ', ' + data.toBeCreated.first_name
+              authorData.toBeCreated.authorName
+                ? authorData.toBeCreated.authorName
+                : authorData.toBeCreated.surname + ', ' + authorData.toBeCreated.first_name
             }
             margin="normal"
-            onChange={(e) => handleChange(e, data, 'authorName')}
+            onChange={(e) => handleChange(e, authorData, 'authorName')}
           />
         </FormGroup>
         <div className={`metadata`}>
-          {data.toBeCreated.affiliations
-            .filter((item, number) => data.toBeCreated.affiliations.indexOf(item) === number)
+          {authorData.toBeCreated.affiliations
+            .filter((item, number) => authorData.toBeCreated.affiliations.indexOf(item) === number)
             .map((inst, index) => (
               <Card variant="outlined" key={index} style={{ padding: '0.5rem', marginBottom: '0.5rem' }}>
                 <Typography style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>{inst.institutionName}</Typography>
@@ -403,7 +382,7 @@ function Contributor(props) {
             disabled={
               addDisabled ||
               selectedInstitution.cristinInstitutionNr === 0 ||
-              (data.toBeCreated.affiliations.filter((instNr) => {
+              (authorData.toBeCreated.affiliations.filter((instNr) => {
                 return parseInt(selectedInstitution.cristinInstitutionNr) === parseInt(instNr.cristinInstitutionNr);
               }).length > 0 &&
                 !selectedUnit) ||
@@ -416,13 +395,13 @@ function Contributor(props) {
           <Button
             data-testid={`contributor-delete-button-${props.index}`}
             color="secondary"
-            onClick={() => props.deleteContributor(rowIndex)}>
+            onClick={() => props.deleteContributor(props.index)}>
             Slett person
           </Button>
           <Button
             data-testid={`contributor-search-button-${props.index}`}
-            onClick={() => retrySearch(data)}
-            disabled={data.toBeCreated.first_name === '' || data.toBeCreated.surname === ''}>
+            onClick={() => retrySearch(authorData)}
+            disabled={authorData.toBeCreated.first_name === '' || authorData.toBeCreated.surname === ''}>
             Søk igjen
           </Button>
           <Button data-testid={`contributor-save-button-${props.index}`} color="primary" onClick={() => handleSubmit()}>
@@ -448,11 +427,11 @@ function Contributor(props) {
 
   return (
     <div className="content-wrapper">
-      {!data.isEditing ? (
+      {!authorData.isEditing ? (
         <div data-testid={`contributor-for-import-wrapper-${props.index}`}>
-          <h6>{data.toBeCreated.surname + ', ' + data.toBeCreated.first_name}</h6>
+          <h6>{authorData.toBeCreated.surname + ', ' + authorData.toBeCreated.first_name}</h6>
           <div className={`metadata`}>
-            {data.toBeCreated.affiliations.map((inst, instIndex) => (
+            {authorData.toBeCreated.affiliations.map((inst, instIndex) => (
               <div style={{ fontStyle: 'italic' }} key={instIndex}>
                 <p key={instIndex}>{inst.institutionName}</p>
                 <ul style={{ marginBottom: '0.3rem' }}>
@@ -478,7 +457,7 @@ function Contributor(props) {
             <Button
               data-testid={`contributor-delete-button-${props.index}`}
               color="secondary"
-              onClick={() => props.deleteContributor(rowIndex)}>
+              onClick={() => props.deleteContributor(props.index)}>
               Slett person
             </Button>
           </div>

@@ -24,7 +24,6 @@ export interface ContextType {
   institutionsEnglish: null | Institution[];
   isSampublikasjon: boolean;
   param: null | any;
-  selected: BooleanString;
   selectedField: string;
   selectedPublication: SelectedPublication | any; //TODO: code-cleanup, selectedPublication changes interface throughout the application (possibly only the initial state is incorrect)
   totalCount: number;
