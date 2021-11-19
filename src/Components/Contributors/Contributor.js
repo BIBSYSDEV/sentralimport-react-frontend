@@ -4,10 +4,14 @@ import InstitutionCountrySelect from '../InstitutionSelect/InstitutionCountrySel
 import ContributorSearchPanel from './ContributorSearchPanel';
 import { Form } from 'reactstrap';
 import { Context } from '../../Context';
-import axios from 'axios';
 import '../../assets/styles/common.scss';
-import { CRIST_REST_API } from '../../utils/constants';
-import { getPersonDetailById, searchPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
+import {
+  getInstitutionName,
+  getPersonDetailById,
+  SearchLanguage,
+  searchPersonDetailById,
+  searchPersonDetailByName,
+} from '../../api/contributorApi';
 import { Colors } from '../../assets/styles/StyleConstants';
 import styled from 'styled-components';
 import { getAffiliationDetails } from '../../utils/contributorUtils';
@@ -119,9 +123,10 @@ function Contributor(props) {
   async function addInstitution() {
     setAddDisabled(true);
     let affiliationCopy = [...authorData.toBeCreated.affiliations];
-    let fetchedInstitution = await axios.get(
-      CRIST_REST_API + '/institutions/' + selectedInstitution.cristinInstitutionNr + '?lang=' + searchLanguage,
-      JSON.parse(localStorage.getItem('config'))
+    const { institutionName } = await getInstitutionName(
+      selectedInstitution.cristinInstitutionNr,
+      SearchLanguage.En,
+      new Map()
     );
 
     let duplicate = 0;
@@ -129,8 +134,10 @@ function Contributor(props) {
       if (parseInt(affiliationCopy[i].cristinInstitutionNr) === parseInt(selectedInstitution.cristinInstitutionNr)) {
         duplicate++;
 
-        if (affiliationCopy[i].unitName !== fetchedInstitution.data.institution_name.en) {
-          affiliationCopy[i].unitName = fetchedInstitution.data.institution_name.en;
+        //TODO: Why is institutionName set as unitName?? Ask somebody if they know, this doesn't make  any sense
+        //Maybe linked to bug SMILE-1131?
+        if (affiliationCopy[i].unitName !== institutionName) {
+          affiliationCopy[i].unitName = institutionName;
         }
       }
     }

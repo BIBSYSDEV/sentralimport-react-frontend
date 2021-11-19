@@ -48,7 +48,8 @@ export async function getInstitutionUnitName(
       url: encodeURI(`${CRIST_REST_API}/units/${institutionUnitId}?lang=${searchLanguage}`),
       method: 'GET',
     }) as AxiosPromise<UnitResponse>);
-    unitName = unit.data.unit_name.en || unit.data.unit_name.nb;
+    unitName =
+      searchLanguage === SearchLanguage.En ? unit.data.unit_name.en || unit.data.unit_name.nb : unit.data.unit_name.nb;
   } catch (error) {
     unitName = `Fant ikke ${institutionUnitId}`;
   } finally {
