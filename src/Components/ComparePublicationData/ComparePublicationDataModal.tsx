@@ -3,7 +3,7 @@ import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Button, FormControl, Grid, TextField, Typography } from '@material-ui/core';
 import Select from 'react-select';
 import ConfirmationDialog from '../Dialogs/ConfirmationDialog';
-import ClosingDialog from '../Dialogs/ClosingDialog';
+import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import Validation, { doiMatcher } from '../Validation/Validation';
 import { Context } from '../../Context';
 import axios from 'axios';
@@ -89,6 +89,7 @@ const StyledLineImportValue = styled.div`
   min-width: 10rem;
   width: 40%;
 `;
+
 const StyledDisabledTypography = styled(Typography)`
   color: #555555;
 `;
@@ -135,7 +136,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [allContributorsFetched, setAllContributorsFetched] = useState(false);
   const [kilde, setKilde] = useState('');
   const [kildeId, setKildeId] = useState('');
-  const [contributorModal, setContributorModal] = useState(false);
+  const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors] = useState(isDuplicate ? state.selectedPublication.authors : importPublication?.authors || []);
   const [aarstall, setAarstall] = useState('');
   const [categories, setCategories] = useState<Category[]>();
@@ -436,8 +437,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     setDialogAbortOpen(true);
   }
 
-  function handleContributorClose() {
-    setContributorModal(false);
+  function handleContributorModalClose() {
+    setIsContributorModalOpen(false);
   }
 
   const handleNewJournal = (newJournal: any) => {
@@ -566,7 +567,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   }
 
   function openContributorModal() {
-    setContributorModal(true);
+    setIsContributorModalOpen(true);
   }
 
   function searchJournals(searchString: string) {
@@ -967,7 +968,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
               onClick={openContributorModal}
               variant="contained"
               color="primary">
-              Bidragsytere
+              Vis bidragsytere
             </Button>
           </StyledOpenContributorsButtonWrapper>
           {state.contributorErrors.length >= 1 ? <ErrorMessage /> : ''}
@@ -1012,7 +1013,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           </Grid>
         </ModalFooter>
       </StyledModal>
-      <ClosingDialog
+      <ConfirmDialog
         doFunction={emptyArr}
         title={'Avbryt import'}
         text={
@@ -1031,10 +1032,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       />
       {importPublication && (
         <ContributorModal
-          open={contributorModal}
-          toggle={handleContributorClose.bind(this)}
-          data={importPublication}
-          duplicate={isDuplicate}
+          isContributorModalOpen={isContributorModalOpen}
+          handleContributorModalClose={handleContributorModalClose.bind(this)}
+          importPublication={importPublication}
+          isDuplicate={isDuplicate}
         />
       )}
     </div>

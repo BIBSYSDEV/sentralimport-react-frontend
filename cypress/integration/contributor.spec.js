@@ -15,17 +15,83 @@ context('contributor', () => {
     cy.visit('/');
   });
 
+  it('shows contributor-list', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.get(`[data-testid="open-contributors-modal-button"]`).click();
+
+    cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].firstname);
+    cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].surname);
+
+    cy.get(`[data-testid="creator-institutions-1"]`).contains(mockImportData[0].authors[0].institutions[0].unitName);
+    cy.get(`[data-testid="creator-institutions-1"]`).contains(mockImportData[0].authors[0].institutions[0].countryCode);
+    cy.get(`[data-testid="creator-institutions-1"]`).contains(
+      mockImportData[0].authors[0].institutions[0].institutionName
+    );
+    cy.get(`[data-testid="creator-name-2"]`).contains(mockImportData[0].authors[1].firstname);
+    cy.get(`[data-testid="creator-name-2"]`).contains(mockImportData[0].authors[1].surname);
+    cy.get(`[data-testid="creator-name-3"]`).contains(mockImportData[0].authors[2].firstname);
+    cy.get(`[data-testid="creator-name-3"]`).contains(mockImportData[0].authors[2].surname);
+
+    cy.get(`[data-testid="contributor-back-button"]`).should('exist');
+    cy.get(`[data-testid="add-contributor-button`).should('exist');
+  });
+
+  it('can move contrinutor', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.get(`[data-testid="open-contributors-modal-button"]`).click();
+
+    cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].firstname);
+    cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].surname);
+    cy.get(`[data-testid="creator-name-2"]`).contains(mockImportData[0].authors[1].firstname);
+    cy.get(`[data-testid="creator-name-2"]`).contains(mockImportData[0].authors[1].surname);
+    cy.get(`[data-testid="move-down-button-1"]`).click();
+    cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[1].firstname);
+    cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[1].surname);
+    cy.get(`[data-testid="creator-name-2"]`).contains(mockImportData[0].authors[0].firstname);
+    cy.get(`[data-testid="creator-name-2"]`).contains(mockImportData[0].authors[0].surname);
+    cy.get(`[data-testid="move-up-button-2"]`).click();
+    cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].firstname);
+    cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].surname);
+    cy.get(`[data-testid="creator-name-2"]`).contains(mockImportData[0].authors[1].firstname);
+    cy.get(`[data-testid="creator-name-2"]`).contains(mockImportData[0].authors[1].surname);
+  });
+
+  it('can add contributor', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.get(`[data-testid="open-contributors-modal-button"]`).click();
+
+    cy.get(`[data-testid="contributor-line-7"]`).should('not.exist');
+    cy.get(`[data-testid="add-contributor-button`).click();
+    cy.get(`[data-testid="contributor-line-7"]`).should('exist');
+  });
+
+  it('can delete contributor', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.get(`[data-testid="open-contributors-modal-button"]`).click();
+
+    cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].firstname);
+    cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].surname);
+    cy.get(`[data-testid="contributor-delete-button-0"]`).click();
+    cy.get(`[data-testid="dialog-confirm-button"]`).click();
+    cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[1].firstname);
+    cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[1].surname);
+  });
+
   it('saves contributor with foreign institution with cristin-id - institution should be kept', () => {
     cy.get('[data-testid="doi-filter"]').type(mockImportPublication1.doi);
     cy.get(`[data-testid="import-table-row-${mockImportPublication1.pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="open-contributors-modal-button"]`).click();
     //institusjon skal ikke skifte navn
-    cy.get(`[data-testid="contributor-form-0"`).contains(
+    cy.get(`[data-testid="contributor-form-0"]`).contains(
       mockImportPublication1.authors[0].institutions[0].institutionName
     );
     cy.get(`[data-testid="contributor-save-button-0"]`).click();
-    cy.get(`[data-testid="contributor-for-import-wrapper-0"`).contains(
+    cy.get(`[data-testid="contributor-for-import-wrapper-0"]`).contains(
       mockImportPublication1.authors[0].institutions[0].institutionName
     );
   });
@@ -34,9 +100,10 @@ context('contributor', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="open-contributors-modal-button"]`).click();
-    cy.get(`[data-testid="contributor-form-0"`).contains('China (Ukjent institusjon');
-    cy.get(`[data-testid="contributor-save-button-0"]`).click();
-    cy.get(`[data-testid="contributor-for-import-wrapper-0"`).contains('China (Ukjent institusjon');
+
+    cy.get(`[data-testid="contributor-form-1"]`).contains('China (Ukjent institusjon');
+    cy.get(`[data-testid="contributor-save-button-1"]`).click();
+    cy.get(`[data-testid="contributor-for-import-wrapper-1"]`).contains('China (Ukjent institusjon');
   });
 
   it('hides inactive affiliations for authors with cristin-id', () => {

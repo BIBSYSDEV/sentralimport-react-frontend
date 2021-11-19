@@ -3,7 +3,6 @@ export const Colors = {
   PURPLE: '#76559a',
   LIGHT_PURPLE: '#f3eff6',
   WHITE: '#ffffff',
-  ERROR: '#f44336',
 
   Text: {
     OPAQUE_87_BLACK: 'rgba(0, 0, 0, 0.87)',

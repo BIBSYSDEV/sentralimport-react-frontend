@@ -51,3 +51,42 @@ export interface Affiliation {
   isCristinInstitution: boolean;
   units: Unit[];
 }
+
+export const defaultAuthor = {
+  cristin_person_id: null,
+  identified_cristin_person: false,
+  first_name: '',
+  surname: '',
+  order: 0,
+  affiliations: [],
+  url: null,
+  isEditing: true,
+};
+
+//TODO: endre datamodell ? trekke ut felles data som order ?
+export const emptyContributor = {
+  imported: {
+    order: 0,
+    affiliations: [],
+    first_name: '',
+    surname: '',
+    cristin_person_id: 0,
+    role_code: 'AUTHOR',
+  },
+  cristin: {
+    order: 0,
+    affiliations: [],
+    first_name: '',
+    surname: '',
+    cristin_person_id: 0,
+    role_code: 'AUTHOR',
+  },
+  toBeCreated: {
+    order: 0,
+    affiliations: [],
+    first_name: '',
+    surname: '',
+    cristin_person_id: 0,
+    role_code: 'AUTHOR',
+  },
+};
