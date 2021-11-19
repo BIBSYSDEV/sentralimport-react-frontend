@@ -19,6 +19,7 @@ import clone from 'just-clone';
 import { Channel, CristinPublication, ImportData, Language } from '../../types/PublicationTypes';
 import CreateJournalPanel from '../CreateJournalPanel/CreateJournalPanel';
 import { Colors } from '../../assets/styles/StyleConstants';
+import CommonErrorMessage from '../CommonErrorMessage';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -40,7 +41,6 @@ const StyledFormWrapper = styled.div`
 `;
 
 const StyledErrorMessage = styled.div`
-  color: ${Colors.ERROR};
   font-size: 0.8rem;
   padding-top: 5px;
   padding-bottom: 10px;
@@ -784,7 +784,9 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                     onInputChange={searchJournals}
                   />
                   {selectedJournal.label === 'Ingen tidsskrift funnet' && (
-                    <StyledErrorMessage>Tidsskrift mangler</StyledErrorMessage>
+                    <StyledErrorMessage>
+                      <CommonErrorMessage errorMessage="Tidsskrift mangler" />
+                    </StyledErrorMessage>
                   )}
                 </>
                 <CreateJournalPanel handleCreateJournal={handleNewJournal} />

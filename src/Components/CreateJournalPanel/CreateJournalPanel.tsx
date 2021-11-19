@@ -6,14 +6,11 @@ import AddIcon from '@material-ui/icons/Add';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { ErrorMessage, Field, FieldProps, Form, Formik } from 'formik';
 import * as Yup from 'yup';
+import CommonErrorMessage from '../CommonErrorMessage';
 
 const StyledFormWrapper = styled.div`
   padding: 1rem;
   background-color: ${Colors.LIGHT_GREY}; ;
-`;
-
-const StyledErrorTypography = styled(Typography)`
-  color: ${Colors.ERROR};
 `;
 
 const StyledCreateJournalPanel = styled.div`
@@ -138,9 +135,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                     </Button>
                   </Grid>
                 </Grid>
-                {!isValid && (
-                  <StyledErrorTypography variant="caption">Det er feil i tidskrift-skjema.</StyledErrorTypography>
-                )}
+                {!isValid && <CommonErrorMessage errorMessage="Det er feil i tidskrift-skjema" />}
               </Form>
             )}
           </Formik>
