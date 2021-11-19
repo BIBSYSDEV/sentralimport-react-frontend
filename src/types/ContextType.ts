@@ -20,8 +20,8 @@ export interface ContextType {
   identified: any[];
   identifiedImported: any[];
   importDone: boolean;
-  institutions: null | Institution[];
-  institutionsEnglish: null | Institution[];
+  institutions: null | InstitutionSelector[];
+  institutionsEnglish: null | InstitutionSelector[];
   isSampublikasjon: boolean;
   param: null | any;
   selectedField: string;
@@ -81,7 +81,7 @@ export interface ImportSources {
   source_reference_id?: string;
 }
 
-export interface Institution {
+export interface InstitutionSelector {
   cristinInstitutionNr: string;
   label: string;
   value: string;
