@@ -72,7 +72,6 @@ export default function ImportStatus() {
             setData(response.data as CountData);
           })
           .catch(function (error) {
-            console.log(error);
             if (!error.response || error.response.status === 401 || error.response.status === 403) {
               localStorage.setItem('authorized', 'false');
               history.push('/login');

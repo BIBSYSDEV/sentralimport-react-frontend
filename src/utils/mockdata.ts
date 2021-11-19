@@ -480,6 +480,13 @@ export const mockPerson = {
 
 export const cristinIDWithoutActiveAffiliation = '9456892';
 export const cristinIDWithoutAffiliationAttribute = '89754123';
+export const cristinIdClassifiedPerson = '1235412375';
+
+export const mockNotAuthorizedForThisPersonDetail = {
+  status: 403,
+  response_id: 'svh6s12a',
+  errors: ['Client lacks authorization.'],
+};
 
 export const mockPersonWithoutActiveAffiliation = {
   first_name: 'Arne',
@@ -493,6 +500,13 @@ export const mockPersonWithoutAffiliationAttribute = {
   surname: 'Benoni',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: cristinIDWithoutAffiliationAttribute,
+};
+
+export const mockClassifiedPerson = {
+  first_name: 'Arne',
+  surname: 'Benoni',
+  url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
+  cristin_person_id: cristinIdClassifiedPerson,
 };
 
 export const mockPersonDetailed = {

@@ -101,6 +101,12 @@ export const interceptRequestsOnMock = () => {
     .reply(200, [mockPerson, mockPersonWithoutActiveAffiliation, mockPersonWithoutAffiliationAttribute]);
 
   //get person-details by id
+  /*
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIdClassifiedPerson}`))
+    .reply(403, mockNotAuthorizedForThisPersonDetail);
+       */
+
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIDWithoutActiveAffiliation}`))
     .reply(200, mockPersonDetailedWithoutActiveAffiliations);

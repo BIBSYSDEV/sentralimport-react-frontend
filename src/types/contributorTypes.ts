@@ -3,10 +3,12 @@ export interface Person {
   identified_cristin_person: boolean;
   first_name_preferred?: boolean;
   surname_preferred?: boolean;
+  surname: string;
   tel?: string;
   cristinId: number;
   cristin_profile_url?: string;
   picture_url?: string;
+  require_higher_authorization?: boolean;
 }
 
 export interface PersonDetailResponse extends Person {

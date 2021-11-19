@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { ListGroupItemHeading, ListGroupItemText } from 'reactstrap';
+import { ListGroupItemHeading } from 'reactstrap';
 import { Markup } from 'interweave';
 import { cleanTitleForMarkup } from '../../utils/stringUtils';
 import styled from 'styled-components';
@@ -20,7 +20,7 @@ const ImportPublicationPresentation: FC<ImportPublicationPresentationProps> = ({
   return (
     <>
       <ListGroupItemHeading>Importpublikasjon:</ListGroupItemHeading>
-      <ListGroupItemText data-testid="duplicate-check-importdata">
+      <div data-testid="duplicate-check-importdata">
         {importPublication.authors.slice(0, 5).map((author) => (
           <StyledAuthorTypography display="inline" key={author.sequenceNr}>
             {author.authorName};{' '}
@@ -34,7 +34,7 @@ const ImportPublicationPresentation: FC<ImportPublicationPresentationProps> = ({
         {importPublication.channel && importPublication.channel.pageFrom && importPublication.channel.pageFrom + '-'}
         {importPublication.channel && importPublication.channel.pageTo && importPublication.channel.pageTo}
         {importPublication.doi && ' doi:' + importPublication.doi}
-      </ListGroupItemText>
+      </div>
     </>
   );
 };

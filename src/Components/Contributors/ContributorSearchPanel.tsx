@@ -1,14 +1,11 @@
 import React from 'react';
-import { Button, Card, Collapse } from '@material-ui/core';
+import { Button, Card, Collapse, Typography } from '@material-ui/core';
 import styled from 'styled-components';
 import { Colors } from '../../assets/styles/StyleConstants';
 
-interface ContributorSearchPanelProps {
-  searchResult: any[];
-  collapsed: boolean;
-  handleChoose: (author: any) => void;
-  handleAbort: () => void;
-}
+const StyledTypography = styled(Typography)`
+  margin-left: 10px;
+`;
 
 const StyledChooseButton = styled(Button)`
   justify-self: flex-end;
@@ -25,8 +22,14 @@ const StyledAffiliationsWrapper = styled.div`
   margin-left: 10px;
 `;
 
+interface ContributorSearchPanelProps {
+  searchResult: any[];
+  collapsed: boolean;
+  handleChoose: (author: any) => void;
+  handleAbort: () => void;
+}
+
 export default function ContributorSearchPanel(props: ContributorSearchPanelProps) {
-  console.log(props.searchResult);
   if (props.searchResult.length > 0) {
     return (
       <Collapse in={props.collapsed}>
@@ -48,6 +51,13 @@ export default function ContributorSearchPanel(props: ContributorSearchPanelProp
                       affiliation.units.map((unit: any, i: number) => <div key={i}>&bull; {unit.unitName}</div>)}
                   </StyledAffiliationsWrapper>
                 ))}
+                {author.affiliations.length === 0 && author.require_higher_authorization && (
+                  <StyledAffiliationsWrapper>
+                    <StyledTypography color="error">
+                      Kan ikke hente inn institusjoner for denne bidragsyteren.
+                    </StyledTypography>
+                  </StyledAffiliationsWrapper>
+                )}
                 <StyledChooseButton key={i} color="primary" onClick={() => props.handleChoose(author)}>
                   Velg denne
                 </StyledChooseButton>

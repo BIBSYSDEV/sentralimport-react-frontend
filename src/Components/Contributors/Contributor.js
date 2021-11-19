@@ -7,7 +7,7 @@ import { Context } from '../../Context';
 import axios from 'axios';
 import '../../assets/styles/common.scss';
 import { CRIST_REST_API } from '../../utils/constants';
-import { getPersonDetailById, searchPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
+import { getPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
 import ContributorSearchPanelSkeleton from './ContributorSearchPanelSkeleton';
 import { Colors } from '../../assets/styles/StyleConstants';
 import styled from 'styled-components';
@@ -200,17 +200,16 @@ function Contributor(props) {
     let unitNameCache = new Map();
     let institutionNameCache = new Map();
     try {
-      const authorResults =
-        authorData.imported.cristin_person_id && authorData.imported.cristin_person_id !== 0
-          ? await searchPersonDetailById(authorData.imported.cristin_person_id)
-          : await searchPersonDetailByName(`${authorData.toBeCreated.first_name} ${authorData.toBeCreated.surname}`);
+      const authorResults = await searchPersonDetailByName(
+        `${authorData.toBeCreated.first_name} ${authorData.toBeCreated.surname}`
+      );
 
       if (authorResults.data.length > 0) {
         const fetchedAuthors = [];
         for (let i = 0; i < authorResults.data.length; i++) {
           const resultAffiliations = [];
-          const fetchedAuthor = (await getPersonDetailById(authorResults.data[i].cristin_person_id)).data;
-          if (fetchedAuthor.affiliations) {
+          const fetchedAuthor = await getPersonDetailById(authorResults.data[i]);
+          if (fetchedAuthor && fetchedAuthor.affiliations) {
             const activeAffiliations = fetchedAuthor.affiliations.filter((affiliation) => affiliation.active);
             for (const activeAffiliation of activeAffiliations) {
               const detailedAffiliationAndCache = await getAffiliationDetails(
@@ -223,10 +222,12 @@ function Contributor(props) {
               resultAffiliations.push(detailedAffiliationAndCache.affiliation);
             }
             fetchedAuthor.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(resultAffiliations);
-          } else {
+          } else if (fetchedAuthor && !fetchedAuthor.affiliations) {
             fetchedAuthor.affiliations = [];
           }
-          fetchedAuthors.push(fetchedAuthor);
+          if (fetchedAuthor) {
+            fetchedAuthors.push(fetchedAuthor);
+          }
         }
         setSearchResults(fetchedAuthors);
         setOpenContributorSearchPanel(true);

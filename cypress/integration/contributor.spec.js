@@ -74,4 +74,11 @@ context('contributor', () => {
     cy.get('[data-testid=contributor-search-button-2]').click();
     cy.get(`[data-testid=author-name-${cristinIDWithoutAffiliationAttribute}]`).should('exist');
   });
+
+  it('handles contributors with limited access', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('[data-testid=contributor-search-button-2]').click();
+  });
 });

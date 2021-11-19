@@ -187,7 +187,6 @@ export default function ImportTable(this: any) {
       });
       setFetched(true);
     } catch (error: any) {
-      console.log('ERROR', error);
       if (!error.response || error.response.status === 401 || error.response.status === 403) {
         localStorage.setItem('authorized', 'false');
         history.push('/login');
