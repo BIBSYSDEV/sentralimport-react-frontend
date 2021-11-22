@@ -313,11 +313,11 @@ function ContributorModal(props) {
           i < contributors.length
         ) {
           let person = await getPersonDetailById(contributors[i].imported.cristin_person_id);
-          identifiedImported[i] = person !== undefined ? person.data.identified_cristin_person : false;
+          identifiedImported[i] = person !== undefined ? person.identified_cristin_person : false;
         }
         if (!contributors[i].toBeCreated.identified_cristin_person && props.isDuplicate) {
           let person = await getPersonDetailById(contributors[i].toBeCreated.cristin_person_id);
-          identified[i] = person !== undefined ? person.data.identified_cristin_person : false;
+          identified[i] = person !== undefined ? person.identified_cristin_person : false;
         }
       }
       dispatch({ type: 'identifiedImported', payload: identifiedImported });
