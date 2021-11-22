@@ -118,9 +118,3 @@ export const emptyContributor = {
     role_code: 'AUTHOR',
   },
 };
-
-export const notAuthorizedForThisPersonDetailResponse = {
-  status: 403,
-  response_id: 'svh6s12a',
-  errors: ['Client lacks authorization.'],
-};

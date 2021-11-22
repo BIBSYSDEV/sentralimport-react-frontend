@@ -1,3 +1,5 @@
+import { ForbiddenPersonErrorMessage } from '../api/contributorApi';
+
 export const mockInstitutions = [
   {
     cristin_institution_id: '5737',
@@ -682,4 +684,9 @@ export const mockSavedPublication = {
   pages: {
     count: '0',
   },
+};
+export const mockNotAuthorizedForThisPersonDetailResponse = {
+  status: 403,
+  response_id: 'svh6s12a',
+  errors: [ForbiddenPersonErrorMessage],
 };

@@ -4,7 +4,6 @@ import { authenticatedApiRequest } from './api';
 import { Institution, UnitResponse } from '../types/institutionTypes';
 import {
   AffiliationResponse,
-  notAuthorizedForThisPersonDetailResponse,
   PersonDetailResponse,
   PersonSearchResponse,
   PublicationContributor,
@@ -14,6 +13,8 @@ export enum SearchLanguage {
   En = 'en',
   Nb = 'nb',
 }
+
+export const ForbiddenPersonErrorMessage = 'Client lacks authorization.';
 
 export async function getInstitutionName(
   institutionId: string | undefined,
@@ -89,7 +90,7 @@ export async function getPersonDetailById(person: PersonSearchResponse): Promise
       axios.isAxiosError(error) &&
       error.response &&
       error.response.status === 403 &&
-      error.response.data.errors[0] === notAuthorizedForThisPersonDetailResponse.errors[0]
+      error.response.data.errors[0] === ForbiddenPersonErrorMessage
     ) {
       return {
         cristinId: person.cristin_person_id,
