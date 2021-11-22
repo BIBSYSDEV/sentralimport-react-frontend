@@ -33,3 +33,18 @@ export async function getJournalsByQuery(
     method: 'GET',
   });
 }
+
+interface CategoryResponseItem {
+  code: string;
+  name: {
+    nb?: string;
+    en?: string;
+  };
+}
+
+export async function getCategories(searchLanguage: SearchLanguage): Promise<AxiosResponse<CategoryResponseItem[]>> {
+  return authenticatedApiRequest({
+    url: encodeURI(`${CRIST_REST_API}/results/categories?lang=${searchLanguage}`),
+    method: 'GET',
+  });
+}

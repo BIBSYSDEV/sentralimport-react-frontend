@@ -6,19 +6,17 @@ import ConfirmationDialog from '../Dialogs/ConfirmationDialog';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import Validation, { doiMatcher } from '../Validation/Validation';
 import { Context } from '../../Context';
-import axios from 'axios';
 import '../../assets/styles/buttons.scss';
 import ContributorModal from '../Contributors/ContributorModal';
 import ButtonGroup from '@material-ui/core/ButtonGroup/ButtonGroup';
 import ErrorMessage from '../Dialogs/ErrorMessage';
-import { CRIST_REST_API } from '../../utils/constants';
 import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
 import ActionButtons from './ActionButtons';
 import clone from 'just-clone';
 import { Channel, CristinPublication, ImportData, Language } from '../../types/PublicationTypes';
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
-import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
+import { getCategories, getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -312,8 +310,14 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   }, [isDuplicate, state.selectedPublication, importPublication]);
 
   useEffect(() => {
+    async function getCategoriesAndReformatToReactSelect() {
+      const categoriesResponse = await getCategories(SearchLanguage.Nb);
+      setCategories(
+        categoriesResponse.data.map((category) => ({ value: category.code, label: category.name.nb ?? '' }))
+      );
+    }
     async function fetch() {
-      await getCategories();
+      await getCategoriesAndReformatToReactSelect();
       await getJournals();
     }
     fetch().then();
@@ -595,18 +599,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       console.log('There was an error while getting the journal id', e);
       return '';
     }
-  }
-
-  async function getCategories() {
-    const result: any = await axios.get(
-      CRIST_REST_API + '/results/categories?lang=nb',
-      JSON.parse(localStorage.getItem('config') || '{}')
-    );
-    const categories = [];
-    for (let i = 0; i < result.data.length; i++) {
-      categories.push({ value: result.data[i].code, label: result.data[i].name.nb });
-    }
-    setCategories(categories);
   }
 
   function updateJournals(journals: any) {
