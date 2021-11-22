@@ -1,3 +1,5 @@
+import { ChannelLight } from '../types/PublicationTypes';
+
 export const mockInstitutions = [
   {
     cristin_institution_id: '5737',
@@ -427,7 +429,17 @@ export const responseCountryInstitutionCN = {
   url: 'null/48400000',
 };
 
-export const mockAllJournals = [
+export const mockIssnChannel: ChannelLight[] = [
+  {
+    id: '4187',
+    issn: '1054-3139',
+    issn_electronic: '1095-9289',
+    title: 'ICES Journal of Marine Science',
+    type: 'journal',
+  },
+];
+
+export const mockAllJournals: ChannelLight[] = [
   {
     id: '51160',
     type: 'journal',

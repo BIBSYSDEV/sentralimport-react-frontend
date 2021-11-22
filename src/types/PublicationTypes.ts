@@ -100,3 +100,11 @@ export interface PublicationCount {
   notImportedCount: number;
   notRelevantCount: number;
 }
+
+export interface ChannelLight {
+  id: string;
+  type: string;
+  title: string;
+  issn?: string;
+  issn_electronic?: string;
+}

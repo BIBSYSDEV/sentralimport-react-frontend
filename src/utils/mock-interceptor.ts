@@ -20,6 +20,7 @@ import {
   mockPersonWithoutAffiliationAttribute,
   cristinIDWithoutAffiliationAttribute,
   mockPersonDetailedWithoutAffiliationAttribute,
+  mockIssnChannel,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
@@ -72,6 +73,9 @@ export const interceptRequestsOnMock = () => {
 
   //get all journals
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=title.*`)).reply(200, mockAllJournals);
+
+  //Get journal for issn
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=issn.*`)).reply(200, mockIssnChannel);
 
   //doi-search
   mock.onGet(new RegExp(`${CRIST_REST_API}/results\\?doi=${mockDoiForEmptyCristinSearch}`)).reply(200, []);

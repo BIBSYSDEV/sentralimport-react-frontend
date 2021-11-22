@@ -18,6 +18,7 @@ import ActionButtons from './ActionButtons';
 import clone from 'just-clone';
 import { Channel, CristinPublication, ImportData, Language } from '../../types/PublicationTypes';
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
+import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -582,28 +583,18 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     if (!journalTitle || journalTitle.length === 0) {
       journalTitle = '*';
     }
-    await axios
-      .get(
-        CRIST_REST_API + '/results/channels?type=journal&query=title_general:' + journalTitle,
-        JSON.parse(localStorage.getItem('config') || '{}')
-      )
-      .then((response) => {
-        updateJournals(response.data);
-      });
+    const journals = (await getJournalsByQuery(journalTitle, QueryMethod.title)).data;
+    updateJournals(journals);
   }
 
-  async function getJournalId(issn: any) {
-    let journal: any;
+  async function getJournalId(issn: any[] | undefined) {
     try {
-      journal = await axios.get(
-        CRIST_REST_API + '/results/channels?type=journal&query=issn:' + issn[0].value || '0',
-        JSON.parse(localStorage.getItem('config') || '{}')
-      );
+      const journalResponse = await getJournalsByQuery(issn ? issn[0].value : '0', QueryMethod.issn);
+      return journalResponse.data.length > 0 ? journalResponse.data[0].id : '0';
     } catch (e) {
-      console.log('There was an error while getting the journal id');
+      console.log('There was an error while getting the journal id', e);
+      return '';
     }
-
-    return journal.data.length > 0 ? journal.data[0].id : '0';
   }
 
   async function getCategories() {
