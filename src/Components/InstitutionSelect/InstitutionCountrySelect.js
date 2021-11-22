@@ -4,6 +4,7 @@ import axios from 'axios';
 import { CircularProgress, Typography } from '@material-ui/core';
 import { Context } from '../../Context';
 import { CRIST_REST_API } from '../../utils/constants';
+import CommonErrorMessage from '../CommonErrorMessage';
 
 const searchLanguage = 'en';
 
@@ -11,6 +12,7 @@ export default function InstitutionCountrySelect(props) {
   let { state } = useContext(Context);
   const [units, setUnits] = useState([]);
   const [places, setPlaces] = useState([]);
+  const [loadingError, setLoadingError] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [loadingUnits, setLoadingUnits] = useState(false);
   const [searchingForPlaces, setSearchingForPlaces] = useState(false);
@@ -21,6 +23,7 @@ export default function InstitutionCountrySelect(props) {
 
   useEffect(() => {
     const fetchUnits = async () => {
+      setLoadingError('');
       if (props.selectedInstitution.cristinInstitutionNr) {
         try {
           setLoadingUnits(true);
@@ -43,7 +46,7 @@ export default function InstitutionCountrySelect(props) {
           }
           setUnits(units);
         } catch (err) {
-          props.enqueueSnackbar('Kunne ikke laste enheter', { variant: 'error' });
+          setLoadingError('Kunne ikke laste enheter');
         } finally {
           setLoadingUnits(false);
         }
@@ -102,6 +105,7 @@ export default function InstitutionCountrySelect(props) {
         value={props.selectedInstitution}
       />
       {loadingUnits && <CircularProgress size={'1rem'} style={{ margin: '0.5rem' }} />}
+      {loadingError && <CommonErrorMessage errorMessage={loadingError} />}
       {units.length > 0 ? (
         <div style={{ marginTop: '0.5rem', marginMottom: '0.5rem' }}>
           <Select

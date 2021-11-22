@@ -39,7 +39,6 @@ context('application', () => {
   });
 
   it('is possible to search for acronyms in filter institutions', () => {
-    console.log('meh');
     cy.get('[data-testid=filter-institution-select]').type('ntnu');
     cy.get(`#institution-select-option-0`).should('have.text', mockInstitutions[6].institution_name.nb);
     cy.get(`#institution-select-option-1`).should('have.text', mockInstitutions[5].institution_name.nb);

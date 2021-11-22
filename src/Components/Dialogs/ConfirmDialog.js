@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { Context } from '../../Context';
 
-export default function ClosingDialog(props) {
+export default function ConfirmDialog(props) {
   let { state } = React.useContext(Context);
 
   return (
@@ -12,14 +12,15 @@ export default function ClosingDialog(props) {
         <DialogContentText>{props.text}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button color="secondary" onClick={props.handleCloseDialog} variant="outlined">
+        <Button data-testid="dialog-deny-button" color="secondary" onClick={props.handleCloseDialog} variant="outlined">
           Nei
         </Button>
         <Button
           color="primary"
+          data-testid="dialog-confirm-button"
           variant="contained"
           onClick={() => {
-            props.doFunction(state.param);
+            props.doFunction(state.param); //urk!
             props.handleClose();
           }}>
           Ja

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Button, Card, FormGroup, TextField, Typography } from '@material-ui/core';
+import { Button, Card, CircularProgress, FormGroup, TextField, Typography } from '@material-ui/core';
 import InstitutionCountrySelect from '../InstitutionSelect/InstitutionCountrySelect';
 import ContributorSearchPanel from './ContributorSearchPanel';
 import { Form } from 'reactstrap';
@@ -8,7 +8,6 @@ import axios from 'axios';
 import '../../assets/styles/common.scss';
 import { CRIST_REST_API } from '../../utils/constants';
 import { getPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
-import ContributorSearchPanelSkeleton from './ContributorSearchPanelSkeleton';
 import { Colors } from '../../assets/styles/StyleConstants';
 import styled from 'styled-components';
 import { getAffiliationDetails } from '../../utils/contributorUtils';
@@ -394,7 +393,7 @@ function Contributor(props) {
         </Card>
         <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
           <Button
-            data-testid={`contributor-delete-button-${props.index}`}
+            data-testid={`contributor-delete-button-form-${props.index}`}
             color="secondary"
             onClick={() => props.deleteContributor(props.index)}>
             Slett person
@@ -412,7 +411,7 @@ function Contributor(props) {
         {!searching && searchError && (
           <Typography color="error">{searchError.message ?? 'Noe gikk galt med søket, prøv igjen'} </Typography>
         )}
-        {searching && <ContributorSearchPanelSkeleton />}
+        {searching && <CircularProgress />}
         {openContributorSearchPanel && !searching && (
           <StyledResultTypography>Fant {searchResults.length} bidragsytere</StyledResultTypography>
         )}
@@ -430,10 +429,12 @@ function Contributor(props) {
     <div className="content-wrapper">
       {!authorData.isEditing ? (
         <div data-testid={`contributor-for-import-wrapper-${props.index}`}>
-          <h6>{authorData.toBeCreated.surname + ', ' + authorData.toBeCreated.first_name}</h6>
+          <Typography gutterBottom variant="h6">
+            {authorData.toBeCreated.first_name + ' ' + authorData.toBeCreated.surname}
+          </Typography>
           <div className={`metadata`}>
             {authorData.toBeCreated.affiliations.map((inst, instIndex) => (
-              <div style={{ fontStyle: 'italic' }} key={instIndex}>
+              <div style={{ fontStyle: `italic`, fontSize: '0.9rem' }} key={instIndex}>
                 <p key={instIndex}>{inst.institutionName}</p>
                 <ul style={{ marginBottom: '0.3rem' }}>
                   {inst.units &&
