@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Modal, ModalBody, ModalHeader } from 'reactstrap';
-import axios from 'axios';
 import { Context } from '../../Context';
 import { Button, CircularProgress, Divider, Typography } from '@material-ui/core';
 import Contributor from './Contributor';
@@ -14,6 +13,7 @@ import ContributorOrderComponent from './ContributorOrderComponent';
 import ImportContributorComponent from './ImportContributorComponent';
 import { defaultAuthor, emptyContributor } from '../../types/contributorTypes';
 import { Colors } from '../../assets/styles/StyleConstants';
+import { getInstitutionsByCountryCodes } from '../../api/institutionApi';
 
 const foreign_educational_institution_generic_code = 9127;
 const other_institutions_generic_code = 9126;
@@ -30,17 +30,16 @@ async function fetchInstitutions(affiliations) {
       inst.countryCode
     ) {
       if (countries[inst.countryCode] === undefined) {
-        let response = await axios.get(
-          CRIST_REST_API + '/institutions/country/' + inst.countryCode + '?lang=' + SearchLanguage.En,
-          JSON.parse(localStorage.getItem('config'))
-        );
-        if (response.data.length > 0) {
+        const institutionCountryInformation = (await getInstitutionsByCountryCodes(inst.countryCode, SearchLanguage.En))
+          .data;
+        if (institutionCountryInformation.length > 0) {
           inst = {
-            cristinInstitutionNr: response.data[0].cristin_institution_id,
+            cristinInstitutionNr: institutionCountryInformation[0].cristin_institution_id,
             institutionName:
-              (response.data[0].institution_name.en || response.data[0].institution_name.nb) + ' (Ukjent institusjon)',
-            countryCode: response.data[0].country,
-            isCristinInstitution: response.data[0].isCristinInstitution,
+              (institutionCountryInformation[0].institution_name.en ||
+                institutionCountryInformation[0].institution_name.nb) + ' (Ukjent institusjon)',
+            countryCode: institutionCountryInformation[0].country,
+            isCristinInstitution: institutionCountryInformation[0].cristin_user_institution,
           };
         }
         countries[inst.countryCode] = inst;
@@ -399,17 +398,18 @@ function ContributorModal(props) {
           tempInst.cristinInstitutionNr === 0)
       ) {
         //bytter ut institusjon med instkode for nasjonalitet
-        let response = await axios.get(
-          CRIST_REST_API + '/institutions/country/' + affiliations[i].countryCode + '?lang=' + SearchLanguage.En,
-          JSON.parse(localStorage.getItem('config'))
-        );
-        if (response.data.length > 0) {
+        const institutionCountryInformations = (
+          await getInstitutionsByCountryCodes(affiliations[i].countryCode, SearchLanguage.En)
+        ).data;
+        if (institutionCountryInformations.length > 0) {
           tempInst.institutionName =
-            (response.data[0].institution_name.en || response.data[0].institution_name.nb) + ' (Ukjent institusjon)';
+            (institutionCountryInformations[0].institution_name.en ||
+              institutionCountryInformations[0].institution_name.nb) + ' (Ukjent institusjon)';
           tempInst.unitName =
-            (response.data[0].institution_name.en || response.data[0].institution_name.nb) + ' (Ukjent institusjon)';
-          tempInst.cristinInstitutionNr = response.data[0].cristin_institution_id
-            ? response.data[0].cristin_institution_id
+            (institutionCountryInformations[0].institution_name.en ||
+              institutionCountryInformations[0].institution_name.nb) + ' (Ukjent institusjon)';
+          tempInst.cristinInstitutionNr = institutionCountryInformations[0].cristin_institution_id
+            ? institutionCountryInformations[0].cristin_institution_id
             : 0;
         }
         countries[tempInst.countryCode] = tempInst;

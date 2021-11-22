@@ -31,3 +31,15 @@ export interface UnitResponse extends SimpleUnitResponse {
   parent_unit?: SimpleUnitResponse;
   parent_units?: SimpleUnitResponse[];
 }
+
+export interface InstitutionCountryInformation {
+  acronym: string;
+  country: string;
+  cristin_institution_id: string;
+  cristin_user_institution: boolean;
+  institution_name: {
+    en?: string;
+    nb?: string;
+  };
+  url: string;
+}

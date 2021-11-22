@@ -1,8 +1,7 @@
 export interface Person {
   first_name: string;
   identified_cristin_person: boolean;
-  first_name_preferred?: boolean;
-  surname_preferred?: boolean;
+
   tel?: string;
   cristinId: number;
   cristin_profile_url?: string;
@@ -10,6 +9,8 @@ export interface Person {
 }
 
 export interface PersonDetailResponse extends Person {
+  first_name_preferred?: string;
+  surname_preferred?: string;
   affiliations?: AffiliationResponse[];
 }
 
