@@ -1,16 +1,18 @@
 export interface Person {
   first_name: string;
   identified_cristin_person: boolean;
-
+  first_name_preferred?: boolean;
+  surname_preferred?: boolean;
+  surname: string;
   tel?: string;
   cristinId: number;
+  cristin_person_id?: number;
   cristin_profile_url?: string;
   picture_url?: string;
+  require_higher_authorization?: boolean;
 }
 
 export interface PersonDetailResponse extends Person {
-  first_name_preferred?: string;
-  surname_preferred?: string;
   affiliations?: AffiliationResponse[];
 }
 
@@ -62,7 +64,7 @@ export interface publicationContributorAffiliationResponse {
 export interface PersonSearchResponse {
   first_name: string;
   surname: string;
-  url: string;
+  url?: string;
   cristin_person_id: number;
 }
 

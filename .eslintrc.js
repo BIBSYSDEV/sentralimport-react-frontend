@@ -11,7 +11,7 @@ module.exports = {
     'no-use-before-define': 'off', //TODO: oppgrader biblioteker. skyldes problemer med react-versjon mot eslint
     'no-case-declarations': 'off', //TODO: løsning: Use {} pr case to create the block scope with case
     'no-prototype-builtins': 'off', //pga bruk av hasOwnProperty
-    'no-console': 'off', //TODO: bør fikses. Brukes for å logge flere steder, ofte eneste logikk i catch
+    'no-console': 'warn',
     'react-hooks/exhaustive-deps': 'off', //TODO: bør fikses, men kan medføre uønskede løkker.
     'no-debugger': 'warn',
     'prettier/prettier': 'error',

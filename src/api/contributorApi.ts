@@ -1,4 +1,4 @@
-import { AxiosPromise, AxiosResponse } from 'axios';
+import axios, { AxiosPromise, AxiosResponse } from 'axios';
 import { CRIST_REST_API } from '../utils/constants';
 import { authenticatedApiRequest } from './api';
 import { Institution, UnitResponse } from '../types/institutionTypes';
@@ -13,6 +13,8 @@ export enum SearchLanguage {
   En = 'en',
   Nb = 'nb',
 }
+
+export const ForbiddenPersonErrorMessage = 'Client lacks authorization.';
 
 export async function getInstitutionName(
   institutionId: string | undefined,
@@ -40,7 +42,6 @@ export async function getInstitutionUnitName(
   searchLanguage: SearchLanguage,
   cachedUnitResult: Map<string, string>
 ): Promise<{ unitName: string; cachedUnitResult: Map<string, string> }> {
-  console.log('institutionUnitId', institutionUnitId);
   if (institutionUnitId === '0') return { unitName: '', cachedUnitResult };
   let unitName = '';
   try {
@@ -64,10 +65,7 @@ export async function getInstitutionUnitNameBasedOnIDAndInstitutionStatus(
 ): Promise<{ unitName: string; cache: Map<string, string> }> {
   if (affiliation.unit && cache.get(affiliation.unit?.cristin_unit_id ?? ''))
     return { unitName: cache.get(affiliation.unit?.cristin_unit_id ?? '') ?? '', cache };
-  if (!affiliation.active && affiliation.unit?.cristin_unit_id) {
-    cache.set(affiliation.unit.cristin_unit_id, `${affiliation.unit.cristin_unit_id} er ikke lengre aktiv`);
-    return { unitName: `${affiliation.unit.cristin_unit_id} er ikke lengre aktiv`, cache };
-  }
+
   const unitNameWithCache = await getInstitutionUnitName(
     affiliation.unit?.cristin_unit_id ?? '0',
     SearchLanguage.En,
@@ -79,10 +77,32 @@ export async function getInstitutionUnitNameBasedOnIDAndInstitutionStatus(
   };
 }
 
-export async function getPersonDetailById(personId: number): Promise<AxiosResponse<PersonDetailResponse>> {
-  return authenticatedApiRequest({
-    url: encodeURI(`${CRIST_REST_API}/persons/${personId}`),
-  }) as AxiosPromise<PersonDetailResponse>;
+export async function getPersonDetailById(person: PersonSearchResponse): Promise<PersonDetailResponse> {
+  try {
+    const personDetailResponse = (await authenticatedApiRequest({
+      url: encodeURI(`${CRIST_REST_API}/persons/${person.cristin_person_id ?? person}`),
+    })) as AxiosResponse<PersonDetailResponse>;
+    return personDetailResponse.data;
+  } catch (error) {
+    //Intentionally ignore persons that return forbidden error. See jira task SMILE-1142 for details.
+    //It seems regular forbidden users receive error.response.data.errors[0]: 'User dataporten-piarest does not have role PIAREST_CAN_GET'
+    if (
+      axios.isAxiosError(error) &&
+      error.response &&
+      error.response.status === 403 &&
+      error.response.data.errors[0] === ForbiddenPersonErrorMessage
+    ) {
+      return {
+        cristinId: person.cristin_person_id,
+        cristin_person_id: person.cristin_person_id,
+        first_name: person.first_name,
+        surname: person.surname,
+        identified_cristin_person: true,
+        require_higher_authorization: true,
+      };
+    }
+    throw error;
+  }
 }
 
 export async function searchPersonDetailByName(name: string): Promise<AxiosResponse<PersonSearchResponse[]>> {
