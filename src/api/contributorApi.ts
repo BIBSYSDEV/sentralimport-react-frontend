@@ -2,9 +2,9 @@ import axios, { AxiosPromise, AxiosResponse } from 'axios';
 import { CRIST_REST_API } from '../utils/constants';
 import { authenticatedApiRequest } from './api';
 import { Institution, UnitResponse } from '../types/institutionTypes';
-import { mockNotAuthorizedForThisPersonDetail } from '../utils/mockdata';
 import {
   AffiliationResponse,
+  notAuthorizedForThisPersonDetailResponse,
   PersonDetailResponse,
   PersonSearchResponse,
   PublicationContributor,
@@ -89,7 +89,7 @@ export async function getPersonDetailById(person: PersonSearchResponse): Promise
       axios.isAxiosError(error) &&
       error.response &&
       error.response.status === 403 &&
-      error.response.data.errors[0] === mockNotAuthorizedForThisPersonDetail.errors[0]
+      error.response.data.errors[0] === notAuthorizedForThisPersonDetailResponse.errors[0]
     ) {
       return {
         cristinId: person.cristin_person_id,

@@ -21,13 +21,13 @@ import {
   mockPersonDetailedWithoutAffiliationAttribute,
   mockPerson,
   cristinIdForbiddenPerson,
-  mockNotAuthorizedForThisPersonDetail,
   mockForbiddenPerson,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
 import mockCristinPublications from './mockCristinPublications.json';
 import mockCristinContributors from './mockCristinContributors.json';
+import { notAuthorizedForThisPersonDetailResponse } from '../types/contributorTypes';
 
 export const mockDoiForEmptyCristinSearch = '123456789';
 export const mockTitleForEmptyCristinSearch = 'this_is_a_mocked_title';
@@ -111,7 +111,7 @@ export const interceptRequestsOnMock = () => {
   //get person-details by id
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIdForbiddenPerson}`))
-    .reply(403, mockNotAuthorizedForThisPersonDetail);
+    .reply(403, notAuthorizedForThisPersonDetailResponse);
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIDWithoutActiveAffiliation}`))
     .reply(200, mockPersonDetailedWithoutActiveAffiliations);

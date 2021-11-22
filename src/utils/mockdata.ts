@@ -482,12 +482,6 @@ export const cristinIDWithoutActiveAffiliation = '9456892';
 export const cristinIDWithoutAffiliationAttribute = '89754123';
 export const cristinIdForbiddenPerson = '1235412375';
 
-export const mockNotAuthorizedForThisPersonDetail = {
-  status: 403,
-  response_id: 'svh6s12a',
-  errors: ['Client lacks authorization.'],
-};
-
 export const mockPersonWithoutActiveAffiliation = {
   first_name: 'Arne',
   surname: 'Benoni',
