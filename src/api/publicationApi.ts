@@ -1,7 +1,7 @@
-import { AxiosPromise } from 'axios';
+import { AxiosPromise, AxiosResponse } from 'axios';
 import { authenticatedApiRequest } from './api';
-import { CRIST_REST_API } from '../utils/constants';
-import { CristinPublication } from '../types/PublicationTypes';
+import { CRIST_REST_API, PIA_REST_API } from '../utils/constants';
+import { CristinPublication, PublicationCount } from '../types/PublicationTypes';
 import { SearchLanguage } from './contributorApi';
 
 export async function getCristinPublicationsBySearchTerm(
@@ -12,8 +12,9 @@ export async function getCristinPublicationsBySearchTerm(
   }) as AxiosPromise<CristinPublication[]>;
 }
 
-export async function getCristinAuthorsByPublicationId(cristinId: string): Promise<AxiosPromise<CristinPublication[]>> {
+export async function getImportStatisticsByYear(year: number): Promise<AxiosResponse<PublicationCount>> {
   return authenticatedApiRequest({
-    url: encodeURI(`${CRIST_REST_API}/results/${cristinId}/contributors?per_page=10&lang=${SearchLanguage.Nb}`),
-  }) as AxiosPromise<CristinPublication[]>;
+    url: encodeURI(`${PIA_REST_API}/sentralimport/publicationCount/${year}`),
+    method: 'GET',
+  });
 }

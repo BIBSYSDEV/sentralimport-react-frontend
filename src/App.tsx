@@ -7,10 +7,11 @@ import './assets/styles/buttons.scss';
 import { useHistory } from 'react-router-dom';
 import LogPanel from './Components/Log/LogPanel';
 import Footer from './Components/Footer/Footer';
-import axios from 'axios';
 import { Context } from './Context';
-import { CRIST_REST_API, USE_MOCK_DATA } from './utils/constants';
+import { USE_MOCK_DATA } from './utils/constants';
 import styled from 'styled-components';
+import { getInstitutions } from './api/institutionApi';
+import { InstitutionSelector } from './types/ContextType';
 
 const StyledApp = styled.div`
   text-align: center;
@@ -31,35 +32,33 @@ const StyledGrid = styled(Grid)`
 `;
 
 export default function App() {
-  let history = useHistory();
-  let { dispatch } = useContext(Context);
+  const history = useHistory();
+  const { dispatch } = useContext(Context);
   const isAuthorized = localStorage.getItem('authorized') === 'true' || USE_MOCK_DATA;
   //fetches instututions to populate drop-down lists
   useEffect(() => {
-    const getInstitutions = async () => {
-      let response = await axios.get(
-        CRIST_REST_API + `/institutions?cristin_institution=true&per_page=500&lang=nb,en`,
-        JSON.parse(localStorage.getItem('config'))
-      );
-      response = response.data.filter((i) => i.cristin_user_institution);
-      const institutionsNorwegian = [];
-      const institutionsEnglish = [];
-      for (let i = 0; i < response.length; i++) {
+    const createInstitutionLists = async () => {
+      const institutionListResponse = await getInstitutions();
+      const cristinInstitutions = institutionListResponse.data.filter((i) => i.cristin_user_institution);
+      //TODO: there is no need for institutionNorwegian and institutionEnglish, it should be possible to use cristinInstitutions as is.
+      const institutionsNorwegian: InstitutionSelector[] = [];
+      const institutionsEnglish: InstitutionSelector[] = [];
+      cristinInstitutions.forEach((cristinInstitution) => {
         institutionsNorwegian.push({
-          value: response[i].acronym,
-          label: response[i].institution_name.nb || response[i].institution_name.en,
-          cristinInstitutionNr: response[i].cristin_institution_id,
+          value: cristinInstitution.acronym,
+          label: cristinInstitution.institution_name.nb ?? cristinInstitution.institution_name.en,
+          cristinInstitutionNr: cristinInstitution.cristin_institution_id,
         });
         institutionsEnglish.push({
-          value: response[i].acronym,
-          label: response[i].institution_name.en || response[i].institution_name.nb,
-          cristinInstitutionNr: response[i].cristin_institution_id,
+          value: cristinInstitution.acronym,
+          label: cristinInstitution.institution_name.en ?? cristinInstitution.institution_name.nb,
+          cristinInstitutionNr: cristinInstitution.cristin_institution_id,
         });
-      }
-      await dispatch({ type: 'institutions', payload: institutionsNorwegian });
-      await dispatch({ type: 'institutionsEnglish', payload: institutionsEnglish });
+      });
+      dispatch({ type: 'institutions', payload: institutionsNorwegian });
+      dispatch({ type: 'institutionsEnglish', payload: institutionsEnglish });
     };
-    isAuthorized && getInstitutions().then();
+    isAuthorized && createInstitutionLists().then();
   }, [isAuthorized]);
 
   if (!isAuthorized) {
