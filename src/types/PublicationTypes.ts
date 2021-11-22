@@ -93,3 +93,10 @@ export const emptyImportPublication: ImportData = {
   ],
   authors: [],
 };
+
+export interface PublicationCount {
+  totalCount: number;
+  importedCount: number;
+  notImportedCount: number;
+  notRelevantCount: number;
+}

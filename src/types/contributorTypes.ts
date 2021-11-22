@@ -20,6 +20,12 @@ export interface SearchContributor extends Person {
   affiliations?: Affiliation[];
 }
 
+export interface PublicationContributor extends Person {
+  order: number;
+  result_id: string;
+  affiliations?: publicationContributorAffiliationResponse;
+}
+
 export interface AffiliationResponse {
   institution: {
     cristin_institution_id: string;
@@ -33,6 +39,25 @@ export interface AffiliationResponse {
   position: {
     en?: string;
     nb?: string;
+  };
+}
+
+export interface publicationContributorAffiliationResponse {
+  institution: {
+    cristin_institution_id: string;
+    url: string;
+  };
+  unit?: {
+    cristin_unit_id: string;
+    url: string;
+  };
+  role_code: string;
+  role: {
+    code: string;
+    name: {
+      nb: string;
+      en: string;
+    };
   };
 }
 
