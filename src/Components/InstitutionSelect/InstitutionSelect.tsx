@@ -5,6 +5,7 @@ import { TextField } from '@material-ui/core';
 import styled from 'styled-components';
 import { Institution } from '../../types/ContextType';
 import { Colors } from '../../assets/styles/StyleConstants';
+import { InstitutionSelector } from '../../types/ContextType';
 
 const StyledTextField = styled(TextField)`
   .MuiInputBase-root {
@@ -14,9 +15,9 @@ const StyledTextField = styled(TextField)`
 
 //this function exists so that typing institution acronyms, also get their label. Ex. typing "ntnu", returns "norges tekninske naturvitenskapelige universitet"
 function filterByInstitutionNameAndAcronym(
-  options: Institution[],
-  state: FilterOptionsState<Institution>
-): Institution[] {
+  options: InstitutionSelector[],
+  state: FilterOptionsState<InstitutionSelector>
+): InstitutionSelector[] {
   return options.filter(
     (option) =>
       option.label.toLowerCase().includes(state.inputValue.toLowerCase()) ||
@@ -43,7 +44,7 @@ export default function InstitutionSelect() {
         id="institution-select"
         noOptionsText="fant ingen institusjon"
         data-testid="insitution-select"
-        filterOptions={(options: Institution[], state) => filterByInstitutionNameAndAcronym(options, state)}
+        filterOptions={(options: InstitutionSelector[], state) => filterByInstitutionNameAndAcronym(options, state)}
         options={state.institutions
           .slice()
           .sort((institutionA, institutionB) => institutionA.label.localeCompare(institutionB.label))}

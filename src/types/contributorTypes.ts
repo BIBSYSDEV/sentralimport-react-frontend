@@ -1,8 +1,7 @@
 export interface Person {
   first_name: string;
   identified_cristin_person: boolean;
-  first_name_preferred?: boolean;
-  surname_preferred?: boolean;
+
   tel?: string;
   cristinId: number;
   cristin_profile_url?: string;
@@ -10,11 +9,19 @@ export interface Person {
 }
 
 export interface PersonDetailResponse extends Person {
+  first_name_preferred?: string;
+  surname_preferred?: string;
   affiliations?: AffiliationResponse[];
 }
 
 export interface SearchContributor extends Person {
   affiliations?: Affiliation[];
+}
+
+export interface PublicationContributor extends Person {
+  order: number;
+  result_id: string;
+  affiliations?: publicationContributorAffiliationResponse;
 }
 
 export interface AffiliationResponse {
@@ -30,6 +37,25 @@ export interface AffiliationResponse {
   position: {
     en?: string;
     nb?: string;
+  };
+}
+
+export interface publicationContributorAffiliationResponse {
+  institution: {
+    cristin_institution_id: string;
+    url: string;
+  };
+  unit?: {
+    cristin_unit_id: string;
+    url: string;
+  };
+  role_code: string;
+  role: {
+    code: string;
+    name: {
+      nb: string;
+      en: string;
+    };
   };
 }
 

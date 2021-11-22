@@ -2,7 +2,12 @@ import { AxiosPromise, AxiosResponse } from 'axios';
 import { CRIST_REST_API } from '../utils/constants';
 import { authenticatedApiRequest } from './api';
 import { Institution, UnitResponse } from '../types/institutionTypes';
-import { AffiliationResponse, PersonDetailResponse, PersonSearchResponse } from '../types/contributorTypes';
+import {
+  AffiliationResponse,
+  PersonDetailResponse,
+  PersonSearchResponse,
+  PublicationContributor,
+} from '../types/contributorTypes';
 
 export enum SearchLanguage {
   En = 'en',
@@ -43,7 +48,8 @@ export async function getInstitutionUnitName(
       url: encodeURI(`${CRIST_REST_API}/units/${institutionUnitId}?lang=${searchLanguage}`),
       method: 'GET',
     }) as AxiosPromise<UnitResponse>);
-    unitName = unit.data.unit_name.en || unit.data.unit_name.nb;
+    unitName =
+      searchLanguage === SearchLanguage.En ? unit.data.unit_name.en || unit.data.unit_name.nb : unit.data.unit_name.nb;
   } catch (error) {
     unitName = `Fant ikke ${institutionUnitId}`;
   } finally {
@@ -89,4 +95,18 @@ export async function searchPersonDetailById(personId: number) {
   return authenticatedApiRequest({
     url: encodeURI(`${CRIST_REST_API}/persons/?id=${personId}`),
   }) as AxiosPromise<PersonSearchResponse[]>;
+}
+
+export async function getContributorsByPublicationCristinResultId(
+  publicationResultCristinId: string,
+  page: number,
+  resultsPerPage: number,
+  searchLanguage: SearchLanguage
+): Promise<AxiosResponse<PublicationContributor[]>> {
+  return authenticatedApiRequest({
+    url: encodeURI(
+      `${CRIST_REST_API}/results/${publicationResultCristinId}/contributors?page=${page}&per_page=${resultsPerPage}&lang=${searchLanguage}`
+    ),
+    method: 'GET',
+  });
 }

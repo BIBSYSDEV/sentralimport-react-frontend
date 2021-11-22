@@ -17,6 +17,7 @@ import { useSnackbar } from 'notistack';
 import ActionButtons from './ActionButtons';
 import clone from 'just-clone';
 import { Channel, CristinPublication, ImportData, Language } from '../../types/PublicationTypes';
+import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
 import CreateJournalPanel from '../CreateJournalPanel/CreateJournalPanel';
 import { Colors } from '../../assets/styles/StyleConstants';
 import CommonErrorMessage from '../CommonErrorMessage';
@@ -358,11 +359,13 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       let page = 1;
       let allAuthors: any[] = [];
       while (allAuthors.length < state.selectedPublication.authorTotalCount) {
-        const response: any = await axios.get(
-          CRIST_REST_API + '/results/' + resultId + '/contributors?page=' + page + '&per_page=500&lang=nb',
-          JSON.parse(localStorage.getItem('config') || '{}')
+        const contributorResponse = await getContributorsByPublicationCristinResultId(
+          resultId,
+          page,
+          500,
+          SearchLanguage.Nb
         );
-        allAuthors = [...allAuthors, ...response.data];
+        allAuthors = [...allAuthors, ...contributorResponse.data];
         page++;
       }
       const tempPub = { ...state.selectedPublication, authors: allAuthors };
