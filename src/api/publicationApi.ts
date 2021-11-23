@@ -1,8 +1,9 @@
 import { AxiosPromise, AxiosResponse } from 'axios';
 import { authenticatedApiRequest } from './api';
 import { CRIST_REST_API, PIA_REST_API } from '../utils/constants';
-import { ChannelLight, CristinPublication, PublicationCount } from '../types/PublicationTypes';
+import { ChannelLight, CristinPublication, ImportData, Order, PublicationCount } from '../types/PublicationTypes';
 import { SearchLanguage } from './contributorApi';
+import { SortValue } from '../types/ContextType';
 
 export async function getCristinPublicationsBySearchTerm(
   searchTerms: string
@@ -128,5 +129,67 @@ export async function patchPiaPublication(
     url: encodeURI(`${PIA_REST_API}/sentralimport/publication/${pubId}`),
     method: 'PATCH',
     data: { cristin_id: cristinResultId },
+  });
+}
+
+export async function changePublicationImportStatus(
+  pubId: string | number,
+  isNotRelevant: boolean
+): Promise<AxiosResponse<null>> {
+  return authenticatedApiRequest({
+    url: encodeURI(`${PIA_REST_API}/sentralimport/publication/${pubId}`),
+    method: 'PATCH',
+    data: { not_relevant: isNotRelevant },
+  });
+}
+
+enum ImportDataSearchParams {
+  SORT = 'sort',
+  PER_PAGE = 'per_page',
+  PAGE = 'page',
+  YEAR = 'year_published',
+  INSTITUTION = 'institution',
+  DOI = 'doi',
+  CO_PUBLICATION = 'copublication',
+  RELEVANT = 'relevant',
+  IMPORTED = 'imported',
+}
+
+function getSortAndPageSearchParams(sortValue: SortValue, sortOrder: Order, resultPerPage: number, pageNumber: number) {
+  const searchParams = new URLSearchParams();
+  searchParams.set(ImportDataSearchParams.SORT, `${sortValue} ${sortOrder}`);
+  searchParams.set(ImportDataSearchParams.PER_PAGE, `${resultPerPage}`);
+  searchParams.set(ImportDataSearchParams.PAGE, `${pageNumber}`);
+  return searchParams;
+}
+
+const not_relevant = 'ikke aktuelle';
+
+export async function getImportData(
+  year: number,
+  cristinInstitutionNr: string | null,
+  isSamPublikasjon: boolean,
+  importStatus: string,
+  sortValue: SortValue,
+  sortOrder: Order,
+  resultPerPage: number,
+  pageNumber: number,
+  doiFilter: string | null
+): Promise<AxiosResponse<ImportData[]>> {
+  const searchParams = getSortAndPageSearchParams(sortValue, sortOrder, resultPerPage, pageNumber);
+  searchParams.set(ImportDataSearchParams.YEAR, `${year}`);
+  if (cristinInstitutionNr && cristinInstitutionNr !== '') {
+    searchParams.set(ImportDataSearchParams.INSTITUTION, cristinInstitutionNr);
+  }
+  if (doiFilter) {
+    searchParams.set(ImportDataSearchParams.DOI, doiFilter);
+  }
+  searchParams.set(ImportDataSearchParams.CO_PUBLICATION, `${isSamPublikasjon}`);
+  importStatus === not_relevant
+    ? searchParams.set(ImportDataSearchParams.RELEVANT, 'false')
+    : searchParams.set(ImportDataSearchParams.IMPORTED, importStatus);
+  return authenticatedApiRequest({
+    url: `${PIA_REST_API}/sentralimport/publications?${searchParams.toString()}`,
+    method: 'GET',
   });
 }

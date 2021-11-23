@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
-import axios from 'axios';
 import { Context } from '../../Context';
 import DuplicateCheckModal from '../DuplicateCheck/DuplicateCheckModal';
 import Pagination from '../Pagination/Pagination';
@@ -9,7 +8,6 @@ import '../../assets/styles/Results.scss';
 import '../../assets/styles/Imports.css';
 import { useHistory } from 'react-router-dom';
 import ListModal from '../ListModal/ListModal';
-import { PIA_REST_API } from '../../utils/constants';
 import EnhancedTableHead from './EnhancedTableHead';
 import { emptyImportPublication, ImportData, Order } from '../../types/PublicationTypes';
 import ImportTableListItem from './ImportTableListItem';
@@ -17,6 +15,7 @@ import PlaceHolderListItem from './PlaceHolderListItem';
 import AuthorList from './AuthorList';
 import styled from 'styled-components';
 import { SortValue } from '../../types/ContextType';
+import { getImportData } from '../../api/publicationApi';
 
 const StyledRoot = styled.div`
   display: block;
@@ -142,52 +141,26 @@ export default function ImportTable(this: any) {
     }
     setChecked(checkedValues);
 
-    let url = PIA_REST_API + '/sentralimport/publications?year_published=' + state.currentImportYear.value;
-    if (state.doiFilter !== null) {
-      url += '&doi=' + state.doiFilter;
-    }
-    if (state.currentInstitution.value === null || state.currentInstitution.value === ' ') {
-      if (state.isSampublikasjon) {
-        url += '&copublication=' + state.isSampublikasjon;
-      }
-      if (state.currentImportStatus !== 'ikke aktuelle') {
-        url = url + ('&imported=' + state.currentImportStatus);
-      } else {
-        url = url + '&relevant=false';
-      }
-    } else {
-      url =
-        url +
-        ('&institution=' + state.currentInstitution.cristinInstitutionNr + '&copublication=' + state.isSampublikasjon);
-      if (state.currentImportStatus !== 'ikke aktuelle') {
-        url = url + ('&imported=' + state.currentImportStatus);
-      } else {
-        url = url + '&relevant=false';
-      }
-    }
-    url =
-      url +
-      '&sort=' +
-      state.currentSortValue +
-      ' ' +
-      state.currentSortOrder +
-      '&per_page=' +
-      state.currentPerPage.value +
-      '&page=' +
-      (state.currentPageNr + 1);
-
     setFetched(false);
     try {
-      await axios.get(url, JSON.parse(localStorage.getItem('config') ?? '{}')).then((response) => {
-        handleRows(response.data as ImportData[]);
-        dispatch({
-          type: 'setTotalCount',
-          payload: response.headers['x-total-count'],
-        });
+      const importDataResponse = await getImportData(
+        state.currentImportYear.value,
+        state.currentInstitution.cristinInstitutionNr,
+        state.isSampublikasjon,
+        state.currentImportStatus,
+        state.currentSortValue,
+        state.currentSortOrder,
+        state.currentPerPage.value,
+        state.currentPageNr + 1,
+        state.doiFilter
+      );
+      handleRows(importDataResponse.data);
+      dispatch({
+        type: 'setTotalCount',
+        payload: importDataResponse.headers['x-total-count'],
       });
       setFetched(true);
     } catch (error: any) {
-      console.log('ERROR', error);
       if (!error.response || error.response.status === 401 || error.response.status === 403) {
         localStorage.setItem('authorized', 'false');
         history.push('/login');

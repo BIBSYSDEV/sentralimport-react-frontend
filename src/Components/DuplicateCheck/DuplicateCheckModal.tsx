@@ -4,13 +4,13 @@ import { Context } from '../../Context';
 import '../../assets/styles/Results.scss';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import { PIA_REST_API } from '../../utils/constants';
 import ComparePublicationDataModal from '../ComparePublicationData/ComparePublicationDataModal';
 import { ImportData } from '../../types/PublicationTypes';
 import { Button, Divider, Grid } from '@material-ui/core';
 import ImportPublicationPresentation from './ImportPublicationPresentation';
 import DuplicateSearch from './DuplicateSearch';
 import styled from 'styled-components';
+import { changePublicationImportStatus } from '../../api/publicationApi';
 
 const StyledModal = styled(Modal)`
   width: 80%;
@@ -55,7 +55,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
       setDuplicate(false);
       setIsComparePublicationDataModalOpen(true);
     } else if (selectedRadioButton === SelectValues.TOGGLE_RELEVANT) {
-      toggleRelavantStatus().then();
+      toggleRelevantStatus().then();
       handleDuplicateCheckModalClose();
       dispatch({ type: 'importDone', payload: !state.importDone });
     } else {
@@ -70,23 +70,22 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
     setIsComparePublicationDataModalOpen(false);
   }
 
-  async function toggleRelavantStatus() {
+  async function toggleRelevantStatus() {
     const relevantStatus = state.currentImportStatus !== 'ikke aktuelle';
-    await axios
-      .patch(
-        PIA_REST_API + '/sentralimport/publication/' + importPublication.pubId,
-        JSON.stringify({ not_relevant: relevantStatus }),
-        JSON.parse(localStorage.getItem('config') || '{}')
-      )
-      .catch(function (e) {
-        console.log('Patch request failed:', e);
-        if (!e.response || e.response.status === 401 || e.response.status === 403) {
-          localStorage.setItem('authorized', 'false');
-          history.push('/login');
-        } else {
-          history.push('/error');
-        }
-      });
+    try {
+      await changePublicationImportStatus(importPublication.pubId, relevantStatus);
+    } catch (error) {
+      console.log('Patch request failed:', error);
+      if (
+        axios.isAxiosError(error) &&
+        (!error.response || error.response.status === 401 || error.response.status === 403)
+      ) {
+        localStorage.setItem('authorized', 'false');
+        history.push('/login');
+      } else {
+        history.push('/error');
+      }
+    }
   }
 
   return (
