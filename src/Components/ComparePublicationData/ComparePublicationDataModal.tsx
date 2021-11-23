@@ -313,7 +313,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     async function getCategoriesAndReformatToReactSelect() {
       const categoriesResponse = await getCategories(SearchLanguage.Nb);
       setCategories(
-        categoriesResponse.data.map((category) => ({ value: category.code, label: category.name.nb ?? '' }))
+        categoriesResponse.data.map((category) => ({ value: category.code, label: category.name?.nb ?? '' }))
       );
     }
     async function fetch() {

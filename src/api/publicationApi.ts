@@ -34,17 +34,99 @@ export async function getJournalsByQuery(
   });
 }
 
-interface CategoryResponseItem {
+interface CategoryItem {
   code: string;
-  name: {
+  name?: {
     nb?: string;
     en?: string;
   };
 }
 
-export async function getCategories(searchLanguage: SearchLanguage): Promise<AxiosResponse<CategoryResponseItem[]>> {
+export async function getCategories(searchLanguage: SearchLanguage): Promise<AxiosResponse<CategoryItem[]>> {
   return authenticatedApiRequest({
     url: encodeURI(`${CRIST_REST_API}/results/categories?lang=${searchLanguage}`),
     method: 'GET',
+  });
+}
+
+interface PostPublication {
+  category: CategoryItem;
+  journal: Journal;
+  original_language: string;
+  title: any;
+  pub_id: string | number;
+  year_published: string;
+  import_sources: any;
+  volume: string;
+  issue: string;
+  links: Link[];
+  pages: Pages;
+  contributor: any[];
+  cristin_result_id: string | number;
+  cristinResultId?: string | number;
+  annotation?: string;
+}
+
+interface InternationalStandardNumber {
+  type: string;
+  value?: string | number;
+}
+
+interface Link {
+  url_type: string;
+  url_value: string;
+}
+
+interface Journal {
+  cristin_journal_id: string;
+  name: string;
+  international_standard_numbers: InternationalStandardNumber[];
+  pia_journal_number?: string | number;
+}
+
+interface Pages {
+  from: string | number;
+  to: string | number;
+  count: string;
+}
+
+export async function postPublication(publication: PostPublication): Promise<AxiosResponse<PostPublication>> {
+  return authenticatedApiRequest({ url: encodeURI(`${CRIST_REST_API}/results`), method: 'POST', data: publication });
+}
+
+interface PatchPublication {
+  category?: CategoryItem;
+  journal?: Journal;
+  original_language?: string;
+  title?: any;
+  pub_id?: string | number;
+  year_published?: string;
+  import_sources?: any;
+  volume?: string;
+  issue?: string;
+  links?: Link[];
+  pages?: Pages;
+  contributor?: any[];
+  cristin_result_id?: string | number;
+  cristinResultId: string | number;
+  annotation?: string;
+}
+
+export async function patchPublication(publication: PatchPublication): Promise<AxiosResponse<PatchPublication>> {
+  return authenticatedApiRequest({
+    url: encodeURI(`${CRIST_REST_API}/results/${publication.cristinResultId}`),
+    method: 'PATCH',
+    data: publication,
+  });
+}
+
+export async function patchPiaPublication(
+  cristinResultId: string | number,
+  pubId: string | number
+): Promise<AxiosResponse<null>> {
+  return authenticatedApiRequest({
+    url: encodeURI(`${PIA_REST_API}/sentralimport/publication/${pubId}`),
+    method: 'PATCH',
+    data: { cristin_id: cristinResultId },
   });
 }

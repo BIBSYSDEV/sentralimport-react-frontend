@@ -49,7 +49,7 @@ export const interceptRequestsOnMock = () => {
   mock.onGet(new RegExp(`${PIA_REST_API}/sentralimport/publicationCount.*`)).reply(200, mockPublicationCount);
 
   //patching the publication
-  mock.onPatch(new RegExp(`${PIA_REST_API}/sentralimport/publication.*`)).reply(200);
+  mock.onPatch(new RegExp(`${PIA_REST_API}/sentralimport/publication.*`)).reply(204);
 
   //get cristin institutions by id
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/([1-9][0-9]*).*`)).reply(200, resultInstitutionNTNU);
