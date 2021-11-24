@@ -92,23 +92,18 @@ const SearchPanel: FC<SearchPanelProps> = ({
   }
 
   async function retrySearch() {
-    const searchString =
-      (isDoiChecked ? '?doi=' + doi : '') +
-      (titleChecked
-        ? (isDoiChecked ? '&' : '?') + 'title=' + title + (isAuthorChecked ? '&contributor=' + author : '')
-        : '') +
-      (isYearPublishedChecked
-        ? (isDoiChecked || titleChecked ? '&' : '?') +
-          'published_since=' +
-          (+yearPublished - 1) +
-          '&published_before=' +
-          +yearPublished
-        : '') +
-      (isIssnChecked ? (isDoiChecked || isYearPublishedChecked || isIssnChecked ? '&' : '?') + 'issn=' + issn : '') +
-      '&per_page=5';
     setIsSearching(true);
     setFoundDuplicates(false);
-    const results = await searchChristinPublications(searchString);
+
+    const perPage = '5';
+    const results = await searchChristinPublications(
+      perPage,
+      isDoiChecked ? doi : undefined,
+      titleChecked ? title : undefined,
+      isYearPublishedChecked ? +yearPublished : undefined,
+      isIssnChecked ? issn : undefined,
+      isAuthorChecked ? author : undefined
+    );
     if (results.length > 0) {
       setFoundDuplicates(true);
     }

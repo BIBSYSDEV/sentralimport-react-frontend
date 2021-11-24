@@ -42,24 +42,16 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
 
   useEffect(() => {
     async function fetch() {
-      let searchString;
-      if (importPublication.doi) {
-        searchString = '?doi=' + importPublication.doi;
-      } else {
-        const title = importPublication.languages && importPublication.languages[0].title.substr(0, 20);
-        searchString = '?title=' + title;
-        if (importPublication.yearPublished) {
-          const yearPublished: number = +importPublication.yearPublished;
-          searchString += '&published_since=' + (yearPublished - 1) + '&published_before=' + yearPublished;
-        }
-
-        if (importPublication.channel?.issns) {
-          const issn = importPublication.channel.issns[0];
-          searchString += '&issn=' + issn;
-        }
-      }
-      searchString += '&per_page=5';
-      setDuplicateList(await searchChristinPublications(searchString));
+      const perPage = '5';
+      setDuplicateList(
+        await searchChristinPublications(
+          perPage,
+          importPublication.doi ?? undefined,
+          importPublication.languages ? importPublication.languages[0].title.substring(0, 20) : undefined,
+          importPublication.yearPublished ? +importPublication.yearPublished : undefined,
+          importPublication.channel?.issns ? importPublication.channel.issns[0] : undefined
+        )
+      );
     }
     setSelectedRadioButton(SelectValues.CREATE_NEW);
     fetch().then();
