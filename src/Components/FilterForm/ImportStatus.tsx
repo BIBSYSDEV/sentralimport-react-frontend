@@ -50,7 +50,6 @@ export default function ImportStatus() {
         const publicationCount = await getImportStatisticsByYear(state.currentImportYear.value);
         setCount(publicationCount.data);
       } catch (error) {
-        console.log(error);
         if (
           axios.isAxiosError(error) &&
           (!error.response || error.response.status === 401 || error.response.status === 403)
