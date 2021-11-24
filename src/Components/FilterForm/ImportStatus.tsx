@@ -1,12 +1,11 @@
 import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Typography } from '@material-ui/core';
 import { Context } from '../../Context';
-import axios from 'axios';
-import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { getImportStatisticsByYear } from '../../api/publicationApi';
 import { PublicationCount } from '../../types/PublicationTypes';
+import { handlePotentialExpiredSession } from '../../api/api';
 
 const importedStyle = {
   display: 'flex',
@@ -38,7 +37,6 @@ const StyledRadioGroup = styled(RadioGroup)`
 export default function ImportStatus() {
   const { state, dispatch } = useContext(Context);
   const [count, setCount] = useState<PublicationCount>();
-  const history = useHistory();
 
   function handleStatusChange(event: ChangeEvent<HTMLInputElement>) {
     dispatch({ type: 'setImportStatus', payload: event.target.value });
@@ -50,15 +48,7 @@ export default function ImportStatus() {
         const publicationCount = await getImportStatisticsByYear(state.currentImportYear.value);
         setCount(publicationCount.data);
       } catch (error) {
-        if (
-          axios.isAxiosError(error) &&
-          (!error.response || error.response.status === 401 || error.response.status === 403)
-        ) {
-          localStorage.setItem('authorized', 'false');
-          history.push('/login');
-        } else {
-          history.push('/error');
-        }
+        handlePotentialExpiredSession(error);
       }
     }
     getNumbers().then();

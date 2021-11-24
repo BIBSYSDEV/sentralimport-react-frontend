@@ -1,24 +1,24 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Select from 'react-select';
-import axios from 'axios';
 import { CircularProgress, Typography } from '@material-ui/core';
 import { Context } from '../../Context';
-import { CRIST_REST_API } from '../../utils/constants';
 import CommonErrorMessage from '../CommonErrorMessage';
+import { getParentsUnitName, searchForInstitutionsByName } from '../../api/institutionApi';
+import { handlePotentialExpiredSession } from '../../api/api';
 
 const searchLanguage = 'en';
 
 export default function InstitutionCountrySelect(props) {
   let { state } = useContext(Context);
   const [units, setUnits] = useState([]);
-  const [places, setPlaces] = useState([]);
   const [loadingError, setLoadingError] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [loadingUnits, setLoadingUnits] = useState(false);
   const [searchingForPlaces, setSearchingForPlaces] = useState(false);
+  const [searchingForPlacesError, setSearchingForPlacesError] = useState();
   const [groupOptions, setGroupOptions] = useState([
     { label: 'Cristin-institusjoner', options: state.institutionsEnglish },
-    { label: 'Annet', options: places },
+    { label: 'Annet', options: [] },
   ]);
 
   useEffect(() => {
@@ -27,23 +27,14 @@ export default function InstitutionCountrySelect(props) {
       if (props.selectedInstitution.cristinInstitutionNr) {
         try {
           setLoadingUnits(true);
-          let response = await axios.get(
-            CRIST_REST_API +
-              `/units?parent_unit_id=${props.selectedInstitution.cristinInstitutionNr}.0.0.0&per_page=900&lang=${searchLanguage}`,
-            JSON.parse(localStorage.getItem('config'))
+          const parentUnitNamesResponse = await getParentsUnitName(
+            props.selectedInstitution.cristinInstitutionNr,
+            searchLanguage
           );
-          let units = [];
-          for (let i = 0; i < response.data.length; i++) {
-            if (
-              response.data[i].hasOwnProperty('unit_name') &&
-              (response.data[i].unit_name.en || response.data[i].unit_name.nb)
-            ) {
-              units.push({
-                label: response.data[i].unit_name.en || response.data[i].unit_name.nb,
-                value: response.data[i].cristin_unit_id,
-              });
-            }
-          }
+          const units = parentUnitNamesResponse.data.map((parentUnitName) => ({
+            label: parentUnitName.unit_name.en ?? parentUnitName.unit_name.nb,
+            value: parentUnitName.cristin_unit_id,
+          }));
           setUnits(units);
         } catch (err) {
           setLoadingError('Kunne ikke laste enheter');
@@ -60,24 +51,24 @@ export default function InstitutionCountrySelect(props) {
     const fetchPlaces = async () => {
       if (inputValue !== '') {
         setSearchingForPlaces(true);
-        let response = await axios.get(
-          CRIST_REST_API + `/institutions?cristin_institution=false&lang=${searchLanguage}&name=${inputValue}`,
-          JSON.parse(localStorage.getItem('config'))
-        );
-        setSearchingForPlaces(false);
-        let places = [];
-        for (let i = 0; i < response.data.length; i++) {
-          places.push({
-            value: response.data[i].acronym,
-            label: response.data[i].institution_name.en || response.data[i].institution_name.nb,
-            cristinInstitutionNr: response.data[i].cristin_institution_id,
-          });
+        setSearchingForPlacesError(undefined);
+        try {
+          const institutionsResponse = await searchForInstitutionsByName(inputValue, searchLanguage);
+          const places = institutionsResponse.data.map((institution) => ({
+            value: institution.acronym,
+            label: institution.institution_name.en ?? institution.institution_name.nb,
+            cristinInstitutionNr: institution.cristin_institution_id,
+          }));
+          setGroupOptions([
+            { label: 'Cristin-institusjoner', options: state.institutionsEnglish },
+            { label: 'Annet', options: places },
+          ]);
+        } catch (error) {
+          handlePotentialExpiredSession(error);
+          setSearchingForPlacesError(error);
+        } finally {
+          setSearchingForPlaces(false);
         }
-        setPlaces(places);
-        setGroupOptions([
-          { label: 'Cristin-institusjoner', options: state.institutionsEnglish },
-          { label: 'Annet', options: places },
-        ]);
       }
     };
     fetchPlaces().then();
@@ -90,6 +81,9 @@ export default function InstitutionCountrySelect(props) {
           Søk etter institusjon:
         </Typography>
         {searchingForPlaces && <CircularProgress size={'1rem'} />}
+        {!searchingForPlaces && searchingForPlacesError && (
+          <Typography color="error">Søket på institusjon feilet.</Typography>
+        )}
       </div>
       <Select
         placeholder="Søk på institusjoner eller sted"
@@ -107,7 +101,7 @@ export default function InstitutionCountrySelect(props) {
       {loadingUnits && <CircularProgress size={'1rem'} style={{ margin: '0.5rem' }} />}
       {loadingError && <CommonErrorMessage errorMessage={loadingError} />}
       {units.length > 0 ? (
-        <div style={{ marginTop: '0.5rem', marginMottom: '0.5rem' }}>
+        <div style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
           <Select
             placeholder="Søk på enheter"
             name="unitSelect"

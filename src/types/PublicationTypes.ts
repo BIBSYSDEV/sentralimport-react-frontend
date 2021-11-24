@@ -58,7 +58,7 @@ export interface Channel {
 
 export interface InternationalStandardNumber {
   type: string;
-  value: string;
+  value?: string;
 }
 
 export interface institution {
@@ -99,4 +99,74 @@ export interface PublicationCount {
   importedCount: number;
   notImportedCount: number;
   notRelevantCount: number;
+}
+
+export interface ChannelLight {
+  id: string;
+  type: string;
+  title: string;
+  issn?: string;
+  issn_electronic?: string;
+}
+
+export interface CategoryItem {
+  code: string;
+  name?: {
+    nb?: string;
+    en?: string;
+  };
+}
+
+export interface PostPublication {
+  category: CategoryItem;
+  journal: Journal;
+  original_language: string;
+  title: any;
+  pub_id: string | number;
+  year_published: string;
+  import_sources: any;
+  volume: string;
+  issue: string;
+  links: Link[];
+  pages: Pages;
+  contributor: any[];
+  cristin_result_id: string | number;
+  cristinResultId?: string | number;
+  annotation?: string;
+}
+
+export interface Link {
+  url_type: string;
+  url_value: string;
+}
+
+export interface Journal {
+  cristin_journal_id: string;
+  name: string;
+  international_standard_numbers: InternationalStandardNumber[];
+  pia_journal_number?: string | number;
+}
+
+export interface Pages {
+  from: string | number;
+  to: string | number;
+  count: string;
+}
+
+export interface PatchPublication {
+  category?: CategoryItem;
+  journal?: Journal;
+  original_language?: string;
+  title?: any;
+  pub_id?: string | number;
+  year_published?: string;
+  import_sources?: any;
+  volume?: string;
+  issue?: string;
+  links?: Link[];
+  pages?: Pages;
+  contributor?: any[];
+  cristin_result_id?: string | number;
+  cristinResultId: string | number;
+  annotation?: string;
 }

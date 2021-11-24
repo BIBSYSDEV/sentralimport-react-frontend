@@ -1,7 +1,7 @@
 import { authenticatedApiRequest } from './api';
 import { CRIST_REST_API } from '../utils/constants';
 import { AxiosResponse } from 'axios';
-import { Institution, InstitutionCountryInformation } from '../types/institutionTypes';
+import { Institution, InstitutionCountryInformation, SimpleUnitResponse } from '../types/institutionTypes';
 import { SearchLanguage } from './contributorApi';
 
 export async function getInstitutions(): Promise<AxiosResponse<Institution[]>> {
@@ -17,6 +17,32 @@ export async function getInstitutionsByCountryCodes(
 ): Promise<AxiosResponse<InstitutionCountryInformation[]>> {
   return authenticatedApiRequest({
     url: encodeURI(`${CRIST_REST_API}/institutions/country/${countryCode}?lang=${searchLanguage}`),
+    method: 'GET',
+  });
+}
+
+export async function getParentsUnitName(
+  cristinInstitutionNr: string | number,
+  searchLanguage: SearchLanguage
+): Promise<AxiosResponse<SimpleUnitResponse[]>> {
+  return authenticatedApiRequest({
+    url: encodeURI(
+      `${CRIST_REST_API}/units?parent_unit_id=${cristinInstitutionNr}.0.0.0&per_page=900&lang=${searchLanguage}`
+    ),
+    method: 'GET',
+  });
+}
+
+export async function searchForInstitutionsByName(
+  institutionName: string,
+  searchLanguage: SearchLanguage
+): Promise<
+  AxiosResponse<{ acronym: string; cristin_institution_id: string; institution_name: { en?: string; nb: string } }[]>
+> {
+  return authenticatedApiRequest({
+    url: encodeURI(
+      `${CRIST_REST_API}/institutions?cristin_institution=false&lang=${searchLanguage}&name=${institutionName}`
+    ),
     method: 'GET',
   });
 }

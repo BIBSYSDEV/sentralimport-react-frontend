@@ -1,6 +1,6 @@
 import axios, { AxiosPromise, AxiosResponse } from 'axios';
 import { CRIST_REST_API } from '../utils/constants';
-import { authenticatedApiRequest } from './api';
+import { authenticatedApiRequest, handlePotentialExpiredSession } from './api';
 import { Institution, UnitResponse } from '../types/institutionTypes';
 import {
   AffiliationResponse,
@@ -52,6 +52,7 @@ export async function getInstitutionUnitName(
     unitName =
       searchLanguage === SearchLanguage.En ? unit.data.unit_name.en || unit.data.unit_name.nb : unit.data.unit_name.nb;
   } catch (error) {
+    handlePotentialExpiredSession(error);
     unitName = `Fant ikke ${institutionUnitId}`;
   } finally {
     cachedUnitResult.set(institutionUnitId, unitName);

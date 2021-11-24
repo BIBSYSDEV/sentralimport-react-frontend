@@ -14,6 +14,7 @@ import {
 import { Colors } from '../../assets/styles/StyleConstants';
 import styled from 'styled-components';
 import { getAffiliationDetails } from '../../utils/contributorUtils';
+import { handlePotentialExpiredSession } from '../../api/api';
 
 const StyledResultTypography = styled(Typography)`
   color: ${Colors.Text.OPAQUE_87_BLACK};
@@ -239,6 +240,7 @@ function Contributor(props) {
         setOpenContributorSearchPanel(true);
       }
     } catch (error) {
+      handlePotentialExpiredSession(error);
       setSearchError(error);
       setSearchResults([]);
     } finally {

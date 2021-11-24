@@ -8,6 +8,10 @@ import { Button } from 'reactstrap';
 import { Card, CardContent, Grid, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 
+export const ACESS_TOKEN = 'access_token';
+export const EXPIRES = 'expires';
+export const AUTHORIZED = 'authorized';
+
 export default function Login(props) {
   const search = queryString.parse(props.location.hash);
   const authState = 'bra';
@@ -73,16 +77,9 @@ export default function Login(props) {
       console.log('Error! Wrong invalid login!');
     else {
       localStorage.setItem('authorized', 'true');
-      localStorage.setItem('access_token', search.access_token.toString());
+      localStorage.setItem(ACESS_TOKEN, search.access_token.toString());
       localStorage.setItem('expires', jsonToken.exp);
       localStorage.setItem('id_token', search.id_token.toString());
-      //TODO: Lag heller en metode som pakker inn axios-kall og legger på headeren (som authenticatedApiRequest i dlr)
-      let config = {
-        headers: {
-          Authorization: 'Bearer ' + search.access_token.toString(),
-        },
-      };
-      localStorage.setItem('config', JSON.stringify(config));
       history.push('/');
     }
   }
