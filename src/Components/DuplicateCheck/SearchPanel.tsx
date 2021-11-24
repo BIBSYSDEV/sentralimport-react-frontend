@@ -105,7 +105,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
           +yearPublished
         : '') +
       (isIssnChecked ? (isDoiChecked || isYearPublishedChecked || isIssnChecked ? '&' : '?') + 'issn=' + issn : '') +
-      '&per_page=5&category=ARTICLE';
+      '&per_page=5';
     setIsSearching(true);
     setFoundDuplicates(false);
     const results = await searchChristinPublications(searchString);
