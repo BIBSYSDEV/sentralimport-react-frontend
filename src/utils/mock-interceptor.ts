@@ -35,10 +35,12 @@ export const mockTitleForEmptyCristinSearch = 'this_is_a_mocked_title';
 
 // AXIOS INTERCEPTOR
 export const interceptRequestsOnMock = () => {
+  const urlSearchParams = new URLSearchParams();
+  urlSearchParams.set('doi', mockImportPublication1.doi);
   const mock = new MockAdapter(Axios);
 
   mock
-    .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*&doi=${mockImportPublication1.doi}.*`))
+    .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*${urlSearchParams.toString()}.*`))
     .reply(200, [mockImportPublication1], {
       'x-total-count': 1,
     });
