@@ -4,6 +4,7 @@ import { CircularProgress, Typography } from '@material-ui/core';
 import { Context } from '../../Context';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { getParentsUnitName, searchForInstitutionsByName } from '../../api/institutionApi';
+import { handlePotentialExpiredSession } from '../../api/api';
 
 const searchLanguage = 'en';
 
@@ -63,6 +64,7 @@ export default function InstitutionCountrySelect(props) {
             { label: 'Annet', options: places },
           ]);
         } catch (error) {
+          handlePotentialExpiredSession(error);
           setSearchingForPlacesError(error);
         } finally {
           setSearchingForPlaces(false);
