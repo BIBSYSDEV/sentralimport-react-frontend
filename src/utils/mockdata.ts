@@ -1,4 +1,4 @@
-import { ForbiddenPersonErrorMessage } from '../api/contributorApi';
+import { ChannelLight } from '../types/PublicationTypes';
 
 export const mockInstitutions = [
   {
@@ -429,7 +429,17 @@ export const responseCountryInstitutionCN = {
   url: 'null/48400000',
 };
 
-export const mockAllJournals = [
+export const mockIssnChannel: ChannelLight[] = [
+  {
+    id: '4187',
+    issn: '1054-3139',
+    issn_electronic: '1095-9289',
+    title: 'ICES Journal of Marine Science',
+    type: 'journal',
+  },
+];
+
+export const mockAllJournals: ChannelLight[] = [
   {
     id: '51160',
     type: 'journal',
@@ -688,5 +698,5 @@ export const mockSavedPublication = {
 export const mockNotAuthorizedForThisPersonDetailResponse = {
   status: 403,
   response_id: 'svh6s12a',
-  errors: [ForbiddenPersonErrorMessage],
+  errors: ['Client lacks authorization.'],
 };

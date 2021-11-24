@@ -15,7 +15,7 @@ export interface ContextType {
   currentSortOrder: Order;
   currentSortValue: SortValue;
   doSave: boolean;
-  doiFilter: null;
+  doiFilter: string | null;
   formErrors: string[];
   identified: any[];
   identifiedImported: any[];
