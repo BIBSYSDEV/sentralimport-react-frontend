@@ -1,5 +1,4 @@
 import { ChannelLight } from '../types/PublicationTypes';
-import { ForbiddenPersonErrorMessage } from '../api/contributorApi';
 
 export const mockInstitutions = [
   {
@@ -699,5 +698,5 @@ export const mockSavedPublication = {
 export const mockNotAuthorizedForThisPersonDetailResponse = {
   status: 403,
   response_id: 'svh6s12a',
-  errors: [ForbiddenPersonErrorMessage],
+  errors: ['Client lacks authorization.'],
 };
