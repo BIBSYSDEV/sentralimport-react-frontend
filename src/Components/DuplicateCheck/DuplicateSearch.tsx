@@ -45,10 +45,9 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
   const [totalResults, setTotalResults] = useState(0);
 
   useEffect(() => {
-    async function fetch() {
+    async function initialSearch() {
       setIsSearching(true);
       setFoundDuplicates(false);
-
       if (importPublication.doi) {
         setIsInitialSearchWithDoi(true);
       }
@@ -67,7 +66,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
       setDuplicateList(results.cristinPublications);
     }
     setSelectedRadioButton(SelectValues.CREATE_NEW);
-    fetch().then();
+    initialSearch().then();
   }, [importPublication]);
 
   useEffect(() => {
@@ -101,12 +100,9 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
         {isSearching && <CircularProgress style={{ marginLeft: '1rem' }} size={'1.5rem'} />}
         {!isSearching &&
           (foundDuplicates ? (
-            <Typography
-              style={{
-                color: Colors.Text.GREEN,
-              }}>{`Søket ga følgende treff: (Viser ${duplicateList.length} av ${totalResults})`}</Typography>
+            <Typography color="primary">{`Søket ga følgende treff: (Viser ${duplicateList.length} av ${totalResults})`}</Typography>
           ) : (
-            <Typography color="error">Det finnes ingen eksisterende publikasjoner som matcher søket</Typography>
+            <Typography color="primary">Det finnes ingen eksisterende publikasjoner som matcher søket</Typography>
           ))}
       </StyledStatusWrapper>
       <Divider />
