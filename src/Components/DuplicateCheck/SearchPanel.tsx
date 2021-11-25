@@ -27,13 +27,13 @@ const StyledButtonWrapper = styled.div`
   align-items: center;
 `;
 
-//TODO: awoid prop-drilling by using formik
 interface SearchPanelProps {
   importPublication: ImportPublication;
   setDuplicateList: (results: CristinPublication[]) => void;
   setIsSearching: (value: boolean) => void;
   setFoundDuplicates: (value: boolean) => void;
   isInitialSearchWithDoi: boolean;
+  setTotalResults: (total: number) => void;
 }
 
 const SearchPanel: FC<SearchPanelProps> = ({
@@ -42,6 +42,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
   setIsSearching,
   setFoundDuplicates,
   isInitialSearchWithDoi,
+  setTotalResults,
 }) => {
   const [doi, setDoi] = useState(importPublication.doi ?? '');
   const [isDoiChecked, setIsDoiChecked] = useState(isInitialSearchWithDoi);
@@ -115,11 +116,12 @@ const SearchPanel: FC<SearchPanelProps> = ({
       isIssnChecked ? issn : undefined,
       isAuthorChecked ? author : undefined
     );
-    if (results.length > 0) {
+    if (results.cristinPublications.length > 0) {
       setFoundDuplicates(true);
     }
+    setTotalResults(results.totalPublicationsResults);
     setIsSearching(false);
-    setDuplicateList(results);
+    setDuplicateList(results.cristinPublications);
   }
 
   const noCheckBoxesChecked = !(

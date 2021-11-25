@@ -4,7 +4,7 @@ import { CircularProgress, Divider, FormControlLabel, Radio, RadioGroup, Typogra
 import '../../assets/styles/Results.scss';
 import ResultItem from './ResultItem';
 import { CristinPublication, ImportPublication } from '../../types/PublicationTypes';
-import { searchChristinPublications } from './SearchChristinPublications';
+import { searchChristinPublications, SearchChristinPublicationsResponse } from './SearchChristinPublications';
 import SearchPanel from './SearchPanel';
 import styled from 'styled-components';
 import { SelectValues } from './DuplicateCheckModal';
@@ -42,21 +42,29 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
   const [isInitialSearchWithDoi, setIsInitialSearchWithDoi] = useState(false);
   const { state, dispatch } = useContext(Context);
   const relevantStatus = state.currentImportStatus !== 'ikke aktuelle';
+  const [totalResults, setTotalResults] = useState(0);
 
   useEffect(() => {
     async function fetch() {
+      setIsSearching(true);
+      setFoundDuplicates(false);
+
       if (importPublication.doi) {
         setIsInitialSearchWithDoi(true);
       }
-      setDuplicateList(
-        await searchChristinPublications(
-          maxResults,
-          importPublication.doi,
-          importPublication.languages[0].title.substring(0, 20),
-          importPublication.yearPublished,
-          importPublication.channel?.issn
-        )
+      const results = await searchChristinPublications(
+        maxResults,
+        importPublication.doi,
+        importPublication.languages[0].title.substring(0, 20),
+        importPublication.yearPublished,
+        importPublication.channel?.issn
       );
+      if (results.cristinPublications.length > 0) {
+        setFoundDuplicates(true);
+      }
+      setTotalResults(results.totalPublicationsResults);
+      setIsSearching(false);
+      setDuplicateList(results.cristinPublications);
     }
     setSelectedRadioButton(SelectValues.CREATE_NEW);
     fetch().then();
@@ -87,12 +95,16 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
         setIsSearching={setIsSearching}
         setFoundDuplicates={setFoundDuplicates}
         isInitialSearchWithDoi={isInitialSearchWithDoi}
+        setTotalResults={setTotalResults}
       />
       <StyledStatusWrapper>
         {isSearching && <CircularProgress style={{ marginLeft: '1rem' }} size={'1.5rem'} />}
         {!isSearching &&
           (foundDuplicates ? (
-            <Typography style={{ color: Colors.Text.GREEN }}>Søket ga følgende treff</Typography>
+            <Typography
+              style={{
+                color: Colors.Text.GREEN,
+              }}>{`Søket ga følgende treff: (Viser ${duplicateList.length} av ${totalResults})`}</Typography>
           ) : (
             <Typography color="error">Det finnes ingen eksisterende publikasjoner som matcher søket</Typography>
           ))}

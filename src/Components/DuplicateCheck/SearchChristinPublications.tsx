@@ -1,5 +1,6 @@
 import { getCristinPublicationsBySearchTerm } from '../../api/publicationApi';
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
+import { CristinPublication } from '../../types/PublicationTypes';
 
 enum SearchChristinPublicationsSearchParams {
   doi = 'doi',
@@ -45,6 +46,11 @@ function generateSearchParams(
   }
 }
 
+export interface SearchChristinPublicationsResponse {
+  cristinPublications: CristinPublication[];
+  totalPublicationsResults: number;
+}
+
 export async function searchChristinPublications(
   perPage: string,
   doi: string | undefined,
@@ -52,7 +58,7 @@ export async function searchChristinPublications(
   yearPublished: string | undefined,
   issn: string | undefined,
   contributor?: string
-) {
+): Promise<SearchChristinPublicationsResponse> {
   const searchParams = generateSearchParams(
     perPage,
     doi,
@@ -61,18 +67,21 @@ export async function searchChristinPublications(
     issn,
     contributor ? contributor : undefined
   );
-  const response = await getCristinPublicationsBySearchTerm(searchParams);
-  const cristinPublications = response.data;
+  const publicationsResponse = await getCristinPublicationsBySearchTerm(searchParams);
+  const totalPublicationsResults = +publicationsResponse.headers['x-total-count'];
+  const cristinPublications = publicationsResponse.data;
   for (let i = 0; i < cristinPublications.length; i++) {
-    const response = await getContributorsByPublicationCristinResultId(
+    const contributorsResponse = await getContributorsByPublicationCristinResultId(
       cristinPublications[i].cristin_result_id,
       1,
       10,
       SearchLanguage.Nb
     );
-    cristinPublications[i].authors = response.data;
-    cristinPublications[i].authorTotalCount = response.headers['x-total-count'];
+    cristinPublications[i].authors = contributorsResponse.data;
+    cristinPublications[i].authorTotalCount = contributorsResponse.headers['x-total-count'];
   }
-
-  return cristinPublications;
+  return {
+    cristinPublications: cristinPublications,
+    totalPublicationsResults: totalPublicationsResults,
+  };
 }
