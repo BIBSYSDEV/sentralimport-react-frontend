@@ -27,7 +27,7 @@ function generateSearchParams(
   searchParams.set(SearchChristinPublicationsSearchParams.fields, 'all');
   searchParams.set(SearchChristinPublicationsSearchParams.lang, SearchLanguage.Nb);
   if (doi) {
-    return `${searchParams.toString()}&doi=${doi}`; //DOI må spesialbehandles som string siden den inneholder '/'
+    return `${searchParams.toString()}&${SearchChristinPublicationsSearchParams.doi}=${doi}`; //DOI må spesialbehandles som string siden den inneholder '/'
   } else {
     if (title) {
       searchParams.set(SearchChristinPublicationsSearchParams.title, title);

@@ -35,6 +35,8 @@ const StyledButtonWrapper = styled.div`
   align-items: center;
 `;
 
+const maxResults = '5';
+
 interface SearchPanelProps {
   importPublication: ImportPublication;
   setDuplicateList: (results: CristinPublication[]) => void;
@@ -126,9 +128,8 @@ const SearchPanel: FC<SearchPanelProps> = ({
     setIsSearching(true);
     setFoundDuplicates(false);
 
-    const perPage = '5';
     const results = await searchChristinPublications(
-      perPage,
+      maxResults,
       isDoiChecked ? doi : undefined,
       isTitleChecked ? title : undefined,
       isYearPublishedChecked ? yearPublished : undefined,
