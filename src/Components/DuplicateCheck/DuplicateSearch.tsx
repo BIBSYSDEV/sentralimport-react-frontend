@@ -4,11 +4,10 @@ import { CircularProgress, Divider, FormControlLabel, Radio, RadioGroup, Typogra
 import '../../assets/styles/Results.scss';
 import ResultItem from './ResultItem';
 import { CristinPublication, ImportPublication } from '../../types/PublicationTypes';
-import { searchChristinPublications, SearchChristinPublicationsResponse } from './SearchChristinPublications';
+import { searchChristinPublications } from './SearchChristinPublications';
 import SearchPanel from './SearchPanel';
 import styled from 'styled-components';
 import { SelectValues } from './DuplicateCheckModal';
-import { Colors } from '../../assets/styles/StyleConstants';
 
 const StyledRadioGroupWrapper = styled.div`
   margin-top: 1rem;
