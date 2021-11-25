@@ -47,7 +47,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
   const [doi, setDoi] = useState(importPublication.doi ?? '');
   const [isDoiChecked, setIsDoiChecked] = useState(isInitialSearchWithDoi);
   const [title, setTitle] = useState(importPublication.languages && importPublication.languages[0].title);
-  const [titleChecked, setTitleChecked] = useState(!isInitialSearchWithDoi);
+  const [isTitleChecked, setIsTitleChecked] = useState(!isInitialSearchWithDoi);
   const [yearPublished, setYearPublished] = useState(importPublication.yearPublished);
   const [isYearPublishedChecked, setIsYearPublishedChecked] = useState(false);
   const [issn, setIssn] = useState(importPublication.channel?.issns ? importPublication.channel.issns[0] : '');
@@ -60,11 +60,22 @@ const SearchPanel: FC<SearchPanelProps> = ({
 
   useEffect(() => {
     setIsDoiChecked(isInitialSearchWithDoi);
-    setIsIssnChecked(!isInitialSearchWithDoi);
-    setIsYearPublishedChecked(!isInitialSearchWithDoi);
-    setIsAuthorChecked(!isInitialSearchWithDoi);
-    setTitleChecked(!isInitialSearchWithDoi);
   }, [isInitialSearchWithDoi]);
+
+  useEffect(() => {
+    if (isDoiChecked) {
+      setIsIssnChecked(false);
+      setIsYearPublishedChecked(false);
+      setIsAuthorChecked(false);
+      setIsTitleChecked(false);
+    }
+  }, [isDoiChecked]);
+
+  useEffect(() => {
+    if (isIssnChecked || isTitleChecked || isAuthorChecked || isYearPublishedChecked) {
+      setIsDoiChecked(false);
+    }
+  }, [isIssnChecked, isTitleChecked, isAuthorChecked, isYearPublishedChecked]);
 
   function handleChangeDoi(event: any) {
     setDoi(event.target.value);
@@ -96,7 +107,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
     setYearPublished(importPublication.yearPublished);
     setIssn(importPublication.channel?.issns ? importPublication.channel.issns[0] : '');
     setIsDoiChecked(false);
-    setTitleChecked(false);
+    setIsTitleChecked(false);
     setIsAuthorChecked(false);
     setIsIssnChecked(false);
     setIsYearPublishedChecked(false);
@@ -111,7 +122,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
     const results = await searchChristinPublications(
       perPage,
       isDoiChecked ? doi : undefined,
-      titleChecked ? title : undefined,
+      isTitleChecked ? title : undefined,
       isYearPublishedChecked ? yearPublished : undefined,
       isIssnChecked ? issn : undefined,
       isAuthorChecked ? author : undefined
@@ -128,7 +139,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
     isYearPublishedChecked ||
     isIssnChecked ||
     isAuthorChecked ||
-    titleChecked ||
+    isTitleChecked ||
     isDoiChecked
   );
 
@@ -165,8 +176,8 @@ const SearchPanel: FC<SearchPanelProps> = ({
             control={
               <Checkbox
                 data-testid="search-panel-title-checkbox"
-                checked={titleChecked}
-                onClick={() => setTitleChecked(!titleChecked)}
+                checked={isTitleChecked}
+                onClick={() => setIsTitleChecked(!isTitleChecked)}
               />
             }
             label="Tittel"
@@ -175,7 +186,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
             data-testid="search-panel-title-textfield"
             fullWidth
             variant="outlined"
-            disabled={!titleChecked}
+            disabled={!isTitleChecked}
             multiline
             value={title}
             onChange={handleChangeTitle}
