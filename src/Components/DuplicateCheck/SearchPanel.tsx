@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Button, Checkbox, FormControlLabel, FormGroup, TextField, Typography } from '@material-ui/core';
 import styled from 'styled-components';
 import { CristinPublication, ImportPublication } from '../../types/PublicationTypes';
@@ -48,14 +48,22 @@ const SearchPanel: FC<SearchPanelProps> = ({
   const [title, setTitle] = useState(importPublication.languages && importPublication.languages[0].title);
   const [titleChecked, setTitleChecked] = useState(!isInitialSearchWithDoi);
   const [yearPublished, setYearPublished] = useState(importPublication.yearPublished);
-  const [isYearPublishedChecked, setIsYearPublishedChecked] = useState(!isInitialSearchWithDoi);
+  const [isYearPublishedChecked, setIsYearPublishedChecked] = useState(false);
   const [issn, setIssn] = useState(importPublication.channel?.issns ? importPublication.channel.issns[0] : '');
-  const [isIssnChecked, setIsIssnChecked] = useState(!isInitialSearchWithDoi);
+  const [isIssnChecked, setIsIssnChecked] = useState(false);
   const [author, setAuthor] = useState(
     importPublication.authors[0].authorName ||
       importPublication.authors[0].surname + ', ' + importPublication.authors[0]?.first_name?.substr(0, 1)
   );
   const [isAuthorChecked, setIsAuthorChecked] = useState(!isInitialSearchWithDoi);
+
+  useEffect(() => {
+    setIsDoiChecked(isInitialSearchWithDoi);
+    setIsIssnChecked(!isInitialSearchWithDoi);
+    setIsYearPublishedChecked(!isInitialSearchWithDoi);
+    setIsAuthorChecked(!isInitialSearchWithDoi);
+    setTitleChecked(!isInitialSearchWithDoi);
+  }, [isInitialSearchWithDoi]);
 
   function handleChangeDoi(event: any) {
     setDoi(event.target.value);

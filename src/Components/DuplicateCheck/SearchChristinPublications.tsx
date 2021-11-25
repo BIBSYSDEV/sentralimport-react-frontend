@@ -20,10 +20,13 @@ function generateSearchParams(
   yearPublished: string | undefined,
   issn: string | undefined,
   contributor?: string | undefined
-) {
+): string {
   const searchParams = new URLSearchParams();
+  searchParams.set(SearchChristinPublicationsSearchParams.perPage, perPage);
+  searchParams.set(SearchChristinPublicationsSearchParams.fields, 'all');
+  searchParams.set(SearchChristinPublicationsSearchParams.lang, SearchLanguage.Nb);
   if (doi) {
-    searchParams.set(SearchChristinPublicationsSearchParams.doi, doi);
+    return `${searchParams.toString()}&doi=${doi}`; //DOI må spesialbehandles som string siden den inneholder '/'
   } else {
     if (title) {
       searchParams.set(SearchChristinPublicationsSearchParams.title, title);
@@ -38,11 +41,8 @@ function generateSearchParams(
     if (contributor) {
       searchParams.set(SearchChristinPublicationsSearchParams.contributor, contributor);
     }
+    return searchParams.toString();
   }
-  searchParams.set(SearchChristinPublicationsSearchParams.perPage, perPage);
-  searchParams.set(SearchChristinPublicationsSearchParams.fields, 'all');
-  searchParams.set(SearchChristinPublicationsSearchParams.lang, SearchLanguage.Nb);
-  return searchParams;
 }
 
 export async function searchChristinPublications(
@@ -53,10 +53,6 @@ export async function searchChristinPublications(
   issn: string | undefined,
   contributor?: string
 ) {
-  console.log(doi);
-  console.log(title);
-  console.log(yearPublished);
-  console.log(contributor);
   const searchParams = generateSearchParams(
     perPage,
     doi,
@@ -65,7 +61,7 @@ export async function searchChristinPublications(
     issn,
     contributor ? contributor : undefined
   );
-  const response = await getCristinPublicationsBySearchTerm(searchParams.toString());
+  const response = await getCristinPublicationsBySearchTerm(searchParams);
   const cristinPublications = response.data;
   for (let i = 0; i < cristinPublications.length; i++) {
     const response = await getContributorsByPublicationCristinResultId(

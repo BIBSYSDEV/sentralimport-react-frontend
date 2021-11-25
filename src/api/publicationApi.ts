@@ -17,8 +17,10 @@ import { SortValue } from '../types/ContextType';
 export async function getCristinPublicationsBySearchTerm(
   searchTerms: string
 ): Promise<AxiosResponse<CristinPublication[]>> {
+  console.log('SEARCHTERMS');
+  console.log(searchTerms);
   return authenticatedApiRequest({
-    url: encodeURI(`${CRIST_REST_API}/results?${searchTerms}`),
+    url: `${CRIST_REST_API}/results?${searchTerms}`,
   });
 }
 
