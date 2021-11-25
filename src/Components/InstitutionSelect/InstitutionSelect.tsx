@@ -3,7 +3,6 @@ import { Context } from '../../Context';
 import { Autocomplete, FilterOptionsState } from '@material-ui/lab';
 import { TextField } from '@material-ui/core';
 import styled from 'styled-components';
-import { Institution } from '../../types/ContextType';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { InstitutionSelector } from '../../types/ContextType';
 
