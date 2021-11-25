@@ -35,7 +35,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
   selectedRadioButton,
   setSelectedRadioButton,
 }) => {
-  const [duplicateList, setDuplicateList] = useState<CristinPublication[]>([]);
+  const [resultList, setResultList] = useState<CristinPublication[]>([]);
   const [foundDuplicates, setFoundDuplicates] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isInitialSearchWithDoi, setIsInitialSearchWithDoi] = useState(false);
@@ -62,18 +62,18 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
       }
       setTotalResults(results.totalPublicationsResults);
       setIsSearching(false);
-      setDuplicateList(results.cristinPublications);
+      setResultList(results.cristinPublications);
     }
     setSelectedRadioButton(SelectValues.CREATE_NEW);
     initialSearch().then();
   }, [importPublication]);
 
   useEffect(() => {
-    if (importPublication.cristin_id && duplicateList.length > 0) {
-      setSelectedRadioButton(duplicateList[0].cristin_result_id);
-      dispatch({ type: 'setSelectedPublication', payload: duplicateList[0] });
+    if (importPublication.cristin_id && resultList.length > 0) {
+      setSelectedRadioButton(resultList[0].cristin_result_id);
+      dispatch({ type: 'setSelectedPublication', payload: resultList[0] });
     }
-  }, [duplicateList]);
+  }, [resultList]);
 
   function handleRadioGroupChange(event: any) {
     setSelectedRadioButton(event.target.value);
@@ -81,7 +81,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
       event.target.value !== SelectValues.TOGGLE_RELEVANT &&
       dispatch({
         type: 'setSelectedPublication',
-        payload: duplicateList.find((element: any) => element.cristin_result_id === event.target.value),
+        payload: resultList.find((element: any) => element.cristin_result_id === event.target.value),
       });
   }
 
@@ -89,7 +89,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
     <>
       <SearchPanel
         importPublication={importPublication}
-        setDuplicateList={setDuplicateList}
+        setDuplicateList={setResultList}
         setIsSearching={setIsSearching}
         setFoundDuplicates={setFoundDuplicates}
         isInitialSearchWithDoi={isInitialSearchWithDoi}
@@ -99,7 +99,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
         {isSearching && <CircularProgress style={{ marginLeft: '1rem' }} size={'1.5rem'} />}
         {!isSearching &&
           (foundDuplicates ? (
-            <Typography color="primary">{`Søket ga følgende treff: (Viser ${duplicateList.length} av ${totalResults})`}</Typography>
+            <Typography color="primary">{`Søket ga følgende treff: (Viser ${resultList.length} av ${totalResults})`}</Typography>
           ) : (
             <Typography color="primary">Det finnes ingen eksisterende publikasjoner som matcher søket</Typography>
           ))}
@@ -108,8 +108,8 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
       <StyledRadioGroupWrapper>
         <RadioGroup onChange={handleRadioGroupChange} value={selectedRadioButton}>
           <StyledResultListWrapper data-testid="duplicates-result-list">
-            {duplicateList.length > 0 &&
-              duplicateList.map((cristinPublication: any, index: number) => (
+            {resultList.length > 0 &&
+              resultList.map((cristinPublication: any, index: number) => (
                 <FormControlLabel
                   key={index}
                   control={<ResultItem cristinPublication={cristinPublication} />}

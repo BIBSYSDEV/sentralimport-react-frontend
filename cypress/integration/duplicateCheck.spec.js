@@ -8,7 +8,7 @@ context('duplication-check-modal', () => {
     cy.visit('/');
   });
 
-  it('can show duplication-modal', () => {
+  it('can show duplication-modal with initial search', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
 
     //import-publication-data shows //TODO: test for exact text-match ?
@@ -22,7 +22,7 @@ context('duplication-check-modal', () => {
     cy.get(`[data-testid="duplicate-check-importdata"]`).contains(mockImportData[0].yearPublished);
     //checkboxes
     cy.get(`[data-testid="search-panel-doi-checkbox"]`).should('exist');
-    cy.get(`[data-testid="search-panel-doi-checkbox"].Mui-checked`).should('not.exist'); //not checked
+    cy.get(`[data-testid="search-panel-doi-checkbox"].Mui-checked`).should('exist'); //not checked
     cy.get(`[data-testid="search-panel-title-checkbox"]`).should('exist');
     cy.get(`[data-testid="search-panel-title-checkbox"].Mui-checked`).should('not.exist');
     cy.get(`[data-testid="search-panel-year-checkbox"]`).should('exist');
