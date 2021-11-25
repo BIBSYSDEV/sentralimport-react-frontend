@@ -14,13 +14,13 @@ import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
 import ActionButtons from './ActionButtons';
 import clone from 'just-clone';
-import { Channel, CristinPublication, ImportData, Language } from '../../types/PublicationTypes';
+import { CategoryItem, Channel, CristinPublication, ImportData, Language } from '../../types/PublicationTypes';
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
-import { getCategories, getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
-import { handlePotentialExpiredSession } from '../../api/api';
 import CreateJournalPanel from '../CreateJournalPanel/CreateJournalPanel';
 import { Colors } from '../../assets/styles/StyleConstants';
 import CommonErrorMessage from '../CommonErrorMessage';
+import { handlePotentialExpiredSession } from '../../api/api';
+import { getCategories, getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -324,7 +324,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     async function getCategoriesAndReformatToReactSelect() {
       const categoriesResponse = await getCategories(SearchLanguage.Nb);
       setCategories(
-        categoriesResponse.data.map((category) => ({ value: category.code, label: category.name?.nb ?? '' }))
+        categoriesResponse.data.map((category: CategoryItem) => ({
+          value: category.code,
+          label: category.name?.nb ?? '',
+        }))
       );
     }
     async function fetch() {
@@ -756,42 +759,42 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                   </StyledLineCristinValue>
                 </StyledLineWrapper>
 
-            <StyledLineWrapper>
-              <StyledLineLabelTypography htmlFor="cristindata-journal">Tidsskrift</StyledLineLabelTypography>
-              <StyledLineImportValue>
-                <Typography data-testid="importdata-journal-title">{importPublication.channel?.title}</Typography>
-              </StyledLineImportValue>
-              <ActionButtons
-                isImportAndCristinEqual={
-                  selectedJournal.value === importPublication.channel?.cristinTidsskriftNr?.toString()
-                }
-                isCopyBottonDisabled={!importPublication.channel?.title}
-                copyCommand={copyJournal}
-              />
-              <StyledLineCristinValue>
-                <>
-                  <Select
-                    data-testid="cristindata-journal-select"
-                    id="cristindata-journal"
-                    aria-label="Tidsskrift-select"
-                    placeholder="Søk på tidsskrift"
-                    name="journalSelect"
-                    options={journals}
-                    value={selectedJournal}
-                    className="basic-select"
-                    classNamePrefix="select"
-                    onChange={handleChangeJournal}
-                    onInputChange={searchJournals}
+                <StyledLineWrapper>
+                  <StyledLineLabelTypography htmlFor="cristindata-journal">Tidsskrift</StyledLineLabelTypography>
+                  <StyledLineImportValue>
+                    <Typography data-testid="importdata-journal-title">{importPublication.channel?.title}</Typography>
+                  </StyledLineImportValue>
+                  <ActionButtons
+                    isImportAndCristinEqual={
+                      selectedJournal.value === importPublication.channel?.cristinTidsskriftNr?.toString()
+                    }
+                    isCopyBottonDisabled={!importPublication.channel?.title}
+                    copyCommand={copyJournal}
                   />
-                  {selectedJournal.label === 'Ingen tidsskrift funnet' && (
-                    <StyledErrorMessage>
-                      <CommonErrorMessage errorMessage="Tidsskrift mangler" />
-                    </StyledErrorMessage>
-                  )}
-                </>
-                <CreateJournalPanel handleCreateJournal={handleNewJournal} />
-              </StyledLineCristinValue>
-            </StyledLineWrapper>
+                  <StyledLineCristinValue>
+                    <>
+                      <Select
+                        data-testid="cristindata-journal-select"
+                        id="cristindata-journal"
+                        aria-label="Tidsskrift-select"
+                        placeholder="Søk på tidsskrift"
+                        name="journalSelect"
+                        options={journals}
+                        value={selectedJournal}
+                        className="basic-select"
+                        classNamePrefix="select"
+                        onChange={handleChangeJournal}
+                        onInputChange={searchJournals}
+                      />
+                      {selectedJournal.label === 'Ingen tidsskrift funnet' && (
+                        <StyledErrorMessage>
+                          <CommonErrorMessage errorMessage="Tidsskrift mangler" />
+                        </StyledErrorMessage>
+                      )}
+                    </>
+                    <CreateJournalPanel handleCreateJournal={handleNewJournal} />
+                  </StyledLineCristinValue>
+                </StyledLineWrapper>
 
                 <StyledLineWrapper>
                   <StyledLineLabelTypography>DOI</StyledLineLabelTypography>
