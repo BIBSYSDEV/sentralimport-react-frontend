@@ -29,8 +29,6 @@ const initialState: ContextType = {
   formErrors: ['Ingen tidsskrift valgt'],
   totalCount: 0,
   contributors: null,
-  contributorPage: 0,
-  contributorPerPage: 5,
   institutions: null,
   institutionsEnglish: null,
   doSave: false,

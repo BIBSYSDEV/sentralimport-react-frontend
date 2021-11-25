@@ -1,11 +1,8 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Button, Card, Collapse, Typography } from '@material-ui/core';
 import styled from 'styled-components';
 import { Colors } from '../../assets/styles/StyleConstants';
-
-const StyledTypography = styled(Typography)`
-  margin-left: 10px;
-`;
+import { ContributorType } from '../../types/ContributorTypes';
 
 const StyledChooseButton = styled(Button)`
   justify-self: flex-end;
@@ -22,6 +19,10 @@ const StyledAffiliationsWrapper = styled.div`
   margin-left: 10px;
 `;
 
+const StyledTypography = styled(Typography)`
+  margin-left: 10px;
+`;
+
 interface ContributorSearchPanelProps {
   searchResult: any[];
   collapsed: boolean;
@@ -29,49 +30,55 @@ interface ContributorSearchPanelProps {
   handleAbort: () => void;
 }
 
-export default function ContributorSearchPanel(props: ContributorSearchPanelProps) {
-  if (props.searchResult.length > 0) {
-    return (
-      <Collapse in={props.collapsed}>
-        <Card>
-          <div>
-            {props.searchResult.map((author, i) => (
-              <span key={i}>
-                <StyledAuthorWrapper data-testid={`author-name-${author.cristin_person_id}`}>
-                  {(author.first_name_preferred ?? author.first_name) +
-                    ' ' +
-                    (author.surname_preferred ?? author.surname)}
-                </StyledAuthorWrapper>
-                {author.affiliations.map((affiliation: any, h: number) => (
-                  <StyledAffiliationsWrapper
-                    data-testid={`list-item-author-${author.cristin_person_id}-affiliations-${affiliation.cristinInstitutionNr}`}
-                    key={h}>
-                    {affiliation.institutionName}
-                    {affiliation.units &&
-                      affiliation.units.map((unit: any, i: number) => <div key={i}>&bull; {unit.unitName}</div>)}
-                  </StyledAffiliationsWrapper>
-                ))}
-                {author.affiliations.length === 0 && author.require_higher_authorization && (
-                  <StyledAffiliationsWrapper>
-                    <StyledTypography data-testid={`person-limited-access-${author.cristin_person_id}`} color="error">
-                      Kan ikke hente inn institusjoner for denne bidragsyteren.
-                    </StyledTypography>
-                  </StyledAffiliationsWrapper>
-                )}
-                <StyledChooseButton key={i} color="primary" onClick={() => props.handleChoose(author)}>
-                  Velg denne
-                </StyledChooseButton>
-                <hr />
-              </span>
-            ))}
-          </div>
-          <Button color="primary" onClick={props.handleAbort}>
-            Lukk
-          </Button>
-        </Card>
-      </Collapse>
-    );
-  } else {
-    return null;
-  }
-}
+const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
+  searchResult,
+  collapsed,
+  handleChoose,
+  handleAbort,
+}) => {
+  return searchResult.length > 0 ? (
+    <Collapse in={collapsed}>
+      <Card>
+        <div>
+          {searchResult.map((author: ContributorType, searchResultIndex: number) => (
+            <span key={searchResultIndex}>
+              <StyledAuthorWrapper data-testid={`author-name-${author.cristin_person_id}`}>
+                {(author.first_name_preferred ?? author.first_name) +
+                  ' ' +
+                  (author.surname_preferred ?? author.surname)}
+              </StyledAuthorWrapper>
+              {author.affiliations?.map((affiliation: any, h: number) => (
+                <StyledAffiliationsWrapper
+                  data-testid={`list-item-author-${author.cristin_person_id}-affiliations-${affiliation.cristinInstitutionNr}`}
+                  key={h}>
+                  {affiliation.institutionName}
+                  {affiliation.units &&
+                    affiliation.units.map((unit: any, i: number) => <div key={i}>&bull; {unit.unitName}</div>)}
+                </StyledAffiliationsWrapper>
+              ))}
+
+              {author.affiliations?.length === 0 && author.require_higher_authorization && (
+                <StyledAffiliationsWrapper>
+                  <StyledTypography data-testid={`person-limited-access-${author.cristin_person_id}`} color="error">
+                    Kan ikke hente inn institusjoner for denne bidragsyteren.
+                  </StyledTypography>
+                </StyledAffiliationsWrapper>
+              )}
+              <StyledChooseButton color="primary" onClick={() => handleChoose(author)}>
+                Velg denne
+              </StyledChooseButton>
+              <hr />
+            </span>
+          ))}
+        </div>
+        <Button color="primary" onClick={handleAbort}>
+          Lukk
+        </Button>
+      </Card>
+    </Collapse>
+  ) : (
+    <></>
+  );
+};
+
+export default ContributorSearchPanel;

@@ -1,10 +1,10 @@
 import { Order } from './PublicationTypes';
+import { InstitutionSelector } from './InstitutionTypes';
 
 export interface ContextType {
   allChecked: boolean;
   contributorErrors: number[];
-  contributorPage: number;
-  contributorPerPage: number;
+
   contributors: null | any;
   contributorsLoaded: boolean;
   currentImportStatus: string;
@@ -79,10 +79,4 @@ export interface SelectedPublication {
 export interface ImportSources {
   source_name: string;
   source_reference_id?: string;
-}
-
-export interface InstitutionSelector {
-  cristinInstitutionNr: string;
-  label: string;
-  value: string;
 }

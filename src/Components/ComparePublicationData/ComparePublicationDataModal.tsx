@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
 import ActionButtons from './ActionButtons';
 import clone from 'just-clone';
-import { Channel, CristinPublication, ImportData, Language } from '../../types/PublicationTypes';
+import { Channel, CristinPublication, ImportPublication, Language } from '../../types/PublicationTypes';
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
 import { getCategories, getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
@@ -105,7 +105,7 @@ interface Category {
 interface ComparePublicationDataModalProps {
   isComparePublicationDataModalOpen: boolean;
   handleComparePublicationDataModalClose: () => void;
-  importPublication: ImportData;
+  importPublication: ImportPublication;
   cristinPublication: CristinPublication;
   handleDuplicateCheckModalClose: () => void;
   isDuplicate: boolean;
@@ -181,7 +181,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       try {
         setFatalError(undefined);
         let workedOn = false;
-        let publicationFromLocalStorage: ImportData | undefined;
+        let publicationFromLocalStorage: ImportPublication | undefined;
         const localStorageData = localStorage.getItem('tempPublication');
         if (localStorageData) {
           publicationFromLocalStorage = JSON.parse(localStorageData).publication;

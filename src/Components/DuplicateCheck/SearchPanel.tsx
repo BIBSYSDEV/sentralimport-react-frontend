@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Button, Checkbox, FormControlLabel, FormGroup, TextField, Typography } from '@material-ui/core';
 import styled from 'styled-components';
-import { CristinPublication, ImportData } from '../../types/PublicationTypes';
+import { CristinPublication, ImportPublication } from '../../types/PublicationTypes';
 import { searchChristinPublications } from './SearchChristinPublications';
 
 const StyledFormWrapper = styled.div`
@@ -28,7 +28,7 @@ const StyledButtonWrapper = styled.div`
 `;
 
 interface SearchPanelProps {
-  importPublication: ImportData;
+  importPublication: ImportPublication;
   setDuplicateList: (results: CristinPublication[]) => void;
   setIsSearching: (value: boolean) => void;
   setFoundDuplicates: (value: boolean) => void;

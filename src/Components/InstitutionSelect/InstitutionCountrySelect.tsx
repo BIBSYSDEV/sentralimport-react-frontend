@@ -1,21 +1,52 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import Select from 'react-select';
 import { CircularProgress, Typography } from '@material-ui/core';
 import { Context } from '../../Context';
 import CommonErrorMessage from '../CommonErrorMessage';
+import styled from 'styled-components';
 import { getParentsUnitName, searchForInstitutionsByName } from '../../api/institutionApi';
 import { handlePotentialExpiredSession } from '../../api/api';
+import { SearchLanguage } from '../../api/contributorApi';
 
-const searchLanguage = 'en';
+const StyledCircularProgress = styled(CircularProgress)`
+  margin: 0.5rem;
+`;
 
-export default function InstitutionCountrySelect(props) {
-  let { state } = useContext(Context);
-  const [units, setUnits] = useState([]);
+const StyledUnitSelectWrapper = styled.div`
+  margin: 0 0.5rem;
+`;
+const StyledLabelTypography = styled(Typography)`
+  && {
+    font-size: 1.2rem;
+  }
+  margin-bottom: 1rem;
+`;
+
+const StyledLabel = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+interface InstitutionCountrySelectProps {
+  selectedInstitution: any;
+  handleInstitutionChange: any;
+  unit: any;
+  handleUnitChange: any;
+}
+
+const InstitutionCountrySelect: FC<InstitutionCountrySelectProps> = ({
+  selectedInstitution,
+  handleInstitutionChange,
+  unit,
+  handleUnitChange,
+}) => {
+  const { state } = useContext(Context);
+  const [units, setUnits] = useState<any>([]);
   const [loadingError, setLoadingError] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [loadingUnits, setLoadingUnits] = useState(false);
   const [searchingForPlaces, setSearchingForPlaces] = useState(false);
-  const [searchingForPlacesError, setSearchingForPlacesError] = useState();
+  const [searchingForPlacesError, setSearchingForPlacesError] = useState<Error | undefined>();
   const [groupOptions, setGroupOptions] = useState([
     { label: 'Cristin-institusjoner', options: state.institutionsEnglish },
     { label: 'Annet', options: [] },
@@ -24,12 +55,12 @@ export default function InstitutionCountrySelect(props) {
   useEffect(() => {
     const fetchUnits = async () => {
       setLoadingError('');
-      if (props.selectedInstitution.cristinInstitutionNr) {
+      if (selectedInstitution.cristinInstitutionNr) {
         try {
           setLoadingUnits(true);
           const parentUnitNamesResponse = await getParentsUnitName(
-            props.selectedInstitution.cristinInstitutionNr,
-            searchLanguage
+            selectedInstitution.cristinInstitutionNr,
+            SearchLanguage.En
           );
           const units = parentUnitNamesResponse.data.map((parentUnitName) => ({
             label: parentUnitName.unit_name.en ?? parentUnitName.unit_name.nb,
@@ -45,15 +76,15 @@ export default function InstitutionCountrySelect(props) {
     };
     setUnits([]);
     fetchUnits().then();
-  }, [inputValue, searchLanguage, props.selectedInstitution]);
+  }, [inputValue, selectedInstitution]);
 
   useEffect(() => {
     const fetchPlaces = async () => {
       if (inputValue !== '') {
-        setSearchingForPlaces(true);
         setSearchingForPlacesError(undefined);
+        setSearchingForPlaces(true);
         try {
-          const institutionsResponse = await searchForInstitutionsByName(inputValue, searchLanguage);
+          const institutionsResponse = await searchForInstitutionsByName(inputValue, SearchLanguage.En);
           const places = institutionsResponse.data.map((institution) => ({
             value: institution.acronym,
             label: institution.institution_name.en ?? institution.institution_name.nb,
@@ -64,57 +95,60 @@ export default function InstitutionCountrySelect(props) {
             { label: 'Annet', options: places },
           ]);
         } catch (error) {
-          handlePotentialExpiredSession(error);
-          setSearchingForPlacesError(error);
+          if (error instanceof Error) {
+            handlePotentialExpiredSession(error);
+            setSearchingForPlacesError(error);
+          }
         } finally {
           setSearchingForPlaces(false);
         }
       }
     };
     fetchPlaces().then();
-  }, [inputValue, searchLanguage]);
+  }, [inputValue]);
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyConent: 'space-between' }}>
-        <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} gutterBottom>
-          Søk etter institusjon:
-        </Typography>
+      <StyledLabel>
+        <StyledLabelTypography gutterBottom>Søk etter institusjon:</StyledLabelTypography>
         {searchingForPlaces && <CircularProgress size={'1rem'} />}
-        {!searchingForPlaces && searchingForPlacesError && (
-          <Typography color="error">Søket på institusjon feilet.</Typography>
-        )}
-      </div>
+      </StyledLabel>
+
+      {!searchingForPlaces && searchingForPlacesError && (
+        <Typography color="error">Søket på institusjon feilet.</Typography>
+      )}
       <Select
         placeholder="Søk på institusjoner eller sted"
         name="institutionSelect"
         options={groupOptions}
         className="basic-multi-select"
         classNamePrefix="select"
-        onChange={props.handleInstitutionChange}
+        onChange={handleInstitutionChange}
         onInputChange={(event) => {
           setInputValue(event);
         }}
         aria-label="Institusjonsvelger"
-        value={props.selectedInstitution}
+        value={selectedInstitution}
       />
-      {loadingUnits && <CircularProgress size={'1rem'} style={{ margin: '0.5rem' }} />}
+      {loadingUnits && <StyledCircularProgress size={'1rem'} />}
       {loadingError && <CommonErrorMessage errorMessage={loadingError} />}
       {units.length > 0 ? (
-        <div style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
+        <StyledUnitSelectWrapper>
           <Select
             placeholder="Søk på enheter"
             name="unitSelect"
             options={units}
-            value={props.unit}
-            onChange={props.handleUnitChange}
+            value={unit}
+            onChange={handleUnitChange}
             isClearable
           />
-        </div>
+        </StyledUnitSelectWrapper>
       ) : (
-        props.selectedInstitution &&
+        selectedInstitution &&
         !loadingUnits && <Typography variant="caption">Institusjonen har ingen enheter</Typography>
       )}
     </div>
   );
-}
+};
+
+export default InstitutionCountrySelect;

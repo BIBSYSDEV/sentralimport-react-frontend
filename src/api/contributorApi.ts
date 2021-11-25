@@ -1,13 +1,8 @@
 import axios, { AxiosPromise, AxiosResponse } from 'axios';
 import { CRIST_REST_API } from '../utils/constants';
 import { authenticatedApiRequest, handlePotentialExpiredSession } from './api';
-import { Institution, UnitResponse } from '../types/institutionTypes';
-import {
-  AffiliationResponse,
-  PersonDetailResponse,
-  PersonSearchResponse,
-  PublicationContributor,
-} from '../types/contributorTypes';
+import { Affiliation, Institution, UnitResponse } from '../types/InstitutionTypes';
+import { ContributorType } from '../types/ContributorTypes';
 
 export enum SearchLanguage {
   En = 'en',
@@ -61,7 +56,7 @@ export async function getInstitutionUnitName(
 }
 
 export async function getInstitutionUnitNameBasedOnIDAndInstitutionStatus(
-  affiliation: AffiliationResponse,
+  affiliation: Affiliation,
   cache: Map<string, string>
 ): Promise<{ unitName: string; cache: Map<string, string> }> {
   if (affiliation.unit && cache.get(affiliation.unit?.cristin_unit_id ?? ''))
@@ -78,11 +73,11 @@ export async function getInstitutionUnitNameBasedOnIDAndInstitutionStatus(
   };
 }
 
-export async function getPersonDetailById(person: PersonSearchResponse): Promise<PersonDetailResponse> {
+export async function getPersonDetailById(person: ContributorType): Promise<ContributorType> {
   try {
     const personDetailResponse = (await authenticatedApiRequest({
-      url: encodeURI(`${CRIST_REST_API}/persons/${person.cristin_person_id ?? person}`),
-    })) as AxiosResponse<PersonDetailResponse>;
+      url: encodeURI(`${CRIST_REST_API}/persons/${person.cristin_person_id}`),
+    })) as AxiosResponse<ContributorType>;
     return personDetailResponse.data;
   } catch (error) {
     //Intentionally ignore persons that return forbidden error. See jira task SMILE-1142 for details.
@@ -94,7 +89,6 @@ export async function getPersonDetailById(person: PersonSearchResponse): Promise
       error.response.data.errors[0] === ForbiddenPersonErrorMessage
     ) {
       return {
-        cristinId: person.cristin_person_id,
         cristin_person_id: person.cristin_person_id,
         first_name: person.first_name,
         surname: person.surname,
@@ -106,16 +100,16 @@ export async function getPersonDetailById(person: PersonSearchResponse): Promise
   }
 }
 
-export async function searchPersonDetailByName(name: string): Promise<AxiosResponse<PersonSearchResponse[]>> {
+export async function searchPersonDetailByName(name: string): Promise<AxiosResponse<ContributorType[]>> {
   return authenticatedApiRequest({
     url: encodeURI(`${CRIST_REST_API}/persons/?name=${name}`),
-  }) as AxiosPromise<PersonSearchResponse[]>;
+  }) as AxiosPromise<ContributorType[]>;
 }
 
 export async function searchPersonDetailById(personId: number) {
   return authenticatedApiRequest({
     url: encodeURI(`${CRIST_REST_API}/persons/?id=${personId}`),
-  }) as AxiosPromise<PersonSearchResponse[]>;
+  }) as AxiosPromise<ContributorType[]>;
 }
 
 export async function getContributorsByPublicationCristinResultId(
@@ -123,7 +117,7 @@ export async function getContributorsByPublicationCristinResultId(
   page: number,
   resultsPerPage: number,
   searchLanguage: SearchLanguage
-): Promise<AxiosResponse<PublicationContributor[]>> {
+): Promise<AxiosResponse<ContributorType[]>> {
   return authenticatedApiRequest({
     url: encodeURI(
       `${CRIST_REST_API}/results/${publicationResultCristinId}/contributors?page=${page}&per_page=${resultsPerPage}&lang=${searchLanguage}`
