@@ -6,9 +6,10 @@ import { Markup } from 'interweave';
 import { cleanTitleForMarkup } from '../../utils/stringUtils';
 import IconButton from '@material-ui/core/IconButton';
 import PeopleIcon from '@material-ui/icons/People';
-import { Author, ImportData } from '../../types/PublicationTypes';
+import { ImportPublication } from '../../types/PublicationTypes';
 import ResultIcon from '../../assets/icons/result-active.svg';
 import { Typography } from '@material-ui/core';
+import { ImportPublicationPerson } from '../../types/ContributorTypes';
 
 const monsterPostStyle = {
   fontWeight: 700,
@@ -20,17 +21,21 @@ function reformatDate(dateString: string) {
 }
 
 interface ImportTableListItemProps {
-  importData: ImportData;
+  importData: ImportPublication;
   setOpen: (status: boolean) => void;
   handleClick: (event: any, row: { row: any }) => void;
   handleKeyPress: (event: React.KeyboardEvent<HTMLButtonElement>, row: { row: any }) => void;
   handleOnBlur: (event: any) => void;
   handleOnFocus: (event: any) => void;
   checked: boolean;
-  handleCheckBoxChange: (event: React.ChangeEvent<HTMLInputElement>, importData: ImportData, index: number) => void;
+  handleCheckBoxChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    importData: ImportPublication,
+    index: number
+  ) => void;
   index: number;
-  handleAuthorClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, row: ImportData) => void;
-  handleAuthorPress: (event: React.KeyboardEvent<HTMLButtonElement>, row: ImportData) => void;
+  handleAuthorClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, row: ImportPublication) => void;
+  handleAuthorPress: (event: React.KeyboardEvent<HTMLButtonElement>, row: ImportPublication) => void;
 }
 
 export default function ImportTableListItem({
@@ -45,13 +50,13 @@ export default function ImportTableListItem({
   handleAuthorClick,
   handleAuthorPress,
 }: ImportTableListItemProps) {
-  function filterTitle(row: ImportData) {
+  function filterTitle(row: ImportPublication) {
     if (row.languages) {
       return row.languages.filter((l) => l.original)[0].title;
     }
   }
 
-  function countFoundPersons(persons: Author[]) {
+  function countFoundPersons(persons: ImportPublicationPerson[]) {
     let personCount = 0;
     for (let i = 0; i < persons.length; i++) {
       if (persons[i].cristinId && persons[i].cristinId !== 0) {
@@ -61,7 +66,7 @@ export default function ImportTableListItem({
     return personCount;
   }
 
-  function handleOwnerInstitutions(row: ImportData) {
+  function handleOwnerInstitutions(row: ImportPublication) {
     let inst: any[] = [];
     const authorList = row.authors;
     for (let h = 0; h < authorList.length; h++) {

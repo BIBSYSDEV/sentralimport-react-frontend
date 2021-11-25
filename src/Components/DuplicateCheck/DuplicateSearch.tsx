@@ -3,7 +3,7 @@ import { Context } from '../../Context';
 import { CircularProgress, Divider, FormControlLabel, Radio, RadioGroup, Typography } from '@material-ui/core';
 import '../../assets/styles/Results.scss';
 import ResultItem from './ResultItem';
-import { CristinPublication, ImportData } from '../../types/PublicationTypes';
+import { CristinPublication, ImportPublication } from '../../types/PublicationTypes';
 import { searchChristinPublications } from './SearchChristinPublications';
 import SearchPanel from './SearchPanel';
 import styled from 'styled-components';
@@ -24,7 +24,7 @@ const StyledResultListWrapper = styled.div`
 `;
 
 interface DuplicateSearchProps {
-  importPublication: ImportData;
+  importPublication: ImportPublication;
   selectedRadioButton: string;
   setSelectedRadioButton: (value: string) => void;
 }

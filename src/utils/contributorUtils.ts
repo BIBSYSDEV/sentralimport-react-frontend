@@ -1,22 +1,22 @@
-import { Affiliation, AffiliationResponse } from '../types/contributorTypes';
 import {
   getInstitutionName,
   getInstitutionUnitNameBasedOnIDAndInstitutionStatus,
   SearchLanguage,
 } from '../api/contributorApi';
+import { Affiliation } from '../types/InstitutionTypes';
 
 export async function getAffiliationDetails(
-  affiliation: AffiliationResponse | undefined,
+  affiliation: Affiliation | undefined,
   unitNameCache: Map<string, string>,
   institutionNameCache: Map<string, string>
 ): Promise<{
   institutionNameCache: Map<string, string>;
   unitNameCache: Map<string, string>;
-  affiliation?: Affiliation;
+  affiliation: Affiliation | undefined;
 }> {
   if (affiliation) {
     const institutionNameAndCache = await getInstitutionName(
-      affiliation.institution.cristin_institution_id,
+      affiliation.institution?.cristin_institution_id,
       SearchLanguage.En,
       institutionNameCache
     );
@@ -28,17 +28,17 @@ export async function getAffiliationDetails(
       institutionNameCache: institutionNameCache,
       affiliation: {
         institutionName: institutionNameAndCache.institutionName,
-        cristinInstitutionNr: affiliation.institution.cristin_institution_id,
+        cristinInstitutionNr: affiliation.institution?.cristin_institution_id,
         isCristinInstitution: true,
         units: [
           {
             unitName: unitNameAndCache.unitName,
-            unitNr: affiliation.unit ? affiliation.unit.cristin_unit_id : '',
+            unitNr: affiliation.unit ? affiliation.unit?.cristin_unit_id : '',
           },
         ],
       },
     };
   } else {
-    return { unitNameCache: unitNameCache, institutionNameCache: institutionNameCache };
+    return { unitNameCache: unitNameCache, institutionNameCache: institutionNameCache, affiliation: undefined };
   }
 }

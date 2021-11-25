@@ -5,7 +5,7 @@ import {
   CategoryItem,
   ChannelLight,
   CristinPublication,
-  ImportData,
+  ImportPublication,
   Order,
   PatchPublication,
   PostPublication,
@@ -138,7 +138,7 @@ export async function getImportData(
   resultPerPage: number,
   pageNumber: number,
   doiFilter: string | null
-): Promise<AxiosResponse<ImportData[]>> {
+): Promise<AxiosResponse<ImportPublication[]>> {
   const searchParams = generateSearchParams(
     sortValue,
     sortOrder,

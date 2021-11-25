@@ -1,15 +1,17 @@
+import { ImportPublicationPerson } from './ContributorTypes';
+
 export enum Order {
   asc = 'asc',
   desc = 'desc',
 }
 
-export interface ImportData {
+export interface ImportPublication {
   duplicate?: boolean;
   externalId: string;
   cristin_id?: boolean;
   category?: any;
   pubId: string;
-  authors: Author[];
+  authors: ImportPublicationPerson[];
   yearPublished: string;
   channel?: Channel;
   doi?: string;
@@ -35,15 +37,6 @@ export interface CristinPublication {
   cristin_result_id: string;
 }
 
-export interface Author {
-  first_name?: string;
-  surname?: string;
-  authorName: string;
-  sequenceNr: number;
-  institutions: institution[];
-  cristinId?: number;
-}
-
 export interface Channel {
   issns?: any; //?????
   issn?: string;
@@ -61,18 +54,13 @@ export interface InternationalStandardNumber {
   value?: string;
 }
 
-export interface institution {
-  unitName: string;
-  acronym: string;
-}
-
 export interface Language {
   lang: string;
   original: boolean;
   title: string;
 }
 
-export const emptyImportPublication: ImportData = {
+export const emptyImportPublication: ImportPublication = {
   externalCategory: '',
   externalId: '',
   yearPublished: '',

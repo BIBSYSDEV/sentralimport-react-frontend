@@ -3,7 +3,7 @@ import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Context } from '../../Context';
 import '../../assets/styles/Results.scss';
 import ComparePublicationDataModal from '../ComparePublicationData/ComparePublicationDataModal';
-import { ImportData } from '../../types/PublicationTypes';
+import { ImportPublication } from '../../types/PublicationTypes';
 import { Button, Divider, Grid, Typography } from '@material-ui/core';
 import ImportPublicationPresentation from './ImportPublicationPresentation';
 import DuplicateSearch from './DuplicateSearch';
@@ -34,7 +34,7 @@ export enum SelectValues {
 interface DuplicateCheckModalProps {
   isDuplicateCheckModalOpen: boolean;
   handleDuplicateCheckModalClose: () => void;
-  importPublication: ImportData;
+  importPublication: ImportPublication;
 }
 
 const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
