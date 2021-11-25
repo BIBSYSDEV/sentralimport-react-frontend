@@ -11,6 +11,7 @@ import { USE_MOCK_DATA } from './utils/constants';
 import styled from 'styled-components';
 import { getInstitutions } from './api/institutionApi';
 import { InstitutionSelector } from './types/ContextType';
+import { handlePotentialExpiredSession } from './api/api';
 
 const StyledApp = styled.div`
   text-align: center;
@@ -37,25 +38,29 @@ export default function App() {
   //fetches instututions to populate drop-down lists
   useEffect(() => {
     const createInstitutionLists = async () => {
-      const institutionListResponse = await getInstitutions();
-      const cristinInstitutions = institutionListResponse.data.filter((i) => i.cristin_user_institution);
-      //TODO: there is no need for institutionNorwegian and institutionEnglish, it should be possible to use cristinInstitutions as is.
-      const institutionsNorwegian: InstitutionSelector[] = [];
-      const institutionsEnglish: InstitutionSelector[] = [];
-      cristinInstitutions.forEach((cristinInstitution) => {
-        institutionsNorwegian.push({
-          value: cristinInstitution.acronym,
-          label: cristinInstitution.institution_name.nb ?? cristinInstitution.institution_name.en,
-          cristinInstitutionNr: cristinInstitution.cristin_institution_id,
+      try {
+        const institutionListResponse = await getInstitutions();
+        const cristinInstitutions = institutionListResponse.data.filter((i) => i.cristin_user_institution);
+        //TODO: there is no need for institutionNorwegian and institutionEnglish, it should be possible to use cristinInstitutions as is.
+        const institutionsNorwegian: InstitutionSelector[] = [];
+        const institutionsEnglish: InstitutionSelector[] = [];
+        cristinInstitutions.forEach((cristinInstitution) => {
+          institutionsNorwegian.push({
+            value: cristinInstitution.acronym,
+            label: cristinInstitution.institution_name.nb ?? cristinInstitution.institution_name.en,
+            cristinInstitutionNr: cristinInstitution.cristin_institution_id,
+          });
+          institutionsEnglish.push({
+            value: cristinInstitution.acronym,
+            label: cristinInstitution.institution_name.en ?? cristinInstitution.institution_name.nb,
+            cristinInstitutionNr: cristinInstitution.cristin_institution_id,
+          });
         });
-        institutionsEnglish.push({
-          value: cristinInstitution.acronym,
-          label: cristinInstitution.institution_name.en ?? cristinInstitution.institution_name.nb,
-          cristinInstitutionNr: cristinInstitution.cristin_institution_id,
-        });
-      });
-      dispatch({ type: 'institutions', payload: institutionsNorwegian });
-      dispatch({ type: 'institutionsEnglish', payload: institutionsEnglish });
+        dispatch({ type: 'institutions', payload: institutionsNorwegian });
+        dispatch({ type: 'institutionsEnglish', payload: institutionsEnglish });
+      } catch (error) {
+        handlePotentialExpiredSession(error);
+      }
     };
     isAuthorized && createInstitutionLists().then();
   }, [isAuthorized]);

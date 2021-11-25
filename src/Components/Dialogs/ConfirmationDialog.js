@@ -1,10 +1,9 @@
 import React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { Context } from '../../Context';
-import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
-import { CRIST_REST_API, PIA_REST_API } from '../../utils/constants';
+import { patchPiaPublication, patchPublication, postPublication } from '../../api/publicationApi';
 
 export default function ConfirmationDialog(props) {
   let { dispatch } = React.useContext(Context);
@@ -17,7 +16,7 @@ export default function ConfirmationDialog(props) {
     let id = 0;
     setImportDisabled(true);
     try {
-      id = await postPublication(publication);
+      id = (await postPublication(publication)).data.cristin_result_id;
       await patchPiaPublication(id, publication.pub_id);
       dispatch({ type: 'setFormErrors', payload: [] });
     } catch (e) {
@@ -67,31 +66,6 @@ export default function ConfirmationDialog(props) {
         : publication.title.nb;
     dispatch({ type: 'setContributorsLoaded', payload: false });
     return { result: { id: publication.cristinResultId, title: title }, status: 200 };
-  }
-
-  async function postPublication(publication) {
-    let response = await axios.post(
-      CRIST_REST_API + '/results',
-      publication,
-      JSON.parse(localStorage.getItem('config'))
-    );
-    return response.data.cristin_result_id;
-  }
-
-  async function patchPublication(publication) {
-    await axios.patch(
-      CRIST_REST_API + '/results/' + publication.cristinResultId,
-      publication,
-      JSON.parse(localStorage.getItem('config'))
-    );
-  }
-
-  async function patchPiaPublication(id, pubId) {
-    await axios.patch(
-      PIA_REST_API + '/sentralimport/publication/' + pubId,
-      JSON.stringify({ cristin_id: id }),
-      JSON.parse(localStorage.getItem('config'))
-    );
   }
 
   function createPublicationObject() {

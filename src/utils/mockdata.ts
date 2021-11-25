@@ -1,3 +1,5 @@
+import { ChannelLight } from '../types/PublicationTypes';
+
 export const mockInstitutions = [
   {
     cristin_institution_id: '5737',
@@ -427,7 +429,17 @@ export const responseCountryInstitutionCN = {
   url: 'null/48400000',
 };
 
-export const mockAllJournals = [
+export const mockIssnChannel: ChannelLight[] = [
+  {
+    id: '4187',
+    issn: '1054-3139',
+    issn_electronic: '1095-9289',
+    title: 'ICES Journal of Marine Science',
+    type: 'journal',
+  },
+];
+
+export const mockAllJournals: ChannelLight[] = [
   {
     id: '51160',
     type: 'journal',
@@ -480,6 +492,7 @@ export const mockPerson = {
 
 export const cristinIDWithoutActiveAffiliation = '9456892';
 export const cristinIDWithoutAffiliationAttribute = '89754123';
+export const cristinIdForbiddenPerson = '1235412375';
 
 export const mockPersonWithoutActiveAffiliation = {
   first_name: 'Arne',
@@ -493,6 +506,13 @@ export const mockPersonWithoutAffiliationAttribute = {
   surname: 'Benoni',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: cristinIDWithoutAffiliationAttribute,
+};
+
+export const mockForbiddenPerson = {
+  first_name: 'Arne',
+  surname: 'Benoni',
+  url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
+  cristin_person_id: cristinIdForbiddenPerson,
 };
 
 export const mockPersonDetailed = {
@@ -674,4 +694,9 @@ export const mockSavedPublication = {
   pages: {
     count: '0',
   },
+};
+export const mockNotAuthorizedForThisPersonDetailResponse = {
+  status: 403,
+  response_id: 'svh6s12a',
+  errors: ['Client lacks authorization.'],
 };

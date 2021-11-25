@@ -6,7 +6,6 @@ import {
   mockAllJournals,
   mockImportPublication1,
   mockInstitutions,
-  mockPerson,
   mockPersonWithoutActiveAffiliation,
   mockPersonDetailed,
   mockPersonDetailedWithoutActiveAffiliations,
@@ -20,6 +19,11 @@ import {
   mockPersonWithoutAffiliationAttribute,
   cristinIDWithoutAffiliationAttribute,
   mockPersonDetailedWithoutAffiliationAttribute,
+  mockIssnChannel,
+  mockPerson,
+  cristinIdForbiddenPerson,
+  mockForbiddenPerson,
+  mockNotAuthorizedForThisPersonDetailResponse,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
@@ -31,10 +35,12 @@ export const mockTitleForEmptyCristinSearch = 'this_is_a_mocked_title';
 
 // AXIOS INTERCEPTOR
 export const interceptRequestsOnMock = () => {
+  const urlSearchParams = new URLSearchParams();
+  urlSearchParams.set('doi', mockImportPublication1.doi);
   const mock = new MockAdapter(Axios);
 
   mock
-    .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*&doi=${mockImportPublication1.doi}.*`))
+    .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*${urlSearchParams.toString()}.*`))
     .reply(200, [mockImportPublication1], {
       'x-total-count': 1,
     });
@@ -48,7 +54,7 @@ export const interceptRequestsOnMock = () => {
   mock.onGet(new RegExp(`${PIA_REST_API}/sentralimport/publicationCount.*`)).reply(200, mockPublicationCount);
 
   //patching the publication
-  mock.onPatch(new RegExp(`${PIA_REST_API}/sentralimport/publication.*`)).reply(200);
+  mock.onPatch(new RegExp(`${PIA_REST_API}/sentralimport/publication.*`)).reply(204);
 
   //get cristin institutions by id
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/([1-9][0-9]*).*`)).reply(200, resultInstitutionNTNU);
@@ -72,6 +78,9 @@ export const interceptRequestsOnMock = () => {
 
   //get all journals
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=title.*`)).reply(200, mockAllJournals);
+
+  //Get journal for issn
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=issn.*`)).reply(200, mockIssnChannel);
 
   //doi-search
   mock.onGet(new RegExp(`${CRIST_REST_API}/results\\?doi=${mockDoiForEmptyCristinSearch}`)).reply(200, []);
@@ -98,9 +107,17 @@ export const interceptRequestsOnMock = () => {
   //search persons by name
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/\\?name.*`))
-    .reply(200, [mockPerson, mockPersonWithoutActiveAffiliation, mockPersonWithoutAffiliationAttribute]);
+    .reply(200, [
+      mockPerson,
+      mockPersonWithoutActiveAffiliation,
+      mockPersonWithoutAffiliationAttribute,
+      mockForbiddenPerson,
+    ]);
 
   //get person-details by id
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIdForbiddenPerson}`))
+    .reply(403, mockNotAuthorizedForThisPersonDetailResponse);
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIDWithoutActiveAffiliation}`))
     .reply(200, mockPersonDetailedWithoutActiveAffiliations);

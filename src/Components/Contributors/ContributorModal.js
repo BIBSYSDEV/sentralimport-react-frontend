@@ -62,7 +62,7 @@ async function searchContributors(authors) {
     let person = defaultAuthor;
     let affiliations = [];
     if (authors[i].cristinId !== 0) {
-      person = (await getPersonDetailById(authors[i].cristinId)).data;
+      person = await getPersonDetailById(authors[i].cristinId);
       if (person.affiliations) {
         const activeAffiliations = person.affiliations.filter((affiliation) => affiliation.active);
         for (const activeAffiliation of activeAffiliations) {
@@ -313,11 +313,11 @@ function ContributorModal(props) {
           i < contributors.length
         ) {
           let person = await getPersonDetailById(contributors[i].imported.cristin_person_id);
-          identifiedImported[i] = person !== undefined ? person.data.identified_cristin_person : false;
+          identifiedImported[i] = person !== undefined ? person.identified_cristin_person : false;
         }
         if (!contributors[i].toBeCreated.identified_cristin_person && props.isDuplicate) {
           let person = await getPersonDetailById(contributors[i].toBeCreated.cristin_person_id);
-          identified[i] = person !== undefined ? person.data.identified_cristin_person : false;
+          identified[i] = person !== undefined ? person.identified_cristin_person : false;
         }
       }
       dispatch({ type: 'identifiedImported', payload: identifiedImported });
