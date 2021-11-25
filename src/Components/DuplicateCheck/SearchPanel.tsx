@@ -20,6 +20,14 @@ const StyledFormControlLabel = styled(FormControlLabel)`
   min-width: 11rem;
 `;
 
+const StyledCenterWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 1rem;
+  align-items: center;
+`;
+
 const StyledButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-start;
@@ -170,7 +178,9 @@ const SearchPanel: FC<SearchPanelProps> = ({
             onChange={handleChangeDoi}
           />
         </StyledFormElementWrapper>
-
+        <StyledCenterWrapper>
+          <Typography>eller søk på</Typography>
+        </StyledCenterWrapper>
         <StyledFormElementWrapper>
           <StyledFormControlLabel
             control={
@@ -192,7 +202,6 @@ const SearchPanel: FC<SearchPanelProps> = ({
             onChange={handleChangeTitle}
           />
         </StyledFormElementWrapper>
-
         <StyledFormElementWrapper>
           <StyledFormControlLabel
             control={
@@ -213,7 +222,6 @@ const SearchPanel: FC<SearchPanelProps> = ({
             onChange={handleChangeAuthor}
           />
         </StyledFormElementWrapper>
-
         {importPublication.channel?.issns && (
           <StyledFormElementWrapper>
             <StyledFormControlLabel
@@ -236,7 +244,6 @@ const SearchPanel: FC<SearchPanelProps> = ({
             />
           </StyledFormElementWrapper>
         )}
-
         <StyledFormElementWrapper>
           <StyledFormControlLabel
             control={
@@ -256,7 +263,6 @@ const SearchPanel: FC<SearchPanelProps> = ({
             onChange={handleChangePublished}
           />
         </StyledFormElementWrapper>
-
         <StyledButtonWrapper>
           <Button
             data-testid="search-panel-reset-serach-button"
