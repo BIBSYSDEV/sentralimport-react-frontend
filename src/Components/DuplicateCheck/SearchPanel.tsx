@@ -27,11 +27,13 @@ const StyledButtonWrapper = styled.div`
   align-items: center;
 `;
 
+//TODO: awoid prop-drilling by using formik
 interface SearchPanelProps {
   importPublication: ImportData;
   setDuplicateList: (results: CristinPublication[]) => void;
   setIsSearching: (value: boolean) => void;
   setFoundDuplicates: (value: boolean) => void;
+  isInitialSearchWithDoi: boolean;
 }
 
 const SearchPanel: FC<SearchPanelProps> = ({
@@ -39,20 +41,21 @@ const SearchPanel: FC<SearchPanelProps> = ({
   setDuplicateList,
   setIsSearching,
   setFoundDuplicates,
+  isInitialSearchWithDoi,
 }) => {
   const [doi, setDoi] = useState(importPublication.doi ?? '');
-  const [isDoiChecked, setIsDoiChecked] = useState(false);
+  const [isDoiChecked, setIsDoiChecked] = useState(isInitialSearchWithDoi);
   const [title, setTitle] = useState(importPublication.languages && importPublication.languages[0].title);
-  const [titleChecked, setTitleChecked] = useState(false);
-  const [yearPublished, setYearPublished] = useState(+(importPublication.yearPublished ?? 0));
-  const [isYearPublishedChecked, setIsYearPublishedChecked] = useState(false);
+  const [titleChecked, setTitleChecked] = useState(!isInitialSearchWithDoi);
+  const [yearPublished, setYearPublished] = useState(importPublication.yearPublished);
+  const [isYearPublishedChecked, setIsYearPublishedChecked] = useState(!isInitialSearchWithDoi);
   const [issn, setIssn] = useState(importPublication.channel?.issns ? importPublication.channel.issns[0] : '');
-  const [isIssnChecked, setIsIssnChecked] = useState(false);
+  const [isIssnChecked, setIsIssnChecked] = useState(!isInitialSearchWithDoi);
   const [author, setAuthor] = useState(
     importPublication.authors[0].authorName ||
       importPublication.authors[0].surname + ', ' + importPublication.authors[0]?.first_name?.substr(0, 1)
   );
-  const [isAuthorChecked, setIsAuthorChecked] = useState(false);
+  const [isAuthorChecked, setIsAuthorChecked] = useState(!isInitialSearchWithDoi);
 
   function handleChangeDoi(event: any) {
     setDoi(event.target.value);
@@ -81,7 +84,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
       importPublication.authors[0].authorName ||
         importPublication.authors[0].surname + ', ' + importPublication.authors[0]?.first_name?.substr(0, 1)
     );
-    setYearPublished(+(importPublication.yearPublished ?? 0));
+    setYearPublished(importPublication.yearPublished);
     setIssn(importPublication.channel?.issns ? importPublication.channel.issns[0] : '');
     setIsDoiChecked(false);
     setTitleChecked(false);
@@ -100,7 +103,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
       perPage,
       isDoiChecked ? doi : undefined,
       titleChecked ? title : undefined,
-      isYearPublishedChecked ? +yearPublished : undefined,
+      isYearPublishedChecked ? yearPublished : undefined,
       isIssnChecked ? issn : undefined,
       isAuthorChecked ? author : undefined
     );
