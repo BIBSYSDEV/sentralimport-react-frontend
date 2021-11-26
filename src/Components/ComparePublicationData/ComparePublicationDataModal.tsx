@@ -543,6 +543,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         }
       );
       handleComparePublicationDataModalClose();
+      handleDuplicateCheckModalClose();
     } else {
       const errorMessage =
         'Noe gikk galt med import av publikasjon med pub-id: ' +
