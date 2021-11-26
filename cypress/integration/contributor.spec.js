@@ -20,7 +20,6 @@ context('contributor', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="open-contributors-modal-button"]`).click();
-    cy.wait(500);
 
     cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].firstname);
     cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].surname);
