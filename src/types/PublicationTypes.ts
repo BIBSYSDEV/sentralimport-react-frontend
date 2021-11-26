@@ -23,7 +23,7 @@ export interface ImportPublication {
 }
 
 export interface CristinPublication {
-  authorTotalCount: any;
+  authorTotalCount: number;
   authors: any;
   international_standard_numbers?: InternationalStandardNumber[];
   publisher: any;
