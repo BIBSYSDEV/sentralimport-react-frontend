@@ -11,6 +11,18 @@ export default function ConfirmImportDialog(props) {
   const [annotation, setAnnotation] = React.useState(null);
   const [importDisabled, setImportDisabled] = React.useState(false);
 
+  const generateErrorMessage = (error) => {
+    return {
+      result: null,
+      errorMessage:
+        error.response.data &&
+        `Feilkode: (${error.response.data.response_id}). Meldinger: ${
+          error.response.data.errors && error.response.data.errors.toString()
+        }`,
+      status: error.response !== undefined ? error.response.status : 500,
+    };
+  };
+
   async function handleCreatePublication() {
     let publication = createPublicationObject();
     let cristinResultId = 0;
@@ -27,15 +39,7 @@ export default function ConfirmImportDialog(props) {
         history.push('/login');
       }
       setImportDisabled(false);
-      return {
-        result: null,
-        errorMessage:
-          error.response.data &&
-          `Feilkode: (${error.response.data.response_id}). Meldinger: ${
-            error.response.data.errors && error.response.data.errors.toString()
-          }`,
-        status: error.response !== undefined ? error.response.status : 500,
-      };
+      return generateErrorMessage(error);
     }
     dispatch({ type: 'setFormErrors', payload: [] });
     let title = publication.title[publication.original_language];
@@ -67,15 +71,7 @@ export default function ConfirmImportDialog(props) {
         history.push('/login');
       }
       setImportDisabled(false);
-      return {
-        result: null,
-        errorMessage:
-          error.response.data &&
-          `Feilkode: (${error.response.data.response_id}). Meldinger: ${
-            error.response.data.errors && error.response.data.errors.toString()
-          }`,
-        status: error.response !== undefined ? error.response.status : 500,
-      };
+      return generateErrorMessage(error);
     }
     let title =
       publication.title.en.length > 14 || publication.title.nb.length > 14
