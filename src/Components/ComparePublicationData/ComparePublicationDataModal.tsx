@@ -545,10 +545,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       handleComparePublicationDataModalClose();
       handleDuplicateCheckModalClose();
     } else {
-      const errorMessage =
-        'Noe gikk galt med import av publikasjon med pub-id: ' +
-        importPublication.pubId +
-        '. Dine endringer er fortsatt lagret i browseren. Vennligst prøv på nytt.';
+      const errorMessage = `Noe gikk galt med import av publikasjon med pub-id: ${importPublication.pubId}.
+       Dine endringer er fortsatt lagret i browseren. ${result.errorMessage}`;
       setImportPublicationError(new Error(errorMessage));
       dispatch({ type: 'importDone', payload: false });
       // dispatch({ type: 'setContributorsLoaded', payload: false });
@@ -637,7 +635,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   return (
     <>
       {fetchDataError ? (
-        <Typography color="error">Noe gikk galt {fetchDataError.message}</Typography>
+        <Typography color="error">Noe gikk galt. {fetchDataError.message}</Typography>
       ) : (
         <div>
           <StyledModal isOpen={isComparePublicationDataModalOpen} size="lg" data-testid="compare-modal">

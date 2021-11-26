@@ -11,21 +11,31 @@ export default function ConfirmImportDialog(props) {
   const [annotation, setAnnotation] = React.useState(null);
   const [importDisabled, setImportDisabled] = React.useState(false);
 
-  async function post() {
+  async function handleCreatePublication() {
     let publication = createPublicationObject();
-    let id = 0;
+    let cristinResultId = 0;
     setImportDisabled(true);
+    let postPublicationResponse = {};
     try {
-      id = (await postPublication(publication)).data.cristin_result_id;
-      await patchPiaPublication(id, publication.pub_id);
+      postPublicationResponse = await postPublication(publication);
+      cristinResultId = postPublicationResponse.data.cristin_result_id;
+      await patchPiaPublication(cristinResultId, publication.pub_id);
       setImportDisabled(false);
-    } catch (e) {
-      if (!e.hasOwnProperty('response') || e.response.status === 401 || e.response.status === 403) {
+    } catch (error) {
+      if (!error.hasOwnProperty('response') || error.response.status === 401 || error.response.status === 403) {
         localStorage.setItem('authorized', 'false');
         history.push('/login');
       }
       setImportDisabled(false);
-      return { result: null, status: e.response !== undefined ? e.response.status : 500 };
+      return {
+        result: null,
+        errorMessage:
+          error.response.data &&
+          `Feilkode: (${error.response.data.response_id}). Meldinger: ${
+            error.response.data.errors && error.response.data.errors.toString()
+          }`,
+        status: error.response !== undefined ? error.response.status : 500,
+      };
     }
     dispatch({ type: 'setFormErrors', payload: [] });
     let title = publication.title[publication.original_language];
@@ -33,13 +43,13 @@ export default function ConfirmImportDialog(props) {
     let log = JSON.parse(localStorage.getItem('log'));
     if (log === null) log = [];
     else if (log.length > 15) log.shift();
-    log.push({ id: id, title: title });
+    log.push({ id: cristinResultId, title: title });
     localStorage.setItem('log', JSON.stringify(log));
     dispatch({ type: 'setContributorsLoaded', payload: false });
-    return { result: { id: id, title: title }, status: 200 };
+    return { result: { id: cristinResultId, title: title }, status: 200 };
   }
 
-  async function patch() {
+  async function handleUpdatePublication() {
     let publication = createPublicationObject();
     //bugfix (if patch is used, all 3 properties must have a value)
     if (publication.pages.count === 0 && !(publication.pages.from && publication.pages.to)) {
@@ -50,14 +60,22 @@ export default function ConfirmImportDialog(props) {
       await patchPublication(publication);
       await patchPiaPublication(publication.cristinResultId, publication.pub_id);
       setImportDisabled(false);
-    } catch (e) {
-      console.log('There was an error while updating the publication', e);
-      if (!e.hasOwnProperty('response') || e.response.status === 401 || e.response.status === 403) {
+    } catch (error) {
+      console.log('There was an error while updating the publication', error);
+      if (!error.hasOwnProperty('response') || error.response.status === 401 || error.response.status === 403) {
         localStorage.setItem('authorized', 'false');
         history.push('/login');
       }
       setImportDisabled(false);
-      return { result: null, status: e.response !== undefined ? e.response.status : 500 };
+      return {
+        result: null,
+        errorMessage:
+          error.response.data &&
+          `Feilkode: (${error.response.data.response_id}). Meldinger: ${
+            error.response.data.errors && error.response.data.errors.toString()
+          }`,
+        status: error.response !== undefined ? error.response.status : 500,
+      };
     }
     let title =
       publication.title.en.length > 14 || publication.title.nb.length > 14
@@ -211,8 +229,8 @@ export default function ConfirmImportDialog(props) {
 
   function handleImportButtonClick() {
     props.duplicate
-      ? patch().then((response) => props.handleClose(response))
-      : post().then((response) => props.handleClose(response));
+      ? handleUpdatePublication().then((response) => props.handleClose(response))
+      : handleCreatePublication().then((response) => props.handleClose(response));
   }
 
   return (
