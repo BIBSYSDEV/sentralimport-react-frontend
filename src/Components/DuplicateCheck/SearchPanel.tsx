@@ -55,37 +55,26 @@ const SearchPanel: FC<SearchPanelProps> = ({
   setTotalResults,
 }) => {
   const [doi, setDoi] = useState(importPublication.doi ?? '');
-  const [isDoiChecked, setIsDoiChecked] = useState(isInitialSearchWithDoi);
+  const [isDoiChecked, setIsDoiChecked] = useState(false);
   const [title, setTitle] = useState(importPublication.languages && importPublication.languages[0].title);
-  const [isTitleChecked, setIsTitleChecked] = useState(!isInitialSearchWithDoi);
+  const [isTitleChecked, setIsTitleChecked] = useState(false);
   const [yearPublished, setYearPublished] = useState(importPublication.yearPublished);
-  const [isYearPublishedChecked, setIsYearPublishedChecked] = useState(!isInitialSearchWithDoi);
+  const [isYearPublishedChecked, setIsYearPublishedChecked] = useState(false);
   const [issn, setIssn] = useState(importPublication.channel?.issns ? importPublication.channel.issns[0] : '');
-  const [isIssnChecked, setIsIssnChecked] = useState(!isInitialSearchWithDoi);
+  const [isIssnChecked, setIsIssnChecked] = useState(false);
   const [author, setAuthor] = useState(
     importPublication.authors[0].authorName ||
       importPublication.authors[0].surname + ', ' + importPublication.authors[0]?.first_name?.substr(0, 1)
   );
-  const [isAuthorChecked, setIsAuthorChecked] = useState(!isInitialSearchWithDoi);
+  const [isAuthorChecked, setIsAuthorChecked] = useState(false);
 
   useEffect(() => {
     setIsDoiChecked(isInitialSearchWithDoi);
+    setIsIssnChecked(!isInitialSearchWithDoi);
+    setIsYearPublishedChecked(!isInitialSearchWithDoi);
+    setIsAuthorChecked(!isInitialSearchWithDoi);
+    setIsTitleChecked(!isInitialSearchWithDoi);
   }, [isInitialSearchWithDoi]);
-
-  useEffect(() => {
-    if (isDoiChecked) {
-      setIsIssnChecked(false);
-      setIsYearPublishedChecked(false);
-      setIsAuthorChecked(false);
-      setIsTitleChecked(false);
-    }
-  }, [isDoiChecked]);
-
-  useEffect(() => {
-    if (isIssnChecked || isTitleChecked || isAuthorChecked || isYearPublishedChecked) {
-      setIsDoiChecked(false);
-    }
-  }, [isIssnChecked, isTitleChecked, isAuthorChecked, isYearPublishedChecked]);
 
   function handleChangeDoi(event: any) {
     setDoi(event.target.value);
@@ -164,7 +153,15 @@ const SearchPanel: FC<SearchPanelProps> = ({
               <Checkbox
                 data-testid="search-panel-doi-checkbox"
                 checked={isDoiChecked}
-                onClick={() => setIsDoiChecked(!isDoiChecked)}
+                onClick={() => {
+                  if (!isDoiChecked) {
+                    setIsIssnChecked(false);
+                    setIsYearPublishedChecked(false);
+                    setIsAuthorChecked(false);
+                    setIsTitleChecked(false);
+                  }
+                  setIsDoiChecked(!isDoiChecked);
+                }}
               />
             }
             label="DOI"
@@ -188,7 +185,12 @@ const SearchPanel: FC<SearchPanelProps> = ({
               <Checkbox
                 data-testid="search-panel-title-checkbox"
                 checked={isTitleChecked}
-                onClick={() => setIsTitleChecked(!isTitleChecked)}
+                onClick={() => {
+                  if (!isTitleChecked) {
+                    setIsDoiChecked(false);
+                  }
+                  setIsTitleChecked(!isTitleChecked);
+                }}
               />
             }
             label="Tittel"
@@ -209,7 +211,12 @@ const SearchPanel: FC<SearchPanelProps> = ({
               <Checkbox
                 data-testid="search-panel-author-checkbox"
                 checked={isAuthorChecked}
-                onClick={() => setIsAuthorChecked(!isAuthorChecked)}
+                onClick={() => {
+                  if (!isAuthorChecked) {
+                    setIsDoiChecked(false);
+                  }
+                  setIsAuthorChecked(!isAuthorChecked);
+                }}
               />
             }
             label="Søk med forfatter"
@@ -230,7 +237,12 @@ const SearchPanel: FC<SearchPanelProps> = ({
                 <Checkbox
                   data-testid="search-panel-issn-checkbox"
                   checked={isIssnChecked}
-                  onClick={() => setIsIssnChecked(!isIssnChecked)}
+                  onClick={() => {
+                    if (!isIssnChecked) {
+                      setIsDoiChecked(false);
+                    }
+                    setIsIssnChecked(!isIssnChecked);
+                  }}
                 />
               }
               label="ISSN"
@@ -251,7 +263,12 @@ const SearchPanel: FC<SearchPanelProps> = ({
               <Checkbox
                 data-testid="search-panel-year-checkbox"
                 checked={isYearPublishedChecked}
-                onClick={() => setIsYearPublishedChecked(!isYearPublishedChecked)}
+                onClick={() => {
+                  if (isYearPublishedChecked) {
+                    setIsDoiChecked(false);
+                  }
+                  setIsYearPublishedChecked(!isYearPublishedChecked);
+                }}
               />
             }
             label="Publiseringsår"

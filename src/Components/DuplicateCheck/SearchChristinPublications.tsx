@@ -68,7 +68,7 @@ export async function searchChristinPublications(
     contributor ? contributor : undefined
   );
   const publicationsResponse = await getCristinPublicationsBySearchTerm(searchParams);
-  const totalPublicationsResults = +publicationsResponse.headers['x-total-count'];
+  const totalPublicationsResults: number = +publicationsResponse.headers['x-total-count'];
   const cristinPublications = publicationsResponse.data;
   for (let i = 0; i < cristinPublications.length; i++) {
     const contributorsResponse = await getContributorsByPublicationCristinResultId(
@@ -78,7 +78,7 @@ export async function searchChristinPublications(
       SearchLanguage.Nb
     );
     cristinPublications[i].authors = contributorsResponse.data;
-    cristinPublications[i].authorTotalCount = contributorsResponse.headers['x-total-count'];
+    cristinPublications[i].authorTotalCount = +contributorsResponse.headers['x-total-count2'];
   }
   return {
     cristinPublications: cristinPublications,

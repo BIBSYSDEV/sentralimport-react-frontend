@@ -95,9 +95,7 @@ export const interceptRequestsOnMock = () => {
     'x-total-count': 999,
   });
 
-  //search with error //TODO
-  //supports this https://crisrest-utv.dataporten-api.no/results&per_page=5&category=ARTICLE&fields=all&lang=nb
-  // mock.onGet(new RegExp(`${CRIST_REST_API}/results&.*`)).reply(200, mockCristinPublications);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results&.*`)).reply(200, mockCristinPublications);
 
   //search for title
   mock.onGet(new RegExp(`${CRIST_REST_API}/results.*title=${mockTitleForEmptyCristinSearch}.*`)).reply(200, [], {
