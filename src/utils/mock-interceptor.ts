@@ -2,33 +2,35 @@ import Axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import { CRIST_REST_API, PIA_REST_API } from './constants';
 import {
+  cristinIdForbiddenPerson,
+  cristinIDWithoutActiveAffiliation,
+  cristinIDWithoutAffiliationAttribute,
   mockAllCategories,
   mockAllJournals,
+  mockForbiddenPerson,
   mockImportPublication1,
   mockInstitutions,
-  mockPersonWithoutActiveAffiliation,
+  mockIssnChannel,
+  mockNotAuthorizedForThisPersonDetailResponse,
+  mockPerson,
   mockPersonDetailed,
   mockPersonDetailedWithoutActiveAffiliations,
+  mockPersonDetailedWithoutAffiliationAttribute,
+  mockPersonWithoutActiveAffiliation,
+  mockPersonWithoutAffiliationAttribute,
   mockPublicationCount,
   mockSavedPublication,
+  mockSaveErrorResponse,
   mockUnits,
-  cristinIDWithoutActiveAffiliation,
   responseCountryInstitutionCN,
   responseCountryInstitutionIT,
   resultInstitutionNTNU,
-  mockPersonWithoutAffiliationAttribute,
-  cristinIDWithoutAffiliationAttribute,
-  mockPersonDetailedWithoutAffiliationAttribute,
-  mockIssnChannel,
-  mockPerson,
-  cristinIdForbiddenPerson,
-  mockForbiddenPerson,
-  mockNotAuthorizedForThisPersonDetailResponse,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
 import mockCristinPublications from './mockCristinPublications.json';
 import mockCristinContributors from './mockCristinContributors.json';
+import { PostPublication } from '../types/PublicationTypes';
 
 export const mockDoiForEmptyCristinSearch = '123456789';
 export const mockTitleForEmptyCristinSearch = 'this_is_a_mocked_title';
@@ -71,6 +73,11 @@ export const interceptRequestsOnMock = () => {
   mock.onGet(new RegExp(`${CRIST_REST_API}/units/.*`)).reply(200, mockUnits);
 
   //save publication
+  mock
+    .onPost(new RegExp(`${CRIST_REST_API}/results`), {
+      asymmetricMatch: (actual: PostPublication) => actual.pub_id === mockImportData[1].pubId,
+    })
+    .reply(400, mockSaveErrorResponse);
   mock.onPost(new RegExp(`${CRIST_REST_API}/results`)).reply(200, mockSavedPublication);
 
   //get all categories

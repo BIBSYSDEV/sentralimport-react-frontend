@@ -700,3 +700,11 @@ export const mockNotAuthorizedForThisPersonDetailResponse = {
   response_id: 'svh6s12a',
   errors: ['Client lacks authorization.'],
 };
+
+export const mockSaveErrorResponse = {
+  status: 400,
+  response_id: 'l20utud2',
+  errors: [
+    'JSON schema validation failed on content: [#/contributors/list/0/affiliations: expected minimum item count: 1, found: 0].',
+  ],
+};

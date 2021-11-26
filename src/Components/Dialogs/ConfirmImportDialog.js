@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import { patchPiaPublication, patchPublication, postPublication } from '../../api/publicationApi';
 
-export default function ConfirmationDialog(props) {
+export default function ConfirmImportDialog(props) {
   let { dispatch } = React.useContext(Context);
   let history = useHistory();
   const [annotation, setAnnotation] = React.useState(null);
@@ -18,15 +18,16 @@ export default function ConfirmationDialog(props) {
     try {
       id = (await postPublication(publication)).data.cristin_result_id;
       await patchPiaPublication(id, publication.pub_id);
-      dispatch({ type: 'setFormErrors', payload: [] });
+      setImportDisabled(false);
     } catch (e) {
-      console.log('There was an error while importing the publication', e);
       if (!e.hasOwnProperty('response') || e.response.status === 401 || e.response.status === 403) {
         localStorage.setItem('authorized', 'false');
         history.push('/login');
       }
+      setImportDisabled(false);
       return { result: null, status: e.response !== undefined ? e.response.status : 500 };
     }
+    dispatch({ type: 'setFormErrors', payload: [] });
     let title = publication.title[publication.original_language];
     title = title.length > 50 ? title.substr(0, 49) : title;
     let log = JSON.parse(localStorage.getItem('log'));
@@ -48,12 +49,14 @@ export default function ConfirmationDialog(props) {
     try {
       await patchPublication(publication);
       await patchPiaPublication(publication.cristinResultId, publication.pub_id);
+      setImportDisabled(false);
     } catch (e) {
       console.log('There was an error while updating the publication', e);
       if (!e.hasOwnProperty('response') || e.response.status === 401 || e.response.status === 403) {
         localStorage.setItem('authorized', 'false');
         history.push('/login');
       }
+      setImportDisabled(false);
       return { result: null, status: e.response !== undefined ? e.response.status : 500 };
     }
     let title =
@@ -65,6 +68,7 @@ export default function ConfirmationDialog(props) {
         ? publication.title.en
         : publication.title.nb;
     dispatch({ type: 'setContributorsLoaded', payload: false });
+    dispatch({ type: 'setFormErrors', payload: [] });
     return { result: { id: publication.cristinResultId, title: title }, status: 200 };
   }
 
@@ -129,80 +133,86 @@ export default function ConfirmationDialog(props) {
   }
 
   function createContributorObject() {
-    let temp = JSON.parse(localStorage.getItem('tempContributors'));
+    let temp = JSON.parse(localStorage.getItem('tempContributors') || '{}');
     let contributors = [];
-    for (let i = 0; i < temp.contributors.length; i++) {
-      let affiliations = [];
-      for (let j = 0; j < temp.contributors[i].toBeCreated.affiliations.length; j++) {
-        let count = 0;
-        if (!temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty('units')) {
-          affiliations[j + count] = {
-            role_code:
-              temp.contributors[i].imported.role_code === 'FORFATTER'
-                ? 'AUTHOR'
-                : temp.contributors[i].imported.role_code,
-            institution: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty('institution')
-              ? {
-                  ...temp.contributors[i].toBeCreated.affiliations[j].institution,
-                  role_code: temp.contributors[i].imported.role_code,
-                }
-              : {
-                  cristin_institution_id:
-                    temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty('cristinInstitutionNr') &&
-                    (temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr !== undefined ||
-                      temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr !== null)
-                      ? temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString()
-                      : '0',
-                },
-          };
-        } else {
-          for (let h = 0; h < temp.contributors[i].toBeCreated.affiliations[j].units.length; h++) {
+    if (temp.contributors) {
+      for (let i = 0; i < temp.contributors.length; i++) {
+        let affiliations = [];
+        for (let j = 0; j < temp.contributors[i].toBeCreated.affiliations.length; j++) {
+          let count = 0;
+          if (!temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty('units')) {
             affiliations[j + count] = {
               role_code:
                 temp.contributors[i].imported.role_code === 'FORFATTER'
                   ? 'AUTHOR'
                   : temp.contributors[i].imported.role_code,
-              unit: {
-                cristin_unit_id:
-                  temp.contributors[i].toBeCreated.affiliations[j].units[h].hasOwnProperty('unitNr') &&
-                  (temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr !== undefined ||
-                    temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr !== null)
-                    ? temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr.toString()
-                    : '0',
-              },
+              institution: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty('institution')
+                ? {
+                    ...temp.contributors[i].toBeCreated.affiliations[j].institution,
+                    role_code: temp.contributors[i].imported.role_code,
+                  }
+                : {
+                    cristin_institution_id:
+                      temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty('cristinInstitutionNr') &&
+                      (temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr !== undefined ||
+                        temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr !== null)
+                        ? temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString()
+                        : '0',
+                  },
             };
-            count++;
+          } else {
+            for (let h = 0; h < temp.contributors[i].toBeCreated.affiliations[j].units.length; h++) {
+              affiliations[j + count] = {
+                role_code:
+                  temp.contributors[i].imported.role_code === 'FORFATTER'
+                    ? 'AUTHOR'
+                    : temp.contributors[i].imported.role_code,
+                unit: {
+                  cristin_unit_id:
+                    temp.contributors[i].toBeCreated.affiliations[j].units[h].hasOwnProperty('unitNr') &&
+                    (temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr !== undefined ||
+                      temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr !== null)
+                      ? temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr.toString()
+                      : '0',
+                },
+              };
+              count++;
+            }
           }
         }
+        contributors[i] = {
+          ...temp.contributors[i].toBeCreated,
+          affiliations: affiliations,
+          cristin_person_id: temp.contributors[i].toBeCreated.cristin_person_id.toString(),
+        };
       }
-      contributors[i] = {
-        ...temp.contributors[i].toBeCreated,
-        affiliations: affiliations,
-        cristin_person_id: temp.contributors[i].toBeCreated.cristin_person_id.toString(),
-      };
+      // filtrerer vekk institusjoner om samme institusjon kommer flere ganger på samme person. f.eks ANDREINST
+      contributors = contributors.map((item) => ({
+        ...item,
+        affiliations: item.affiliations.filter(
+          (v, i, a) =>
+            a.findIndex((t) => {
+              if (t.hasOwnProperty('institution') && v.hasOwnProperty('institution')) {
+                return t.institution.cristin_institution_id === v.institution.cristin_institution_id;
+              } else if (t.hasOwnProperty('unit') && v.hasOwnProperty('unit')) {
+                return t.unit.cristin_unit_id === v.unit.cristin_unit_id;
+              }
+              return false;
+            }) === i
+        ),
+      }));
     }
-
-    // filtrerer vekk institusjoner om samme institusjon kommer flere ganger på samme person. f.eks ANDREINST
-    contributors = contributors.map((item) => ({
-      ...item,
-      affiliations: item.affiliations.filter(
-        (v, i, a) =>
-          a.findIndex((t) => {
-            if (t.hasOwnProperty('institution') && v.hasOwnProperty('institution')) {
-              return t.institution.cristin_institution_id === v.institution.cristin_institution_id;
-            } else if (t.hasOwnProperty('unit') && v.hasOwnProperty('unit')) {
-              return t.unit.cristin_unit_id === v.unit.cristin_unit_id;
-            }
-            return false;
-          }) === i
-      ),
-    }));
-
     return contributors;
   }
 
   function handleChange(event) {
     setAnnotation(event.target.value);
+  }
+
+  function handleImportButtonClick() {
+    props.duplicate
+      ? patch().then((response) => props.handleClose(response))
+      : post().then((response) => props.handleClose(response));
   }
 
   return (
@@ -222,17 +232,18 @@ export default function ConfirmationDialog(props) {
         <DialogContentText>Er du sikker på at du vil importere denne publikasjonen?</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button color="secondary" onClick={props.handleCloseDialog} variant="outlined">
+        <Button
+          color="secondary"
+          onClick={props.handleCloseDialog}
+          variant="outlined"
+          data-testid="confirm-import-dialog-cancel">
           Avbryt
         </Button>
         <Button
           color="primary"
           variant="contained"
-          onClick={() => {
-            props.duplicate
-              ? patch().then((response) => props.handleClose(response))
-              : post().then((response) => props.handleClose(response));
-          }}
+          data-testid="confirm-import-dialog-ok"
+          onClick={handleImportButtonClick}
           disabled={importDisabled}>
           Importer
         </Button>
