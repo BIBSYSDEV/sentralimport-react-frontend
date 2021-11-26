@@ -177,6 +177,8 @@ const Contributor: FC<ContributorProps> = ({
     return affiliationsCopy;
   }
 
+  console.log('testing 123..');
+
   //TODO: TO BE REPLACED BY FORMIK
   function handleFieldChange(event: any, obj: any, property: string) {
     if (!obj.authorName) {
