@@ -72,7 +72,6 @@ context('duplication-check-modal', () => {
 
   it('can search for duplicates using title', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
-    cy.wait(500);
     cy.get(`[data-testid="search-panel-title-checkbox"]`).click();
     cy.get(`[data-testid="search-panel-title-textfield"]`).type('{selectall}{backspace}');
     cy.get(`[data-testid="search-panel-title-textfield"]`).type('some text');
