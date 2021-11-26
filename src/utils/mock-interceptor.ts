@@ -90,16 +90,27 @@ export const interceptRequestsOnMock = () => {
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=issn.*`)).reply(200, mockIssnChannel);
 
   //doi-search
-  mock.onGet(new RegExp(`${CRIST_REST_API}/results\\?doi=${mockDoiForEmptyCristinSearch}`)).reply(200, []);
-  mock.onGet(new RegExp(`${CRIST_REST_API}/results\\?doi.*`)).reply(200, mockCristinPublications);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/results.*doi=${mockImportData[0].doi}`))
+    .reply(200, [mockCristinPublications[0]], {
+      'x-total-count': 1,
+    });
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results.*doi=${mockDoiForEmptyCristinSearch}`)).reply(200, [], {
+    'x-total-count': 0,
+  });
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results.*doi=.*`)).reply(200, mockCristinPublications, {
+    'x-total-count': 999,
+  });
 
-  //search with error //TODO
-  //supports this https://crisrest-utv.dataporten-api.no/results&per_page=5&category=ARTICLE&fields=all&lang=nb
   mock.onGet(new RegExp(`${CRIST_REST_API}/results&.*`)).reply(200, mockCristinPublications);
 
   //search for title
-  mock.onGet(new RegExp(`${CRIST_REST_API}/results\\?title=${mockTitleForEmptyCristinSearch}.*`)).reply(200, []);
-  mock.onGet(new RegExp(`${CRIST_REST_API}/results\\?title=.*`)).reply(200, mockCristinPublications);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results.*title=${mockTitleForEmptyCristinSearch}.*`)).reply(200, [], {
+    'x-total-count': 0,
+  });
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results.*title=.*`)).reply(200, mockCristinPublications, {
+    'x-total-count': 32,
+  });
 
   //get contributors for publication
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/\\d+/contributors.*`)).reply(200, mockCristinContributors, {
@@ -108,8 +119,10 @@ export const interceptRequestsOnMock = () => {
 
   //search with yearspan
   mock
-    .onGet(new RegExp(`${CRIST_REST_API}/results\\?published_since=.*&published_before=.*&category=ARTICLE`))
-    .reply(200, mockCristinPublications);
+    .onGet(new RegExp(`${CRIST_REST_API}/results.*published_since=.*&published_before=.*&category=ARTICLE`))
+    .reply(200, mockCristinPublications, {
+      'x-total-count': 32,
+    });
 
   //search persons by name
   mock
