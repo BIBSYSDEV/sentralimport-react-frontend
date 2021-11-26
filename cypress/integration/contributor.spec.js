@@ -20,14 +20,25 @@ context('contributor', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="open-contributors-modal-button"]`).click();
+    cy.wait(500);
 
     cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].firstname);
     cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].surname);
 
-    cy.get(`[data-testid="creator-institutions-1"]`).contains(mockImportData[0].authors[0].institutions[0].unitName);
-    cy.get(`[data-testid="creator-institutions-1"]`).contains(mockImportData[0].authors[0].institutions[0].countryCode);
-    cy.get(`[data-testid="creator-institutions-1"]`).contains(
+    cy.get('[data-testid=creator-institutions-1-institution-name]').contains(
       mockImportData[0].authors[0].institutions[0].institutionName
+    );
+    cy.get('[data-testid=creator-institutions-1-list-item-text-unit-0]').contains(
+      'The School of Computer Science and Engineering'
+    );
+    cy.get('[data-testid=creator-institutions-1-list-item-text-unit-1]').contains(
+      'The Key Laboratory of Computer Vision and System (Ministry of Education)'
+    );
+    cy.get('[data-testid=creator-institutions-1-list-item-text-unit-2]').contains(
+      'Engineering Research Center of Learning-Based Intelligent System (Ministry of Education)'
+    );
+    cy.get(`[data-testid=creator-institutions-1-country-code]`).contains(
+      mockImportData[0].authors[0].institutions[0].countryCode
     );
     cy.get(`[data-testid="creator-name-2"]`).contains(mockImportData[0].authors[1].firstname);
     cy.get(`[data-testid="creator-name-2"]`).contains(mockImportData[0].authors[1].surname);

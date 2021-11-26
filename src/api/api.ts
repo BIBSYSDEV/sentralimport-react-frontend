@@ -19,8 +19,7 @@ export const authenticatedApiRequest = (axiosRequestConfig: AxiosRequestConfig) 
 
 export const handlePotentialExpiredSession = (potentialAxiosError: unknown) => {
   const expires = localStorage.getItem(EXPIRES) ?? '0';
-  if (axios.isAxiosError(potentialAxiosError) && Date.now() < parseInt(expires)) {
-    window.alert('din sesjon har gått ut');
+  if (axios.isAxiosError(potentialAxiosError) && Date.now() > parseInt(expires)) {
     localStorage.setItem(AUTHORIZED, 'false');
     window.location.href = '/login';
   }

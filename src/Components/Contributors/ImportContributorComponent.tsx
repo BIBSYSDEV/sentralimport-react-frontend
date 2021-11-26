@@ -2,10 +2,18 @@ import React, { FC } from 'react';
 import styled from 'styled-components';
 import { Button, Typography } from '@material-ui/core';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
+import AffiliationDisplay from './AffiliationDisplay';
+import { Colors } from '../../assets/styles/StyleConstants';
 
 const StyledActionWrapper = styled.div`
   margin-top: 1rem;
 `;
+
+interface AffiliationDisplayGurba {
+  units: string[];
+  institutionName: string;
+  countryCode: string;
+}
 
 interface ContributorOrderComponentProps {
   row: any;
@@ -13,6 +21,25 @@ interface ContributorOrderComponentProps {
 }
 
 const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, handleChooseAuthor }) => {
+  //UnitName is a string of departments split by ";", most important unit last.
+  const affiliations: AffiliationDisplayGurba[] = row.imported.affiliations
+    .slice()
+    .sort((affiliationA: any, affiliationB: any) => {
+      if (affiliationA.institutionName.localeCompare(affiliationB.institutionName) === 0) {
+        return affiliationA.unitName.localeCompare(affiliationB.unitName);
+      }
+      return affiliationA.institutionName.localeCompare(affiliationB.institutionName);
+    })
+    .map((affiliation: any) => ({
+      units: affiliation.unitName
+        .replace(affiliation.institutionName, '')
+        .split(';')
+        .filter((unit: string) => unit.length > 0)
+        .reverse(),
+      institutionName: affiliation.institutionName,
+      countryCode: affiliation.countryCode,
+    }));
+
   return (
     <>
       <Typography variant="h6" gutterBottom data-testid={`creator-name-${row.toBeCreated.order}`}>
@@ -26,13 +53,13 @@ const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, ha
           </>
         )}
       </Typography>
-      {row.imported.affiliations.map((institution: any, index: number) => (
-        <div key={index} data-testid={`creator-institutions-${row.toBeCreated.order}`}>
-          <Typography gutterBottom style={{ fontStyle: `italic`, fontSize: '0.9rem' }}>
-            {institution.unitName /*TODO: kan splittes på ';'*/}
-            {institution.countryCode && ' (' + institution.countryCode + ')'}
-          </Typography>
-        </div>
+      {affiliations.map((affiliation, affiliationIndex) => (
+        <AffiliationDisplay
+          key={`${affiliationIndex}`}
+          backgroundcolor={Colors.LIGHT_GREY}
+          affiliation={affiliation}
+          dataTestid={`creator-institutions-${row.toBeCreated.order}`}
+        />
       ))}
       {row.imported.surname && row.imported.first_name && (
         <StyledActionWrapper>
