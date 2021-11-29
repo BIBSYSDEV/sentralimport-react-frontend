@@ -5,7 +5,9 @@ import { Button, Typography } from '@material-ui/core';
 import { Colors } from '../../assets/styles/StyleConstants';
 
 const StyledChooseButton = styled(Button)`
-  justify-self: flex-end;
+  &.MuiButtonBase-root {
+    margin-top: 1rem;
+  }
 `;
 
 const StyledAffiliationsWrapper = styled.div`
@@ -23,7 +25,7 @@ const StyledActivePersonNameTypography = styled(Typography)`
 `;
 
 const StyledInactivePersonNameTypography = styled(Typography)`
-  color: ${Colors.Text.OPAQUE_54_BLACK};
+  color: ${Colors.Text.OPAQUE_30_BLACK};
 `;
 
 interface ContributorSearchResultItemProps {
@@ -33,22 +35,24 @@ interface ContributorSearchResultItemProps {
 
 const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({ contributor, handleChoose }) => {
   const [isActive] = useState(
-    contributor.affiliations && contributor.affiliations.some((affiliation) => affiliation.isCristinInstitution)
+    contributor.affiliations &&
+      contributor.affiliations.some((affiliation) => affiliation.isCristinInstitution) &&
+      contributor.identified_cristin_person
   );
 
   return (
     <div>
       {isActive ? (
-        <StyledActivePersonNameTypography variant="h6">
+        <StyledActivePersonNameTypography data-testid={`author-name-${contributor.cristin_person_id}`} variant="h6">
           {`${contributor.first_name_preferred ?? contributor.first_name} ${
             contributor.surname_preferred ?? contributor.surname
           }`}
         </StyledActivePersonNameTypography>
       ) : (
-        <StyledInactivePersonNameTypography variant="h6">
+        <StyledInactivePersonNameTypography data-testid={`author-name-${contributor.cristin_person_id}`} variant="h6">
           {`${contributor.first_name_preferred ?? contributor.first_name} ${
             contributor.surname_preferred ?? contributor.surname
-          }`}
+          } (inaktiv)`}
         </StyledInactivePersonNameTypography>
       )}
       {contributor.affiliations?.map((affiliation: any, h: number) => (
@@ -68,7 +72,7 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({ con
           </StyledTypography>
         </StyledAffiliationsWrapper>
       )}
-      <StyledChooseButton color="primary" onClick={() => handleChoose(contributor)}>
+      <StyledChooseButton size="small" variant="outlined" color="primary" onClick={() => handleChoose(contributor)}>
         Velg denne
       </StyledChooseButton>
       <hr />

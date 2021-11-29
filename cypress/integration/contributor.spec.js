@@ -9,6 +9,7 @@ import {
   cristinIdForbiddenPerson,
 } from '../../src/utils/mockdata';
 import mockImportData from '../../src/utils/mockImportData.json';
+import { Colors } from '../../src/assets/styles/StyleConstants';
 
 context('contributor', () => {
   beforeEach(() => {
@@ -152,5 +153,19 @@ context('contributor', () => {
       'have.text',
       'Kan ikke hente inn institusjoner for denne bidragsyteren.'
     );
+  });
+
+  it('displays active and inactice contributors differently', () => {
+    //active contributors are defined as person with identified_cristin_person = true AND atleast one active affiliation.
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.get(`[data-testid="open-contributors-modal-button"]`).click();
+    cy.get('[data-testid=contributor-search-button-2]').click();
+    cy.get('[data-testid="author-name-1234567"]')
+      .should('not.include.text', '(inaktiv)')
+      .should('have.css', 'color', Colors.Text.GREEN);
+    cy.get('[data-testid="author-name-9456892"]')
+      .should('include.text', '(inaktiv)')
+      .should('have.css', 'color', Colors.Text.OPAQUE_30_BLACK);
   });
 });
