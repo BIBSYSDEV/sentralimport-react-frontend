@@ -145,7 +145,7 @@ const Contributor: FC<ContributorProps> = ({
         });
       }
 
-      if (selectedUnit) {
+      if (selectedUnit.value !== '') {
         affiliationsCopy = addUnit(affiliationsCopy);
       }
 
