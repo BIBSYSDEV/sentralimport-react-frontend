@@ -1,13 +1,12 @@
 import React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { Context } from '../../Context';
-import { useHistory } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import { patchPiaPublication, patchPublication, postPublication } from '../../api/publicationApi';
+import { handlePotentialExpiredSession } from '../../api/api';
 
 export default function ConfirmImportDialog(props) {
   let { dispatch } = React.useContext(Context);
-  let history = useHistory();
   const [annotation, setAnnotation] = React.useState(null);
   const [importDisabled, setImportDisabled] = React.useState(false);
 
@@ -34,10 +33,7 @@ export default function ConfirmImportDialog(props) {
       await patchPiaPublication(cristinResultId, publication.pub_id);
       setImportDisabled(false);
     } catch (error) {
-      if (!error.hasOwnProperty('response') || error.response.status === 401 || error.response.status === 403) {
-        localStorage.setItem('authorized', 'false');
-        history.push('/login');
-      }
+      handlePotentialExpiredSession(error);
       setImportDisabled(false);
       return generateErrorMessage(error);
     }
@@ -65,11 +61,7 @@ export default function ConfirmImportDialog(props) {
       await patchPiaPublication(publication.cristinResultId, publication.pub_id);
       setImportDisabled(false);
     } catch (error) {
-      console.log('There was an error while updating the publication', error);
-      if (!error.hasOwnProperty('response') || error.response.status === 401 || error.response.status === 403) {
-        localStorage.setItem('authorized', 'false');
-        history.push('/login');
-      }
+      handlePotentialExpiredSession(error);
       setImportDisabled(false);
       return generateErrorMessage(error);
     }
