@@ -88,7 +88,8 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                     <StyledTextField
                       fullWidth
                       label="Tittel *"
-                      inputProps={{ 'data-testid': 'journal-form-title-input' }}
+                      data-testid="new-journal-form-title-field"
+                      inputProps={{ 'data-testid': 'new-journal-form-title-input' }}
                       {...field}
                       error={!!error && touched}
                       helperText={<ErrorMessage name={field.name} />}
@@ -100,7 +101,8 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                     <StyledTextField
                       fullWidth
                       label="ISSN "
-                      inputProps={{ 'data-testid': 'journal-form-issn-input' }}
+                      data-testid="new-journal-form-issn-field"
+                      inputProps={{ 'data-testid': 'new-journal-form-issn-input' }}
                       {...field}
                       error={!!error && touched}
                       helperText={<ErrorMessage name={field.name} />}
@@ -112,7 +114,8 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                     <StyledTextField
                       fullWidth
                       label="e-ISSN "
-                      inputProps={{ 'data-testid': 'journal-form-eissn-input' }}
+                      data-testid="new-journal-form-eissn-field"
+                      inputProps={{ 'data-testid': 'new-journal-form-eissn-input' }}
                       {...field}
                       error={!!error && touched}
                       helperText={<ErrorMessage name={field.name} />}
@@ -135,7 +138,12 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                     </Button>
                   </Grid>
                 </Grid>
-                {!isValid && <CommonErrorMessage errorMessage="Det er feil i tidskrift-skjema" />}
+                {!isValid && (
+                  <CommonErrorMessage
+                    datatestid="new-journal-form-error"
+                    errorMessage="Det er feil i tidskrift-skjema"
+                  />
+                )}
               </Form>
             )}
           </Formik>

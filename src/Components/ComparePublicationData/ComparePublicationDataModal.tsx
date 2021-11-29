@@ -788,7 +788,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                       />
                       {selectedJournal.label === 'Ingen tidsskrift funnet' && (
                         <StyledErrorMessage>
-                          <CommonErrorMessage errorMessage="Tidsskrift mangler" />
+                          <CommonErrorMessage datatestid="journal-missing-error" errorMessage="Tidsskrift mangler" />
                         </StyledErrorMessage>
                       )}
                     </>
@@ -1000,6 +1000,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                     Avbryt
                   </Button>
                 </Grid>
+                {state.formErrors} |{importPublication?.cristin_id} |{state.contributorErrors.length}
                 <Grid item>
                   <Button
                     disabled={

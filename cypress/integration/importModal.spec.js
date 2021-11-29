@@ -69,21 +69,32 @@ context('importModal', () => {
     cy.get(`[data-testid="import-publication-cancel-button"]`).should('exist').should('not.be.disabled');
   });
 
-  it('can registrate a new Journal', () => {
+  it('can registrate a new journal', () => {
     const mockTitle = 'MockJournalTitle';
-    const mockIssn = '12345-12345';
+    const mockIssn = '1234-1234';
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
-    cy.wait(500); //To make modal visible (tests works without, but is more difficult to view with cypress open)
     cy.get(`#cristindata-journal`).contains(mockImportData[0].channel.title);
     cy.get(`[data-testid="submit-journal-button"]`).should('not.exist');
     cy.get(`[data-testid="add-journal-button"]`).click();
-    cy.get(`[data-testid="journal-form-title-input"]`).type(mockTitle);
-    cy.get(`[data-testid="journal-form-issn-input"]`).type(mockIssn);
+    cy.get(`[data-testid="new-journal-form-title-input"]`).type(mockTitle);
+    cy.get(`[data-testid="new-journal-form-issn-input"]`).type(mockIssn);
     cy.get(`[data-testid="submit-journal-button"]`).click();
     cy.get(`#cristindata-journal`).contains(mockTitle);
     cy.get(`[data-testid="submit-journal-button"]`).should('not.exist');
   });
 
-  //TODO: test validation of create-journal
+  it('can validate new journal registration', () => {
+    const mockInvalidIssn = '123412341234';
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.wait(500);
+    cy.get(`[data-testid="add-journal-button"]`).click();
+    cy.get(`[data-testid="new-journal-form-issn-input"]`).type(mockInvalidIssn);
+    cy.get(`[data-testid="submit-journal-button"]`).click();
+    cy.get(`[data-testid="new-journal-form-title-field"]`).contains('Tittel er et obligatorisk felt');
+    cy.get(`[data-testid="new-journal-form-issn-field"]`).contains('SSN er ikke på korrekt format (NNNN-NNNC)');
+    cy.get(`[data-testid="new-journal-form-error"]`).contains('Det er feil i tidskrift-skjema');
+    cy.get(`[data-testid="submit-journal-button"]`).should('exist');
+  });
 });

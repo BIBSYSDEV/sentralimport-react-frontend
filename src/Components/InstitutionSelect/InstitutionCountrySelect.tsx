@@ -131,7 +131,7 @@ const InstitutionCountrySelect: FC<InstitutionCountrySelectProps> = ({
         value={selectedInstitution}
       />
       {loadingUnits && <StyledCircularProgress size={'1rem'} />}
-      {loadingError && <CommonErrorMessage errorMessage={loadingError} />}
+      {loadingError && <CommonErrorMessage datatestid="institution-country-select-error" errorMessage={loadingError} />}
       {units.length > 0 ? (
         <StyledUnitSelectWrapper>
           <Select
