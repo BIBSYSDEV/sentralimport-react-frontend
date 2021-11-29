@@ -35,18 +35,18 @@ interface AffiliationDisplayProps {
   affiliation: { units: string[]; institutionName: string; countryCode?: string };
   dataTestid: string;
   backgroundcolor: string;
-  deleteUnitHandleClick?: (unitIndex: number) => void;
-  addAffiliationsHandleClick?: () => void;
-  deleteAffiliationHandleClick?: () => void;
+  handleDeleteUnitClick?: (unitIndex: number) => void;
+  handleAddAffiliationsClick?: () => void;
+  handleDeleteAffiliationClick?: () => void;
 }
 
 const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
   affiliation,
   dataTestid,
   backgroundcolor,
-  deleteUnitHandleClick,
-  addAffiliationsHandleClick,
-  deleteAffiliationHandleClick,
+  handleDeleteUnitClick,
+  handleAddAffiliationsClick,
+  handleDeleteAffiliationClick,
 }) => {
   return (
     <StyledAffiliationsWrapper backgroundColor={backgroundcolor} variant="outlined" data-testid={dataTestid}>
@@ -64,9 +64,9 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
           {affiliation.units.map((unit, unitIndex) => (
             <ListItem key={unitIndex} dense={true}>
               <StyledListItemText data-testid={`${dataTestid}-list-item-text-unit-${unitIndex}`} primary={unit} />
-              {deleteUnitHandleClick && (
+              {handleDeleteUnitClick && (
                 <Button
-                  onClick={() => deleteUnitHandleClick(unitIndex)}
+                  onClick={() => handleDeleteUnitClick(unitIndex)}
                   size="small"
                   data-testid={`${dataTestid}-delete-unit-${unitIndex}`}
                   startIcon={<DeleteIcon />}
@@ -79,12 +79,12 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
           ))}
         </List>
       </StyledCardContent>
-      {(deleteAffiliationHandleClick || addAffiliationsHandleClick) && (
+      {(handleDeleteAffiliationClick || handleAddAffiliationsClick) && (
         <CardActions>
-          {deleteAffiliationHandleClick && (
+          {handleDeleteAffiliationClick && (
             <Button
               size="small"
-              onClick={deleteAffiliationHandleClick}
+              onClick={handleDeleteAffiliationClick}
               data-testid={`${dataTestid}-delete-institution`}
               startIcon={<DeleteIcon />}
               variant="outlined"
@@ -92,11 +92,11 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
               Fjern tilknyttning
             </Button>
           )}
-          {addAffiliationsHandleClick && (
+          {handleAddAffiliationsClick && (
             <Button
               size="small"
               data-testid={`${dataTestid}-add-unit`}
-              onClick={addAffiliationsHandleClick}
+              onClick={handleAddAffiliationsClick}
               startIcon={<AddIcon />}
               variant="outlined"
               color="primary">

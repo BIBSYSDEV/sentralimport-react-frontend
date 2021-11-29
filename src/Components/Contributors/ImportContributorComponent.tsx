@@ -4,41 +4,53 @@ import { Button, Typography } from '@material-ui/core';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import AffiliationDisplay from './AffiliationDisplay';
 import { Colors } from '../../assets/styles/StyleConstants';
+import { ContributorWrapper } from '../../types/ContributorTypes';
 
 const StyledActionWrapper = styled.div`
   margin-top: 1rem;
 `;
 
-interface AffiliationDisplayGurba {
+interface AffiliationDisplay {
   units: string[];
   institutionName: string;
   countryCode: string;
 }
 
 interface ContributorOrderComponentProps {
-  row: any;
+  row: ContributorWrapper;
   handleChooseAuthor: any;
 }
 
 const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, handleChooseAuthor }) => {
   //UnitName is a string of departments split by ";", most important unit last.
-  const affiliations: AffiliationDisplayGurba[] = row.imported.affiliations
-    .slice()
-    .sort((affiliationA: any, affiliationB: any) => {
-      if (affiliationA.institutionName.localeCompare(affiliationB.institutionName) === 0) {
-        return affiliationA.unitName.localeCompare(affiliationB.unitName);
-      }
-      return affiliationA.institutionName.localeCompare(affiliationB.institutionName);
-    })
-    .map((affiliation: any) => ({
-      units: affiliation.unitName
-        .replace(affiliation.institutionName, '')
-        .split(';')
-        .filter((unit: string) => unit.length > 0)
-        .reverse(),
-      institutionName: affiliation.institutionName,
-      countryCode: affiliation.countryCode,
-    }));
+  const affiliations: AffiliationDisplay[] = row.imported.affiliations
+    ? row.imported.affiliations
+        .slice()
+        .sort((affiliationA, affiliationB) => {
+          if (
+            affiliationA.institutionName &&
+            affiliationB.institutionName &&
+            affiliationA.institutionName.localeCompare(affiliationB.institutionName) !== 0
+          ) {
+            return affiliationA.institutionName.localeCompare(affiliationB.institutionName);
+          } else if (affiliationA.unitName && affiliationB.unitName) {
+            return affiliationA.unitName.localeCompare(affiliationB.unitName);
+          } else {
+            return 0;
+          }
+        })
+        .map((affiliation) => ({
+          units: affiliation.unitName
+            ? affiliation.unitName
+                .replace(affiliation.institutionName ?? '', '')
+                .split(';')
+                .filter((unit: string) => unit.length > 0)
+                .reverse()
+            : [],
+          institutionName: affiliation.institutionName ?? '',
+          countryCode: affiliation.countryCode ?? '',
+        }))
+    : [];
 
   return (
     <>
