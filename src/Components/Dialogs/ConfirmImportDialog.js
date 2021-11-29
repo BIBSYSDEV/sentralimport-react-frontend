@@ -230,7 +230,14 @@ export default function ConfirmImportDialog(props) {
   }
 
   return (
-    <Dialog open={props.open} onClose={props.handleClose} disableBackdropClick disableEscapeKeyDown>
+    <Dialog
+      open={props.open}
+      onClose={(event, reason) => {
+        if (reason !== 'backdropClick' && reason !== 'escapeKeyDown') {
+          props.handleClose();
+        }
+      }}
+      disableEscapeKeyDown>
       <DialogTitle>Bekreft import</DialogTitle>
       <DialogContent>
         <TextField
