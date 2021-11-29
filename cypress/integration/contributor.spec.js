@@ -17,6 +17,8 @@ context('contributor', () => {
     cy.visit('/');
   });
 
+  /*
+
   it('shows contributor-list', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
@@ -155,17 +157,41 @@ context('contributor', () => {
     );
   });
 
-  it('displays active and inactice contributors differently', () => {
+   */
+
+  it('displays verified and unverified contributors differently', () => {
     //active contributors are defined as person with identified_cristin_person = true AND atleast one active affiliation.
+    //getContributors may respond with not-authorized, in which case it is not possible to know whether or not a contributor is verified
+    const VerifiedText = 'Verifisert';
+    const notVerifiedText = 'Ikke verifisert';
+    const unknownVerificationText = 'Ukjent verifikasjonsstatus';
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="open-contributors-modal-button"]`).click();
     cy.get('[data-testid=contributor-search-button-2]').click();
-    cy.get('[data-testid="author-name-1234567"]')
-      .should('not.include.text', '(inaktiv)')
-      .should('have.css', 'color', Colors.Text.GREEN);
-    cy.get('[data-testid="author-name-9456892"]')
-      .should('include.text', '(inaktiv)')
-      .should('have.css', 'color', Colors.Text.OPAQUE_30_BLACK);
+    cy.get(`[data-testid="author-name-${mockPerson.cristin_person_id}-verified-badge"]`)
+      .children('title')
+      .should('have.text', VerifiedText);
+    cy.get(`[data-testid="author-name-${mockPerson.cristin_person_id}"]`).should(
+      'have.css',
+      'color',
+      Colors.Text.GREEN
+    );
+    cy.get(`[data-testid="author-name-${cristinIDWithoutActiveAffiliation}-not-verified-badge"]`)
+      .children('title')
+      .should('have.text', notVerifiedText);
+    cy.get(`[data-testid="author-name-${cristinIDWithoutActiveAffiliation}"]`).should(
+      'have.css',
+      'color',
+      Colors.Text.OPAQUE_30_BLACK
+    );
+    cy.get(`[data-testid="author-name-${cristinIdForbiddenPerson}-uknown-verified-badge"]`)
+      .children('title')
+      .should('have.text', unknownVerificationText);
+    cy.get(`[data-testid="author-name-${cristinIdForbiddenPerson}"]`).should(
+      'have.css',
+      'color',
+      Colors.Text.OPAQUE_30_BLACK
+    );
   });
 });

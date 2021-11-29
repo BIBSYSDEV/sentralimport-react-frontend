@@ -3,6 +3,42 @@ import { ContributorType } from '../../types/ContributorTypes';
 import styled from 'styled-components';
 import { Button, Typography } from '@material-ui/core';
 import { Colors } from '../../assets/styles/StyleConstants';
+import { ReactComponent as VerifiedBadge } from '../../assets/icons/verified-badge.svg';
+import { ReactComponent as NotVerifiedBadge } from '../../assets/icons/not-verified-badge.svg';
+import { ReactComponent as UnknownVerifiedBadge } from '../../assets/icons/uknown-verification-badge.svg';
+
+const StyledVerifiedBadge = styled(VerifiedBadge)`
+  margin-right: 0.5rem;
+  width: 1.7rem;
+  height: 1.7rem;
+  & path {
+    fill: ${Colors.Text.GREEN};
+  }
+`;
+
+const StyledNotVerifiedBadge = styled(NotVerifiedBadge)`
+  margin-right: 0.5rem;
+  width: 1.7rem;
+  height: 1.7rem;
+  & path {
+    fill: ${Colors.Text.OPAQUE_30_BLACK};
+  }
+  & circle {
+    fill: ${Colors.Text.OPAQUE_30_BLACK};
+  }
+`;
+
+const StyledUnknownVerifiedBadge = styled(UnknownVerifiedBadge)`
+  margin-right: 0.5rem;
+  width: 1.7rem;
+  height: 1.7rem;
+  & path {
+    fill: ${Colors.Text.OPAQUE_30_BLACK};
+  }
+  & ellipse {
+    fill: ${Colors.Text.OPAQUE_30_BLACK};
+  }
+`;
 
 const StyledChooseButton = styled(Button)`
   &.MuiButtonBase-root {
@@ -44,15 +80,25 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({ con
     <div>
       {isActive ? (
         <StyledActivePersonNameTypography data-testid={`author-name-${contributor.cristin_person_id}`} variant="h6">
+          <StyledVerifiedBadge data-testid={`author-name-${contributor.cristin_person_id}-verified-badge`} />
+
           {`${contributor.first_name_preferred ?? contributor.first_name} ${
             contributor.surname_preferred ?? contributor.surname
           }`}
         </StyledActivePersonNameTypography>
       ) : (
         <StyledInactivePersonNameTypography data-testid={`author-name-${contributor.cristin_person_id}`} variant="h6">
+          {contributor.require_higher_authorization ? (
+            <StyledUnknownVerifiedBadge
+              data-testid={`author-name-${contributor.cristin_person_id}-uknown-verified-badge`}
+              title="Ukjent verifikasjonsstatus"
+            />
+          ) : (
+            <StyledNotVerifiedBadge data-testid={`author-name-${contributor.cristin_person_id}-not-verified-badge`} />
+          )}
           {`${contributor.first_name_preferred ?? contributor.first_name} ${
             contributor.surname_preferred ?? contributor.surname
-          } (inaktiv)`}
+          }`}
         </StyledInactivePersonNameTypography>
       )}
       {contributor.affiliations?.map((affiliation: any, h: number) => (
