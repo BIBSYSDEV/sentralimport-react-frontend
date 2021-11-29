@@ -1,11 +1,11 @@
-import { AxiosPromise, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import { authenticatedApiRequest } from './api';
 import { CRIST_REST_API, PIA_REST_API } from '../utils/constants';
 import {
   CategoryItem,
   ChannelLight,
   CristinPublication,
-  ImportData,
+  ImportPublication,
   Order,
   PatchPublication,
   PostPublication,
@@ -16,10 +16,10 @@ import { SortValue } from '../types/ContextType';
 
 export async function getCristinPublicationsBySearchTerm(
   searchTerms: string
-): Promise<AxiosPromise<CristinPublication[]>> {
+): Promise<AxiosResponse<CristinPublication[]>> {
   return authenticatedApiRequest({
-    url: encodeURI(`${CRIST_REST_API}/results${searchTerms}&fields=all&lang=${SearchLanguage.Nb}`),
-  }) as AxiosPromise<CristinPublication[]>;
+    url: `${CRIST_REST_API}/results?${searchTerms}`,
+  });
 }
 
 export async function getImportStatisticsByYear(year: number): Promise<AxiosResponse<PublicationCount>> {
@@ -138,7 +138,7 @@ export async function getImportData(
   resultPerPage: number,
   pageNumber: number,
   doiFilter: string | null
-): Promise<AxiosResponse<ImportData[]>> {
+): Promise<AxiosResponse<ImportPublication[]>> {
   const searchParams = generateSearchParams(
     sortValue,
     sortOrder,

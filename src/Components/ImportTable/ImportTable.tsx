@@ -8,7 +8,7 @@ import '../../assets/styles/Results.scss';
 import '../../assets/styles/Imports.css';
 import ListModal from '../ListModal/ListModal';
 import EnhancedTableHead from './EnhancedTableHead';
-import { emptyImportPublication, ImportData, Order } from '../../types/PublicationTypes';
+import { emptyImportPublication, ImportPublication, Order } from '../../types/PublicationTypes';
 import ImportTableListItem from './ImportTableListItem';
 import PlaceHolderListItem from './PlaceHolderListItem';
 import AuthorList from './AuthorList';
@@ -82,15 +82,15 @@ const EnhancedTableToolbar = () => {
 
 export default function ImportTable(this: any) {
   const { state, dispatch } = useContext(Context);
-  const [modalData, setModalData] = useState<ImportData>(emptyImportPublication);
+  const [modalData, setModalData] = useState<ImportPublication>(emptyImportPublication);
   const [order, setOrder] = useState(state.currentSortOrder);
   const [orderBy, setOrderBy] = useState(state.currentSortValue);
   const [page] = useState(state.currentPageNr);
   const [open, setOpen] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(state.currentPerPage.value);
-  const [rows, setRows] = useState<ImportData[]>([]);
+  const [rows, setRows] = useState<ImportPublication[]>([]);
   const [authorList, setAuthorList] = useState(false);
-  const [authorData, setAuthorData] = useState<ImportData>();
+  const [authorData, setAuthorData] = useState<ImportPublication>();
   const [fetched, setFetched] = useState(false);
   const [checked, setChecked] = useState<boolean[]>([]);
   const [openSeveral, setOpenSeveral] = useState<string[]>([]);
@@ -156,7 +156,7 @@ export default function ImportTable(this: any) {
         state.currentPageNr + 1,
         state.doiFilter
       );
-      handleRows(importDataResponse.data);
+      handleRows(importDataResponse.data as ImportPublication[]);
       dispatch({
         type: 'setTotalCount',
         payload: importDataResponse.headers['x-total-count'],
@@ -178,7 +178,7 @@ export default function ImportTable(this: any) {
     dispatch({ type: 'setPageNr', payload: 0 });
   }
 
-  function handleRows(temp: ImportData[]) {
+  function handleRows(temp: ImportPublication[]) {
     setRows(temp);
   }
 
@@ -211,14 +211,14 @@ export default function ImportTable(this: any) {
     setAuthorList(false);
   }
 
-  function handleAuthorClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, row: ImportData) {
+  function handleAuthorClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, row: ImportPublication) {
     if (!authorList) {
       setAuthorList(true);
       setAuthorData(row);
     }
   }
 
-  function handleAuthorPress(event: React.KeyboardEvent<HTMLButtonElement>, row: ImportData) {
+  function handleAuthorPress(event: React.KeyboardEvent<HTMLButtonElement>, row: ImportPublication) {
     if (!authorList) {
       if (event.keyCode === 13 || event.keyCode === 32) {
         setAuthorList(true);
@@ -242,7 +242,11 @@ export default function ImportTable(this: any) {
     }
   }
 
-  function handleCheckBoxChange(event: React.ChangeEvent<HTMLInputElement>, importData: ImportData, index: number) {
+  function handleCheckBoxChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+    importData: ImportPublication,
+    index: number
+  ) {
     event.stopPropagation();
     const statuses = [...checked];
     statuses[index] = !statuses[index];
@@ -308,7 +312,7 @@ export default function ImportTable(this: any) {
   } else {
     const body = stableSort(rows, getSorting(order, orderBy))
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-      .map((row: ImportData, i) => {
+      .map((row: ImportPublication, i) => {
         return (
           <ImportTableListItem
             key={row.pubId}

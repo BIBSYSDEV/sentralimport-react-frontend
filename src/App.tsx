@@ -10,8 +10,8 @@ import { Context } from './Context';
 import { USE_MOCK_DATA } from './utils/constants';
 import styled from 'styled-components';
 import { getInstitutions } from './api/institutionApi';
-import { InstitutionSelector } from './types/ContextType';
 import { handlePotentialExpiredSession } from './api/api';
+import { InstitutionSelector } from './types/InstitutionTypes';
 
 const StyledApp = styled.div`
   text-align: center;

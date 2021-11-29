@@ -4,7 +4,7 @@ import { Markup } from 'interweave';
 import { cleanTitleForMarkup } from '../../utils/stringUtils';
 import styled from 'styled-components';
 import { Typography } from '@material-ui/core';
-import { ImportData } from '../../types/PublicationTypes';
+import { ImportPublication } from '../../types/PublicationTypes';
 
 const StyledAuthorTypography = styled(Typography)`
   && {
@@ -13,7 +13,7 @@ const StyledAuthorTypography = styled(Typography)`
 `;
 
 interface ImportPublicationPresentationProps {
-  importPublication: ImportData;
+  importPublication: ImportPublication;
 }
 
 const ImportPublicationPresentation: FC<ImportPublicationPresentationProps> = ({ importPublication }) => {

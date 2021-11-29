@@ -9,7 +9,7 @@ interface PlaceHolderListItemProps {
 
 export default function PlaceHolderListItem({ index }: PlaceHolderListItemProps) {
   return (
-    <TableRow hover id={'skeleton' + index} role="checkbox" className="card-horiz basic-background result" tabIndex={0}>
+    <TableRow id={'skeleton' + index} role="checkbox" tabIndex={0}>
       <TableCell component="td" scope="row" padding="none" />
       <TableCell>
         <Skeleton variant="rect" width="auto" height={118} />

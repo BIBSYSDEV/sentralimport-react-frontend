@@ -1,7 +1,7 @@
 import { authenticatedApiRequest } from './api';
 import { CRIST_REST_API } from '../utils/constants';
 import { AxiosResponse } from 'axios';
-import { Institution, InstitutionCountryInformation, SimpleUnitResponse } from '../types/institutionTypes';
+import { Institution, InstitutionCountryInformation, SimpleUnitResponse } from '../types/InstitutionTypes';
 import { SearchLanguage } from './contributorApi';
 
 export async function getInstitutions(): Promise<AxiosResponse<Institution[]>> {

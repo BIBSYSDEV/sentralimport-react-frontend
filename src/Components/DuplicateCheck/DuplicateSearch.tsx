@@ -3,7 +3,7 @@ import { Context } from '../../Context';
 import { CircularProgress, Divider, FormControlLabel, Radio, RadioGroup, Typography } from '@material-ui/core';
 import '../../assets/styles/Results.scss';
 import ResultItem from './ResultItem';
-import { CristinPublication, ImportData } from '../../types/PublicationTypes';
+import { CristinPublication, ImportPublication } from '../../types/PublicationTypes';
 import { searchChristinPublications } from './SearchChristinPublications';
 import SearchPanel from './SearchPanel';
 import styled from 'styled-components';
@@ -23,54 +23,57 @@ const StyledResultListWrapper = styled.div`
 `;
 
 interface DuplicateSearchProps {
-  importPublication: ImportData;
+  importPublication: ImportPublication;
   selectedRadioButton: string;
   setSelectedRadioButton: (value: string) => void;
 }
+
+const maxResults = '5';
 
 const DuplicateSearch: FC<DuplicateSearchProps> = ({
   importPublication,
   selectedRadioButton,
   setSelectedRadioButton,
 }) => {
-  const [duplicateList, setDuplicateList] = useState<CristinPublication[]>([]);
+  const [resultList, setResultList] = useState<CristinPublication[]>([]);
   const [foundDuplicates, setFoundDuplicates] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-
+  const [isInitialSearchWithDoi, setIsInitialSearchWithDoi] = useState(false);
   const { state, dispatch } = useContext(Context);
   const relevantStatus = state.currentImportStatus !== 'ikke aktuelle';
+  const [totalResults, setTotalResults] = useState(0);
 
   useEffect(() => {
-    async function fetch() {
-      let searchString;
+    async function initialSearch() {
+      setIsSearching(true);
+      setFoundDuplicates(false);
       if (importPublication.doi) {
-        searchString = '?doi=' + importPublication.doi;
-      } else {
-        const title = importPublication.languages && importPublication.languages[0].title.substr(0, 20);
-        searchString = '?title=' + title;
-        if (importPublication.yearPublished) {
-          const yearPublished: number = +importPublication.yearPublished;
-          searchString += '&published_since=' + (yearPublished - 1) + '&published_before=' + yearPublished;
-        }
-
-        if (importPublication.channel?.issns) {
-          const issn = importPublication.channel.issns[0];
-          searchString += '&issn=' + issn;
-        }
+        setIsInitialSearchWithDoi(true);
       }
-      searchString += '&per_page=5';
-      setDuplicateList(await searchChristinPublications(searchString));
+      const results = await searchChristinPublications(
+        maxResults,
+        importPublication.doi,
+        importPublication.languages[0].title.substring(0, 20),
+        importPublication.yearPublished,
+        importPublication.channel?.issn
+      );
+      if (results.cristinPublications.length > 0) {
+        setFoundDuplicates(true);
+      }
+      setTotalResults(results.totalPublicationsResults);
+      setIsSearching(false);
+      setResultList(results.cristinPublications);
     }
     setSelectedRadioButton(SelectValues.CREATE_NEW);
-    fetch().then();
+    initialSearch().then();
   }, [importPublication]);
 
   useEffect(() => {
-    if (importPublication.cristin_id && duplicateList.length > 0) {
-      setSelectedRadioButton(duplicateList[0].cristin_result_id);
-      dispatch({ type: 'setSelectedPublication', payload: duplicateList[0] });
+    if (importPublication.cristin_id && resultList.length > 0) {
+      setSelectedRadioButton(resultList[0].cristin_result_id);
+      dispatch({ type: 'setSelectedPublication', payload: resultList[0] });
     }
-  }, [duplicateList]);
+  }, [resultList]);
 
   function handleRadioGroupChange(event: any) {
     setSelectedRadioButton(event.target.value);
@@ -78,7 +81,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
       event.target.value !== SelectValues.TOGGLE_RELEVANT &&
       dispatch({
         type: 'setSelectedPublication',
-        payload: duplicateList.find((element: any) => element.cristin_result_id === event.target.value),
+        payload: resultList.find((element: any) => element.cristin_result_id === event.target.value),
       });
   }
 
@@ -86,27 +89,27 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
     <>
       <SearchPanel
         importPublication={importPublication}
-        setDuplicateList={setDuplicateList}
+        setDuplicateList={setResultList}
         setIsSearching={setIsSearching}
         setFoundDuplicates={setFoundDuplicates}
+        isInitialSearchWithDoi={isInitialSearchWithDoi}
+        setTotalResults={setTotalResults}
       />
       <StyledStatusWrapper>
         {isSearching && <CircularProgress style={{ marginLeft: '1rem' }} size={'1.5rem'} />}
         {!isSearching &&
           (foundDuplicates ? (
-            <Typography style={{ color: 'green' }}>Søket ga følgende treff</Typography>
+            <Typography color="primary">{`Søket ga følgende treff: (Viser ${resultList.length} av ${totalResults})`}</Typography>
           ) : (
-            <Typography style={{ color: 'darkred' }}>
-              Det finnes ingen eksisterende publikasjoner som matcher søket
-            </Typography>
+            <Typography color="primary">Det finnes ingen eksisterende publikasjoner som matcher søket</Typography>
           ))}
       </StyledStatusWrapper>
       <Divider />
       <StyledRadioGroupWrapper>
         <RadioGroup onChange={handleRadioGroupChange} value={selectedRadioButton}>
           <StyledResultListWrapper data-testid="duplicates-result-list">
-            {duplicateList.length > 0 &&
-              duplicateList.map((cristinPublication: any, index: number) => (
+            {resultList.length > 0 &&
+              resultList.map((cristinPublication: any, index: number) => (
                 <FormControlLabel
                   key={index}
                   control={<ResultItem cristinPublication={cristinPublication} />}
