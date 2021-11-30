@@ -839,7 +839,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                     <Typography data-testid="importdata-year">{importPublication.yearPublished}</Typography>
                   </StyledLineImportValue>
                   <ActionButtons
-                    isImportAndCristinEqual={aarstall === importPublication.yearPublished}
+                    isImportAndCristinEqual={+aarstall === +importPublication.yearPublished}
                     isCopyBottonDisabled={!importPublication.yearPublished}
                     copyCommand={copyAarstall}
                   />
