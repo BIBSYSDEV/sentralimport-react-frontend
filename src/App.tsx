@@ -3,7 +3,6 @@ import ImportTable from './Components/ImportTable/ImportTable';
 import Grid from '@material-ui/core/Grid/Grid';
 import FilterFormPanel from './Components/FilterForm/FilterFormPanel';
 import Header from './Components/Header/Header';
-import './assets/styles/buttons.scss';
 import { useHistory } from 'react-router-dom';
 import LogPanel from './Components/Log/LogPanel';
 import Footer from './Components/Footer/Footer';

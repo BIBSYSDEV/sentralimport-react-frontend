@@ -79,63 +79,64 @@ export default function ConfirmImportDialog(props) {
   }
 
   function createPublicationObject() {
-    const temp = JSON.parse(localStorage.getItem('tempPublication'));
-
+    const publication = JSON.parse(localStorage.getItem('tempPublication')).publication;
     let title = {};
-    for (let i = 0; i < temp.publication.languages.length; i++) {
-      title[temp.publication.languages[i].lang.toLowerCase()] = temp.publication.languages[i].title;
+    for (let i = 0; i < publication.languages.length; i++) {
+      title[publication.languages[i].lang.toLowerCase()] = publication.languages[i].title;
     }
-    let publication = {
+    let cristinPublication = {
       category: {
-        code: temp.publication.category,
+        code: publication.category,
       },
-      journal: {
-        name: temp.publication.channel.title,
-        cristin_journal_id:
-          temp.publication.channel.cristinTidsskriftNr !== 0 ? temp.publication.channel.cristinTidsskriftNr : null,
-        international_standard_numbers: [
-          {
-            type: 'printed',
-            value: temp.publication.channel.issn ? temp.publication.channel.issn : null,
-          },
-          {
-            type: 'online',
-            value: temp.publication.channel.eissn ? temp.publication.channel.eissn : null,
-          },
-        ],
-        pia_journal_number: temp.publication.channel.cristinTidsskriftNr,
-      },
-      original_language: temp.publication.languages.filter((l) => l.original)[0].lang.toLowerCase(),
+      journal:
+        publication.channel.cristinTidsskriftNr && publication.channel.cristinTidsskriftNr !== '0'
+          ? {
+              cristin_journal_id: publication.channel.cristinTidsskriftNr,
+            }
+          : {
+              name: publication.channel.title,
+              international_standard_numbers: [
+                {
+                  type: 'printed',
+                  value: publication.channel.issn ? publication.channel.issn : null,
+                },
+                {
+                  type: 'electronic',
+                  value: publication.channel.eissn ? publication.channel.eissn : null,
+                },
+              ],
+            },
+      original_language: publication.languages.filter((l) => l.original)[0].lang.toLowerCase(),
       title: title,
-      pub_id: temp.publication.pubId,
-      year_published: temp.publication.yearPublished.toString(),
-      import_sources: temp.publication.import_sources,
-      volume: temp.publication.channel.volume,
-      issue: temp.publication.channel.issue,
+      pub_id: publication.pubId,
+      year_published: publication.yearPublished.toString(),
+      import_sources: publication.import_sources,
+      volume: publication.channel.volume,
+      issue: publication.channel.issue,
       links: [
         {
           url_type: 'doi',
-          url_value: temp.publication.doi,
+          url_value: publication.doi,
         },
       ],
       pages: {
-        from: temp.publication.channel.pageFrom,
-        to: temp.publication.channel.pageTo,
+        from: publication.channel.pageFrom,
+        to: publication.channel.pageTo,
         count:
-          temp.publication.channel.pageTo !== null &&
-          temp.publication.channel.pageFrom !== null &&
-          !isNaN(temp.publication.channel.pageTo) &&
-          !isNaN(temp.publication.channel.pageFrom)
-            ? (temp.publication.channel.pageTo - temp.publication.channel.pageFrom).toString()
+          publication.channel.pageTo !== null &&
+          publication.channel.pageFrom !== null &&
+          !isNaN(publication.channel.pageTo) &&
+          !isNaN(publication.channel.pageFrom)
+            ? (publication.channel.pageTo - publication.channel.pageFrom).toString()
             : '0',
       },
       contributors: {
         list: createContributorObject(),
       },
     };
-    if (props.duplicate) publication.cristinResultId = temp.publication.cristinResultId;
-    if (annotation !== null) publication.annotation = annotation;
-    return publication;
+    if (props.duplicate) cristinPublication.cristinResultId = publication.cristinResultId;
+    if (annotation !== null) cristinPublication.annotation = annotation;
+    return cristinPublication;
   }
 
   function createContributorObject() {

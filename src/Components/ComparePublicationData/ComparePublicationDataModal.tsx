@@ -14,10 +14,13 @@ import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
 import ActionButtons from './ActionButtons';
 import clone from 'just-clone';
-import { Channel, CristinPublication, ImportPublication, Language } from '../../types/PublicationTypes';
+import { CategoryItem, Channel, CristinPublication, ImportPublication, Language } from '../../types/PublicationTypes';
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
-import { getCategories, getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
+import CreateJournalPanel from '../CreateJournalPanel/CreateJournalPanel';
+import { Colors } from '../../assets/styles/StyleConstants';
+import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
+import { getCategories, getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -46,7 +49,6 @@ const StyledFormWrapper = styled.div`
 `;
 
 const StyledErrorMessage = styled.div`
-  color: red;
   font-size: 0.8rem;
   padding-top: 5px;
   padding-bottom: 10px;
@@ -59,12 +61,13 @@ const StyledLineWrapper = styled.div`
   align-items: center;
   padding: 0.5rem;
   :nth-of-type(2n) {
-    background-color: #fafafa;
+    background-color: ${Colors.LIGHT_GREY};
   }
 `;
 
 const StyledHeaderLineWrapper = styled(StyledLineWrapper)`
-  color: #76559a;
+  color: ${Colors.PURPLE};
+
   padding: 0.5rem 0;
   border-bottom: none;
   margin-bottom: 1rem;
@@ -155,7 +158,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           label: state.selectedPublication.journal?.name || 'Ingen tidsskrift/journal funnet',
         }
       : {
-          value: importPublication.channel?.cristinTidsskriftNr?.toString() || 0,
+          value: importPublication.channel?.cristinTidsskriftNr?.toString() || '0',
           label: importPublication.channel?.title || 'Ingen tidsskrift/journal funnet',
         }
   );
@@ -329,7 +332,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     async function getCategoriesAndReformatToReactSelect() {
       const categoriesResponse = await getCategories(SearchLanguage.Nb);
       setCategories(
-        categoriesResponse.data.map((category) => ({ value: category.code, label: category.name?.nb ?? '' }))
+        categoriesResponse.data.map((category: CategoryItem) => ({
+          value: category.code,
+          label: category.name?.nb ?? '',
+        }))
       );
     }
     async function fetch() {
@@ -463,6 +469,12 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     setIsContributorModalOpen(false);
   }
 
+  const handleNewJournal = (newJournal: any) => {
+    setSelectedJournal({ label: newJournal.title, value: 0, issn: newJournal.issn, eissn: newJournal.eissn });
+    dispatch({ type: 'setSelectedField', payload: 'tidsskrift' });
+    dispatch({ type: 'setValidation', payload: newJournal.title });
+  };
+
   const copyTittel = () => {
     if (languages && importPublication.languages && selectedLang) {
       const originalTitle = importPublication.languages.filter((lang: any) => lang.lang === selectedLang.lang)[0].title;
@@ -584,12 +596,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   function emptyGlobalFormErrors() {
     dispatch({ type: 'setFormErrors', payload: [] });
   }
-
-  // const handleNewJournal = (newJournal) => {
-  //   setSelectedJournal({ label: newJournal.title, value: 0, issn: newJournal.issn, eissn: newJournal.eissn });
-  //   dispatch({ type: 'setSelectedField', payload: 'tidsskrift' });
-  //   dispatch({ type: 'setValidation', payload: newJournal.title });
-  // };
 
   async function getJournals(journalTitle?: string) {
     if (!journalTitle || journalTitle.length === 0) {
@@ -781,10 +787,12 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         onInputChange={searchJournals}
                       />
                       {selectedJournal.label === 'Ingen tidsskrift funnet' && (
-                        <StyledErrorMessage>Tidsskrift mangler</StyledErrorMessage>
+                        <StyledErrorMessage>
+                          <CommonErrorMessage datatestid="journal-missing-error" errorMessage="Tidsskrift mangler" />
+                        </StyledErrorMessage>
                       )}
                     </>
-                    {/* TODO: doesnt work *<CreateJournalPanel handleCreateJournal={handleNewJournal} />*/}
+                    <CreateJournalPanel handleCreateJournal={handleNewJournal} />
                   </StyledLineCristinValue>
                 </StyledLineWrapper>
 
@@ -999,6 +1007,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                     Avbryt
                   </Button>
                 </Grid>
+                {state.formErrors} |{importPublication?.cristin_id} |{state.contributorErrors.length}
                 <Grid item>
                   <Button
                     disabled={
