@@ -82,7 +82,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
   }
 
   return (
-    <StyledModal isOpen={isDuplicateCheckModalOpen} size="lg">
+    <StyledModal isOpen={isDuplicateCheckModalOpen} size="lg" data-testid="duplicate-check-modal">
       <ModalHeader toggle={handleDuplicateCheckModalClose}>Importvalg for resultat</ModalHeader>
       <ModalBody>
         <StyledBodyWrapper>

@@ -4,11 +4,11 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import styled from 'styled-components';
 
-const StyledAffiliationsWrapper = styled(Card)<{ backgroundColor: string }>`
+const StyledAffiliationsWrapper = styled(Card)<{ backgroundcolor: string }>`
   margin-bottom: 2rem;
   &&.MuiPaper-outlined {
     border: none;
-    background-color: ${(props) => props.backgroundColor};
+    background-color: ${(props) => props.backgroundcolor};
   }
 `;
 
@@ -49,7 +49,7 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
   handleDeleteAffiliationClick,
 }) => {
   return (
-    <StyledAffiliationsWrapper backgroundColor={backgroundcolor} variant="outlined" data-testid={dataTestid}>
+    <StyledAffiliationsWrapper backgroundcolor={backgroundcolor} variant="outlined" data-testid={dataTestid}>
       <StyledCardContent>
         <StyledCardHeader>
           <Typography data-testid={`${dataTestid}-institution-name`} display="inline" variant="subtitle1">
