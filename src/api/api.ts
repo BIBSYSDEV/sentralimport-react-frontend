@@ -1,6 +1,7 @@
 import Axios, { AxiosRequestConfig } from 'axios';
 import { ACESS_TOKEN, AUTHORIZED, EXPIRES } from '../Components/Login/Login';
 import axios from 'axios';
+import { USE_MOCK_DATA } from '../utils/constants';
 
 Axios.defaults.headers.common = {
   Accept: 'application/json',
@@ -19,7 +20,7 @@ export const authenticatedApiRequest = (axiosRequestConfig: AxiosRequestConfig) 
 
 export const handlePotentialExpiredSession = (potentialAxiosError: unknown) => {
   const expires = localStorage.getItem(EXPIRES) ?? '0';
-  if (axios.isAxiosError(potentialAxiosError) && Date.now() > parseInt(expires)) {
+  if (axios.isAxiosError(potentialAxiosError) && Date.now() > parseInt(expires) && !USE_MOCK_DATA) {
     localStorage.setItem(AUTHORIZED, 'false');
     window.location.href = '/login';
   }

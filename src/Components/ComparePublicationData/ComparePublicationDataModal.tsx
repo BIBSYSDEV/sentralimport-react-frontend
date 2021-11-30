@@ -2,14 +2,14 @@ import React, { FC, useContext, useEffect, useState } from 'react';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Button, FormControl, Grid, TextField, Typography } from '@material-ui/core';
 import Select from 'react-select';
-import ConfirmationDialog from '../Dialogs/ConfirmationDialog';
+import ConfirmImportDialog from '../Dialogs/ConfirmImportDialog';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import Validation, { doiMatcher } from '../Validation/Validation';
 import { Context } from '../../Context';
 import '../../assets/styles/buttons.scss';
 import ContributorModal from '../Contributors/ContributorModal';
 import ButtonGroup from '@material-ui/core/ButtonGroup/ButtonGroup';
-import ErrorMessage from '../Dialogs/ErrorMessage';
+import ContributorErrorMessage from './ContributorErrorMessage';
 import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
 import ActionButtons from './ActionButtons';
@@ -30,6 +30,13 @@ const StyledModal = styled(Modal)`
 const StyledActionButtonsPlaceHolder = styled.div`
   min-width: 10rem;
   width: 5%;
+`;
+
+const StyledErrorMessageWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
 `;
 
 const StyledFormWrapper = styled.div`
@@ -163,10 +170,11 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           label: 'Ingen kategori funnet',
         }
   );
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [dialogAbortOpen, setDialogAbortOpen] = useState(false);
   const firstUpdate = useRef(true);
-  const [fatalError, setFatalError] = useState<Error | undefined>();
+  const [fetchDataError, setFetchDataError] = useState<Error | undefined>();
+  const [importPublicationError, setImportPublicationError] = useState<Error | undefined>();
 
   useLayoutEffect(() => {
     if (firstUpdate.current) {
@@ -179,7 +187,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   useEffect(() => {
     async function setFields() {
       try {
-        setFatalError(undefined);
+        setFetchDataError(undefined);
         let workedOn = false;
         let publicationFromLocalStorage: ImportPublication | undefined;
         const localStorageData = localStorage.getItem('tempPublication');
@@ -310,7 +318,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         );
       } catch (error) {
         handlePotentialExpiredSession(error);
-        setFatalError(error as Error);
+        setFetchDataError(error as Error);
       }
     }
 
@@ -439,14 +447,15 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   }
 
   function handleSubmit() {
+    setImportPublicationError(undefined);
     saveToLocalStorage();
     if (state.contributors === null) {
       dispatch({ type: 'contributors', payload: contributors });
     }
-    setDialogOpen(true);
+    setIsConfirmDialogOpen(true);
   }
 
-  function handleAbortDialogClose() {
+  function handleAbort() {
     setDialogAbortOpen(true);
   }
 
@@ -524,33 +533,24 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     publishingDetails && setPublishingDetails({ ...publishingDetails, issue: importPublication.channel?.issue });
   };
 
-  function confirmImportToCristin(result: any) {
-    setDialogOpen(false);
-    handleComparePublicationDataModalClose();
+  function handlePublicationImported(result: any) {
+    setIsConfirmDialogOpen(false);
     if (result.status === 200) {
       enqueueSnackbar(
-        'Importerte ny publikasjon med Cristin-id: ' + result.result.id + ' og tittel: ' + result.result.title,
+        'Importerte ny publikasjon (Cristin-id: ' + result.result.id + ' og tittel: ' + result.result.title + ')',
         {
           variant: 'success',
         }
       );
-    } else if (result.status === 401 || result.status === 403) {
-      enqueueSnackbar('Din sesjon har gått ut. Vennligst logg inn på nytt', {
-        variant: 'warning',
-      });
+      handleComparePublicationDataModalClose();
+      handleDuplicateCheckModalClose();
     } else {
-      enqueueSnackbar(
-        'Noe gikk galt med import av publikasjon med pub-id: ' +
-          importPublication.pubId +
-          '. Dine endringer er fortsatt lagret i browseren. Vennligst prøv på nytt.',
-        {
-          variant: 'error',
-        }
-      );
+      const errorMessage = `Noe gikk galt med import av publikasjon med pub-id: ${importPublication.pubId}.
+       Dine endringer er fortsatt lagret i browseren. ${result.errorMessage}`;
+      setImportPublicationError(new Error(errorMessage));
+      dispatch({ type: 'importDone', payload: false });
+      // dispatch({ type: 'setContributorsLoaded', payload: false });
     }
-    handleDuplicateCheckModalClose();
-    dispatch({ type: 'importDone', payload: !state.importDone });
-    dispatch({ type: 'setContributorsLoaded', payload: false });
   }
 
   function abortToggle() {
@@ -565,8 +565,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'setContributorsLoaded', payload: false });
   }
 
-  function toggleDialog() {
-    setDialogOpen(false);
+  function handleCloseConfirmImportDialog() {
+    setIsConfirmDialogOpen(false);
   }
 
   function toggleAbortDialog() {
@@ -581,7 +581,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     getJournals(searchString).then();
   }
 
-  function emptyArr() {
+  function emptyGlobalFormErrors() {
     dispatch({ type: 'setFormErrors', payload: [] });
   }
 
@@ -634,11 +634,11 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   return (
     <>
-      {fatalError ? (
-        <Typography color="error">Noe gikk galt {fatalError.message}</Typography>
+      {fetchDataError ? (
+        <Typography color="error">Noe gikk galt. {fetchDataError.message}</Typography>
       ) : (
         <div>
-          <StyledModal isOpen={isComparePublicationDataModalOpen} size="lg">
+          <StyledModal isOpen={isComparePublicationDataModalOpen} size="lg" data-testid="compare-modal">
             <ModalBody>
               <StyledFormWrapper>
                 <StyledHeaderLineWrapper>
@@ -968,7 +968,14 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                   Vis bidragsytere
                 </Button>
               </StyledOpenContributorsButtonWrapper>
-              {state.contributorErrors.length >= 1 ? <ErrorMessage /> : ''}
+              <StyledErrorMessageWrapper>
+                {state.contributorErrors.length >= 1 && <ContributorErrorMessage />}
+                {importPublicationError && (
+                  <Typography color="error" data-testid="import-publication-errors">
+                    {importPublicationError.message}
+                  </Typography>
+                )}
+              </StyledErrorMessageWrapper>
             </ModalBody>
 
             <ModalFooter>
@@ -985,7 +992,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 </Grid>
                 <Grid item>
                   <Button
-                    onClick={handleAbortDialogClose}
+                    onClick={handleAbort}
                     variant="outlined"
                     color="secondary"
                     data-testid="import-publication-cancel-button">
@@ -1011,7 +1018,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             </ModalFooter>
           </StyledModal>
           <ConfirmDialog
-            doFunction={emptyArr}
+            doFunction={emptyGlobalFormErrors}
             title={'Avbryt import'}
             text={
               'Er du sikker på at du vil lukke denne publikasjonen? Endringer vil bli lagret fram til man åpner en ny publikasjon'
@@ -1020,10 +1027,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             handleClose={abortToggle}
             handleCloseDialog={toggleAbortDialog}
           />
-          <ConfirmationDialog
-            open={dialogOpen}
-            handleClose={confirmImportToCristin}
-            handleCloseDialog={toggleDialog}
+          <ConfirmImportDialog
+            open={isConfirmDialogOpen}
+            handleClose={handlePublicationImported}
+            handleCloseDialog={handleCloseConfirmImportDialog}
             data={importPublication}
             duplicate={isDuplicate}
           />
