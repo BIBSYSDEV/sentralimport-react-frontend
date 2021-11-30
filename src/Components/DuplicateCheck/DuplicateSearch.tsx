@@ -122,7 +122,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
               value={SelectValues.TOGGLE_RELEVANT}
               control={<Radio />}
               label={relevantStatus ? 'Marker som ikke aktuell' : 'Marker som aktuell'}
-              disabled={importPublication.cristin_id}
+              disabled={!!importPublication.cristin_id}
             />
           </div>
           <div>
@@ -130,7 +130,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
               value={SelectValues.CREATE_NEW}
               control={<Radio />}
               label="Opprett ny cristin-publikasjon basert på importpublikasjon"
-              disabled={importPublication.cristin_id}
+              disabled={!!importPublication.cristin_id}
             />
           </div>
         </RadioGroup>
