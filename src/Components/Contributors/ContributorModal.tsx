@@ -75,7 +75,6 @@ async function replaceNonCristinInstitutions(
 }
 
 async function searchCristinPersons(authors: ImportPublicationPerson[]) {
-  debugger;
   let unitNameCache = new Map();
   let institutionNameCache = new Map();
   const suggestedAuthors = [];
