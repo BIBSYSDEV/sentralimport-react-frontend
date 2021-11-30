@@ -7,12 +7,19 @@ interface ClosingDialogProps {
   handleClose: any;
   title: string;
   text: string;
-  doFunction: any;
+  handleConfirmButtonClick: any;
   handleCloseDialog: any;
 }
 
 //TODO: denne kan nok byttes ut med en Alert fra materiualUi for begge brukstilfellene
-const ClosingDialog: FC<ClosingDialogProps> = ({ open, handleClose, title, text, doFunction, handleCloseDialog }) => {
+const ClosingDialog: FC<ClosingDialogProps> = ({
+  open,
+  handleClose,
+  title,
+  text,
+  handleConfirmButtonClick,
+  handleCloseDialog,
+}) => {
   const { state } = useContext(Context);
 
   return (
@@ -29,7 +36,7 @@ const ClosingDialog: FC<ClosingDialogProps> = ({ open, handleClose, title, text,
           color="primary"
           variant="contained"
           onClick={() => {
-            doFunction(state.param);
+            handleConfirmButtonClick(state.param);
             handleClose();
           }}>
           Ja
