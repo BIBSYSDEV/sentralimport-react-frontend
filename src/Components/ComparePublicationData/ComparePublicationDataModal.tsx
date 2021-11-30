@@ -1003,7 +1003,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                   <Button
                     disabled={
                       state.formErrors.length >= 1 ||
-                      importPublication?.cristin_id ||
+                      !!importPublication?.cristin_id ||
                       state.contributorErrors.length >= 1 ||
                       !state.contributorsLoaded
                     }
