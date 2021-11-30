@@ -78,7 +78,7 @@ export async function searchChristinPublications(
       SearchLanguage.Nb
     );
     cristinPublications[i].authors = contributorsResponse.data;
-    cristinPublications[i].authorTotalCount = +contributorsResponse.headers['x-total-count']; //todo feilhåndtering
+    cristinPublications[i].authorTotalCount = +contributorsResponse.headers['x-total-count']; //todo feilhåndtering trengs virkelig
   }
   return {
     cristinPublications: cristinPublications,

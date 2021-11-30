@@ -10,7 +10,7 @@ const StyledActionWrapper = styled.div`
   margin-top: 1rem;
 `;
 
-interface AffiliationDisplay {
+interface AffiliationDisplayType {
   units: string[];
   institutionName: string;
   countryCode: string;
@@ -23,7 +23,7 @@ interface ContributorOrderComponentProps {
 
 const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, handleChooseAuthor }) => {
   //UnitName is a string of departments split by ";", most important unit last.
-  const affiliations: AffiliationDisplay[] = row.imported.affiliations
+  const affiliations: AffiliationDisplayType[] = row.imported.affiliations
     ? row.imported.affiliations
         .slice()
         .sort((affiliationA, affiliationB) => {
