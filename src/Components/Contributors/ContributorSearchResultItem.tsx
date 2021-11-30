@@ -21,10 +21,10 @@ const StyledNotVerifiedBadge = styled(NotVerifiedBadge)`
   width: 1.7rem;
   height: 1.7rem;
   & path {
-    fill: ${Colors.Text.OPAQUE_30_BLACK};
+    fill: ${Colors.Text.OPAQUE_41_BLACK};
   }
   & circle {
-    fill: ${Colors.Text.OPAQUE_30_BLACK};
+    fill: ${Colors.Text.OPAQUE_41_BLACK};
   }
 `;
 
@@ -33,10 +33,10 @@ const StyledUnknownVerifiedBadge = styled(UnknownVerifiedBadge)`
   width: 1.7rem;
   height: 1.7rem;
   & path {
-    fill: ${Colors.Text.OPAQUE_30_BLACK};
+    fill: ${Colors.Text.OPAQUE_41_BLACK};
   }
   & ellipse {
-    fill: ${Colors.Text.OPAQUE_30_BLACK};
+    fill: ${Colors.Text.OPAQUE_41_BLACK};
   }
 `;
 
@@ -61,7 +61,7 @@ const StyledActivePersonNameTypography = styled(Typography)`
 `;
 
 const StyledInactivePersonNameTypography = styled(Typography)`
-  color: ${Colors.Text.OPAQUE_30_BLACK};
+  color: ${Colors.Text.OPAQUE_41_BLACK};
 `;
 
 interface ContributorSearchResultItemProps {
@@ -101,13 +101,13 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({ con
           }`}
         </StyledInactivePersonNameTypography>
       )}
-      {contributor.affiliations?.map((affiliation: any, h: number) => (
+      {contributor.affiliations?.map((affiliation, affiliationIndex) => (
         <StyledAffiliationsWrapper
           data-testid={`list-item-author-${contributor.cristin_person_id}-affiliations-${affiliation.cristinInstitutionNr}`}
-          key={h}>
+          key={affiliationIndex}>
           {affiliation.institutionName}
           {affiliation.units &&
-            affiliation.units.map((unit: any, i: number) => <div key={i}>&bull; {unit.unitName}</div>)}
+            affiliation.units.map((unit, unitIndex) => <div key={unitIndex}>&bull; {unit.unitName}</div>)}
         </StyledAffiliationsWrapper>
       ))}
 

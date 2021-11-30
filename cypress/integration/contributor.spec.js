@@ -17,8 +17,6 @@ context('contributor', () => {
     cy.visit('/');
   });
 
-  /*
-
   it('shows contributor-list', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
@@ -157,11 +155,9 @@ context('contributor', () => {
     );
   });
 
-   */
-
   it('displays verified and unverified contributors differently', () => {
     //active contributors are defined as person with identified_cristin_person = true AND atleast one active affiliation.
-    //getContributors may respond with not-authorized, in which case it is not possible to know whether or not a contributor is verified
+    //getPersonDetailed may respond with not-authorized, in which case it is not possible to assert whether or not a contributor is verified
     const VerifiedText = 'Verifisert';
     const notVerifiedText = 'Ikke verifisert';
     const unknownVerificationText = 'Ukjent verifikasjonsstatus';
@@ -183,7 +179,7 @@ context('contributor', () => {
     cy.get(`[data-testid="author-name-${cristinIDWithoutActiveAffiliation}"]`).should(
       'have.css',
       'color',
-      Colors.Text.OPAQUE_30_BLACK
+      Colors.Text.OPAQUE_41_BLACK
     );
     cy.get(`[data-testid="author-name-${cristinIdForbiddenPerson}-uknown-verified-badge"]`)
       .children('title')
@@ -191,7 +187,7 @@ context('contributor', () => {
     cy.get(`[data-testid="author-name-${cristinIdForbiddenPerson}"]`).should(
       'have.css',
       'color',
-      Colors.Text.OPAQUE_30_BLACK
+      Colors.Text.OPAQUE_41_BLACK
     );
   });
 });
