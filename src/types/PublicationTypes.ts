@@ -58,6 +58,8 @@ export interface Language {
   lang: string;
   original: boolean;
   title: string;
+  langName?: string;
+  summary?: string;
 }
 
 export const emptyImportPublication: ImportPublication = {

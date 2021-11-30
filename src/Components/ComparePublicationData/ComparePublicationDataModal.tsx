@@ -21,6 +21,10 @@ import { Colors } from '../../assets/styles/StyleConstants';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
 import { getCategories, getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
+import { Form, Formik } from 'formik';
+import * as Yup from 'yup';
+import { StyledLineImportValue, StyledLineLabelTypography, StyledLineWrapper } from './CompareFormWrappers';
+import CompareFormTitle from './CompareFormTitle';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -54,17 +58,6 @@ const StyledErrorMessage = styled.div`
   padding-bottom: 10px;
 `;
 
-const StyledLineWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 0.5rem;
-  :nth-of-type(2n) {
-    background-color: ${Colors.LIGHT_GREY};
-  }
-`;
-
 const StyledHeaderLineWrapper = styled(StyledLineWrapper)`
   color: ${Colors.PURPLE};
 
@@ -82,19 +75,6 @@ const StyledOpenContributorsButtonWrapper = styled.div`
 
 const StyledLineHeader = styled(Typography)`
   min-width: 20rem;
-  width: 40%;
-`;
-
-const StyledLineLabelTypography: any = styled(Typography)`
-  min-width: 10rem;
-  width: 10%;
-  && {
-    font-weight: bold;
-  }
-`;
-
-const StyledLineImportValue = styled.div`
-  min-width: 10rem;
   width: 40%;
 `;
 
@@ -123,6 +103,10 @@ interface ComparePublicationDataModalProps {
 
 //TODO: tidsskrift id er ikke med i duplikat. må derfor matche på issn i stedet?
 
+export interface compareFormValuesType {
+  title: string;
+}
+
 const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   isComparePublicationDataModalOpen,
   handleComparePublicationDataModalClose,
@@ -138,9 +122,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     .languages.sort((a: any, b: any) => a.original - b.original)
     .reverse();
   const [languages, setLanguages] = useState(sortedLanguagesFromImportPublication);
-  const [selectedLang, setSelectedLang] = useState<Language | undefined>(
-    importPublication.languages.filter((lang: any) => lang.original)[0]
-  );
+  const originalImportLanguage = importPublication.languages?.find((lang: Language) => lang.original);
+  const [selectedLang, setSelectedLang] = useState<Language | undefined>(originalImportLanguage);
   const [allContributorsFetched, setAllContributorsFetched] = useState(false);
   const [kilde, setKilde] = useState('');
   const [kildeId, setKildeId] = useState('');
@@ -406,18 +389,19 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'setValidation', payload: option.label });
   }
 
-  function handleChangeTittel(event: any) {
-    if (languages && selectedLang) {
-      const index = languages.map((lang: any) => lang.lang).indexOf(selectedLang.lang);
-      setSelectedLang({ ...selectedLang, title: event.target.value });
-      if (languages[index]) {
-        languages[index].title = event.target.value;
-      }
-      setLanguages(languages);
-      dispatch({ type: 'setSelectedField', payload: 'tittel' });
-      dispatch({ type: 'setValidation', payload: event.target.value });
-    }
-  }
+  // function handleTitleBlur(event) {
+  //   console.log('EVERY TIME I CLICK!');
+  //   if (languages && selectedLang) {
+  //     const index = languages.map((lang: any) => lang.lang).indexOf(selectedLang.lang);
+  //     setSelectedLang({ ...selectedLang, title: event.target.value });
+  //     if (languages[index]) {
+  //       languages[index].title = event.target.value;
+  //     }
+  //     setLanguages(languages);
+  //     dispatch({ type: 'setSelectedField', payload: 'tittel' });
+  //     dispatch({ type: 'setValidation', payload: event.target.value });
+  //   }
+  // }
 
   function handleChangeAarstall(event: any) {
     setAarstall(event.target.value);
@@ -455,7 +439,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     publishingDetails && setPublishingDetails({ ...publishingDetails, pageTo: event.target.value });
   }
 
-  function handleSubmit() {
+  function handleFormSubmit() {
     setImportPublicationError(undefined);
     saveToLocalStorage();
     if (state.contributors === null) {
@@ -478,19 +462,19 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'setValidation', payload: newJournal.title });
   };
 
-  const copyTittel = () => {
-    if (languages && importPublication.languages && selectedLang) {
-      const originalTitle = importPublication.languages.filter((lang: any) => lang.lang === selectedLang.lang)[0].title;
-      setSelectedLang({ ...selectedLang, title: originalTitle });
-      const index = languages.map((lang: any) => lang.lang).indexOf(selectedLang.lang);
-      languages[index].title = importPublication.languages.filter(
-        (lang: any) => lang.lang === selectedLang.lang
-      )[0].title;
-      setLanguages(languages);
-      dispatch({ type: 'setSelectedField', payload: 'tittel' });
-      dispatch({ type: 'setValidation', payload: importPublication.languages[0].title });
-    }
-  };
+  // const copyTittel = () => {
+  //   if (languages && importPublication.languages && selectedLang) {
+  //     const originalTitle = importPublication.languages.filter((lang: any) => lang.lang === selectedLang.lang)[0].title;
+  //     setSelectedLang({ ...selectedLang, title: originalTitle });
+  //     const index = languages.map((lang: any) => lang.lang).indexOf(selectedLang.lang);
+  //     languages[index].title = importPublication.languages.filter(
+  //       (lang: any) => lang.lang === selectedLang.lang
+  //     )[0].title;
+  //     setLanguages(languages);
+  //     dispatch({ type: 'setSelectedField', payload: 'tittel' });
+  //     dispatch({ type: 'setValidation', payload: importPublication.languages[0].title });
+  //   }
+  // };
 
   const copyAarstall = () => {
     if (importPublication.yearPublished) {
@@ -641,6 +625,23 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     return tempMonth + ' ' + tempDay + ', ' + tempYear;
   }
 
+  const formValidationSchema = Yup.object().shape({
+    title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
+  });
+
+  const formValues: compareFormValuesType = {
+    title: selectedLang?.title ?? '',
+  };
+
+  const NewAndImprovedHandleFormSubmit = () => {
+    saveToLocalStorage(); //tja ?
+    // if (state.contributors === null) {
+    //   dispatch({ type: 'contributors', payload: contributors });
+    // }
+    setIsConfirmDialogOpen(true);
+    //sette formValues som parameter i confirmdialogOpen
+  };
+
   return (
     <>
       {fetchDataError ? (
@@ -650,325 +651,316 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           <StyledModal isOpen={isComparePublicationDataModalOpen} size="lg" data-testid="compare-modal">
             <ModalBody>
               <StyledFormWrapper>
-                <StyledHeaderLineWrapper>
-                  <StyledLineLabelTypography />
-                  <StyledLineHeader variant="h4">Import-publikasjon</StyledLineHeader>
-                  <StyledActionButtonsPlaceHolder />
-                  <StyledLineHeader variant="h4">Cristin-publikasjon</StyledLineHeader>
-                </StyledHeaderLineWrapper>
+                <Formik
+                  onSubmit={NewAndImprovedHandleFormSubmit}
+                  initialValues={formValues}
+                  validationSchema={formValidationSchema}>
+                  {({ isValid }) => (
+                    <Form>
+                      <StyledHeaderLineWrapper>
+                        <StyledLineLabelTypography />
+                        <StyledLineHeader variant="h4">Import-publikasjon</StyledLineHeader>
+                        <StyledActionButtonsPlaceHolder />
+                        <StyledLineHeader variant="h4">Cristin-publikasjon</StyledLineHeader>
+                      </StyledHeaderLineWrapper>
 
-                <StyledLineWrapper>
-                  <StyledLineLabelTypography>Publication id</StyledLineLabelTypography>
-                  <StyledLineImportValue>
-                    <StyledDisabledTypography data-testid="importdata-pubid">
-                      {importPublication.pubId}
-                    </StyledDisabledTypography>
-                  </StyledLineImportValue>
-                  <StyledActionButtonsPlaceHolder />
-                  <StyledLineCristinValue>
-                    <StyledDisabledTypography data-testid="cristindata-id">
-                      {isDuplicate ? cristinPublication.cristin_result_id : 'Ingen Cristin-Id'}
-                    </StyledDisabledTypography>
-                  </StyledLineCristinValue>
-                </StyledLineWrapper>
+                      <StyledLineWrapper>
+                        <StyledLineLabelTypography>Publication id</StyledLineLabelTypography>
+                        <StyledLineImportValue>
+                          <StyledDisabledTypography data-testid="importdata-pubid">
+                            {importPublication.pubId}
+                          </StyledDisabledTypography>
+                        </StyledLineImportValue>
+                        <StyledActionButtonsPlaceHolder />
+                        <StyledLineCristinValue>
+                          <StyledDisabledTypography data-testid="cristindata-id">
+                            {isDuplicate ? cristinPublication.cristin_result_id : 'Ingen Cristin-Id'}
+                          </StyledDisabledTypography>
+                        </StyledLineCristinValue>
+                      </StyledLineWrapper>
 
-                <StyledLineWrapper>
-                  <StyledLineLabelTypography>Dato registrert</StyledLineLabelTypography>
-                  <StyledLineImportValue>
-                    <StyledDisabledTypography data-testid="importdata-date-registered">
-                      {importPublication.registered}
-                    </StyledDisabledTypography>
-                  </StyledLineImportValue>
-                  <StyledActionButtonsPlaceHolder />
-                  <StyledLineCristinValue data-testid="cristindata-created">
-                    <StyledDisabledTypography>
-                      {isDuplicate ? formatDate(cristinPublication.created.date.substring(0, 10)) : '-'}
-                    </StyledDisabledTypography>
-                  </StyledLineCristinValue>
-                </StyledLineWrapper>
+                      <StyledLineWrapper>
+                        <StyledLineLabelTypography>Dato registrert</StyledLineLabelTypography>
+                        <StyledLineImportValue>
+                          <StyledDisabledTypography data-testid="importdata-date-registered">
+                            {importPublication.registered}
+                          </StyledDisabledTypography>
+                        </StyledLineImportValue>
+                        <StyledActionButtonsPlaceHolder />
+                        <StyledLineCristinValue data-testid="cristindata-created">
+                          <StyledDisabledTypography>
+                            {isDuplicate ? formatDate(cristinPublication.created.date.substring(0, 10)) : '-'}
+                          </StyledDisabledTypography>
+                        </StyledLineCristinValue>
+                      </StyledLineWrapper>
 
-                <StyledLineWrapper>
-                  <StyledLineLabelTypography>Kilde</StyledLineLabelTypography>
-                  <StyledLineImportValue>
-                    <Typography data-testid="importdata-source">
-                      {importPublication.sourceName} ({importPublication.externalId})
-                    </Typography>
-                  </StyledLineImportValue>
-                  <StyledActionButtonsPlaceHolder />
-                  <StyledLineCristinValue>
-                    <StyledDisabledTypography data-testid="cristindata-source">
-                      {kilde} ({kildeId})
-                    </StyledDisabledTypography>
-                  </StyledLineCristinValue>
-                </StyledLineWrapper>
+                      <StyledLineWrapper>
+                        <StyledLineLabelTypography>Kilde</StyledLineLabelTypography>
+                        <StyledLineImportValue>
+                          <Typography data-testid="importdata-source">
+                            {importPublication.sourceName} ({importPublication.externalId})
+                          </Typography>
+                        </StyledLineImportValue>
+                        <StyledActionButtonsPlaceHolder />
+                        <StyledLineCristinValue>
+                          <StyledDisabledTypography data-testid="cristindata-source">
+                            {kilde} ({kildeId})
+                          </StyledDisabledTypography>
+                        </StyledLineCristinValue>
+                      </StyledLineWrapper>
 
-                <StyledLineWrapper>
-                  <StyledLineLabelTypography>Språk</StyledLineLabelTypography>
-                  <StyledLineImportValue>
-                    <Typography data-testid="importdata-lang">{selectedLang?.lang}</Typography>
-                  </StyledLineImportValue>
-                  <StyledActionButtonsPlaceHolder />
-                  <StyledLineCristinValue>
-                    <ButtonGroup
-                      data-testid="cristindata-lang-buttongroup"
-                      className={`buttonGroup`}
-                      size="small"
-                      aria-label="language buttons">
-                      {languages.map((lang: any, index: number) => (
-                        <Button
-                          key={index}
-                          variant="outlined"
-                          className={selectedLang === lang ? `selected` : ``}
-                          onClick={() => handleSelectedLang(lang)}>
-                          {lang.lang}
-                        </Button>
-                      ))}
-                    </ButtonGroup>
-                  </StyledLineCristinValue>
-                </StyledLineWrapper>
+                      <StyledLineWrapper>
+                        <StyledLineLabelTypography>Språk</StyledLineLabelTypography>
+                        <StyledLineImportValue>
+                          <Typography data-testid="importdata-lang">{selectedLang?.lang}</Typography>
+                        </StyledLineImportValue>
+                        <StyledActionButtonsPlaceHolder />
+                        <StyledLineCristinValue>
+                          <ButtonGroup
+                            data-testid="cristindata-lang-buttongroup"
+                            className={`buttonGroup`}
+                            size="small"
+                            aria-label="language buttons">
+                            {languages.map((lang: any, index: number) => (
+                              <Button
+                                key={index}
+                                variant="outlined"
+                                className={selectedLang === lang ? `selected` : ``}
+                                onClick={() => handleSelectedLang(lang)}>
+                                {lang.lang}
+                              </Button>
+                            ))}
+                          </ButtonGroup>
+                        </StyledLineCristinValue>
+                      </StyledLineWrapper>
 
-                <StyledLineWrapper>
-                  <StyledLineLabelTypography htmlFor="Cristin-tittel">Tittel</StyledLineLabelTypography>
-                  <StyledLineImportValue>
-                    <Typography data-testid="importdata-title">
-                      {
-                        sortedLanguagesFromImportPublication?.filter(
-                          (lang: any) => lang?.lang === selectedLang?.lang
-                        )[0]?.title
-                      }
-                    </Typography>
-                  </StyledLineImportValue>
-                  <ActionButtons
-                    isImportAndCristinEqual={
-                      sortedLanguagesFromImportPublication?.filter((lang: any) => lang?.lang === selectedLang?.lang)[0]
-                        ?.title === selectedLang?.title
-                    }
-                    isCopyBottonDisabled={!importPublication.languages}
-                    copyCommand={copyTittel}
-                  />
-                  <StyledLineCristinValue>
-                    <TextField
-                      data-testid="cristindata-title-textfield"
-                      id="Cristin-tittel"
-                      name="title"
-                      value={selectedLang?.title}
-                      onChange={handleChangeTittel}
-                      required
-                      multiline
-                      fullWidth
-                      error={selectedLang && selectedLang.title?.length < 6}
-                      helperText={selectedLang && selectedLang.title?.length < 6 ? 'Tittel er for kort/mangler' : ''}
-                    />
-                  </StyledLineCristinValue>
-                </StyledLineWrapper>
+                      <CompareFormTitle importPublication={importPublication} selectedLang={selectedLang} />
 
-                <StyledLineWrapper>
-                  <StyledLineLabelTypography htmlFor="cristindata-journal">Tidsskrift</StyledLineLabelTypography>
-                  <StyledLineImportValue>
-                    <Typography data-testid="importdata-journal-title">{importPublication.channel?.title}</Typography>
-                  </StyledLineImportValue>
-                  <ActionButtons
-                    isImportAndCristinEqual={
-                      selectedJournal.value === importPublication.channel?.cristinTidsskriftNr?.toString()
-                    }
-                    isCopyBottonDisabled={!importPublication.channel?.title}
-                    copyCommand={copyJournal}
-                  />
-                  <StyledLineCristinValue>
-                    <>
-                      <Select
-                        data-testid="cristindata-journal-select"
-                        id="cristindata-journal"
-                        aria-label="Tidsskrift-select"
-                        placeholder="Søk på tidsskrift"
-                        name="journalSelect"
-                        options={journals}
-                        value={selectedJournal}
-                        className="basic-select"
-                        classNamePrefix="select"
-                        onChange={handleChangeJournal}
-                        onInputChange={searchJournals}
-                      />
-                      {selectedJournal.label === 'Ingen tidsskrift funnet' && (
-                        <StyledErrorMessage>
-                          <CommonErrorMessage datatestid="journal-missing-error" errorMessage="Tidsskrift mangler" />
-                        </StyledErrorMessage>
+                      <StyledLineWrapper>
+                        <StyledLineLabelTypography htmlFor="cristindata-journal">Tidsskrift</StyledLineLabelTypography>
+                        <StyledLineImportValue>
+                          <Typography data-testid="importdata-journal-title">
+                            {importPublication.channel?.title}
+                          </Typography>
+                        </StyledLineImportValue>
+                        <ActionButtons
+                          isImportAndCristinEqual={
+                            selectedJournal.value === importPublication.channel?.cristinTidsskriftNr?.toString()
+                          }
+                          isCopyBottonDisabled={!importPublication.channel?.title}
+                          copyCommand={copyJournal}
+                        />
+                        <StyledLineCristinValue>
+                          <>
+                            <Select
+                              data-testid="cristindata-journal-select"
+                              id="cristindata-journal"
+                              aria-label="Tidsskrift-select"
+                              placeholder="Søk på tidsskrift"
+                              name="journalSelect"
+                              options={journals}
+                              value={selectedJournal}
+                              className="basic-select"
+                              classNamePrefix="select"
+                              onChange={handleChangeJournal}
+                              onInputChange={searchJournals}
+                            />
+                            {selectedJournal.label === 'Ingen tidsskrift funnet' && (
+                              <StyledErrorMessage>
+                                <CommonErrorMessage
+                                  datatestid="journal-missing-error"
+                                  errorMessage="Tidsskrift mangler"
+                                />
+                              </StyledErrorMessage>
+                            )}
+                          </>
+                          <CreateJournalPanel handleCreateJournal={handleNewJournal} />
+                        </StyledLineCristinValue>
+                      </StyledLineWrapper>
+
+                      <StyledLineWrapper>
+                        <StyledLineLabelTypography>DOI</StyledLineLabelTypography>
+                        <StyledLineImportValue>
+                          <Typography data-testid="importdata-doi">
+                            {importPublication.doi ? (
+                              <a
+                                href={'https://doi.org/' + importPublication.doi}
+                                target="_blank"
+                                rel="noopener noreferrer">
+                                {importPublication.doi}
+                              </a>
+                            ) : (
+                              'Ingen DOI funnet'
+                            )}
+                          </Typography>
+                        </StyledLineImportValue>
+                        <ActionButtons
+                          isImportAndCristinEqual={doi === importPublication.doi}
+                          isCopyBottonDisabled={!importPublication.doi}
+                          copyCommand={copyDoi}
+                        />
+                        <StyledLineCristinValue>
+                          <FormControl fullWidth>
+                            <TextField
+                              id="Cristin-doi"
+                              placeholder="DOI"
+                              value={doi}
+                              data-testid="cristindata-doi-textfield"
+                              onChange={(event: any) => handleChangeDoi(event)}
+                              margin="normal"
+                              error={!doi?.match(doiMatcher)}
+                              helperText={doi && !doi.match(doiMatcher) ? 'Doi har galt format' : ''}
+                            />
+                          </FormControl>
+                        </StyledLineCristinValue>
+                      </StyledLineWrapper>
+
+                      <StyledLineWrapper>
+                        <StyledLineLabelTypography htmlFor="cristindata-year">Årstall</StyledLineLabelTypography>
+                        <StyledLineImportValue>
+                          <Typography data-testid="importdata-year">{importPublication.yearPublished}</Typography>
+                        </StyledLineImportValue>
+                        <ActionButtons
+                          isImportAndCristinEqual={+aarstall === +importPublication.yearPublished}
+                          isCopyBottonDisabled={!importPublication.yearPublished}
+                          copyCommand={copyAarstall}
+                        />
+                        <StyledLineCristinValue>
+                          <TextField
+                            id="cristindata-year"
+                            data-testid="cristindata-year-textfield"
+                            value={aarstall}
+                            onChange={handleChangeAarstall}
+                            margin="normal"
+                            required
+                            error={
+                              aarstall.toString().length !== 4 || !(parseInt(aarstall) <= new Date().getFullYear())
+                            }
+                            helperText={
+                              aarstall.toString().length !== 4 ||
+                              (!(parseInt(aarstall) <= new Date().getFullYear())
+                                ? 'Årstall kan ikke være i framtiden eller før år 1000'
+                                : '')
+                            }
+                          />
+                        </StyledLineCristinValue>
+                      </StyledLineWrapper>
+
+                      <StyledLineWrapper>
+                        <StyledLineLabelTypography htmlFor="cristindata-category">Kategori</StyledLineLabelTypography>
+                        <StyledLineImportValue>
+                          <Typography data-testid="importdata-category">{importPublication.categoryName}</Typography>
+                        </StyledLineImportValue>
+                        <ActionButtons
+                          isImportAndCristinEqual={selectedCategory.label === importPublication.categoryName}
+                          isCopyBottonDisabled={!importPublication.categoryName}
+                          copyCommand={copyCategory}
+                        />
+                        <StyledLineCristinValue data-testid="cristindata-category-select">
+                          <Select
+                            id="cristindata-category"
+                            aria-label="Kategori"
+                            placeholder="Søk på kategori"
+                            name="categorySelect"
+                            options={categories}
+                            value={selectedCategory}
+                            className="basic-select"
+                            classNamePrefix="select"
+                            onChange={handleChangeCategory}
+                          />
+                        </StyledLineCristinValue>
+                      </StyledLineWrapper>
+
+                      <StyledLineWrapper>
+                        <StyledLineLabelTypography>Volum</StyledLineLabelTypography>
+                        <StyledLineImportValue>
+                          <Typography data-testid="importdata-volume">{importPublication.channel?.volume}</Typography>
+                        </StyledLineImportValue>
+                        <ActionButtons
+                          isImportAndCristinEqual={importPublication.channel?.volume === publishingDetails?.volume}
+                          isCopyBottonDisabled={!importPublication.channel?.volume}
+                          copyCommand={copyVolume}
+                        />
+                        <StyledLineCristinValue>
+                          <TextField
+                            data-testid="cristindata-volume-textfield"
+                            id="cristindata-volume"
+                            placeholder="Volum"
+                            value={publishingDetails && publishingDetails.volume}
+                            margin="normal"
+                            onChange={handleChangeVolume}
+                          />
+                        </StyledLineCristinValue>
+                      </StyledLineWrapper>
+
+                      <StyledLineWrapper>
+                        <StyledLineLabelTypography>Hefte</StyledLineLabelTypography>
+                        <StyledLineImportValue>
+                          <Typography data-testid="importdata-issue">{importPublication.channel?.issue}</Typography>
+                        </StyledLineImportValue>
+                        <ActionButtons
+                          isImportAndCristinEqual={importPublication.channel?.issue === publishingDetails?.issue}
+                          isCopyBottonDisabled={!importPublication.channel?.issue}
+                          copyCommand={copyIssue}
+                        />
+                        <StyledLineCristinValue>
+                          <TextField
+                            id="Cristin-hefte"
+                            data-testid="cristindata-issue-textfield"
+                            placeholder="Hefte"
+                            value={publishingDetails && publishingDetails.issue}
+                            margin="normal"
+                            onChange={handleChangeIssue}
+                          />
+                        </StyledLineCristinValue>
+                      </StyledLineWrapper>
+
+                      <StyledLineWrapper>
+                        <StyledLineLabelTypography>Sider</StyledLineLabelTypography>
+                        <StyledLineImportValue>
+                          <Typography data-testid="importdata-pages">
+                            {importPublication.channel?.pageFrom && `Fra: ${importPublication.channel.pageFrom}`}
+                            {importPublication.channel?.pageTo && ` Til: ${importPublication.channel.pageTo}`}
+                          </Typography>
+                        </StyledLineImportValue>
+                        <ActionButtons
+                          isImportAndCristinEqual={
+                            importPublication.channel?.pageFrom === publishingDetails?.pageFrom &&
+                            importPublication.channel?.pageTo === publishingDetails?.pageTo
+                          }
+                          isCopyBottonDisabled={
+                            !(importPublication.channel?.pageFrom || importPublication.channel?.pageTo)
+                          }
+                          copyCommand={copyPages}
+                        />
+                        <StyledLineCristinValue>
+                          <div style={{ display: 'flex' }}>
+                            <TextField
+                              placeholder="Side fra"
+                              data-testid="cristindata-pagefrom-textfield"
+                              id="pageFromCristin"
+                              value={publishingDetails ? publishingDetails.pageFrom : ''}
+                              onChange={handleChangePageFrom}
+                            />
+                            <TextField
+                              placeholder="Side til"
+                              data-testid="cristindata-pageto-textfield"
+                              id="pageToCristin"
+                              value={publishingDetails ? publishingDetails.pageTo : ''}
+                              onChange={handleChangePageTo}
+                              style={{ marginLeft: '2rem' }}
+                            />
+                          </div>
+                        </StyledLineCristinValue>
+                      </StyledLineWrapper>
+
+                      {!isValid && (
+                        <CommonErrorMessage datatestid="compare-form-error" errorMessage="Det er feil i skjema" />
                       )}
-                    </>
-                    <CreateJournalPanel handleCreateJournal={handleNewJournal} />
-                  </StyledLineCristinValue>
-                </StyledLineWrapper>
-
-                <StyledLineWrapper>
-                  <StyledLineLabelTypography>DOI</StyledLineLabelTypography>
-                  <StyledLineImportValue>
-                    <Typography data-testid="importdata-doi">
-                      {importPublication.doi ? (
-                        <a href={'https://doi.org/' + importPublication.doi} target="_blank" rel="noopener noreferrer">
-                          {importPublication.doi}
-                        </a>
-                      ) : (
-                        'Ingen DOI funnet'
-                      )}
-                    </Typography>
-                  </StyledLineImportValue>
-                  <ActionButtons
-                    isImportAndCristinEqual={doi === importPublication.doi}
-                    isCopyBottonDisabled={!importPublication.doi}
-                    copyCommand={copyDoi}
-                  />
-                  <StyledLineCristinValue>
-                    <FormControl fullWidth>
-                      <TextField
-                        id="Cristin-doi"
-                        placeholder="DOI"
-                        value={doi}
-                        data-testid="cristindata-doi-textfield"
-                        onChange={(event: any) => handleChangeDoi(event)}
-                        margin="normal"
-                        error={!doi?.match(doiMatcher)}
-                        helperText={doi && !doi.match(doiMatcher) ? 'Doi har galt format' : ''}
-                      />
-                    </FormControl>
-                  </StyledLineCristinValue>
-                </StyledLineWrapper>
-
-                <StyledLineWrapper>
-                  <StyledLineLabelTypography htmlFor="cristindata-year">Årstall</StyledLineLabelTypography>
-                  <StyledLineImportValue>
-                    <Typography data-testid="importdata-year">{importPublication.yearPublished}</Typography>
-                  </StyledLineImportValue>
-                  <ActionButtons
-                    isImportAndCristinEqual={+aarstall === +importPublication.yearPublished}
-                    isCopyBottonDisabled={!importPublication.yearPublished}
-                    copyCommand={copyAarstall}
-                  />
-                  <StyledLineCristinValue>
-                    <TextField
-                      id="cristindata-year"
-                      data-testid="cristindata-year-textfield"
-                      value={aarstall}
-                      onChange={handleChangeAarstall}
-                      margin="normal"
-                      required
-                      error={aarstall.toString().length !== 4 || !(parseInt(aarstall) <= new Date().getFullYear())}
-                      helperText={
-                        aarstall.toString().length !== 4 ||
-                        (!(parseInt(aarstall) <= new Date().getFullYear())
-                          ? 'Årstall kan ikke være i framtiden eller før år 1000'
-                          : '')
-                      }
-                    />
-                  </StyledLineCristinValue>
-                </StyledLineWrapper>
-
-                <StyledLineWrapper>
-                  <StyledLineLabelTypography htmlFor="cristindata-category">Kategori</StyledLineLabelTypography>
-                  <StyledLineImportValue>
-                    <Typography data-testid="importdata-category">{importPublication.categoryName}</Typography>
-                  </StyledLineImportValue>
-                  <ActionButtons
-                    isImportAndCristinEqual={selectedCategory.label === importPublication.categoryName}
-                    isCopyBottonDisabled={!importPublication.categoryName}
-                    copyCommand={copyCategory}
-                  />
-                  <StyledLineCristinValue data-testid="cristindata-category-select">
-                    <Select
-                      id="cristindata-category"
-                      aria-label="Kategori"
-                      placeholder="Søk på kategori"
-                      name="categorySelect"
-                      options={categories}
-                      value={selectedCategory}
-                      className="basic-select"
-                      classNamePrefix="select"
-                      onChange={handleChangeCategory}
-                    />
-                  </StyledLineCristinValue>
-                </StyledLineWrapper>
-
-                <StyledLineWrapper>
-                  <StyledLineLabelTypography>Volum</StyledLineLabelTypography>
-                  <StyledLineImportValue>
-                    <Typography data-testid="importdata-volume">{importPublication.channel?.volume}</Typography>
-                  </StyledLineImportValue>
-                  <ActionButtons
-                    isImportAndCristinEqual={importPublication.channel?.volume === publishingDetails?.volume}
-                    isCopyBottonDisabled={!importPublication.channel?.volume}
-                    copyCommand={copyVolume}
-                  />
-                  <StyledLineCristinValue>
-                    <TextField
-                      data-testid="cristindata-volume-textfield"
-                      id="cristindata-volume"
-                      placeholder="Volum"
-                      value={publishingDetails && publishingDetails.volume}
-                      margin="normal"
-                      onChange={handleChangeVolume}
-                    />
-                  </StyledLineCristinValue>
-                </StyledLineWrapper>
-
-                <StyledLineWrapper>
-                  <StyledLineLabelTypography>Hefte</StyledLineLabelTypography>
-                  <StyledLineImportValue>
-                    <Typography data-testid="importdata-issue">{importPublication.channel?.issue}</Typography>
-                  </StyledLineImportValue>
-                  <ActionButtons
-                    isImportAndCristinEqual={importPublication.channel?.issue === publishingDetails?.issue}
-                    isCopyBottonDisabled={!importPublication.channel?.issue}
-                    copyCommand={copyIssue}
-                  />
-                  <StyledLineCristinValue>
-                    <TextField
-                      id="Cristin-hefte"
-                      data-testid="cristindata-issue-textfield"
-                      placeholder="Hefte"
-                      value={publishingDetails && publishingDetails.issue}
-                      margin="normal"
-                      onChange={handleChangeIssue}
-                    />
-                  </StyledLineCristinValue>
-                </StyledLineWrapper>
-
-                <StyledLineWrapper>
-                  <StyledLineLabelTypography>Sider</StyledLineLabelTypography>
-                  <StyledLineImportValue>
-                    <Typography data-testid="importdata-pages">
-                      {importPublication.channel?.pageFrom && `Fra: ${importPublication.channel.pageFrom}`}
-                      {importPublication.channel?.pageTo && ` Til: ${importPublication.channel.pageTo}`}
-                    </Typography>
-                  </StyledLineImportValue>
-                  <ActionButtons
-                    isImportAndCristinEqual={
-                      importPublication.channel?.pageFrom === publishingDetails?.pageFrom &&
-                      importPublication.channel?.pageTo === publishingDetails?.pageTo
-                    }
-                    isCopyBottonDisabled={!(importPublication.channel?.pageFrom || importPublication.channel?.pageTo)}
-                    copyCommand={copyPages}
-                  />
-                  <StyledLineCristinValue>
-                    <div style={{ display: 'flex' }}>
-                      <TextField
-                        placeholder="Side fra"
-                        data-testid="cristindata-pagefrom-textfield"
-                        id="pageFromCristin"
-                        value={publishingDetails ? publishingDetails.pageFrom : ''}
-                        onChange={handleChangePageFrom}
-                      />
-                      <TextField
-                        placeholder="Side til"
-                        data-testid="cristindata-pageto-textfield"
-                        id="pageToCristin"
-                        value={publishingDetails ? publishingDetails.pageTo : ''}
-                        onChange={handleChangePageTo}
-                        style={{ marginLeft: '2rem' }}
-                      />
-                    </div>
-                  </StyledLineCristinValue>
-                </StyledLineWrapper>
+                    </Form>
+                  )}
+                </Formik>
               </StyledFormWrapper>
-
               <StyledOpenContributorsButtonWrapper>
                 <Button
                   size="large"
@@ -1019,7 +1011,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                       !state.contributorsLoaded
                     }
                     color="primary"
-                    onClick={handleSubmit}
+                    onClick={handleFormSubmit}
                     variant="contained"
                     data-testid="import-publication-button">
                     Importer
