@@ -290,7 +290,7 @@ const ContributorModal: FC<ContributorProps> = ({
         toBeCreated.surname === '' ||
         (toBeCreated.affiliations && toBeCreated.affiliations.length < 1)
       ) {
-        //console.log('Contributor has error(s) no firstname||surname||affiliations: ', toBeCreated);
+        console.log('Contributor has error(s) no firstname||surname||affiliations: ', toBeCreated);
         errors.push({ value: i + 1 });
       }
     }
@@ -345,9 +345,7 @@ const ContributorModal: FC<ContributorProps> = ({
       dispatch({ type: 'identified', payload: identified }); //skjer dette to steder ?
       dispatch({ type: 'identifiedImported', payload: identified });
       setIsLoadingContributors(false);
-      if (!isDuplicate) {
-        validateContributor(tempContributors);
-      }
+      validateContributor(tempContributors);
     }
 
     fetch().then();
