@@ -210,12 +210,15 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
         setKilde(
           isDuplicate
-            ? state.selectedPublication.import_sources[0]?.source_name || 'Ingen kilde funnet'
+            ? (state.selectedPublication.import_sources && state.selectedPublication.import_sources[0]?.source_name) ||
+                'Ingen kilde funnet'
             : importPublication.sourceName
         );
         setKildeId(
           isDuplicate
-            ? state.selectedPublication.import_sources[0]?.source_reference_id || 'Ingen kildeId funnet'
+            ? (state.selectedPublication.import_sources &&
+                state.selectedPublication.import_sources[0]?.source_reference_id) ||
+                'Ingen kildeId funnet'
             : importPublication.externalId
         );
 
@@ -1007,7 +1010,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                     Avbryt
                   </Button>
                 </Grid>
-                {state.formErrors} |{importPublication?.cristin_id} |{state.contributorErrors.length}
                 <Grid item>
                   <Button
                     disabled={
