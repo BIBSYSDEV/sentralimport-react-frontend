@@ -9,39 +9,37 @@ import {
   StyledLineWrapper,
 } from './CompareFormWrappers';
 import { compareFormValuesType } from './ComparePublicationDataModal';
-import { ImportPublication, Language } from '../../types/PublicationTypes';
+import { ImportPublication } from '../../types/PublicationTypes';
 
-interface CompareFormTitleProps {
+interface CompareFormYearProps {
   importPublication: ImportPublication;
-  selectedLang?: Language; //todo: verdien vil vi få fra formik etterhvert
 }
 
-const CompareFormTitle: FC<CompareFormTitleProps> = ({ importPublication, selectedLang }) => {
+const CompareFormYear: FC<CompareFormYearProps> = ({ importPublication }) => {
   const { values, setFieldValue } = useFormikContext<compareFormValuesType>();
 
   return (
     <StyledLineWrapper>
-      <StyledLineLabelTypography htmlFor="Cristin-tittel">Tittel</StyledLineLabelTypography>
+      <StyledLineLabelTypography htmlFor="cristindata-year">Årstall</StyledLineLabelTypography>
       <StyledLineImportValue>
-        <Typography data-testid="importdata-title">{selectedLang?.title}</Typography>
+        <Typography data-testid="importdata-year">{importPublication.yearPublished}</Typography>
       </StyledLineImportValue>
       <ActionButtons
-        isImportAndCristinEqual={values.title === selectedLang?.title}
-        isCopyBottonDisabled={!importPublication.languages}
-        copyCommand={() => setFieldValue('title', selectedLang?.title ?? '', true)}
+        isImportAndCristinEqual={+values.year === +importPublication.yearPublished}
+        isCopyBottonDisabled={!importPublication.yearPublished}
+        copyCommand={() => setFieldValue('year', importPublication.yearPublished, true)}
       />
       <StyledLineCristinValue>
-        <Field name="title">
+        <Field name="year">
           {({ field, meta: { error } }: FieldProps) => (
             <TextField
               {...field}
-              id="Cristin-tittel"
-              name="title"
-              placeholder="Tittel"
-              data-testid="cristindata-title-textfield"
-              inputProps={{ 'data-testid': 'cristindata-title-textfield-input' }}
+              id="Cristin-year"
+              name="year"
+              placeholder="Årstall"
+              data-testid="cristindata-year-textfield"
+              inputProps={{ 'data-testid': 'cristindata-year-textfield-input' }}
               required
-              multiline
               fullWidth
               error={!!error}
               helperText={<ErrorMessage name={field.name} />}
@@ -53,4 +51,4 @@ const CompareFormTitle: FC<CompareFormTitleProps> = ({ importPublication, select
   );
 };
 
-export default CompareFormTitle;
+export default CompareFormYear;

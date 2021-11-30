@@ -1,6 +1,6 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { Button, FormControl, Grid, TextField, Typography } from '@material-ui/core';
+import { Button, Grid, TextField, Typography } from '@material-ui/core';
 import Select from 'react-select';
 import ConfirmImportDialog from '../Dialogs/ConfirmImportDialog';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
@@ -8,7 +8,6 @@ import Validation, { doiMatcher } from '../Validation/Validation';
 import { Context } from '../../Context';
 import '../../assets/styles/buttons.scss';
 import ContributorModal from '../Contributors/ContributorModal';
-import ButtonGroup from '@material-ui/core/ButtonGroup/ButtonGroup';
 import ContributorErrorMessage from './ContributorErrorMessage';
 import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
@@ -17,14 +16,26 @@ import clone from 'just-clone';
 import { CategoryItem, Channel, CristinPublication, ImportPublication, Language } from '../../types/PublicationTypes';
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
 import CreateJournalPanel from '../CreateJournalPanel/CreateJournalPanel';
-import { Colors } from '../../assets/styles/StyleConstants';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
 import { getCategories, getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
-import { StyledLineImportValue, StyledLineLabelTypography, StyledLineWrapper } from './CompareFormWrappers';
+import {
+  StyledActionButtonsPlaceHolder,
+  StyledErrorMessageWrapper,
+  StyledFormWrapper,
+  StyledHeaderLineWrapper,
+  StyledLineCristinValue,
+  StyledLineHeader,
+  StyledLineImportValue,
+  StyledLineLabelTypography,
+  StyledLineWrapper,
+  StyledOpenContributorsButtonWrapper,
+} from './CompareFormWrappers';
 import CompareFormTitle from './CompareFormTitle';
+import CompareFormYear from './CompareFormYear';
+import CompareFormDoi from './CompareFormDoi';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -34,62 +45,26 @@ const StyledModal = styled(Modal)`
   padding: 0;
 `;
 
-const StyledActionButtonsPlaceHolder = styled.div`
-  min-width: 10rem;
-  width: 5%;
-`;
-
-const StyledErrorMessageWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-`;
-
-const StyledFormWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
 const StyledErrorMessage = styled.div`
   font-size: 0.8rem;
   padding-top: 5px;
   padding-bottom: 10px;
 `;
 
-const StyledHeaderLineWrapper = styled(StyledLineWrapper)`
-  color: ${Colors.PURPLE};
-
-  padding: 0.5rem 0;
-  border-bottom: none;
-  margin-bottom: 1rem;
-`;
-
-const StyledOpenContributorsButtonWrapper = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  margin-top: 1rem;
-`;
-
-const StyledLineHeader = styled(Typography)`
-  min-width: 20rem;
-  width: 40%;
-`;
-
 const StyledDisabledTypography = styled(Typography)`
   color: #555555;
-`;
-
-const StyledLineCristinValue = styled.div`
-  min-width: 20rem;
-  width: 40%;
 `;
 
 interface Category {
   value: string;
   label: string;
+}
+
+export interface compareFormValuesType {
+  title: string;
+  year: string;
+  doi: string;
+  language: any;
 }
 
 interface ComparePublicationDataModalProps {
@@ -102,11 +77,6 @@ interface ComparePublicationDataModalProps {
 }
 
 //TODO: tidsskrift id er ikke med i duplikat. må derfor matche på issn i stedet?
-
-export interface compareFormValuesType {
-  title: string;
-}
-
 const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   isComparePublicationDataModalOpen,
   handleComparePublicationDataModalClose,
@@ -310,7 +280,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         setFetchDataError(error as Error);
       }
     }
-
     setFields().then();
   }, [isDuplicate, state.selectedPublication, importPublication]);
 
@@ -389,38 +358,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'setValidation', payload: option.label });
   }
 
-  // function handleTitleBlur(event) {
-  //   console.log('EVERY TIME I CLICK!');
-  //   if (languages && selectedLang) {
-  //     const index = languages.map((lang: any) => lang.lang).indexOf(selectedLang.lang);
-  //     setSelectedLang({ ...selectedLang, title: event.target.value });
-  //     if (languages[index]) {
-  //       languages[index].title = event.target.value;
-  //     }
-  //     setLanguages(languages);
-  //     dispatch({ type: 'setSelectedField', payload: 'tittel' });
-  //     dispatch({ type: 'setValidation', payload: event.target.value });
-  //   }
-  // }
-
-  function handleChangeAarstall(event: any) {
-    setAarstall(event.target.value);
-    dispatch({ type: 'setSelectedField', payload: 'aarstall' });
-    dispatch({ type: 'setValidation', payload: event.target.value });
-  }
-
   function handleChangeCategory(option: any) {
     setSelectedCategory(option);
-  }
-
-  function handleSelectedLang(lang: any) {
-    setSelectedLang(lang);
-  }
-
-  function handleChangeDoi(event: any) {
-    setDoi(event.target.value);
-    dispatch({ type: 'setSelectedField', payload: 'doi' });
-    dispatch({ type: 'setValidation', payload: event.target.value });
   }
 
   function handleChangeVolume(event: any) {
@@ -462,39 +401,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'setValidation', payload: newJournal.title });
   };
 
-  // const copyTittel = () => {
-  //   if (languages && importPublication.languages && selectedLang) {
-  //     const originalTitle = importPublication.languages.filter((lang: any) => lang.lang === selectedLang.lang)[0].title;
-  //     setSelectedLang({ ...selectedLang, title: originalTitle });
-  //     const index = languages.map((lang: any) => lang.lang).indexOf(selectedLang.lang);
-  //     languages[index].title = importPublication.languages.filter(
-  //       (lang: any) => lang.lang === selectedLang.lang
-  //     )[0].title;
-  //     setLanguages(languages);
-  //     dispatch({ type: 'setSelectedField', payload: 'tittel' });
-  //     dispatch({ type: 'setValidation', payload: importPublication.languages[0].title });
-  //   }
-  // };
-
-  const copyAarstall = () => {
-    if (importPublication.yearPublished) {
-      setAarstall(importPublication.yearPublished);
-      dispatch({ type: 'setSelectedField', payload: 'aarstall' });
-      dispatch({ type: 'setValidation', payload: importPublication.yearPublished });
-    }
-  };
-
   const copyCategory = () => {
     setSelectedCategory({ value: importPublication.category, label: importPublication.categoryName });
-  };
-
-  const copyDoi = () => {
-    setDoi(importPublication.doi ? importPublication.doi : 'Ingen DOI funnet');
-    dispatch({ type: 'setSelectedField', payload: 'doi' });
-    dispatch({
-      type: 'setValidation',
-      payload: importPublication.doi ? importPublication.doi : 'Ingen doi funnet',
-    });
   };
 
   const copyJournal = () => {
@@ -627,10 +535,21 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   const formValidationSchema = Yup.object().shape({
     title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
+    year: Yup.number()
+      .typeError('Årstall må være et nummer')
+      .required('Årstall er et obligatorisk felt')
+      .integer('Årstall må være heltall')
+      .moreThan(999, 'Årstall må være større enn 999')
+      .lessThan(new Date().getFullYear() + 1, 'Årstall kan ikke være et framtidig år'),
+    //todo: nødvendige sjekker ?
+    doi: Yup.string().matches(doiMatcher, 'Doi har galt format'),
   });
 
   const formValues: compareFormValuesType = {
     title: selectedLang?.title ?? '',
+    year: aarstall,
+    doi: doi,
+    language: {},
   };
 
   const NewAndImprovedHandleFormSubmit = () => {
@@ -709,32 +628,11 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         </StyledLineCristinValue>
                       </StyledLineWrapper>
 
-                      <StyledLineWrapper>
-                        <StyledLineLabelTypography>Språk</StyledLineLabelTypography>
-                        <StyledLineImportValue>
-                          <Typography data-testid="importdata-lang">{selectedLang?.lang}</Typography>
-                        </StyledLineImportValue>
-                        <StyledActionButtonsPlaceHolder />
-                        <StyledLineCristinValue>
-                          <ButtonGroup
-                            data-testid="cristindata-lang-buttongroup"
-                            className={`buttonGroup`}
-                            size="small"
-                            aria-label="language buttons">
-                            {languages.map((lang: any, index: number) => (
-                              <Button
-                                key={index}
-                                variant="outlined"
-                                className={selectedLang === lang ? `selected` : ``}
-                                onClick={() => handleSelectedLang(lang)}>
-                                {lang.lang}
-                              </Button>
-                            ))}
-                          </ButtonGroup>
-                        </StyledLineCristinValue>
-                      </StyledLineWrapper>
-
                       <CompareFormTitle importPublication={importPublication} selectedLang={selectedLang} />
+
+                      <CompareFormYear importPublication={importPublication} />
+
+                      <CompareFormDoi importPublication={importPublication} />
 
                       <StyledLineWrapper>
                         <StyledLineLabelTypography htmlFor="cristindata-journal">Tidsskrift</StyledLineLabelTypography>
@@ -775,74 +673,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                             )}
                           </>
                           <CreateJournalPanel handleCreateJournal={handleNewJournal} />
-                        </StyledLineCristinValue>
-                      </StyledLineWrapper>
-
-                      <StyledLineWrapper>
-                        <StyledLineLabelTypography>DOI</StyledLineLabelTypography>
-                        <StyledLineImportValue>
-                          <Typography data-testid="importdata-doi">
-                            {importPublication.doi ? (
-                              <a
-                                href={'https://doi.org/' + importPublication.doi}
-                                target="_blank"
-                                rel="noopener noreferrer">
-                                {importPublication.doi}
-                              </a>
-                            ) : (
-                              'Ingen DOI funnet'
-                            )}
-                          </Typography>
-                        </StyledLineImportValue>
-                        <ActionButtons
-                          isImportAndCristinEqual={doi === importPublication.doi}
-                          isCopyBottonDisabled={!importPublication.doi}
-                          copyCommand={copyDoi}
-                        />
-                        <StyledLineCristinValue>
-                          <FormControl fullWidth>
-                            <TextField
-                              id="Cristin-doi"
-                              placeholder="DOI"
-                              value={doi}
-                              data-testid="cristindata-doi-textfield"
-                              onChange={(event: any) => handleChangeDoi(event)}
-                              margin="normal"
-                              error={!doi?.match(doiMatcher)}
-                              helperText={doi && !doi.match(doiMatcher) ? 'Doi har galt format' : ''}
-                            />
-                          </FormControl>
-                        </StyledLineCristinValue>
-                      </StyledLineWrapper>
-
-                      <StyledLineWrapper>
-                        <StyledLineLabelTypography htmlFor="cristindata-year">Årstall</StyledLineLabelTypography>
-                        <StyledLineImportValue>
-                          <Typography data-testid="importdata-year">{importPublication.yearPublished}</Typography>
-                        </StyledLineImportValue>
-                        <ActionButtons
-                          isImportAndCristinEqual={+aarstall === +importPublication.yearPublished}
-                          isCopyBottonDisabled={!importPublication.yearPublished}
-                          copyCommand={copyAarstall}
-                        />
-                        <StyledLineCristinValue>
-                          <TextField
-                            id="cristindata-year"
-                            data-testid="cristindata-year-textfield"
-                            value={aarstall}
-                            onChange={handleChangeAarstall}
-                            margin="normal"
-                            required
-                            error={
-                              aarstall.toString().length !== 4 || !(parseInt(aarstall) <= new Date().getFullYear())
-                            }
-                            helperText={
-                              aarstall.toString().length !== 4 ||
-                              (!(parseInt(aarstall) <= new Date().getFullYear())
-                                ? 'Årstall kan ikke være i framtiden eller før år 1000'
-                                : '')
-                            }
-                          />
                         </StyledLineCristinValue>
                       </StyledLineWrapper>
 
