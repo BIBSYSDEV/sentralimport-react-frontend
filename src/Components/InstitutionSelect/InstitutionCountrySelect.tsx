@@ -55,7 +55,7 @@ const InstitutionCountrySelect: FC<InstitutionCountrySelectProps> = ({
   useEffect(() => {
     const fetchUnits = async () => {
       setLoadingError('');
-      if (selectedInstitution.cristinInstitutionNr) {
+      if (selectedInstitution.cristinInstitutionNr && selectedInstitution.cristinInstitutionNr !== 0) {
         try {
           setLoadingUnits(true);
           const parentUnitNamesResponse = await getParentsUnitName(
