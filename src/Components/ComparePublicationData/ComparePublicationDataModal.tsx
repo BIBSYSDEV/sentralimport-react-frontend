@@ -36,6 +36,7 @@ import {
 import CompareFormTitle from './CompareFormTitle';
 import CompareFormYear from './CompareFormYear';
 import CompareFormDoi from './CompareFormDoi';
+import CompareFormCategory from './CompareFormCategory';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -55,7 +56,7 @@ const StyledDisabledTypography = styled(Typography)`
   color: #555555;
 `;
 
-interface Category {
+export interface CategoryOption {
   value: string;
   label: string;
 }
@@ -65,6 +66,7 @@ export interface compareFormValuesType {
   year: string;
   doi: string;
   language: any;
+  category: CategoryOption;
 }
 
 interface ComparePublicationDataModalProps {
@@ -100,7 +102,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors] = useState(isDuplicate ? state.selectedPublication.authors : importPublication?.authors || []);
   const [aarstall, setAarstall] = useState('');
-  const [categories, setCategories] = useState<Category[]>();
+  const [categories, setCategories] = useState<CategoryOption[]>();
   const [doi, setDoi] = useState('');
   const [publishingDetails, setPublishingDetails] = useState<Channel | undefined>(importPublication?.channel);
   const [journals, setJournals] = useState<any>();
@@ -358,10 +360,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'setValidation', payload: option.label });
   }
 
-  function handleChangeCategory(option: any) {
-    setSelectedCategory(option);
-  }
-
   function handleChangeVolume(event: any) {
     publishingDetails && setPublishingDetails({ ...publishingDetails, volume: event.target.value });
   }
@@ -399,10 +397,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     setSelectedJournal({ label: newJournal.title, value: 0, issn: newJournal.issn, eissn: newJournal.eissn });
     dispatch({ type: 'setSelectedField', payload: 'tidsskrift' });
     dispatch({ type: 'setValidation', payload: newJournal.title });
-  };
-
-  const copyCategory = () => {
-    setSelectedCategory({ value: importPublication.category, label: importPublication.categoryName });
   };
 
   const copyJournal = () => {
@@ -549,7 +543,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     title: selectedLang?.title ?? '',
     year: aarstall,
     doi: doi,
-    language: {},
+    language: selectedLang,
+    category: selectedCategory,
   };
 
   const NewAndImprovedHandleFormSubmit = () => {
@@ -676,30 +671,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         </StyledLineCristinValue>
                       </StyledLineWrapper>
 
-                      <StyledLineWrapper>
-                        <StyledLineLabelTypography htmlFor="cristindata-category">Kategori</StyledLineLabelTypography>
-                        <StyledLineImportValue>
-                          <Typography data-testid="importdata-category">{importPublication.categoryName}</Typography>
-                        </StyledLineImportValue>
-                        <ActionButtons
-                          isImportAndCristinEqual={selectedCategory.label === importPublication.categoryName}
-                          isCopyBottonDisabled={!importPublication.categoryName}
-                          copyCommand={copyCategory}
-                        />
-                        <StyledLineCristinValue data-testid="cristindata-category-select">
-                          <Select
-                            id="cristindata-category"
-                            aria-label="Kategori"
-                            placeholder="Søk på kategori"
-                            name="categorySelect"
-                            options={categories}
-                            value={selectedCategory}
-                            className="basic-select"
-                            classNamePrefix="select"
-                            onChange={handleChangeCategory}
-                          />
-                        </StyledLineCristinValue>
-                      </StyledLineWrapper>
+                      <CompareFormCategory importPublication={importPublication} categories={categories} />
 
                       <StyledLineWrapper>
                         <StyledLineLabelTypography>Volum</StyledLineLabelTypography>
