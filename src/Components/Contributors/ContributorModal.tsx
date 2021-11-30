@@ -306,7 +306,6 @@ const ContributorModal: FC<ContributorProps> = ({
       let tempContributors: ContributorWrapper[] = [];
       const identified: boolean[] = [];
       const authorsFromImportPublication = importPublication.authors;
-      debugger;
 
       //TODO: Vi bør la være å bruke tempContributors som arbeidsminne.
       const contributorsFromLocalStorage = JSON.parse(localStorage.getItem('tempContributors') || '{}');
