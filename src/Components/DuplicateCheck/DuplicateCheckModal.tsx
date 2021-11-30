@@ -65,7 +65,6 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
         setIsComparePublicationDataModalOpen(true);
       }
     } catch (error) {
-      console.log(error);
       handlePotentialExpiredSession(error);
       setHandleOkButtonError(error as Error);
     }
