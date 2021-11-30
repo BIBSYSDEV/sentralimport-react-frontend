@@ -36,6 +36,10 @@ export default function App() {
   const history = useHistory();
   const { dispatch } = useContext(Context);
   const isAuthorized = localStorage.getItem('authorized') === 'true' || USE_MOCK_DATA;
+
+  window.localStorage.removeItem('tempContributors');
+  window.localStorage.removeItem('tempPublication');
+
   //fetches instututions to populate drop-down lists
   useEffect(() => {
     const createInstitutionLists = async () => {

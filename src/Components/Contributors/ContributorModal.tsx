@@ -75,6 +75,7 @@ async function replaceNonCristinInstitutions(
 }
 
 async function searchCristinPersons(authors: ImportPublicationPerson[]) {
+  debugger;
   let unitNameCache = new Map();
   let institutionNameCache = new Map();
   const suggestedAuthors = [];
@@ -290,7 +291,7 @@ const ContributorModal: FC<ContributorProps> = ({
         toBeCreated.surname === '' ||
         (toBeCreated.affiliations && toBeCreated.affiliations.length < 1)
       ) {
-        console.log('Contributor has error(s) no firstname||surname||affiliations: ', toBeCreated);
+        //console.log('Contributor has error(s) no firstname||surname||affiliations: ', toBeCreated);
         errors.push({ value: i + 1 });
       }
     }
@@ -305,6 +306,7 @@ const ContributorModal: FC<ContributorProps> = ({
       let tempContributors: ContributorWrapper[] = [];
       const identified: boolean[] = [];
       const authorsFromImportPublication = importPublication.authors;
+      debugger;
 
       //TODO: Vi bør la være å bruke tempContributors som arbeidsminne.
       const contributorsFromLocalStorage = JSON.parse(localStorage.getItem('tempContributors') || '{}');
@@ -332,7 +334,6 @@ const ContributorModal: FC<ContributorProps> = ({
           identified[i] = cristinAuthors[i].identified_cristin_person || false;
           tempContributors[i] = createContributorWrapper(authorsFromImportPublication, i, cristinAuthors);
           tempContributors[i].isEditing = tempContributors[i].cristin.cristin_person_id === 0;
-
           tempContributors[i].toBeCreated = await generateToBeCreatedContributor(
             tempContributors[i],
             cristinAuthors[i],
@@ -346,7 +347,9 @@ const ContributorModal: FC<ContributorProps> = ({
       dispatch({ type: 'identified', payload: identified }); //skjer dette to steder ?
       dispatch({ type: 'identifiedImported', payload: identified });
       setIsLoadingContributors(false);
-      validateContributor(tempContributors);
+      if (!isDuplicate) {
+        validateContributor(tempContributors);
+      }
     }
 
     fetch().then();
