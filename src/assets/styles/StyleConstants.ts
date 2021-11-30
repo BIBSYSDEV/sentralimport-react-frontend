@@ -7,6 +7,7 @@ export const Colors = {
   Text: {
     OPAQUE_87_BLACK: 'rgba(0, 0, 0, 0.87)',
     OPAQUE_54_BLACK: 'rgba(0, 0, 0, 0.54)',
-    GREEN: '#3c8947',
+    OPAQUE_41_BLACK: 'rgba(0, 0, 0, 0.41)',
+    GREEN: 'rgb(60, 137, 71)',
   },
 };

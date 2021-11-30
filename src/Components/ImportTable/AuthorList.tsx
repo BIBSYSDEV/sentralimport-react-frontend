@@ -34,7 +34,7 @@ export default function AuthorList({ authors }: AuthorListProps) {
           <Typography>
             <b>{author.sequenceNr + '. ' + author.authorName}</b>
             {author.cristinId !== 0 && (
-              <VerifiedUserIcon aria-label="har cristin id" style={{ paddingBottom: '0.3rem' }} color="primary" />
+              <VerifiedUserIcon aria-label="er verifisert" style={{ paddingBottom: '0.3rem' }} color="primary" />
             )}
           </Typography>
           {author.institutions.map((inst, instIndex) => (
