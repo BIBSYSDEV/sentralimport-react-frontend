@@ -17,6 +17,12 @@ const StyledCreateJournalPanel = styled.div`
   margin-top: 0.5rem;
 `;
 
+const StyledFormHeaderTypography = styled(Typography)`
+  && {
+    font-weight: bold;
+  }
+`;
+
 const StyledTextField = styled(TextField)`
   && {
     margin-top: 0.5rem;
@@ -76,7 +82,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
       )}
       <Collapse in={expanded} unmountOnExit>
         <StyledFormWrapper>
-          <Typography style={{ fontWeight: 'bold' }}>Registrer nytt tidskrift</Typography>
+          <StyledFormHeaderTypography>Registrer nytt tidskrift</StyledFormHeaderTypography>
           <Typography gutterBottom variant="caption">
             Felter merket med * er obligatoriske (ISSN eller e-ISSN må fylles ut)
           </Typography>
