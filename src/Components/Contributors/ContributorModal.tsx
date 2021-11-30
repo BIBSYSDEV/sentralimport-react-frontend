@@ -290,6 +290,7 @@ const ContributorModal: FC<ContributorProps> = ({
         toBeCreated.surname === '' ||
         (toBeCreated.affiliations && toBeCreated.affiliations.length < 1)
       ) {
+        console.log('Contributor has error(s) no firstname||surname||affiliations: ', toBeCreated);
         errors.push({ value: i + 1 });
       }
     }
@@ -370,8 +371,8 @@ const ContributorModal: FC<ContributorProps> = ({
           identifiedImported[i] = person.identified_cristin_person ?? false;
         }
         if (!contributors[i].toBeCreated.identified_cristin_person && isDuplicate) {
-          const person = await getPersonDetailById(contributors[i].toBeCreated);
-          identified[i] = person.identified_cristin_person ?? false;
+          //const person = await getPersonDetailById(contributors[i].toBeCreated); //TODO! Denne gir ingen mening - søker på cristinid=0 som gir 404-feil
+          // identified[i] = person.identified_cristin_person ?? false;
         }
       }
       dispatch({ type: 'identifiedImported', payload: identifiedImported });
