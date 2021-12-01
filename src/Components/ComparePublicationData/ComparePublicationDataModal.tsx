@@ -1,7 +1,6 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Button, Grid, Typography } from '@material-ui/core';
-import Select from 'react-select';
 import ConfirmImportDialog from '../Dialogs/ConfirmImportDialog';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import Validation, { doiMatcher } from '../Validation/Validation';
@@ -11,11 +10,9 @@ import ContributorModal from '../Contributors/ContributorModal';
 import ContributorErrorMessage from './ContributorErrorMessage';
 import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
-import ActionButtons from './ActionButtons';
 import clone from 'just-clone';
 import { Channel, CristinPublication, ImportPublication, Language } from '../../types/PublicationTypes';
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
-import CreateJournalPanel from '../CreateJournalPanel/CreateJournalPanel';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
 import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
@@ -40,6 +37,7 @@ import CompareFormCategory from './CompareFormCategory';
 import CompareFormVolume from './CompareFormVolume';
 import CompareFormIssue from './CompareFormIssue';
 import CompareFormPages from './CompareFormPages';
+import CompareFormJournal from './CompareFormJournal';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -49,12 +47,6 @@ const StyledModal = styled(Modal)`
   padding: 0;
 `;
 
-const StyledErrorMessage = styled.div`
-  font-size: 0.8rem;
-  padding-top: 5px;
-  padding-bottom: 10px;
-`;
-
 const StyledDisabledTypography = styled(Typography)`
   color: #555555;
 `;
@@ -62,6 +54,13 @@ const StyledDisabledTypography = styled(Typography)`
 export interface CategoryOption {
   value: string;
   label: string;
+}
+
+export interface JournalType {
+  cristinTidsskriftNr: string;
+  title: string;
+  issn?: string;
+  eissn?: string;
 }
 
 export interface compareFormValuesType {
@@ -74,6 +73,7 @@ export interface compareFormValuesType {
   issue: string;
   pageFrom: string;
   pageTo: string;
+  journal: JournalType;
 }
 
 interface ComparePublicationDataModalProps {
@@ -111,7 +111,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [aarstall, setAarstall] = useState('');
   const [doi, setDoi] = useState('');
   const [publishingDetails, setPublishingDetails] = useState<Channel | undefined>(importPublication?.channel);
-  const [journals, setJournals] = useState<any>();
   const [selectedJournal, setSelectedJournal] = useState<any>(
     isDuplicate
       ? {
@@ -291,10 +290,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     setFields().then();
   }, [isDuplicate, state.selectedPublication, importPublication]);
 
-  useEffect(() => {
-    getJournals().then();
-  }, []);
-
   function saveToLocalStorage() {
     if (state.doSave)
       localStorage.setItem(
@@ -347,12 +342,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     }
   }
 
-  function handleChangeJournal(option: any) {
-    setSelectedJournal(option);
-    dispatch({ type: 'setSelectedField', payload: 'tidsskrift' });
-    dispatch({ type: 'setValidation', payload: option.label });
-  }
-
   function handleFormSubmit() {
     setImportPublicationError(undefined);
     saveToLocalStorage();
@@ -369,30 +358,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   function handleContributorModalClose() {
     setIsContributorModalOpen(false);
   }
-
-  const handleNewJournal = (newJournal: any) => {
-    setSelectedJournal({ label: newJournal.title, value: 0, issn: newJournal.issn, eissn: newJournal.eissn });
-    dispatch({ type: 'setSelectedField', payload: 'tidsskrift' });
-    dispatch({ type: 'setValidation', payload: newJournal.title });
-  };
-
-  const copyJournal = () => {
-    setSelectedJournal(
-      importPublication.channel
-        ? {
-            value: importPublication.channel.cristinTidsskriftNr?.toString(),
-            label: importPublication.channel.title,
-            issn: importPublication.channel.issn,
-            eissn: importPublication.channel.eissn,
-          }
-        : { value: 'x', label: 'Ingen tidsskrift funnet' }
-    );
-    dispatch({ type: 'setSelectedField', payload: 'tidsskrift' });
-    dispatch({
-      type: 'setValidation',
-      payload: importPublication.channel?.title,
-    });
-  };
 
   function handlePublicationImported(result: any) {
     setIsConfirmDialogOpen(false);
@@ -418,9 +383,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'doSave', payload: false });
     setDialogAbortOpen(false);
     handleComparePublicationDataModalClose();
-    // props.enqueueSnackbar('Lukket publikasjon. Endringer har blitt lagret i browseren', {
-    //   variant: 'warning',
-    // });
     handleDuplicateCheckModalClose();
     dispatch({ type: 'setContributorErrors', payload: 0 });
     dispatch({ type: 'setContributorsLoaded', payload: false });
@@ -438,20 +400,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     setIsContributorModalOpen(true);
   }
 
-  function searchJournals(searchString: string) {
-    getJournals(searchString).then();
-  }
-
   function emptyGlobalFormErrors() {
     dispatch({ type: 'setFormErrors', payload: [] });
-  }
-
-  async function getJournals(journalTitle?: string) {
-    if (!journalTitle || journalTitle.length === 0) {
-      journalTitle = '*';
-    }
-    const journals = (await getJournalsByQuery(journalTitle, QueryMethod.title)).data;
-    updateJournals(journals);
   }
 
   async function getJournalId(issn: any[] | undefined) {
@@ -464,19 +414,19 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       return '';
     }
   }
-
-  function updateJournals(journals: any) {
-    const tempArray: any[] = [];
-    for (let i = 0; i < journals.length; i++) {
-      tempArray.push({
-        value: journals[i].id,
-        label: journals[i].title,
-        issn: journals[i].issn,
-        eissn: journals[i].eissn,
-      });
-    }
-    setJournals(tempArray);
-  }
+  //
+  // function updateJournals(journals: any) {
+  //   const tempArray: any[] = [];
+  //   for (let i = 0; i < journals.length; i++) {
+  //     tempArray.push({
+  //       value: journals[i].id,
+  //       label: journals[i].title,
+  //       issn: journals[i].issn,
+  //       eissn: journals[i].eissn,
+  //     });
+  //   }
+  //   setJournals(tempArray);
+  // }
 
   function formatDate(dateString: string) {
     const newDate = new Date(dateString);
@@ -498,12 +448,13 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     doi: Yup.string().matches(doiMatcher, 'Doi har galt format'),
   });
 
-  //todo: ta hensyn til isduplicate
+  //todo: skrive om initiering og ta hensyn til isduplicate
   const formValues: compareFormValuesType = {
     title: selectedLang?.title ?? '',
     year: aarstall,
     doi: doi,
     language: selectedLang,
+    journal: selectedJournal,
     category: selectedCategory,
     volume: importPublication?.channel?.volume ?? '',
     issue: importPublication?.channel?.issue ?? '',
@@ -588,49 +539,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                       </StyledLineWrapper>
 
                       <CompareFormTitle importPublication={importPublication} selectedLang={selectedLang} />
-
-                      <StyledLineWrapper>
-                        <StyledLineLabelTypography htmlFor="cristindata-journal">Tidsskrift</StyledLineLabelTypography>
-                        <StyledLineImportValue>
-                          <Typography data-testid="importdata-journal-title">
-                            {importPublication.channel?.title}
-                          </Typography>
-                        </StyledLineImportValue>
-                        <ActionButtons
-                          isImportAndCristinEqual={
-                            selectedJournal.value === importPublication.channel?.cristinTidsskriftNr?.toString()
-                          }
-                          isCopyBottonDisabled={!importPublication.channel?.title}
-                          copyCommand={copyJournal}
-                        />
-                        <StyledLineCristinValue>
-                          <>
-                            <Select
-                              data-testid="cristindata-journal-select"
-                              id="cristindata-journal"
-                              aria-label="Tidsskrift-select"
-                              placeholder="Søk på tidsskrift"
-                              name="journalSelect"
-                              options={journals}
-                              value={selectedJournal}
-                              className="basic-select"
-                              classNamePrefix="select"
-                              onChange={handleChangeJournal}
-                              onInputChange={searchJournals}
-                            />
-                            {selectedJournal.label === 'Ingen tidsskrift funnet' && (
-                              <StyledErrorMessage>
-                                <CommonErrorMessage
-                                  datatestid="journal-missing-error"
-                                  errorMessage="Tidsskrift mangler"
-                                />
-                              </StyledErrorMessage>
-                            )}
-                          </>
-                          <CreateJournalPanel handleCreateJournal={handleNewJournal} />
-                        </StyledLineCristinValue>
-                      </StyledLineWrapper>
-
+                      <CompareFormJournal importPublication={importPublication} />
                       <CompareFormDoi importPublication={importPublication} />
                       <CompareFormYear importPublication={importPublication} />
                       <CompareFormCategory importPublication={importPublication} />
