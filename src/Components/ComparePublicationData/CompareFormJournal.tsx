@@ -9,7 +9,7 @@ import {
   StyledLineWrapper,
 } from './CompareFormWrappers';
 import { compareFormValuesType, JournalType } from './ComparePublicationDataModal';
-import { ImportPublication } from '../../types/PublicationTypes';
+import { ImportPublication, Journal } from '../../types/PublicationTypes';
 import CreateJournalPanel from '../CreateJournalPanel/CreateJournalPanel';
 import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
 import { Autocomplete } from '@material-ui/lab';
@@ -27,11 +27,11 @@ interface CompareFormJournalProps {
 
 const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) => {
   const { values, setFieldValue } = useFormikContext<compareFormValuesType>();
-  const [journals, setJournals] = useState<any>();
-  const [fetchJournalsError, setFetchJournalsError] = useState<Error | undefined>();
+  const [journals, setJournals] = useState<any>(); //todo type
+  const [fetchJournalsError, setFetchJournalsError] = useState<Error | undefined>(new Error('test'));
   const [isLoadingJournals, setIsLoadingJournals] = useState(false);
 
-  let handleNewJournal; //TODO - insert into journals
+  const handleNewJournal = (newJournal: Journal) => setJournals((old: any) => [...old, newJournal]); //TODO: sjekk
 
   useEffect(() => {
     async function getJournals(journalTitle?: string) {
@@ -88,7 +88,7 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) 
               noOptionsText="ingen tidskrift funnet"
               data-testid="cristindata-journal-select"
               options={journals ?? []}
-              //                 onInputChange={searchJournals}
+              //TODO- search!  onInputChange={searchJournals} //hva med en wait ?
               getOptionLabel={(option) => option.title}
               getOptionSelected={(option, value) => option.cristinTidsskriftNr === value.cristinTidsskriftNr}
               onChange={(e, value: JournalType) => value && setFieldValue('journal', value)}
