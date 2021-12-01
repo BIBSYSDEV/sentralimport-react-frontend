@@ -13,12 +13,12 @@ import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
 import ActionButtons from './ActionButtons';
 import clone from 'just-clone';
-import { CategoryItem, Channel, CristinPublication, ImportPublication, Language } from '../../types/PublicationTypes';
+import { Channel, CristinPublication, ImportPublication, Language } from '../../types/PublicationTypes';
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
 import CreateJournalPanel from '../CreateJournalPanel/CreateJournalPanel';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
-import { getCategories, getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
+import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -109,7 +109,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors] = useState(isDuplicate ? state.selectedPublication.authors : importPublication?.authors || []);
   const [aarstall, setAarstall] = useState('');
-  const [categories, setCategories] = useState<CategoryOption[]>();
   const [doi, setDoi] = useState('');
   const [publishingDetails, setPublishingDetails] = useState<Channel | undefined>(importPublication?.channel);
   const [journals, setJournals] = useState<any>();
@@ -293,20 +292,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   }, [isDuplicate, state.selectedPublication, importPublication]);
 
   useEffect(() => {
-    async function getCategoriesAndReformatToReactSelect() {
-      const categoriesResponse = await getCategories(SearchLanguage.Nb);
-      setCategories(
-        categoriesResponse.data.map((category: CategoryItem) => ({
-          value: category.code,
-          label: category.name?.nb ?? '',
-        }))
-      );
-    }
-    async function fetch() {
-      await getCategoriesAndReformatToReactSelect();
-      await getJournals();
-    }
-    fetch().then();
+    getJournals().then();
   }, []);
 
   function saveToLocalStorage() {
@@ -521,8 +507,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     category: selectedCategory,
     volume: importPublication?.channel?.volume ?? '',
     issue: importPublication?.channel?.issue ?? '',
-    pageFrom: importPublication?.channel?.issue ?? '',
-    pageTo: importPublication?.channel?.issue ?? '',
+    pageFrom: importPublication?.channel?.pageFrom ?? '',
+    pageTo: importPublication?.channel?.pageTo ?? '',
   };
 
   const NewAndImprovedHandleFormSubmit = () => {
@@ -647,7 +633,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
                       <CompareFormDoi importPublication={importPublication} />
                       <CompareFormYear importPublication={importPublication} />
-                      <CompareFormCategory importPublication={importPublication} categories={categories} />
+                      <CompareFormCategory importPublication={importPublication} />
                       <CompareFormVolume importPublication={importPublication} />
                       <CompareFormIssue importPublication={importPublication} />
                       <CompareFormPages importPublication={importPublication} />

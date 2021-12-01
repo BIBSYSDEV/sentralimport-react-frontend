@@ -1,7 +1,7 @@
-import { TextField, Typography } from '@material-ui/core';
+import { CircularProgress, TextField, Typography } from '@material-ui/core';
 import ActionButtons from './ActionButtons';
 import { Field, FieldProps, useFormikContext } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
   StyledLineCristinValue,
   StyledLineImportValue,
@@ -9,16 +9,41 @@ import {
   StyledLineWrapper,
 } from './CompareFormWrappers';
 import { CategoryOption, compareFormValuesType } from './ComparePublicationDataModal';
-import { ImportPublication } from '../../types/PublicationTypes';
+import { CategoryItem, ImportPublication } from '../../types/PublicationTypes';
 import { Autocomplete } from '@material-ui/lab';
+import { getCategories } from '../../api/publicationApi';
+import { SearchLanguage } from '../../api/contributorApi';
 
 interface CompareFormCategoryProps {
   importPublication: ImportPublication;
-  categories?: CategoryOption[];
 }
 
-const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication, categories }) => {
+const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }) => {
   const { values, setFieldValue } = useFormikContext<compareFormValuesType>();
+  const [categories, setCategories] = useState<CategoryOption[]>();
+  const [fetchCategoriesError, setFetchCategoriesError] = useState<Error | undefined>();
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
+
+  useEffect(() => {
+    async function getCategoriesAndReformatToReactSelect() {
+      try {
+        setIsLoadingCategories(true);
+        setFetchCategoriesError(undefined);
+        const categoriesResponse = await getCategories(SearchLanguage.Nb);
+        setCategories(
+          categoriesResponse.data.map((category: CategoryItem) => ({
+            value: category.code,
+            label: category.name?.nb ?? '',
+          }))
+        );
+      } catch (error) {
+        setFetchCategoriesError(error as Error);
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    }
+    getCategoriesAndReformatToReactSelect().then();
+  }, []);
 
   return (
     <StyledLineWrapper>
@@ -37,11 +62,11 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication, 
         <Field name="category">
           {({ field }: FieldProps) => (
             <Autocomplete
-              //TODO: select isteden ?
               fullWidth
               {...field}
               id="cristindata-category"
               autoHighlight
+              loading={isLoadingCategories}
               noOptionsText="ingen kategorier funnet"
               data-testid="cristindata-category-select"
               options={categories ?? []}
@@ -49,11 +74,27 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication, 
               getOptionSelected={(option, value) => option.value === value.value}
               onChange={(e, value: CategoryOption) => value && setFieldValue('category', value)}
               renderInput={(params) => (
-                <TextField {...params} data-testid="cristindata-category-select-textfield" variant="outlined" />
+                <TextField
+                  {...params}
+                  data-testid="cristindata-category-select-textfield"
+                  variant="outlined"
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <>
+                        {isLoadingCategories && <CircularProgress color="inherit" size={'1rem'} />}
+                        {params.InputProps.endAdornment}
+                      </>
+                    ),
+                  }}
+                />
               )}
             />
           )}
         </Field>
+        {fetchCategoriesError && (
+          <Typography color="error">Kunne ikke laste inn kategorier. {fetchCategoriesError.message}</Typography>
+        )}
       </StyledLineCristinValue>
     </StyledLineWrapper>
   );
