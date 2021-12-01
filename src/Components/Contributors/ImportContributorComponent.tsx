@@ -5,13 +5,14 @@ import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import AffiliationDisplay from './AffiliationDisplay';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { ContributorWrapper } from '../../types/ContributorTypes';
+import { SimpleUnitResponse } from '../../types/InstitutionTypes';
 
 const StyledActionWrapper = styled.div`
   margin-top: 1rem;
 `;
 
 interface AffiliationDisplay {
-  units: string[];
+  units: SimpleUnitResponse[];
   institutionName: string;
   countryCode: string;
 }
@@ -22,7 +23,7 @@ interface ContributorOrderComponentProps {
 }
 
 const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, handleChooseAuthor }) => {
-  //UnitName is a string of departments split by ";", most important unit last.
+  //UnitName is a string of departments split by ";", most important unit last in the list.
   const affiliations: AffiliationDisplay[] = row.imported.affiliations
     ? row.imported.affiliations
         .slice()
@@ -45,6 +46,7 @@ const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, ha
                 .replace(affiliation.institutionName ?? '', '')
                 .split(';')
                 .filter((unit: string) => unit.length > 0)
+                .map((unit) => ({ cristin_unit_id: undefined, unit_name: { nb: unit } }))
                 .reverse()
             : [],
           institutionName: affiliation.institutionName ?? '',

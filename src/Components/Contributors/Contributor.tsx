@@ -19,13 +19,24 @@ import {
   emptyInstitutionSelector,
   emptyUnitSelector,
   InstitutionSelector,
-  Unit,
+  SimpleUnitResponse,
   UnitSelector,
 } from '../../types/InstitutionTypes';
 import { handlePotentialExpiredSession } from '../../api/api';
+import AffiliationDisplay from './AffiliationDisplay';
 
 const StyledResultTypography = styled(Typography)`
   color: ${Colors.Text.OPAQUE_87_BLACK};
+`;
+
+const StyledInstitutionList = styled.div`
+  margin-top: 1rem;
+`;
+
+const StyledFlexEndButtons = styled(Button)`
+  &&.MuiButton-root {
+    margin-left: 1rem;
+  }
 `;
 
 interface ContributorProps {
@@ -50,6 +61,8 @@ const Contributor: FC<ContributorProps> = ({
   const [searchError, setSearchError] = useState<Error | undefined>();
   const [openContributorSearchPanel, setOpenContributorSearchPanel] = useState(false);
   const [selectedInstitution, setSetSelectedInstitution] = useState(emptyInstitutionSelector);
+  const [addUnitError, setAddUnitError] = useState<{ institutionNr: string; message: string } | undefined>();
+  const [deleteUnitError, setDeleteUnitError] = useState<{ institutionNr: string; message: string } | undefined>();
 
   function updateEditing() {
     const temp = contributorData;
@@ -57,12 +70,12 @@ const Contributor: FC<ContributorProps> = ({
     updateContributor(temp, resultListIndex);
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(continueEditing: boolean) {
     //TODO: finn ut om det er noen grunn til objekt-copy i det hele tatt ?
     const temp = JSON.parse(JSON.stringify(contributorData));
-    temp.isEditing = false;
     const cleanedAffiliations = await handleChosenAuthorAffiliations(temp.toBeCreated.affiliations);
     temp.toBeCreated.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(cleanedAffiliations);
+    temp.isEditing = continueEditing;
     await updateContributor(temp, resultListIndex);
     setSetSelectedInstitution(emptyInstitutionSelector);
   }
@@ -76,22 +89,18 @@ const Contributor: FC<ContributorProps> = ({
     setSelectedUnit(emptyUnitSelector);
   }
 
-  function removeInstitution(index: number) {
+  function removeInstitutionByCristinNrOrName(cristinInstitutionNr: string | undefined, institutionName: string) {
     if (contributorData.toBeCreated.affiliations) {
-      const affiliationCopy = [...contributorData.toBeCreated.affiliations];
-      affiliationCopy.splice(index, 1);
       const temp = contributorData;
-      temp.toBeCreated.affiliations = affiliationCopy;
-      updateContributor(temp, resultListIndex);
-    }
-  }
-
-  function removeUnit(instIndex: number, unitIndex: number) {
-    if (contributorData.toBeCreated.affiliations) {
-      const affiliationCopy = [...contributorData.toBeCreated.affiliations];
-      affiliationCopy[instIndex].units?.splice(unitIndex, 1);
-      const temp = contributorData;
-      temp.toBeCreated.affiliations = affiliationCopy;
+      if (cristinInstitutionNr) {
+        temp.toBeCreated.affiliations = [...contributorData.toBeCreated.affiliations].filter(
+          (affiliation) => affiliation.cristinInstitutionNr !== cristinInstitutionNr
+        );
+      } else {
+        temp.toBeCreated.affiliations = [...contributorData.toBeCreated.affiliations].filter(
+          (affiliation) => affiliation.institutionName !== institutionName
+        );
+      }
       updateContributor(temp, resultListIndex);
     }
   }
@@ -116,10 +125,12 @@ const Contributor: FC<ContributorProps> = ({
     });
   }
 
+  //TODO: bytt ut med egen lagd autocomplete som KUN legger til institusjon og ikke enhet.
   async function addInstitution() {
     if (contributorData.toBeCreated.affiliations) {
       setAddDisabled(true);
       let affiliationsCopy: Affiliation[] = [...contributorData.toBeCreated.affiliations];
+      //WHY THO? når brukeren har valgt institusjon i nedtrekksmenyen så vet jo applikasjonen hva navnet er?
       const { institutionName } = await getInstitutionName(
         selectedInstitution.cristinInstitutionNr,
         SearchLanguage.En,
@@ -157,6 +168,7 @@ const Contributor: FC<ContributorProps> = ({
     }
   }
 
+  //Brukes av gammel React select, hives ut når vi får skrevet den om
   function addUnit(affiliationsCopy: Affiliation[]) {
     for (let i = 0; i < affiliationsCopy.length; i++) {
       if (affiliationsCopy[i].cristinInstitutionNr === selectedInstitution.cristinInstitutionNr) {
@@ -178,6 +190,7 @@ const Contributor: FC<ContributorProps> = ({
   }
 
   //TODO: TO BE REPLACED BY FORMIK
+  //Krav fra sidelinjen: bidragsyter uten noen institusjoner er en formik feil
   function handleFieldChange(event: any, obj: any, property: string) {
     if (!obj.authorName) {
       obj.authorName = '';
@@ -195,7 +208,7 @@ const Contributor: FC<ContributorProps> = ({
     updateContributor(obj, resultListIndex);
   }
 
-  async function retrySearch(contributorData: ContributorWrapper) {
+  async function retrySearch() {
     setSearching(true);
     setSearchError(undefined);
     let unitNameCache = new Map();
@@ -274,13 +287,75 @@ const Contributor: FC<ContributorProps> = ({
     updateContributor(temp, resultListIndex);
   }
 
-  function editInstitution(inst: Affiliation) {
-    const tempInst: InstitutionSelector = {
-      value: inst.cristinInstitutionNr ?? '',
-      label: inst.institutionName ?? '',
-      cristinInstitutionNr: inst.cristinInstitutionNr ?? '',
-    };
-    handleInstitutionChange(tempInst);
+  function addUnitToInstitutionAndHandleError(newUnit: SimpleUnitResponse, institutionNr: string) {
+    try {
+      setAddUnitError(undefined);
+      addUnitToInstitution(newUnit, institutionNr);
+    } catch (error) {
+      if (error instanceof Error) {
+        setAddUnitError({ institutionNr: institutionNr, message: error.message });
+      }
+    }
+  }
+
+  function addUnitToInstitution(newUnit: SimpleUnitResponse, institutionNr: string) {
+    const affiliationIndex = contributorData.toBeCreated.affiliations
+      ? contributorData.toBeCreated.affiliations.findIndex(
+          (affiliation) => affiliation.cristinInstitutionNr === institutionNr
+        )
+      : -1;
+    if (contributorData.toBeCreated.affiliations && contributorData.toBeCreated.affiliations[affiliationIndex]) {
+      const newUnitMassaged = {
+        unitName: newUnit.unit_name.en ?? newUnit.unit_name.nb,
+        unitNr: newUnit.cristin_unit_id ?? '',
+      };
+      if (
+        contributorData.toBeCreated.affiliations[affiliationIndex].units?.some(
+          (existingUnit) => existingUnit.unitNr === newUnit.cristin_unit_id
+        )
+      ) {
+        throw new Error(`Enhet eksisterer allerede, enhet : ${newUnit.unit_name.en ?? newUnit.unit_name.nb}`);
+      }
+      contributorData.toBeCreated.affiliations[affiliationIndex].units
+        ? contributorData.toBeCreated.affiliations[affiliationIndex].units?.push(newUnitMassaged)
+        : (contributorData.toBeCreated.affiliations[affiliationIndex].units = [newUnitMassaged]);
+      updateContributor(contributorData, resultListIndex);
+    } else {
+      throw new Error(`Fant ikke institusjon med institusjons nummer: ${institutionNr}`);
+    }
+  }
+
+  function deleteUnitToInstitutionAndHandleError(unitToBeDeleted: SimpleUnitResponse, institutionNr: string) {
+    try {
+      setDeleteUnitError(undefined);
+      deleteUnitToInstitution(unitToBeDeleted, institutionNr);
+    } catch (error) {
+      if (error instanceof Error) {
+        setDeleteUnitError({ institutionNr: institutionNr, message: error.message });
+      }
+    }
+  }
+
+  function deleteUnitToInstitution(unitToBeDeleted: SimpleUnitResponse, institutionNr: string) {
+    const affiliationIndex = contributorData.toBeCreated.affiliations
+      ? contributorData.toBeCreated.affiliations.findIndex(
+          (affiliation) => affiliation.cristinInstitutionNr === institutionNr
+        )
+      : -1;
+    if (contributorData.toBeCreated.affiliations && contributorData.toBeCreated.affiliations[affiliationIndex]) {
+      const unitIndex =
+        contributorData.toBeCreated.affiliations[affiliationIndex].units?.findIndex(
+          (existingUnit) => existingUnit.unitNr === unitToBeDeleted.cristin_unit_id
+        ) ?? -1;
+      if (unitIndex < 0) {
+        throw new Error('Fant ikke enhet');
+      } else {
+        contributorData.toBeCreated.affiliations[affiliationIndex].units?.splice(unitIndex, 1);
+        updateContributor(contributorData, resultListIndex);
+      }
+    } else {
+      throw new Error(`Fant ikke institusjon med institusjons nummer: ${institutionNr}`);
+    }
   }
 
   return (
@@ -291,24 +366,32 @@ const Contributor: FC<ContributorProps> = ({
             {contributorData.toBeCreated.first_name + ' ' + contributorData.toBeCreated.surname}
           </Typography>
           <div className={`metadata`}>
-            {contributorData.toBeCreated.affiliations?.map((inst: Affiliation, instIndex: number) => (
-              <div style={{ fontStyle: `italic`, fontSize: '0.9rem' }} key={instIndex}>
-                <p key={instIndex}>{inst.institutionName}</p>
-                <ul style={{ marginBottom: '0.3rem' }}>
-                  {inst.units &&
-                    inst.units.map(
-                      (unit: Unit, unitIndex: number) =>
-                        unit.unitName !== inst.institutionName && (
-                          <li
-                            data-testid={`institution-${inst.cristinInstitutionNr}-unit-${unit.unitNr}-list-item`}
-                            key={unitIndex}>
-                            {unit.unitName}
-                          </li>
-                        )
-                    )}
-                </ul>
-              </div>
-            ))}
+            {contributorData.toBeCreated.affiliations
+              ?.sort((affiliationA, affiliationB) => {
+                if (affiliationA.institutionName && affiliationB.institutionName) {
+                  return affiliationA.institutionName.localeCompare(affiliationB.institutionName);
+                }
+                return 0;
+              })
+              .map((affiliation) => (
+                <AffiliationDisplay
+                  affiliation={{
+                    institutionName: affiliation.institutionName ?? '',
+                    units: affiliation.units
+                      ? affiliation.units
+                          .filter((unit) => unit.unitName !== affiliation.institutionName)
+                          .map((unit) => ({
+                            cristin_unit_id: unit.unitNr,
+                            unit_name: { nb: unit.unitName },
+                          }))
+                          .reverse()
+                      : [],
+                    countryCode: affiliation.countryCode ?? '',
+                  }}
+                  dataTestid={`list-item-author-${contributorData.toBeCreated.cristin_person_id}-affiliations-${affiliation.cristinInstitutionNr}`}
+                  backgroundcolor={Colors.LIGHT_GREY}
+                />
+              ))}
           </div>
           <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
             <Button data-testid={`contributor-edit-button-${resultListIndex}`} color="primary" onClick={updateEditing}>
@@ -344,68 +427,80 @@ const Contributor: FC<ContributorProps> = ({
               required
             />
           </FormGroup>
-          <FormGroup>
-            <TextField
-              id={'authorName' + resultListIndex}
-              label="Forfatternavn"
-              value={
-                contributorData.toBeCreated.authorName
-                  ? contributorData.toBeCreated.authorName
-                  : contributorData.toBeCreated.surname + ', ' + contributorData.toBeCreated.first_name
-              }
-              margin="normal"
-              onChange={(e) => handleFieldChange(e, contributorData, 'authorName')}
-            />
-          </FormGroup>
-          <div className={`metadata`}>
+          <Button
+            variant="outlined"
+            color="primary"
+            data-testid={`contributor-search-button-${resultListIndex}`}
+            onClick={() => retrySearch()}
+            disabled={contributorData.toBeCreated.first_name === '' || contributorData.toBeCreated.surname === ''}>
+            {contributorData.toBeCreated.cristin_person_id ? 'Søk og erstatt person' : 'Søk etter person'}
+          </Button>
+          {!searching && searchError && (
+            <Typography color="error">{searchError.message ?? 'Noe gikk galt med søket, prøv igjen'} </Typography>
+          )}
+          {searching && <CircularProgress />}
+          {openContributorSearchPanel && !searching && (
+            <StyledResultTypography>Fant {searchResults.length} bidragsytere</StyledResultTypography>
+          )}
+          <ContributorSearchPanel
+            collapsed={openContributorSearchPanel && !searching}
+            searchResult={searchResults}
+            handleChoose={handleChooseThis}
+            handleAbort={handleContributorSearchPanelClose}
+          />
+          <StyledInstitutionList>
             {contributorData.toBeCreated.affiliations
               ?.filter(
                 (item: Affiliation, number: number) =>
                   contributorData.toBeCreated.affiliations?.indexOf(item) === number
               )
-              .map((inst: Affiliation, index: number) => (
-                <Card variant="outlined" key={index} style={{ padding: '0.5rem', marginBottom: '0.5rem' }}>
-                  <Typography style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>{inst.institutionName}</Typography>
-                  {inst.units && (
-                    <ul style={{ marginBottom: 0 }}>
-                      {inst.units.map(
-                        (unit: Unit, unitIndex: number) =>
-                          unit.unitName !== inst.institutionName && (
-                            <li key={unitIndex}>
-                              {unit.unitName}
-                              <Button
-                                style={{ marginLeft: '0.5rem' }}
-                                color="secondary"
-                                size="small"
-                                onClick={() => removeUnit(index, unitIndex)}>
-                                Fjern enhet
-                              </Button>
-                            </li>
-                          )
-                      )}
-                    </ul>
-                  )}
-                  <div style={{ float: 'right' }}>
-                    {inst.isCristinInstitution === true && (
-                      <Button
-                        color="primary"
-                        style={{ marginLeft: '0.5rem' }}
-                        size="small"
-                        onClick={() => editInstitution(inst)}>
-                        Legg til enhet
-                      </Button>
-                    )}
-                    <Button
-                      style={{ marginLeft: '0.5rem' }}
-                      size="small"
-                      color="secondary"
-                      onClick={() => removeInstitution(index)}>
-                      Fjern tilknytning
-                    </Button>
-                  </div>
-                </Card>
+              .map((affiliation) => (
+                <AffiliationDisplay
+                  affiliation={{
+                    institutionName: affiliation.institutionName ?? '',
+                    units: affiliation.units
+                      ? affiliation.units
+                          .filter((unit) => unit.unitName !== affiliation.institutionName)
+                          .map((unit) => ({
+                            cristin_unit_id: unit.unitNr,
+                            unit_name: { nb: unit.unitName },
+                          }))
+                          .reverse()
+                      : [],
+                    countryCode: affiliation.countryCode ?? '',
+                    cristinInstitutionNr: affiliation.cristinInstitutionNr,
+                  }}
+                  dataTestid={`institution-${affiliation.cristinInstitutionNr}`}
+                  backgroundcolor={Colors.LIGHT_GREY}
+                  handleAddUnitClick={
+                    affiliation.isCristinInstitution === true
+                      ? (unit) => {
+                          addUnitToInstitutionAndHandleError(unit, affiliation.cristinInstitutionNr ?? '');
+                        }
+                      : undefined
+                  }
+                  handleDeleteUnitClick={(unit) => {
+                    deleteUnitToInstitutionAndHandleError(unit, affiliation.cristinInstitutionNr ?? '');
+                  }}
+                  handleDeleteAffiliationClick={() =>
+                    removeInstitutionByCristinNrOrName(
+                      affiliation.cristinInstitutionNr,
+                      affiliation.institutionName ?? ''
+                    )
+                  }
+                  addUnitError={
+                    addUnitError && addUnitError.institutionNr === affiliation.cristinInstitutionNr
+                      ? addUnitError.message
+                      : undefined
+                  }
+                  deleteUnitError={
+                    deleteUnitError && deleteUnitError.institutionNr === affiliation.cristinInstitutionNr
+                      ? deleteUnitError.message
+                      : undefined
+                  }
+                />
               ))}
-          </div>
+          </StyledInstitutionList>
           <Card variant="outlined" style={{ overflow: 'visible', padding: '0.5rem', marginTop: '0.5rem' }}>
             <InstitutionCountrySelect
               handleInstitutionChange={handleInstitutionChange}
@@ -435,38 +530,28 @@ const Contributor: FC<ContributorProps> = ({
             </Button>
           </Card>
           <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
-            <Button
+            <StyledFlexEndButtons
+              variant="outlined"
               data-testid={`contributor-delete-button-form-${resultListIndex}`}
               color="secondary"
               onClick={() => deleteContributor(resultListIndex)}>
               Slett person
-            </Button>
-            <Button
-              data-testid={`contributor-search-button-${resultListIndex}`}
-              onClick={() => retrySearch(contributorData)}
-              disabled={contributorData.toBeCreated.first_name === '' || contributorData.toBeCreated.surname === ''}>
-              Søk igjen
-            </Button>
-            <Button
+            </StyledFlexEndButtons>
+            <StyledFlexEndButtons
+              variant="outlined"
               data-testid={`contributor-save-button-${resultListIndex}`}
               color="primary"
-              onClick={() => handleSubmit()}>
+              onClick={() => handleSubmit(true)}>
               Lagre endringer
-            </Button>
+            </StyledFlexEndButtons>
+            <StyledFlexEndButtons
+              variant="outlined"
+              data-testid={`contributor-save-and-close-button-${resultListIndex}`}
+              color="primary"
+              onClick={() => handleSubmit(false)}>
+              Lagre endringer og lukk
+            </StyledFlexEndButtons>
           </div>
-          {!searching && searchError && (
-            <Typography color="error">{searchError.message ?? 'Noe gikk galt med søket, prøv igjen'} </Typography>
-          )}
-          {searching && <CircularProgress />}
-          {openContributorSearchPanel && !searching && (
-            <StyledResultTypography>Fant {searchResults.length} bidragsytere</StyledResultTypography>
-          )}
-          <ContributorSearchPanel
-            collapsed={openContributorSearchPanel && !searching}
-            searchResult={searchResults}
-            handleChoose={handleChooseThis}
-            handleAbort={handleContributorSearchPanelClose}
-          />
         </Form>
       )}
     </div>

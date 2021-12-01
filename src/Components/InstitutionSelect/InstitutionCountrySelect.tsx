@@ -58,10 +58,7 @@ const InstitutionCountrySelect: FC<InstitutionCountrySelectProps> = ({
       if (selectedInstitution.cristinInstitutionNr) {
         try {
           setLoadingUnits(true);
-          const parentUnitNamesResponse = await getParentsUnitName(
-            selectedInstitution.cristinInstitutionNr,
-            SearchLanguage.En
-          );
+          const parentUnitNamesResponse = await getParentsUnitName(selectedInstitution.cristinInstitutionNr);
           const units = parentUnitNamesResponse.data.map((parentUnitName) => ({
             label: parentUnitName.unit_name.en ?? parentUnitName.unit_name.nb,
             value: parentUnitName.cristin_unit_id,

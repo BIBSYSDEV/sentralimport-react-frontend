@@ -3,42 +3,12 @@ import { ContributorType } from '../../types/ContributorTypes';
 import styled from 'styled-components';
 import { Button, Typography } from '@material-ui/core';
 import { Colors } from '../../assets/styles/StyleConstants';
-import { ReactComponent as VerifiedBadge } from '../../assets/icons/verified-badge.svg';
-import { ReactComponent as NotVerifiedBadge } from '../../assets/icons/not-verified-badge.svg';
-import { ReactComponent as UnknownVerifiedBadge } from '../../assets/icons/uknown-verification-badge.svg';
-
-const StyledVerifiedBadge = styled(VerifiedBadge)`
-  margin-right: 0.5rem;
-  width: 1.7rem;
-  height: 1.7rem;
-  & path {
-    fill: ${Colors.Text.GREEN};
-  }
-`;
-
-const StyledNotVerifiedBadge = styled(NotVerifiedBadge)`
-  margin-right: 0.5rem;
-  width: 1.7rem;
-  height: 1.7rem;
-  & path {
-    fill: ${Colors.Text.OPAQUE_41_BLACK};
-  }
-  & circle {
-    fill: ${Colors.Text.OPAQUE_41_BLACK};
-  }
-`;
-
-const StyledUnknownVerifiedBadge = styled(UnknownVerifiedBadge)`
-  margin-right: 0.5rem;
-  width: 1.7rem;
-  height: 1.7rem;
-  & path {
-    fill: ${Colors.Text.OPAQUE_41_BLACK};
-  }
-  & ellipse {
-    fill: ${Colors.Text.OPAQUE_41_BLACK};
-  }
-`;
+import {
+  StyledNotVerifiedBadge,
+  StyledUnknownVerifiedBadge,
+  StyledVerifiedBadge,
+} from '../../assets/styles/StyledComponents';
+import AffiliationDisplay from './AffiliationDisplay';
 
 const StyledChooseButton = styled(Button)`
   &.MuiButtonBase-root {
@@ -101,15 +71,32 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({ con
           }`}
         </StyledInactivePersonNameTypography>
       )}
-      {contributor.affiliations?.map((affiliation, affiliationIndex) => (
-        <StyledAffiliationsWrapper
-          data-testid={`list-item-author-${contributor.cristin_person_id}-affiliations-${affiliation.cristinInstitutionNr}`}
-          key={affiliationIndex}>
-          {affiliation.institutionName}
-          {affiliation.units &&
-            affiliation.units.map((unit, unitIndex) => <div key={unitIndex}>&bull; {unit.unitName}</div>)}
-        </StyledAffiliationsWrapper>
-      ))}
+      {contributor.affiliations
+        ?.sort((affiliationA, affiliationB) => {
+          if (affiliationA.institutionName && affiliationB.institutionName) {
+            return affiliationA.institutionName.localeCompare(affiliationB.institutionName);
+          }
+          return 0;
+        })
+        .map((affiliation) => (
+          <AffiliationDisplay
+            affiliation={{
+              institutionName: affiliation.institutionName ?? '',
+              units: affiliation.units
+                ? affiliation.units
+                    .filter((unit) => unit.unitName !== affiliation.institutionName)
+                    .map((unit) => ({
+                      cristin_unit_id: unit.unitNr,
+                      unit_name: { nb: unit.unitName },
+                    }))
+                    .reverse()
+                : [],
+              countryCode: affiliation.countryCode ?? '',
+            }}
+            dataTestid={`institution-${affiliation.cristinInstitutionNr}`}
+            backgroundcolor={Colors.LIGHT_GREY}
+          />
+        ))}
 
       {contributor.affiliations?.length === 0 && contributor.require_higher_authorization && (
         <StyledAffiliationsWrapper>

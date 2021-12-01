@@ -102,7 +102,7 @@ context('contributor', () => {
     cy.get(`[data-testid="contributor-form-0"]`).contains(
       mockImportPublication1.authors[0].institutions[0].institutionName
     );
-    cy.get(`[data-testid="contributor-save-button-0"]`).click();
+    cy.get(`[data-testid="contributor-save-and-close-button-0"]`).click();
     cy.get(`[data-testid="contributor-for-import-wrapper-0"]`).contains(
       mockImportPublication1.authors[0].institutions[0].institutionName
     );
@@ -112,9 +112,8 @@ context('contributor', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="open-contributors-modal-button"]`).click();
-
     cy.get(`[data-testid="contributor-form-1"]`).contains('China (Ukjent institusjon');
-    cy.get(`[data-testid="contributor-save-button-1"]`).click();
+    cy.get(`[data-testid="contributor-save-and-close-button-1"]`).click();
     cy.get(`[data-testid="contributor-for-import-wrapper-1"]`).contains('China (Ukjent institusjon');
   });
 
@@ -122,13 +121,15 @@ context('contributor', () => {
     cy.get('[data-testid="import-table-row-610213"]').click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
+    //cy.get('[data-testid="institution-7492"] > .MuiCardContent-root > .MuiList-root');
+    //cy.get('[data-testid="contributor-for-import-wrapper-0"] > .metadata > [data-testid="list-item-author-1234567-affiliations-7492"] > .MuiCardContent-root > .MuiList-root > .MuiListItem-root > [data-testid="list-item-author-1234567-affiliations-7492-list-item-text-unit-7492.5.1.0"] > .MuiTypography-root')
     cy.get(
-      `[data-testid="institution-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}-unit-${mockPersonDetailed.affiliations[1].unit.cristin_unit_id}-list-item"]`
+      `[data-testid="list-item-author-${mockPersonDetailed.cristin_person_id}-affiliations-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}-list-item-text-unit-${mockPersonDetailed.affiliations[1].unit.cristin_unit_id}"]`
     )
       .first()
       .should('have.text', `${mockUnits.unit_name.en}`);
     cy.get(
-      `[data-testid="institution-${mockPersonDetailed.affiliations[0].institution.cristin_institution_id}-unit-${mockPersonDetailed.affiliations[0].unit.cristin_unit_id}-list-item"]`
+      `[data-testid="list-item-author-${mockPersonDetailed.cristin_person_id}-affiliations-${mockPersonDetailed.affiliations[0].institution.cristin_institution_id}-list-item-text-unit-${mockPersonDetailed.affiliations[0].unit.cristin_unit_id}"]`
     ).should('not.exist');
   });
 
@@ -137,6 +138,7 @@ context('contributor', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid=contributor-search-button-2]').click();
+
     cy.get(
       `[data-testid=list-item-author-${mockPerson.cristin_person_id}-affiliations-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}]`
     ).should('exist');
@@ -200,4 +202,6 @@ context('contributor', () => {
       Colors.Text.OPAQUE_41_BLACK
     );
   });
+
+  //TODO: legge til tester for å legge til enhet. Fjerne tilknyttning. Fjerne enhet.
 });
