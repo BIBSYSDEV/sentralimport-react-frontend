@@ -58,6 +58,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
 
   const handleSubmit = (values: CreateJournalFormValues) => {
     setExpanded(false);
+    //todo preventdefault
     //old code :  const newJournal = {title: title,issn: issn,eissn: eissn,url: url,countryCode: publisher,id: 0};
     handleCreateJournal({ title: values.title, issn: values.issn, eissn: values.eissn });
   };

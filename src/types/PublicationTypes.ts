@@ -96,6 +96,7 @@ export interface ChannelLight {
   type: string;
   title: string;
   issn?: string;
+  eissn?: string;
   issn_electronic?: string;
 }
 

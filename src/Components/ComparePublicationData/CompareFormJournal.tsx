@@ -9,7 +9,7 @@ import {
   StyledLineWrapper,
 } from './CompareFormWrappers';
 import { compareFormValuesType, JournalType } from './ComparePublicationDataModal';
-import { ImportPublication, Journal } from '../../types/PublicationTypes';
+import { ChannelLight, ImportPublication, Journal } from '../../types/PublicationTypes';
 import CreateJournalPanel from '../CreateJournalPanel/CreateJournalPanel';
 import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
 import { Autocomplete } from '@material-ui/lab';
@@ -27,22 +27,28 @@ interface CompareFormJournalProps {
 
 const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) => {
   const { values, setFieldValue } = useFormikContext<compareFormValuesType>();
-  const [journals, setJournals] = useState<any>(); //todo type
+  const [journals, setJournals] = useState<JournalType[]>(); //todo type
   const [fetchJournalsError, setFetchJournalsError] = useState<Error | undefined>(new Error('test'));
   const [isLoadingJournals, setIsLoadingJournals] = useState(false);
 
-  const handleNewJournal = (newJournal: Journal) => setJournals((old: any) => [...old, newJournal]); //TODO: sjekk
+  const handleNewJournal = (newJournal: Journal) => setJournals((prevState: any) => [...prevState, newJournal]); //TODO: sjekk
 
   useEffect(() => {
     async function getJournals(journalTitle?: string) {
       try {
         setIsLoadingJournals(true);
         setFetchJournalsError(undefined);
-        if (!journalTitle || journalTitle.length === 0) {
-          journalTitle = '*';
-        }
-        const journals = (await getJournalsByQuery(journalTitle, QueryMethod.title)).data;
-        setJournals(journals);
+        const query = journalTitle && journalTitle.length > 0 ? journalTitle : '*';
+        const resultJournals: ChannelLight[] = (await getJournalsByQuery(query, QueryMethod.title)).data;
+        const convertedJournals: JournalType[] = resultJournals.map((journal) => {
+          return {
+            cristinTidsskriftNr: journal.id,
+            title: journal.title,
+            issn: journal.issn,
+            eissn: journal.eissn,
+          };
+        });
+        setJournals(convertedJournals);
       } catch (error) {
         setFetchJournalsError(error as Error);
       } finally {
