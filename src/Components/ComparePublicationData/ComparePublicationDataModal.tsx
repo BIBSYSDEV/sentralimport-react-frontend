@@ -1,6 +1,6 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { Button, Grid, TextField, Typography } from '@material-ui/core';
+import { Button, Grid, Typography } from '@material-ui/core';
 import Select from 'react-select';
 import ConfirmImportDialog from '../Dialogs/ConfirmImportDialog';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
@@ -37,6 +37,9 @@ import CompareFormTitle from './CompareFormTitle';
 import CompareFormYear from './CompareFormYear';
 import CompareFormDoi from './CompareFormDoi';
 import CompareFormCategory from './CompareFormCategory';
+import CompareFormVolume from './CompareFormVolume';
+import CompareFormIssue from './CompareFormIssue';
+import CompareFormPages from './CompareFormPages';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -67,6 +70,10 @@ export interface compareFormValuesType {
   doi: string;
   language: any;
   category: CategoryOption;
+  volume: string;
+  issue: string;
+  pageFrom: string;
+  pageTo: string;
 }
 
 interface ComparePublicationDataModalProps {
@@ -360,22 +367,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'setValidation', payload: option.label });
   }
 
-  function handleChangeVolume(event: any) {
-    publishingDetails && setPublishingDetails({ ...publishingDetails, volume: event.target.value });
-  }
-
-  function handleChangeIssue(event: any) {
-    publishingDetails && setPublishingDetails({ ...publishingDetails, issue: event.target.value });
-  }
-
-  function handleChangePageFrom(event: any) {
-    publishingDetails && setPublishingDetails({ ...publishingDetails, pageFrom: event.target.value });
-  }
-
-  function handleChangePageTo(event: any) {
-    publishingDetails && setPublishingDetails({ ...publishingDetails, pageTo: event.target.value });
-  }
-
   function handleFormSubmit() {
     setImportPublicationError(undefined);
     saveToLocalStorage();
@@ -415,23 +406,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       type: 'setValidation',
       payload: importPublication.channel?.title,
     });
-  };
-
-  const copyPages = () => {
-    publishingDetails &&
-      setPublishingDetails({
-        ...publishingDetails,
-        pageFrom: importPublication.channel?.pageFrom,
-        pageTo: importPublication.channel?.pageTo,
-      });
-  };
-
-  const copyVolume = () => {
-    publishingDetails && setPublishingDetails({ ...publishingDetails, volume: importPublication.channel?.volume });
-  };
-
-  const copyIssue = () => {
-    publishingDetails && setPublishingDetails({ ...publishingDetails, issue: importPublication.channel?.issue });
   };
 
   function handlePublicationImported(result: any) {
@@ -534,26 +508,30 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       .required('Årstall er et obligatorisk felt')
       .integer('Årstall må være heltall')
       .moreThan(999, 'Årstall må være større enn 999')
-      .lessThan(new Date().getFullYear() + 1, 'Årstall kan ikke være et framtidig år'),
-    //todo: nødvendige sjekker ?
+      .lessThan(new Date().getFullYear() + 1, 'Årstall kan ikke være et framtidig år'), //todo: nødvendige sjekker ?
     doi: Yup.string().matches(doiMatcher, 'Doi har galt format'),
   });
 
+  //todo: ta hensyn til isduplicate
   const formValues: compareFormValuesType = {
     title: selectedLang?.title ?? '',
     year: aarstall,
     doi: doi,
     language: selectedLang,
     category: selectedCategory,
+    volume: importPublication?.channel?.volume ?? '',
+    issue: importPublication?.channel?.issue ?? '',
+    pageFrom: importPublication?.channel?.issue ?? '',
+    pageTo: importPublication?.channel?.issue ?? '',
   };
 
   const NewAndImprovedHandleFormSubmit = () => {
     saveToLocalStorage(); //tja ?
-    // if (state.contributors === null) {
-    //   dispatch({ type: 'contributors', payload: contributors });
-    // }
+    if (state.contributors === null) {
+      dispatch({ type: 'contributors', payload: contributors });
+    }
     setIsConfirmDialogOpen(true);
-    //sette formValues som parameter i confirmdialogOpen
+    //later: sette formValues som parameter i confirmdialogOpen
   };
 
   return (
@@ -625,10 +603,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
                       <CompareFormTitle importPublication={importPublication} selectedLang={selectedLang} />
 
-                      <CompareFormYear importPublication={importPublication} />
-
-                      <CompareFormDoi importPublication={importPublication} />
-
                       <StyledLineWrapper>
                         <StyledLineLabelTypography htmlFor="cristindata-journal">Tidsskrift</StyledLineLabelTypography>
                         <StyledLineImportValue>
@@ -671,90 +645,12 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         </StyledLineCristinValue>
                       </StyledLineWrapper>
 
+                      <CompareFormDoi importPublication={importPublication} />
+                      <CompareFormYear importPublication={importPublication} />
                       <CompareFormCategory importPublication={importPublication} categories={categories} />
-
-                      <StyledLineWrapper>
-                        <StyledLineLabelTypography>Volum</StyledLineLabelTypography>
-                        <StyledLineImportValue>
-                          <Typography data-testid="importdata-volume">{importPublication.channel?.volume}</Typography>
-                        </StyledLineImportValue>
-                        <ActionButtons
-                          isImportAndCristinEqual={importPublication.channel?.volume === publishingDetails?.volume}
-                          isCopyBottonDisabled={!importPublication.channel?.volume}
-                          copyCommand={copyVolume}
-                        />
-                        <StyledLineCristinValue>
-                          <TextField
-                            data-testid="cristindata-volume-textfield"
-                            id="cristindata-volume"
-                            placeholder="Volum"
-                            value={publishingDetails && publishingDetails.volume}
-                            margin="normal"
-                            onChange={handleChangeVolume}
-                          />
-                        </StyledLineCristinValue>
-                      </StyledLineWrapper>
-
-                      <StyledLineWrapper>
-                        <StyledLineLabelTypography>Hefte</StyledLineLabelTypography>
-                        <StyledLineImportValue>
-                          <Typography data-testid="importdata-issue">{importPublication.channel?.issue}</Typography>
-                        </StyledLineImportValue>
-                        <ActionButtons
-                          isImportAndCristinEqual={importPublication.channel?.issue === publishingDetails?.issue}
-                          isCopyBottonDisabled={!importPublication.channel?.issue}
-                          copyCommand={copyIssue}
-                        />
-                        <StyledLineCristinValue>
-                          <TextField
-                            id="Cristin-hefte"
-                            data-testid="cristindata-issue-textfield"
-                            placeholder="Hefte"
-                            value={publishingDetails && publishingDetails.issue}
-                            margin="normal"
-                            onChange={handleChangeIssue}
-                          />
-                        </StyledLineCristinValue>
-                      </StyledLineWrapper>
-
-                      <StyledLineWrapper>
-                        <StyledLineLabelTypography>Sider</StyledLineLabelTypography>
-                        <StyledLineImportValue>
-                          <Typography data-testid="importdata-pages">
-                            {importPublication.channel?.pageFrom && `Fra: ${importPublication.channel.pageFrom}`}
-                            {importPublication.channel?.pageTo && ` Til: ${importPublication.channel.pageTo}`}
-                          </Typography>
-                        </StyledLineImportValue>
-                        <ActionButtons
-                          isImportAndCristinEqual={
-                            importPublication.channel?.pageFrom === publishingDetails?.pageFrom &&
-                            importPublication.channel?.pageTo === publishingDetails?.pageTo
-                          }
-                          isCopyBottonDisabled={
-                            !(importPublication.channel?.pageFrom || importPublication.channel?.pageTo)
-                          }
-                          copyCommand={copyPages}
-                        />
-                        <StyledLineCristinValue>
-                          <div style={{ display: 'flex' }}>
-                            <TextField
-                              placeholder="Side fra"
-                              data-testid="cristindata-pagefrom-textfield"
-                              id="pageFromCristin"
-                              value={publishingDetails ? publishingDetails.pageFrom : ''}
-                              onChange={handleChangePageFrom}
-                            />
-                            <TextField
-                              placeholder="Side til"
-                              data-testid="cristindata-pageto-textfield"
-                              id="pageToCristin"
-                              value={publishingDetails ? publishingDetails.pageTo : ''}
-                              onChange={handleChangePageTo}
-                              style={{ marginLeft: '2rem' }}
-                            />
-                          </div>
-                        </StyledLineCristinValue>
-                      </StyledLineWrapper>
+                      <CompareFormVolume importPublication={importPublication} />
+                      <CompareFormIssue importPublication={importPublication} />
+                      <CompareFormPages importPublication={importPublication} />
 
                       {!isValid && (
                         <CommonErrorMessage datatestid="compare-form-error" errorMessage="Det er feil i skjema" />
