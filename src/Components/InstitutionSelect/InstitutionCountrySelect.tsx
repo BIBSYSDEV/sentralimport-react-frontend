@@ -13,8 +13,9 @@ const StyledCircularProgress = styled(CircularProgress)`
 `;
 
 const StyledUnitSelectWrapper = styled.div`
-  margin: 0 0.5rem;
+  margin-top: 0.5rem;
 `;
+
 const StyledLabelTypography = styled(Typography)`
   && {
     font-size: 1.2rem;
