@@ -20,8 +20,9 @@ interface EditAffiliationsProps {
 }
 
 const EditAffiliations: FC<EditAffiliationsProps> = ({ contributorData, updateContributor, resultListIndex }) => {
-  const [addUnitError, setAddUnitError] = useState<{ institutionNr: string; message: string } | undefined>();
-  const [deleteUnitError, setDeleteUnitError] = useState<{ institutionNr: string; message: string } | undefined>();
+  const [deleteOrAddUnitError, setDeleteOrAddUnitError] = useState<
+    { institutionNr: string; message: string } | undefined
+  >();
   const [showUnitSelector, setShowUnitSelector] = useState(false);
 
   function addUnitToInstitution(newUnit: SimpleUnitResponse, institutionNr: string) {
@@ -53,11 +54,11 @@ const EditAffiliations: FC<EditAffiliationsProps> = ({ contributorData, updateCo
 
   function addUnitToInstitutionAndHandleError(newUnit: SimpleUnitResponse, institutionNr: string) {
     try {
-      setAddUnitError(undefined);
+      setDeleteOrAddUnitError(undefined);
       addUnitToInstitution(newUnit, institutionNr);
     } catch (error) {
       if (error instanceof Error) {
-        setAddUnitError({ institutionNr: institutionNr, message: error.message });
+        setDeleteOrAddUnitError({ institutionNr: institutionNr, message: error.message });
       }
     }
   }
@@ -86,11 +87,11 @@ const EditAffiliations: FC<EditAffiliationsProps> = ({ contributorData, updateCo
 
   function deleteUnitToInstitutionAndHandleError(unitToBeDeleted: SimpleUnitResponse, institutionNr: string) {
     try {
-      setDeleteUnitError(undefined);
+      setDeleteOrAddUnitError(undefined);
       deleteUnitToInstitution(unitToBeDeleted, institutionNr);
     } catch (error) {
       if (error instanceof Error) {
-        setDeleteUnitError({ institutionNr: institutionNr, message: error.message });
+        setDeleteOrAddUnitError({ institutionNr: institutionNr, message: error.message });
       }
     }
   }
@@ -193,14 +194,13 @@ const EditAffiliations: FC<EditAffiliationsProps> = ({ contributorData, updateCo
                   </Grid>
                 </Grid>
               )}
-              {addUnitError && (
+              {deleteOrAddUnitError && (
                 <Grid item xs={12}>
-                  <Typography color="error">{addUnitError.message}</Typography>
-                </Grid>
-              )}
-              {deleteUnitError && (
-                <Grid item xs={12}>
-                  <Typography color="error">{deleteUnitError.message}</Typography>
+                  <Typography
+                    data-testid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}-error`}
+                    color="error">
+                    {deleteOrAddUnitError.message}
+                  </Typography>
                 </Grid>
               )}
             </Grid>

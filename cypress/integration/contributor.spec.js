@@ -213,12 +213,26 @@ context('contributor', () => {
     ).click();
     cy.get('[data-testid="unit-select"]').click();
     cy.get(`[data-testid=${mockSimpleUnitResponse[7].unit_name.en.replaceAll(' ', '-')}-option]`).should('exist');
+    //search in norwegian gives hits in english
     cy.get('[data-testid="filter-unit-select"]').type('rektor og styre');
     cy.get(`[data-testid=${mockSimpleUnitResponse[7].unit_name.en.replaceAll(' ', '-')}-option]`).should('not.exist');
     cy.get(`[data-testid=${mockSimpleUnitResponse[1].unit_name.en.replaceAll(' ', '-')}-option]`).click();
     cy.get(
       `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}-list-item-text-unit-${mockSimpleUnitResponse[1].cristin_unit_id}"]`
     ).should('have.text', mockSimpleUnitResponse[1].unit_name.en);
+
+    //cannot add the same unit twice
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}-add-unit"]`
+    ).click();
+    cy.get('[data-testid="unit-select"]').click();
+    cy.get('[data-testid="filter-unit-select"]').type('rektor og styre');
+    cy.get(`[data-testid=${mockSimpleUnitResponse[1].unit_name.en.replaceAll(' ', '-')}-option]`).click();
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}-error"]`
+    ).should('include.text', 'Enhet eksisterer allerede');
+
+    //deletes works:
     cy.get(
       `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}-delete-unit-0"]`
     ).click();
