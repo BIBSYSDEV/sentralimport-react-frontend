@@ -485,7 +485,7 @@ const Contributor: FC<ContributorProps> = ({
                     countryCode: affiliation.countryCode ?? '',
                     cristinInstitutionNr: affiliation.cristinInstitutionNr,
                   }}
-                  dataTestid={`institution-${affiliation.cristinInstitutionNr}`}
+                  dataTestid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}`}
                   backgroundcolor={Colors.LIGHT_GREY}
                   handleAddUnitClick={
                     affiliation.isCristinInstitution === true

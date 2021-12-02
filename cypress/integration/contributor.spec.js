@@ -7,6 +7,7 @@ import {
   cristinIDWithoutActiveAffiliation,
   cristinIDWithoutAffiliationAttribute,
   cristinIdForbiddenPerson,
+  mockSimpleUnitResponse,
 } from '../../src/utils/mockdata';
 import mockImportData from '../../src/utils/mockImportData.json';
 import { Colors } from '../../src/assets/styles/StyleConstants';
@@ -24,7 +25,7 @@ context('contributor', () => {
 
     cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].firstname);
     cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].surname);
-
+    cy.wait(500);
     cy.get('[data-testid=creator-institutions-1-institution-name]').contains(
       mockImportData[0].authors[0].institutions[0].institutionName
     );
@@ -203,5 +204,42 @@ context('contributor', () => {
     );
   });
 
-  //TODO: legge til tester for å legge til enhet. Fjerne tilknyttning. Fjerne enhet.
+  it('is possible to add and delete units for institution with crisin-id for a contributor', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}-add-unit"]`
+    ).click();
+    cy.get('[data-testid="unit-select"]').click();
+    cy.get(`[data-testid=${mockSimpleUnitResponse[7].unit_name.en.replaceAll(' ', '-')}-option]`).should('exist');
+    cy.get('[data-testid="filter-unit-select"]').type('rektor og styre');
+    cy.get(`[data-testid=${mockSimpleUnitResponse[7].unit_name.en.replaceAll(' ', '-')}-option]`).should('not.exist');
+    cy.get(`[data-testid=${mockSimpleUnitResponse[1].unit_name.en.replaceAll(' ', '-')}-option]`).click();
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}-list-item-text-unit-${mockSimpleUnitResponse[1].cristin_unit_id}"]`
+    ).should('have.text', mockSimpleUnitResponse[1].unit_name.en);
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}-delete-unit-0"]`
+    ).click();
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}-list-item-text-unit-${mockSimpleUnitResponse[1].cristin_unit_id}"]`
+    ).should('not.exist');
+  });
+
+  it('is possible to remove affiliations for a contributor', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}"]`
+    ).should('exist');
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}-delete-institution"]`
+    ).click();
+    cy.wait(500);
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}"]`
+    ).should('not.exist');
+  });
 });

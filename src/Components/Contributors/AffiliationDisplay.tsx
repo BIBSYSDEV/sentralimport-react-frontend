@@ -87,7 +87,7 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
           {affiliation.units.map((unit, unitIndex) => (
             <ListItem key={unitIndex} dense={true}>
               <StyledListItemText
-                data-testid={`${dataTestid}-list-item-text-unit-${unit.cristin_unit_id}`}
+                data-testid={`${dataTestid}-list-item-text-unit-${unit.cristin_unit_id ?? unitIndex}`}
                 primary={unit.unit_name.en ?? unit.unit_name.nb}
               />
               {handleDeleteUnitClick && (

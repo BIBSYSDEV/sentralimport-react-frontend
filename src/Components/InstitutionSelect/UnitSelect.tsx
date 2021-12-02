@@ -56,6 +56,7 @@ const UnitSelect: FC<UnitSelectProps> = ({ cristinInstitutionNr, handleUnitChang
         <>Klarte ikke å laste enheter {loadingUnitError.message}</>
       ) : (
         <Autocomplete
+          debug={true}
           defaultValue={null}
           loading={isLoadingUnits}
           fullWidth
@@ -76,7 +77,12 @@ const UnitSelect: FC<UnitSelectProps> = ({ cristinInstitutionNr, handleUnitChang
             )}
           getOptionLabel={(option) => option.unit_name.en ?? ''}
           renderOption={(option) => (
-            <div>
+            <div
+              data-testid={`${
+                option.unit_name.en
+                  ? option.unit_name.en.replaceAll(' ', '-')
+                  : option.unit_name.nb.replaceAll(' ', '-')
+              }-option`}>
               <Typography>{option.unit_name.en}</Typography>
               <Typography variant="body2">{option.unit_name.nb}</Typography>
             </div>
@@ -88,7 +94,7 @@ const UnitSelect: FC<UnitSelectProps> = ({ cristinInstitutionNr, handleUnitChang
           renderInput={(params) => (
             <StyledTextField
               {...params}
-              data-testid="filter-institution-select"
+              data-testid="filter-unit-select"
               multiline
               label="velg enhet"
               variant="outlined"
