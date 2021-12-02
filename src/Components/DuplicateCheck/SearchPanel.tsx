@@ -119,11 +119,11 @@ const SearchPanel: FC<SearchPanelProps> = ({
 
     const results = await searchChristinPublications(
       maxResults,
-      isDoiChecked ? doi : undefined,
-      isTitleChecked ? title : undefined,
-      isYearPublishedChecked ? yearPublished : undefined,
-      isIssnChecked ? issn : undefined,
-      isAuthorChecked ? author : undefined
+      isDoiChecked ? doi.trim() : undefined,
+      isTitleChecked ? title.trim() : undefined,
+      isYearPublishedChecked ? yearPublished.trim() : undefined,
+      isIssnChecked ? issn.trim() : undefined,
+      isAuthorChecked ? author.trim() : undefined
     );
     if (results.cristinPublications.length > 0) {
       setFoundDuplicates(true);
