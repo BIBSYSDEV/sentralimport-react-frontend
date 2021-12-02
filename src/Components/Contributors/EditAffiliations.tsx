@@ -4,6 +4,10 @@ import AffiliationDisplay from './AffiliationDisplay';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { ContributorWrapper } from '../../types/ContributorTypes';
 import styled from 'styled-components';
+import { Button, Grid, Typography } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
+import UnitSelect from '../InstitutionSelect/UnitSelect';
 
 const StyledInstitutionList = styled.div`
   margin-top: 1rem;
@@ -18,6 +22,7 @@ interface EditAffiliationsProps {
 const EditAffiliations: FC<EditAffiliationsProps> = ({ contributorData, updateContributor, resultListIndex }) => {
   const [addUnitError, setAddUnitError] = useState<{ institutionNr: string; message: string } | undefined>();
   const [deleteUnitError, setDeleteUnitError] = useState<{ institutionNr: string; message: string } | undefined>();
+  const [showUnitSelector, setShowUnitSelector] = useState(false);
 
   function addUnitToInstitution(newUnit: SimpleUnitResponse, institutionNr: string) {
     const affiliationIndex = contributorData.toBeCreated.affiliations
@@ -112,8 +117,10 @@ const EditAffiliations: FC<EditAffiliationsProps> = ({ contributorData, updateCo
         ?.filter(
           (item: Affiliation, number: number) => contributorData.toBeCreated.affiliations?.indexOf(item) === number
         )
-        .map((affiliation) => (
+        .map((affiliation, affiliationIndex) => (
           <AffiliationDisplay
+            key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
+            showCardActions={true}
             affiliation={{
               institutionName: affiliation.institutionName ?? '',
               units: affiliation.units
@@ -127,30 +134,77 @@ const EditAffiliations: FC<EditAffiliationsProps> = ({ contributorData, updateCo
             }}
             dataTestid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}`}
             backgroundcolor={Colors.LIGHT_GREY}
-            handleAddUnitClick={
-              affiliation.isCristinInstitution === true
-                ? (unit) => {
-                    addUnitToInstitutionAndHandleError(unit, affiliation.cristinInstitutionNr ?? '');
-                  }
-                : undefined
-            }
             handleDeleteUnitClick={(unit) => {
               deleteUnitToInstitutionAndHandleError(unit, affiliation.cristinInstitutionNr ?? '');
-            }}
-            handleDeleteAffiliationClick={() =>
-              removeInstitutionByCristinNrOrName(affiliation.cristinInstitutionNr, affiliation.institutionName ?? '')
-            }
-            addUnitError={
-              addUnitError && addUnitError.institutionNr === affiliation.cristinInstitutionNr
-                ? addUnitError.message
-                : undefined
-            }
-            deleteUnitError={
-              deleteUnitError && deleteUnitError.institutionNr === affiliation.cristinInstitutionNr
-                ? deleteUnitError.message
-                : undefined
-            }
-          />
+            }}>
+            <Grid container spacing={3}>
+              <Grid item>
+                <Button
+                  size="small"
+                  onClick={() =>
+                    removeInstitutionByCristinNrOrName(
+                      affiliation.cristinInstitutionNr,
+                      affiliation.institutionName ?? ''
+                    )
+                  }
+                  data-testid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}-delete-institution`}
+                  startIcon={<DeleteIcon />}
+                  variant="outlined"
+                  color="secondary">
+                  Fjern tilknyttning
+                </Button>
+              </Grid>
+
+              {affiliation.isCristinInstitution === true && (
+                <Grid item>
+                  <Button
+                    size="small"
+                    data-testid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}-add-unit`}
+                    onClick={() => setShowUnitSelector(true)}
+                    startIcon={<AddIcon />}
+                    variant="outlined"
+                    color="primary">
+                    Legg til enhet
+                  </Button>
+                </Grid>
+              )}
+              {showUnitSelector && affiliation.isCristinInstitution === true && (
+                <Grid item xs={12}>
+                  <Grid container spacing={3}>
+                    <Grid item sm={8}>
+                      <UnitSelect
+                        cristinInstitutionNr={affiliation.cristinInstitutionNr ?? ''}
+                        handleUnitChange={(unit: any) => {
+                          setShowUnitSelector(false);
+                          addUnitToInstitutionAndHandleError(unit, affiliation.cristinInstitutionNr ?? '');
+                        }}
+                      />
+                    </Grid>
+                    <Grid item sm={4}>
+                      <Button
+                        size="small"
+                        data-testid={`cancel-list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}-add-unit`}
+                        onClick={() => setShowUnitSelector(false)}
+                        variant="outlined"
+                        color="secondary">
+                        Avbryt
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              )}
+              {addUnitError && (
+                <Grid item xs={12}>
+                  <Typography color="error">{addUnitError.message}</Typography>
+                </Grid>
+              )}
+              {deleteUnitError && (
+                <Grid item xs={12}>
+                  <Typography color="error">{deleteUnitError.message}</Typography>
+                </Grid>
+              )}
+            </Grid>
+          </AffiliationDisplay>
         ))}
     </StyledInstitutionList>
   );

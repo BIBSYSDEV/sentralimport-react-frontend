@@ -1,20 +1,8 @@
-import React, { FC, useState } from 'react';
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Grid,
-  List,
-  ListItem,
-  ListItemText,
-  Typography,
-} from '@material-ui/core';
+import React, { FC } from 'react';
+import { Button, Card, CardActions, CardContent, List, ListItem, ListItemText, Typography } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
-import AddIcon from '@material-ui/icons/Add';
 import styled from 'styled-components';
 import { SimpleUnitResponse } from '../../types/InstitutionTypes';
-import UnitSelect from '../InstitutionSelect/UnitSelect';
 
 const StyledAffiliationsWrapper = styled(Card)<{ backgroundcolor: string }>`
   margin-bottom: 2rem;
@@ -53,10 +41,7 @@ interface AffiliationDisplayProps {
   dataTestid: string;
   backgroundcolor: string;
   handleDeleteUnitClick?: (unitIndex: SimpleUnitResponse) => void;
-  handleAddUnitClick?: (unit: SimpleUnitResponse) => void;
-  handleDeleteAffiliationClick?: () => void;
-  addUnitError?: string | undefined;
-  deleteUnitError?: string | undefined;
+  showCardActions?: boolean;
 }
 
 const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
@@ -65,12 +50,8 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
   dataTestid,
   backgroundcolor,
   handleDeleteUnitClick,
-  handleAddUnitClick,
-  handleDeleteAffiliationClick,
-  addUnitError,
-  deleteUnitError,
+  showCardActions,
 }) => {
-  const [showUnitSelector, setShowUnitSelector] = useState(false);
   return (
     <StyledAffiliationsWrapper backgroundcolor={backgroundcolor} variant="outlined" data-testid={dataTestid}>
       <StyledCardContent>
@@ -85,7 +66,7 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
 
         <List>
           {affiliation.units.map((unit, unitIndex) => (
-            <ListItem key={unitIndex} dense={true}>
+            <ListItem key={`{$unitIndex}-${unitIndex}`} dense={true}>
               <StyledListItemText
                 data-testid={`${dataTestid}-list-item-text-unit-${unit.cristin_unit_id ?? unitIndex}`}
                 primary={unit.unit_name.en ?? unit.unit_name.nb}
@@ -105,74 +86,7 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
           ))}
         </List>
       </StyledCardContent>
-      {(handleDeleteAffiliationClick || handleAddUnitClick) && (
-        <CardActions>
-          {children}
-          <Grid container spacing={3}>
-            {handleDeleteAffiliationClick && (
-              <Grid item>
-                <Button
-                  size="small"
-                  onClick={handleDeleteAffiliationClick}
-                  data-testid={`${dataTestid}-delete-institution`}
-                  startIcon={<DeleteIcon />}
-                  variant="outlined"
-                  color="secondary">
-                  Fjern tilknyttning
-                </Button>
-              </Grid>
-            )}
-            {handleAddUnitClick && (
-              <Grid item>
-                <Button
-                  size="small"
-                  data-testid={`${dataTestid}-add-unit`}
-                  onClick={() => setShowUnitSelector(true)}
-                  startIcon={<AddIcon />}
-                  variant="outlined"
-                  color="primary">
-                  Legg til enhet
-                </Button>
-              </Grid>
-            )}
-            {showUnitSelector && handleAddUnitClick && (
-              <Grid item xs={12}>
-                <Grid container spacing={3}>
-                  <Grid item sm={8}>
-                    <UnitSelect
-                      cristinInstitutionNr={affiliation.cristinInstitutionNr ?? ''}
-                      handleUnitChange={(unit: any) => {
-                        setShowUnitSelector(false);
-                        handleAddUnitClick(unit);
-                      }}
-                    />
-                  </Grid>
-                  <Grid item sm={4}>
-                    <Button
-                      size="small"
-                      data-testid={`cancel-${dataTestid}-add-unit`}
-                      onClick={() => setShowUnitSelector(false)}
-                      variant="outlined"
-                      color="secondary">
-                      Avbryt
-                    </Button>
-                  </Grid>
-                </Grid>
-              </Grid>
-            )}
-            {addUnitError && (
-              <Grid item xs={12}>
-                <Typography color="error">{addUnitError}</Typography>
-              </Grid>
-            )}
-            {deleteUnitError && (
-              <Grid item xs={12}>
-                <Typography color="error">{deleteUnitError}</Typography>
-              </Grid>
-            )}
-          </Grid>
-        </CardActions>
-      )}
+      {showCardActions && <CardActions>{children}</CardActions>}
     </StyledAffiliationsWrapper>
   );
 };

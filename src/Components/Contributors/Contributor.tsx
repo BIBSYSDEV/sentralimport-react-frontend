@@ -60,8 +60,9 @@ const Contributor: FC<ContributorProps> = ({
                 }
                 return 0;
               })
-              .map((affiliation) => (
+              .map((affiliation, affiliationIndex) => (
                 <AffiliationDisplay
+                  key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
                   affiliation={{
                     institutionName: affiliation.institutionName ?? '',
                     units: affiliation.units
