@@ -1,22 +1,21 @@
-import React, { FC, useEffect, useState } from 'react';
-import { Collapse } from 'react-bootstrap';
-import { Button, CircularProgress, Grid, TextField, Typography } from '@material-ui/core';
+import React, { FC, useState } from 'react';
+
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  CircularProgress,
+  TextField,
+  Typography,
+} from '@material-ui/core';
 import styled from 'styled-components';
-import AddIcon from '@material-ui/icons/Add';
-import { Colors } from '../../assets/styles/StyleConstants';
+
 import { Autocomplete } from '@material-ui/lab';
 import { JournalType } from './ComparePublicationDataModal';
 import { ChannelLight } from '../../types/PublicationTypes';
 import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
-
-const StyledFormWrapper = styled.div`
-  padding: 1rem;
-  background-color: ${Colors.LIGHT_GREY}; ;
-`;
-
-const StyledSearchJournalPanel = styled.div`
-  margin-top: 0.5rem;
-`;
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const StyledFormHeaderTypography = styled(Typography)`
   && {
@@ -24,26 +23,19 @@ const StyledFormHeaderTypography = styled(Typography)`
   }
 `;
 
+const StyledButtonWrapper = styled.div`
+  margin-top: 1rem;
+`;
+
 interface SearchJournalPanelProps {
   handleChooseJournal: any;
 }
 
 const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }) => {
-  const [expanded, setExpanded] = useState(false);
   const [journals, setJournals] = useState<JournalType[]>(); //todo type
   const [fetchJournalsError, setFetchJournalsError] = useState<Error | undefined>();
   const [isLoadingJournals, setIsLoadingJournals] = useState(false);
   const [selectedJournal, setSelectedJournal] = useState<JournalType>();
-
-  const handleExpand = () => {
-    if (!expanded) {
-      setExpanded(true);
-    }
-  };
-
-  const handleCancel = () => {
-    setExpanded(false);
-  };
 
   async function searchJournals(query: string) {
     try {
@@ -66,81 +58,66 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
     }
   }
 
-  return (
-    <StyledSearchJournalPanel>
-      {!expanded && (
-        <Button
-          data-testid="search-journal-button"
-          startIcon={<AddIcon />}
-          variant="outlined"
-          color="primary"
-          onClick={handleExpand}>
-          Søk opp tidsskrift
-        </Button>
-      )}
-      <Collapse in={expanded} unmountOnExit>
-        <StyledFormWrapper>
-          <StyledFormHeaderTypography>Søk opp tidskrift</StyledFormHeaderTypography>
-          <Autocomplete
-            fullWidth
-            id="cristindata-journal"
-            autoHighlight
-            loading={isLoadingJournals}
-            noOptionsText="ingen tidskrift funnet"
-            data-testid="cristindata-journal-select"
-            options={journals ?? []}
-            value={selectedJournal}
-            onChange={(event, newValue: JournalType | null) => {
-              newValue && setSelectedJournal(newValue);
-            }}
-            onInputChange={(event, value) => {
-              value.length > 2 && searchJournals(value); //todo: add debouce
-            }}
-            getOptionLabel={(option) => option.title}
-            getOptionSelected={(option, value) => option.cristinTidsskriftNr === value.cristinTidsskriftNr}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                data-testid="cristindata-journal-select-textfield"
-                variant="outlined"
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <>
-                      {isLoadingJournals && <CircularProgress color="inherit" size={'1rem'} />}
-                      {params.InputProps.endAdornment}
-                    </>
-                  ),
-                }}
-              />
-            )}
-          />
-          {fetchJournalsError && (
-            <Typography color="error">Kunne ikke laste inn tidskrift. {fetchJournalsError.message}</Typography>
-          )}
+  const handleClickChooseButton = () => {
+    if (selectedJournal) {
+      handleChooseJournal(selectedJournal);
+    }
+  };
 
-          <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline" style={{ marginTop: '1rem' }}>
-            <Grid item>
-              <Button data-testid="cancel-journal-button" variant="outlined" color="secondary" onClick={handleCancel}>
-                Avbryt
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  setExpanded(false);
-                  handleChooseJournal(selectedJournal);
-                }}
-                data-testid="submit-journal-button">
-                Velg
-              </Button>
-            </Grid>
-          </Grid>
-        </StyledFormWrapper>
-      </Collapse>
-    </StyledSearchJournalPanel>
+  return (
+    <Accordion>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+        <StyledFormHeaderTypography>Søk opp tidsskrift</StyledFormHeaderTypography>
+      </AccordionSummary>
+      <AccordionDetails style={{ display: 'flex', flexDirection: 'column' }}>
+        <Autocomplete
+          fullWidth
+          id="cristindata-journal"
+          autoHighlight
+          loading={isLoadingJournals}
+          noOptionsText="ingen tidskrift funnet"
+          data-testid="cristindata-journal-select"
+          options={journals ?? []}
+          value={selectedJournal}
+          onChange={(event, newValue: JournalType | null) => {
+            newValue && setSelectedJournal(newValue);
+          }}
+          onInputChange={(event, value) => {
+            value.length > 2 && searchJournals(value); //todo: add debouce
+          }}
+          getOptionLabel={(option) => option.title}
+          getOptionSelected={(option, value) => option.cristinTidsskriftNr === value.cristinTidsskriftNr}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              data-testid="cristindata-journal-select-textfield"
+              variant="outlined"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {isLoadingJournals && <CircularProgress color="inherit" size={'1rem'} />}
+                    {params.InputProps.endAdornment}
+                  </>
+                ),
+              }}
+            />
+          )}
+        />
+        {fetchJournalsError && (
+          <Typography color="error">Kunne ikke laste inn tidskrift. {fetchJournalsError.message}</Typography>
+        )}
+        <StyledButtonWrapper>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleClickChooseButton}
+            data-testid="submit-journal-button">
+            Velg
+          </Button>
+        </StyledButtonWrapper>
+      </AccordionDetails>
+    </Accordion>
   );
 };
 export default SearchJournalPanel;

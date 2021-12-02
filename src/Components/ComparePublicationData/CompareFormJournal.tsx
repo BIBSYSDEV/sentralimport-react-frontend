@@ -1,4 +1,4 @@
-import { Button, Grid, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import ActionButtons from './ActionButtons';
 import { useFormikContext } from 'formik';
 import React, { FC } from 'react';
@@ -14,9 +14,8 @@ import CreateJournalPanel from './CreateJournalPanel';
 import SearchJournalPanel from './SearchJournalPanel';
 import styled from 'styled-components';
 
-const StyledJournalActionsWrapper = styled.div`
-  margin-top: 0.5rem;
-  display: flex;
+const StyledJournalPresentationWrapper = styled.div`
+  margin: 0.5rem 0;
 `;
 
 interface CompareFormJournalProps {
@@ -33,7 +32,6 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) 
     eissn: importPublication.channel?.eissn,
   };
 
-  console.log(values.journal);
   const handleNewJournal = (newJournal: Journal) => {
     setFieldValue('journal', newJournal);
   };
@@ -56,7 +54,9 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) 
         copyCommand={() => setFieldValue('journal', createJournalFromImportPublication, true)}
       />
       <StyledLineCristinValue>
-        <Typography data-testid="cristindata-journal">{values.journal?.title}</Typography>
+        <StyledJournalPresentationWrapper>
+          <Typography data-testid="cristindata-journal">{values.journal?.title}</Typography>
+        </StyledJournalPresentationWrapper>
         <CreateJournalPanel handleCreateJournal={handleNewJournal} />
         <SearchJournalPanel handleChooseJournal={handleChooseJournal} />
       </StyledLineCristinValue>

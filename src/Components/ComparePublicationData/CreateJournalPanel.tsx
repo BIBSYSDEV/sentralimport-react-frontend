@@ -1,26 +1,23 @@
-import React, { FC, useState } from 'react';
-import { Collapse } from 'react-bootstrap';
-import { Button, Grid, TextField, Typography } from '@material-ui/core';
+import React, { FC } from 'react';
+import { Accordion, AccordionSummary, Button, TextField, Typography } from '@material-ui/core';
 import styled from 'styled-components';
-import AddIcon from '@material-ui/icons/Add';
-import { Colors } from '../../assets/styles/StyleConstants';
-import { ErrorMessage, Field, FieldProps, Form, Formik } from 'formik';
+import { ErrorMessage, Field, FieldProps, Formik } from 'formik';
 import * as Yup from 'yup';
 import CommonErrorMessage from '../CommonErrorMessage';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const StyledFormWrapper = styled.div`
   padding: 1rem;
-  background-color: ${Colors.LIGHT_GREY}; ;
-`;
-
-const StyledCreateJournalPanel = styled.div`
-  margin-top: 0.5rem;
 `;
 
 const StyledFormHeaderTypography = styled(Typography)`
   && {
     font-weight: bold;
   }
+`;
+
+const StyledButtonWrapper = styled.div`
+  margin-top: 1rem;
 `;
 
 const StyledTextField = styled(TextField)`
@@ -44,20 +41,7 @@ interface CreateJournalPanelProps {
 }
 
 const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }) => {
-  const [expanded, setExpanded] = useState(false);
-
-  const handleExpand = () => {
-    if (!expanded) {
-      setExpanded(true);
-    }
-  };
-
-  const handleCancel = () => {
-    setExpanded(false);
-  };
-
   const handleSubmit = (values: CreateJournalFormValues) => {
-    setExpanded(false);
     handleCreateJournal({ title: values.title, issn: values.issn, eissn: values.eissn });
   };
 
@@ -68,97 +52,76 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
   });
 
   return (
-    <StyledCreateJournalPanel>
-      {!expanded && (
-        <Button
-          data-testid="add-journal-button"
-          startIcon={<AddIcon />}
-          variant="outlined"
-          color="primary"
-          onClick={handleExpand}>
-          Legg til nytt tidsskrift
-        </Button>
-      )}
-      <Collapse in={expanded} unmountOnExit>
-        <StyledFormWrapper>
-          <StyledFormHeaderTypography>Registrer nytt tidskrift</StyledFormHeaderTypography>
-          <Typography gutterBottom variant="caption">
-            Felter merket med * er obligatoriske (ISSN eller e-ISSN må fylles ut)
-          </Typography>
-          <Formik onSubmit={handleSubmit} initialValues={emptyFormValues} validationSchema={formValidationSchema}>
-            {({ values, isValid }) => (
-              <>
-                <Field name="title">
-                  {({ field, meta: { error, touched } }: FieldProps) => (
-                    <StyledTextField
-                      fullWidth
-                      label="Tittel *"
-                      data-testid="new-journal-form-title-field"
-                      inputProps={{ 'data-testid': 'new-journal-form-title-input' }}
-                      {...field}
-                      error={!!error && touched}
-                      helperText={<ErrorMessage name={field.name} />}
-                    />
-                  )}
-                </Field>
-                <Field name="issn">
-                  {({ field, meta: { error, touched } }: FieldProps) => (
-                    <StyledTextField
-                      fullWidth
-                      label="ISSN "
-                      data-testid="new-journal-form-issn-field"
-                      inputProps={{ 'data-testid': 'new-journal-form-issn-input' }}
-                      {...field}
-                      error={!!error && touched}
-                      helperText={<ErrorMessage name={field.name} />}
-                    />
-                  )}
-                </Field>
-                <Field name="eissn">
-                  {({ field, meta: { error, touched } }: FieldProps) => (
-                    <StyledTextField
-                      fullWidth
-                      label="e-ISSN "
-                      data-testid="new-journal-form-eissn-field"
-                      inputProps={{ 'data-testid': 'new-journal-form-eissn-input' }}
-                      {...field}
-                      error={!!error && touched}
-                      helperText={<ErrorMessage name={field.name} />}
-                    />
-                  )}
-                </Field>
-                <Grid container spacing={3} style={{ marginTop: '0.5rem' }}>
-                  <Grid item>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={handleCancel}
-                      data-testid="cancel-journal-button">
-                      Avbryt
-                    </Button>
-                  </Grid>
-                  <Grid item>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleSubmit(values)}
-                      data-testid="submit-journal-button">
-                      Opprett
-                    </Button>
-                  </Grid>
-                </Grid>
-                {!isValid && (
-                  <CommonErrorMessage
-                    datatestid="new-journal-form-error"
-                    errorMessage="Det er feil i tidskrift-skjema"
+    <Accordion>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="create-journal-content"
+        id="create-journal-header">
+        <StyledFormHeaderTypography>Registrer nytt tidskrift</StyledFormHeaderTypography>
+      </AccordionSummary>
+      <StyledFormWrapper>
+        <Typography gutterBottom variant="caption">
+          Felter merket med * er obligatoriske (ISSN eller e-ISSN må fylles ut)
+        </Typography>
+        <Formik onSubmit={handleSubmit} initialValues={emptyFormValues} validationSchema={formValidationSchema}>
+          {({ values, isValid }) => (
+            <>
+              <Field name="title">
+                {({ field, meta: { error, touched } }: FieldProps) => (
+                  <StyledTextField
+                    fullWidth
+                    label="Tittel *"
+                    data-testid="new-journal-form-title-field"
+                    inputProps={{ 'data-testid': 'new-journal-form-title-input' }}
+                    {...field}
+                    error={!!error && touched}
+                    helperText={<ErrorMessage name={field.name} />}
                   />
                 )}
-              </>
-            )}
-          </Formik>
-        </StyledFormWrapper>
-      </Collapse>
-    </StyledCreateJournalPanel>
+              </Field>
+              <Field name="issn">
+                {({ field, meta: { error, touched } }: FieldProps) => (
+                  <StyledTextField
+                    fullWidth
+                    label="ISSN "
+                    data-testid="new-journal-form-issn-field"
+                    inputProps={{ 'data-testid': 'new-journal-form-issn-input' }}
+                    {...field}
+                    error={!!error && touched}
+                    helperText={<ErrorMessage name={field.name} />}
+                  />
+                )}
+              </Field>
+              <Field name="eissn">
+                {({ field, meta: { error, touched } }: FieldProps) => (
+                  <StyledTextField
+                    fullWidth
+                    label="e-ISSN "
+                    data-testid="new-journal-form-eissn-field"
+                    inputProps={{ 'data-testid': 'new-journal-form-eissn-input' }}
+                    {...field}
+                    error={!!error && touched}
+                    helperText={<ErrorMessage name={field.name} />}
+                  />
+                )}
+              </Field>
+              <StyledButtonWrapper>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleSubmit(values)}
+                  data-testid="submit-journal-button">
+                  Opprett
+                </Button>
+              </StyledButtonWrapper>
+              {!isValid && (
+                <CommonErrorMessage datatestid="new-journal-form-error" errorMessage="Det er feil i tidskrift-skjema" />
+              )}
+            </>
+          )}
+        </Formik>
+      </StyledFormWrapper>
+    </Accordion>
   );
 };
 export default CreateJournalPanel;
