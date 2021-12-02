@@ -1,10 +1,10 @@
 import { Order } from './PublicationTypes';
+import { InstitutionSelector } from './InstitutionTypes';
 
 export interface ContextType {
   allChecked: boolean;
   contributorErrors: number[];
-  contributorPage: number;
-  contributorPerPage: number;
+
   contributors: null | any;
   contributorsLoaded: boolean;
   currentImportStatus: string;
@@ -15,16 +15,15 @@ export interface ContextType {
   currentSortOrder: Order;
   currentSortValue: SortValue;
   doSave: boolean;
-  doiFilter: null;
+  doiFilter: string | null;
   formErrors: string[];
   identified: any[];
   identifiedImported: any[];
   importDone: boolean;
-  institutions: null | Institution[];
-  institutionsEnglish: null | Institution[];
+  institutions: null | InstitutionSelector[];
+  institutionsEnglish: null | InstitutionSelector[];
   isSampublikasjon: boolean;
   param: null | any;
-  selected: BooleanString;
   selectedField: string;
   selectedPublication: SelectedPublication | any; //TODO: code-cleanup, selectedPublication changes interface throughout the application (possibly only the initial state is incorrect)
   totalCount: number;
@@ -80,10 +79,4 @@ export interface SelectedPublication {
 export interface ImportSources {
   source_name: string;
   source_reference_id?: string;
-}
-
-export interface Institution {
-  cristinInstitutionNr: string;
-  label: string;
-  value: string;
 }

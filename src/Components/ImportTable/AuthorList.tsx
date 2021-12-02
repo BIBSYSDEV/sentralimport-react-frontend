@@ -1,8 +1,8 @@
 import React from 'react';
-import { Author } from '../../types/PublicationTypes';
 import { Typography } from '@material-ui/core';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import styled from 'styled-components';
+import { ImportPublicationPerson } from '../../types/ContributorTypes';
 
 interface StyledUnorderedListProps {
   height: number;
@@ -19,7 +19,7 @@ const StyledListItem = styled.li`
 `;
 
 interface AuthorListProps {
-  authors: Author[] | undefined;
+  authors: ImportPublicationPerson[] | undefined;
 }
 
 export default function AuthorList({ authors }: AuthorListProps) {
@@ -29,16 +29,16 @@ export default function AuthorList({ authors }: AuthorListProps) {
     <StyledUnorderedList
       height={authors.length < 5 ? authors.length * 90 : 600}
       style={{ listStyle: 'none', overflow: 'auto', height: authors.length < 5 ? authors.length * 90 : 600 }}>
-      {authors.map((author, i) => (
-        <StyledListItem key={i}>
+      {authors.map((author, authorIndex) => (
+        <StyledListItem key={authorIndex}>
           <Typography>
             <b>{author.sequenceNr + '. ' + author.authorName}</b>
             {author.cristinId !== 0 && (
-              <VerifiedUserIcon aria-label="har cristin id" style={{ paddingBottom: '0.3rem' }} color="primary" />
+              <VerifiedUserIcon aria-label="er verifisert" style={{ paddingBottom: '0.3rem' }} color="primary" />
             )}
           </Typography>
-          {author.institutions.map((inst, j) => (
-            <Typography variant="body2" key={j}>
+          {author.institutions.map((inst, instIndex) => (
+            <Typography variant="body2" key={instIndex}>
               <i>{inst.unitName}</i>
             </Typography>
           ))}

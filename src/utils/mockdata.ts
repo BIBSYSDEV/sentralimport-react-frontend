@@ -1,3 +1,5 @@
+import { ChannelLight } from '../types/PublicationTypes';
+
 export const mockInstitutions = [
   {
     cristin_institution_id: '5737',
@@ -427,7 +429,17 @@ export const responseCountryInstitutionCN = {
   url: 'null/48400000',
 };
 
-export const mockAllJournals = [
+export const mockIssnChannel: ChannelLight[] = [
+  {
+    id: '4187',
+    issn: '1054-3139',
+    issn_electronic: '1095-9289',
+    title: 'ICES Journal of Marine Science',
+    type: 'journal',
+  },
+];
+
+export const mockAllJournals: ChannelLight[] = [
   {
     id: '51160',
     type: 'journal',
@@ -478,13 +490,29 @@ export const mockPerson = {
   cristin_person_id: '1234567',
 };
 
-export const personWithoutAffiliationCristinId = '9456892';
+export const cristinIDWithoutActiveAffiliation = '9456892';
+export const cristinIDWithoutAffiliationAttribute = '89754123';
+export const cristinIdForbiddenPerson = '1235412375';
 
-export const mockPerson2 = {
+export const mockPersonWithoutActiveAffiliation = {
   first_name: 'Arne',
   surname: 'Benoni',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
-  cristin_person_id: personWithoutAffiliationCristinId,
+  cristin_person_id: cristinIDWithoutActiveAffiliation,
+};
+
+export const mockPersonWithoutAffiliationAttribute = {
+  first_name: 'Arne',
+  surname: 'Benoni',
+  url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
+  cristin_person_id: cristinIDWithoutAffiliationAttribute,
+};
+
+export const mockForbiddenPerson = {
+  first_name: 'Arne',
+  surname: 'Benoni',
+  url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
+  cristin_person_id: cristinIdForbiddenPerson,
 };
 
 export const mockPersonDetailed = {
@@ -525,8 +553,16 @@ export const mockPersonDetailed = {
   ],
 };
 
+export const mockPersonDetailedWithoutAffiliationAttribute = {
+  cristin_person_id: cristinIDWithoutAffiliationAttribute,
+  first_name: 'Arne',
+  surname: 'Benoni',
+  identified_cristin_person: true,
+  cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
+};
+
 export const mockPersonDetailedWithoutActiveAffiliations = {
-  cristin_person_id: personWithoutAffiliationCristinId,
+  cristin_person_id: cristinIDWithoutActiveAffiliation,
   first_name: 'Arne',
   surname: 'Benoni',
   identified_cristin_person: true,
@@ -650,7 +686,7 @@ export const mockSavedPublication = {
         type: 'printed',
       },
       {
-        type: 'online',
+        type: 'electronic',
       },
     ],
     pia_journal_number: '116',
@@ -658,4 +694,17 @@ export const mockSavedPublication = {
   pages: {
     count: '0',
   },
+};
+export const mockNotAuthorizedForThisPersonDetailResponse = {
+  status: 403,
+  response_id: 'svh6s12a',
+  errors: ['Client lacks authorization.'],
+};
+
+export const mockSaveErrorResponse = {
+  status: 400,
+  response_id: 'l20utud2',
+  errors: [
+    'JSON schema validation failed on content: [#/contributors/list/0/affiliations: expected minimum item count: 1, found: 0].',
+  ],
 };

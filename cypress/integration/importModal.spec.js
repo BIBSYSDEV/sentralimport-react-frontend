@@ -1,4 +1,3 @@
-import { mockImportPublication1 } from '../../src/utils/mockdata';
 import mockImportData from '../../src/utils/mockImportData.json';
 
 context('importModal', () => {
@@ -11,7 +10,6 @@ context('importModal', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
 
-    cy.wait(500); //To make modal visible (tests works without, but is more difficult to view with cypress open)
     cy.get(`[data-testid="cristindata-doi-textfield"] input`).should('have.value', '');
     cy.get(`[data-testid="import-publication-button"]`).should('exist').should('not.be.disabled');
   });
@@ -19,8 +17,6 @@ context('importModal', () => {
   it('can show an importmodal with populated values', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
-
-    cy.wait(500); //To make modal visible (tests works without, but is more difficult to view with cypress open)
 
     cy.get(`[data-testid="importdata-pubid"]`).contains(mockImportData[0].pubId);
     cy.get(`[data-testid="cristindata-id"]`).contains('Ingen Cristin-Id');
@@ -71,5 +67,34 @@ context('importModal', () => {
     cy.get(`[data-testid="open-contributors-modal-button"]`).should('exist').should('not.be.disabled');
     cy.get(`[data-testid="import-publication-button"]`).should('exist').should('not.be.disabled');
     cy.get(`[data-testid="import-publication-cancel-button"]`).should('exist').should('not.be.disabled');
+  });
+
+  it('can registrate a new journal', () => {
+    const mockTitle = 'MockJournalTitle';
+    const mockIssn = '1234-1234';
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.get(`#cristindata-journal`).contains(mockImportData[0].channel.title);
+    cy.get(`[data-testid="submit-journal-button"]`).should('not.exist');
+    cy.get(`[data-testid="add-journal-button"]`).click();
+    cy.get(`[data-testid="new-journal-form-title-input"]`).type(mockTitle);
+    cy.get(`[data-testid="new-journal-form-issn-input"]`).type(mockIssn);
+    cy.get(`[data-testid="submit-journal-button"]`).click();
+    cy.get(`#cristindata-journal`).contains(mockTitle);
+    cy.get(`[data-testid="submit-journal-button"]`).should('not.exist');
+  });
+
+  it('can validate new journal registration', () => {
+    const mockInvalidIssn = '123412341234';
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.wait(500);
+    cy.get(`[data-testid="add-journal-button"]`).click();
+    cy.get(`[data-testid="new-journal-form-issn-input"]`).type(mockInvalidIssn);
+    cy.get(`[data-testid="submit-journal-button"]`).click();
+    cy.get(`[data-testid="new-journal-form-title-field"]`).contains('Tittel er et obligatorisk felt');
+    cy.get(`[data-testid="new-journal-form-issn-field"]`).contains('SSN er ikke på korrekt format (NNNN-NNNC)');
+    cy.get(`[data-testid="new-journal-form-error"]`).contains('Det er feil i tidskrift-skjema');
+    cy.get(`[data-testid="submit-journal-button"]`).should('exist');
   });
 });

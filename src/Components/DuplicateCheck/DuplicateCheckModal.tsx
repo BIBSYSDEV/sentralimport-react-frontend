@@ -2,15 +2,14 @@ import React, { FC, useContext, useState } from 'react';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Context } from '../../Context';
 import '../../assets/styles/Results.scss';
-import axios from 'axios';
-import { useHistory } from 'react-router-dom';
-import { PIA_REST_API } from '../../utils/constants';
 import ComparePublicationDataModal from '../ComparePublicationData/ComparePublicationDataModal';
-import { ImportData } from '../../types/PublicationTypes';
-import { Button, Divider, Grid } from '@material-ui/core';
+import { ImportPublication } from '../../types/PublicationTypes';
+import { Button, Divider, Grid, Typography } from '@material-ui/core';
 import ImportPublicationPresentation from './ImportPublicationPresentation';
 import DuplicateSearch from './DuplicateSearch';
 import styled from 'styled-components';
+import { changePublicationImportStatus, NOT_RELEVANT } from '../../api/publicationApi';
+import { handlePotentialExpiredSession } from '../../api/api';
 
 const StyledModal = styled(Modal)`
   width: 80%;
@@ -26,10 +25,16 @@ const StyledBodyWrapper = styled.div`
   padding: 1rem;
 `;
 
+export enum SelectValues {
+  TOGGLE_RELEVANT = 'toggle_relevant',
+  CREATE_NEW = 'create_new',
+  //could also be a cristinId
+}
+
 interface DuplicateCheckModalProps {
   isDuplicateCheckModalOpen: boolean;
   handleDuplicateCheckModalClose: () => void;
-  importPublication: ImportData;
+  importPublication: ImportPublication;
 }
 
 const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
@@ -38,23 +43,30 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
   importPublication,
 }) => {
   const { state, dispatch } = useContext(Context);
-  const history = useHistory();
   const [isComparePublicationDataModalOpen, setIsComparePublicationDataModalOpen] = useState(false);
   const [isDuplicate, setDuplicate] = useState(false);
+  const [selectedRadioButton, setSelectedRadioButton] = useState<string>(SelectValues.CREATE_NEW);
+  const [handleOkButtonError, setHandleOkButtonError] = useState<Error | undefined>();
 
-  function handleClickOkButton() {
-    if (state.selected === 'true') {
-      dispatch({ type: 'doSave', payload: true });
-      setDuplicate(false);
-      setIsComparePublicationDataModalOpen(true);
-    } else if (state.selected === 'false') {
-      setNotRelevant().then();
-      handleDuplicateCheckModalClose();
-      dispatch({ type: 'importDone', payload: !state.importDone });
-    } else {
-      dispatch({ type: 'doSave', payload: true });
-      setDuplicate(true);
-      setIsComparePublicationDataModalOpen(true);
+  async function handleClickOkButton() {
+    try {
+      setHandleOkButtonError(undefined);
+      if (selectedRadioButton === SelectValues.CREATE_NEW) {
+        dispatch({ type: 'doSave', payload: true });
+        setDuplicate(false);
+        setIsComparePublicationDataModalOpen(true);
+      } else if (selectedRadioButton === SelectValues.TOGGLE_RELEVANT) {
+        await toggleRelevantStatus();
+        handleDuplicateCheckModalClose();
+        dispatch({ type: 'importDone', payload: !state.importDone });
+      } else {
+        dispatch({ type: 'doSave', payload: true });
+        setDuplicate(true);
+        setIsComparePublicationDataModalOpen(true);
+      }
+    } catch (error) {
+      handlePotentialExpiredSession(error);
+      setHandleOkButtonError(error as Error);
     }
   }
 
@@ -63,33 +75,24 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
     setIsComparePublicationDataModalOpen(false);
   }
 
-  async function setNotRelevant() {
-    const relevantStatus = state.currentImportStatus !== 'ikke aktuelle';
-    await axios
-      .patch(
-        PIA_REST_API + '/sentralimport/publication/' + importPublication.pubId,
-        JSON.stringify({ not_relevant: relevantStatus }),
-        JSON.parse(localStorage.getItem('config') || '{}')
-      )
-      .catch(function (e) {
-        console.log('Patch request failed:', e);
-        if (!e.response || e.response.status === 401 || e.response.status === 403) {
-          localStorage.setItem('authorized', 'false');
-          history.push('/login');
-        } else {
-          history.push('/error');
-        }
-      });
+  async function toggleRelevantStatus() {
+    const relevantStatus = state.currentImportStatus !== NOT_RELEVANT;
+    setHandleOkButtonError(undefined);
+    await changePublicationImportStatus(importPublication.pubId, relevantStatus);
   }
 
   return (
-    <StyledModal isOpen={isDuplicateCheckModalOpen} size="lg">
+    <StyledModal isOpen={isDuplicateCheckModalOpen} size="lg" data-testid="duplicate-check-modal">
       <ModalHeader toggle={handleDuplicateCheckModalClose}>Importvalg for resultat</ModalHeader>
       <ModalBody>
         <StyledBodyWrapper>
           <ImportPublicationPresentation importPublication={importPublication} />
           <Divider />
-          <DuplicateSearch importPublication={importPublication} />
+          <DuplicateSearch
+            importPublication={importPublication}
+            setSelectedRadioButton={setSelectedRadioButton}
+            selectedRadioButton={selectedRadioButton}
+          />
         </StyledBodyWrapper>
       </ModalBody>
       <ModalFooter>
@@ -111,6 +114,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
               onClick={handleClickOkButton}>
               OK
             </Button>
+            {handleOkButtonError && <Typography color="error">Noe gikk galt {handleOkButtonError.message}</Typography>}
           </Grid>
         </Grid>
       </ModalFooter>

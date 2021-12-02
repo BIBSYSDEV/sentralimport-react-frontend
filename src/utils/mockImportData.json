@@ -11,12 +11,12 @@
     "yearPublished": 2021,
     "authors": [
       {
-        "cristinId": 0,
+        "cristinId": 123,
         "roleCode": "FORFATTER",
         "sequenceNr": 1,
-        "surname": "Jia",
-        "firstname": "Chen",
-        "authorName": "Jia C.",
+        "surname": "Mocklastname",
+        "firstname": "Mockfirstname",
+        "authorName": "Mocklastname M.",
         "institutions": [
           {
             "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
@@ -31,9 +31,9 @@
         "cristinId": 0,
         "roleCode": "FORFATTER",
         "sequenceNr": 2,
-        "surname": "Shi",
-        "firstname": "Fan",
-        "authorName": "Shi F.",
+        "surname": "Petter",
+        "firstname": "Olsen",
+        "authorName": "Olsen P.",
         "institutions": [
           {
             "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",

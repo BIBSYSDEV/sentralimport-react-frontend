@@ -1,15 +1,17 @@
+import { ImportPublicationPerson } from './ContributorTypes';
+
 export enum Order {
   asc = 'asc',
   desc = 'desc',
 }
 
-export interface ImportData {
+export interface ImportPublication {
   duplicate?: boolean;
   externalId: string;
   cristin_id?: boolean;
   category?: any;
   pubId: string;
-  authors: Author[];
+  authors: ImportPublicationPerson[];
   yearPublished: string;
   channel?: Channel;
   doi?: string;
@@ -21,7 +23,7 @@ export interface ImportData {
 }
 
 export interface CristinPublication {
-  authorTotalCount: any;
+  authorTotalCount: number;
   authors: any;
   international_standard_numbers?: InternationalStandardNumber[];
   publisher: any;
@@ -35,17 +37,7 @@ export interface CristinPublication {
   cristin_result_id: string;
 }
 
-export interface Author {
-  first_name?: string;
-  surname?: string;
-  authorName: string;
-  sequenceNr: number;
-  institutions: institution[];
-  cristinId?: number;
-}
-
 export interface Channel {
-  issns?: any; //?????
   issn?: string;
   eissn?: string;
   cristinTidsskriftNr?: string;
@@ -58,12 +50,7 @@ export interface Channel {
 
 export interface InternationalStandardNumber {
   type: string;
-  value: string;
-}
-
-export interface institution {
-  unitName: string;
-  acronym: string;
+  value?: string;
 }
 
 export interface Language {
@@ -72,7 +59,7 @@ export interface Language {
   title: string;
 }
 
-export const emptyImportPublication: ImportData = {
+export const emptyImportPublication: ImportPublication = {
   externalCategory: '',
   externalId: '',
   yearPublished: '',
@@ -93,3 +80,80 @@ export const emptyImportPublication: ImportData = {
   ],
   authors: [],
 };
+
+export interface PublicationCount {
+  totalCount: number;
+  importedCount: number;
+  notImportedCount: number;
+  notRelevantCount: number;
+}
+
+export interface ChannelLight {
+  id: string;
+  type: string;
+  title: string;
+  issn?: string;
+  issn_electronic?: string;
+}
+
+export interface CategoryItem {
+  code: string;
+  name?: {
+    nb?: string;
+    en?: string;
+  };
+}
+
+export interface PostPublication {
+  category: CategoryItem;
+  journal: Journal;
+  original_language: string;
+  title: any;
+  pub_id: string | number;
+  year_published: string;
+  import_sources: any;
+  volume: string;
+  issue: string;
+  links: Link[];
+  pages: Pages;
+  contributor: any[];
+  cristin_result_id: string | number;
+  cristinResultId?: string | number;
+  annotation?: string;
+}
+
+export interface Link {
+  url_type: string;
+  url_value: string;
+}
+
+export interface Journal {
+  cristin_journal_id: string;
+  name: string;
+  international_standard_numbers: InternationalStandardNumber[];
+  pia_journal_number?: string | number;
+}
+
+export interface Pages {
+  from: string | number;
+  to: string | number;
+  count: string;
+}
+
+export interface PatchPublication {
+  category?: CategoryItem;
+  journal?: Journal;
+  original_language?: string;
+  title?: any;
+  pub_id?: string | number;
+  year_published?: string;
+  import_sources?: any;
+  volume?: string;
+  issue?: string;
+  links?: Link[];
+  pages?: Pages;
+  contributor?: any[];
+  cristin_result_id?: string | number;
+  cristinResultId: string | number;
+  annotation?: string;
+}

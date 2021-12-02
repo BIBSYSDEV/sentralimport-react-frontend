@@ -2,8 +2,9 @@ import ResultIcon from '../../assets/icons/result-active.svg';
 import React, { FC } from 'react';
 import '../../assets/styles/Results.scss';
 import { Radio } from '@material-ui/core';
-import { Author, CristinPublication, InternationalStandardNumber } from '../../types/PublicationTypes';
+import { CristinPublication, InternationalStandardNumber } from '../../types/PublicationTypes';
 import styled from 'styled-components';
+import { ImportPublicationPerson } from '../../types/ContributorTypes';
 
 const StyledTitle = styled.div`
   display: block;
@@ -39,8 +40,9 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
             </StyledTitle>
             <div className={`metacristinPublication`}>
               <p>
-                {cristinPublication.authors.map((author: Author) => author.surname + ', ' + author.first_name + '; ') +
-                  (cristinPublication.authors.length < cristinPublication.authorTotalCount && ' et al')}
+                {cristinPublication.authors.map(
+                  (author: ImportPublicationPerson) => author.surname + ', ' + author.firstname + '; '
+                ) + (cristinPublication.authors.length < cristinPublication.authorTotalCount && ' et al')}
               </p>
               <p className={`active`}>{cristinPublication.category.name.en}</p>
               <p className={`italic`}>
