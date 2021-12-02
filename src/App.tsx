@@ -3,7 +3,6 @@ import ImportTable from './Components/ImportTable/ImportTable';
 import Grid from '@material-ui/core/Grid/Grid';
 import FilterFormPanel from './Components/FilterForm/FilterFormPanel';
 import Header from './Components/Header/Header';
-import './assets/styles/buttons.scss';
 import { useHistory } from 'react-router-dom';
 import LogPanel from './Components/Log/LogPanel';
 import Footer from './Components/Footer/Footer';
@@ -36,6 +35,7 @@ export default function App() {
   const history = useHistory();
   const { dispatch } = useContext(Context);
   const isAuthorized = localStorage.getItem('authorized') === 'true' || USE_MOCK_DATA;
+
   //fetches instututions to populate drop-down lists
   useEffect(() => {
     const createInstitutionLists = async () => {

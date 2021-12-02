@@ -139,7 +139,11 @@ const StyledContributorLineWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: flex-start;
+<<<<<<< HEAD
   align-items: start;
+=======
+  align-items: flex-start;
+>>>>>>> c09e6cc546fbf22dcbfadc5d11255e0b80862bb9
   padding: 0.5rem;
 `;
 
@@ -290,6 +294,7 @@ const ContributorModal: FC<ContributorProps> = ({
         toBeCreated.surname === '' ||
         (toBeCreated.affiliations && toBeCreated.affiliations.length < 1)
       ) {
+        console.log('Contributor has error(s) no firstname||surname||affiliations: ', toBeCreated);
         errors.push({ value: i + 1 });
       }
     }
@@ -331,7 +336,6 @@ const ContributorModal: FC<ContributorProps> = ({
           identified[i] = cristinAuthors[i].identified_cristin_person || false;
           tempContributors[i] = createContributorWrapper(authorsFromImportPublication, i, cristinAuthors);
           tempContributors[i].isEditing = tempContributors[i].cristin.cristin_person_id === 0;
-
           tempContributors[i].toBeCreated = await generateToBeCreatedContributor(
             tempContributors[i],
             cristinAuthors[i],
@@ -370,8 +374,8 @@ const ContributorModal: FC<ContributorProps> = ({
           identifiedImported[i] = person.identified_cristin_person ?? false;
         }
         if (!contributors[i].toBeCreated.identified_cristin_person && isDuplicate) {
-          const person = await getPersonDetailById(contributors[i].toBeCreated);
-          identified[i] = person.identified_cristin_person ?? false;
+          //const person = await getPersonDetailById(contributors[i].toBeCreated); //TODO! Denne gir ingen mening - søker på cristinid=0 som gir 404-feil
+          // identified[i] = person.identified_cristin_person ?? false;
         }
       }
       dispatch({ type: 'identifiedImported', payload: identifiedImported });

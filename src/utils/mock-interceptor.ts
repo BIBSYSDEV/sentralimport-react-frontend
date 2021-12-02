@@ -21,6 +21,7 @@ import {
   mockPublicationCount,
   mockSavedPublication,
   mockSaveErrorResponse,
+  mockSimpleUnitResponse,
   mockUnits,
   responseCountryInstitutionCN,
   responseCountryInstitutionIT,
@@ -71,6 +72,7 @@ export const interceptRequestsOnMock = () => {
 
   //get institution units
   mock.onGet(new RegExp(`${CRIST_REST_API}/units/.*`)).reply(200, mockUnits);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/units\\?parent_unit_id=.*`)).reply(200, mockSimpleUnitResponse);
 
   //save publication
   mock

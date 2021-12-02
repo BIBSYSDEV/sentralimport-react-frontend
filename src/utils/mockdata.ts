@@ -686,7 +686,7 @@ export const mockSavedPublication = {
         type: 'printed',
       },
       {
-        type: 'online',
+        type: 'electronic',
       },
     ],
     pia_journal_number: '116',
@@ -708,3 +708,102 @@ export const mockSaveErrorResponse = {
     'JSON schema validation failed on content: [#/contributors/list/0/affiliations: expected minimum item count: 1, found: 0].',
   ],
 };
+
+export const mockSimpleUnitResponse = [
+  {
+    cristin_unit_id: '194.12.0.0',
+    unit_name: {
+      en: 'Rector',
+      nb: 'Rektor',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.12.0.0',
+    acronym: 'RE',
+  },
+  {
+    cristin_unit_id: '194.12.1.0',
+    unit_name: {
+      en: 'Rector and Board',
+      nb: 'Rektor og styre',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.12.1.0',
+    acronym: 'RE-REK',
+  },
+  {
+    cristin_unit_id: '194.13.0.0',
+    unit_name: {
+      en: 'Pro-Rector for Research',
+      nb: 'Prorektor for forskning',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.13.0.0',
+    acronym: 'FO',
+  },
+  {
+    cristin_unit_id: '194.14.0.0',
+    unit_name: {
+      en: 'Pro-Rector for Education',
+      nb: 'Prorektor for utdanning',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.14.0.0',
+    acronym: 'UTD',
+  },
+  {
+    cristin_unit_id: '194.14.30.0',
+    unit_name: {
+      en: 'NTNU University Library',
+      nb: 'NTNU Universitetsbiblioteket',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.14.30.0',
+    acronym: 'UTD-UB',
+  },
+  {
+    cristin_unit_id: '194.15.0.0',
+    unit_name: {
+      en: 'Director of Finance and Property',
+      nb: 'Økonomi- og eiendomsdirektør',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.15.0.0',
+    acronym: 'OE',
+  },
+  {
+    cristin_unit_id: '194.16.0.0',
+    unit_name: {
+      en: 'Director, Organization',
+      nb: 'Organisasjonsdirektør',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.16.0.0',
+    acronym: 'OD',
+  },
+  {
+    cristin_unit_id: '194.16.90.0',
+    unit_name: {
+      en: 'Communication Division',
+      nb: 'Kommunikasjonsavdelingen',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.16.90.0',
+    acronym: 'OD-KOMM',
+  },
+];

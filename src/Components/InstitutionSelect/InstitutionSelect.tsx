@@ -3,11 +3,12 @@ import { Context } from '../../Context';
 import { Autocomplete, FilterOptionsState } from '@material-ui/lab';
 import { TextField } from '@material-ui/core';
 import styled from 'styled-components';
+import { Colors } from '../../assets/styles/StyleConstants';
 import { InstitutionSelector } from '../../types/InstitutionTypes';
 
 const StyledTextField = styled(TextField)`
   .MuiInputBase-root {
-    background-color: white;
+    background-color: ${Colors.WHITE};
   }
 `;
 

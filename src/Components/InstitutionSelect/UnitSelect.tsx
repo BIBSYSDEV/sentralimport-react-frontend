@@ -53,7 +53,7 @@ const UnitSelect: FC<UnitSelectProps> = ({ cristinInstitutionNr, handleUnitChang
   return (
     <>
       {loadingUnitError ? (
-        <>Klarte ikke å laste enheter</>
+        <>Klarte ikke å laste enheter {loadingUnitError.message}</>
       ) : (
         <Autocomplete
           defaultValue={null}

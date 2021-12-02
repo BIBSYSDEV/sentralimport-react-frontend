@@ -13,8 +13,9 @@ const StyledCircularProgress = styled(CircularProgress)`
 `;
 
 const StyledUnitSelectWrapper = styled.div`
-  margin: 0 0.5rem;
+  margin-top: 0.5rem;
 `;
+
 const StyledLabelTypography = styled(Typography)`
   && {
     font-size: 1.2rem;
@@ -55,7 +56,7 @@ const InstitutionCountrySelect: FC<InstitutionCountrySelectProps> = ({
   useEffect(() => {
     const fetchUnits = async () => {
       setLoadingError('');
-      if (selectedInstitution.cristinInstitutionNr) {
+      if (selectedInstitution.cristinInstitutionNr && selectedInstitution.cristinInstitutionNr !== 0) {
         try {
           setLoadingUnits(true);
           const parentUnitNamesResponse = await getParentsUnitName(selectedInstitution.cristinInstitutionNr);
@@ -128,7 +129,7 @@ const InstitutionCountrySelect: FC<InstitutionCountrySelectProps> = ({
         value={selectedInstitution}
       />
       {loadingUnits && <StyledCircularProgress size={'1rem'} />}
-      {loadingError && <CommonErrorMessage errorMessage={loadingError} />}
+      {loadingError && <CommonErrorMessage datatestid="institution-country-select-error" errorMessage={loadingError} />}
       {units.length > 0 ? (
         <StyledUnitSelectWrapper>
           <Select
