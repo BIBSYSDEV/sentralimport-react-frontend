@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 import { Button, Typography } from '@material-ui/core';
-import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import AffiliationDisplay from './AffiliationDisplay';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { ContributorWrapper } from '../../types/ContributorTypes';
@@ -57,13 +56,7 @@ const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, ha
       <Typography variant="h6" gutterBottom data-testid={`creator-name-${row.toBeCreated.order}`}>
         {row.imported.surname && row.imported.first_name
           ? row.imported.first_name + ' ' + row.imported.surname
-          : row.imported.authorName}{' '}
-        {row.cristin.identified_cristin_person && (
-          <>
-            <VerifiedUserIcon color="primary" />
-            <Typography variant="srOnly">Har CristinId</Typography>
-          </>
-        )}
+          : row.imported.authorName}
       </Typography>
       {affiliations.map((affiliation, affiliationIndex) => (
         <AffiliationDisplay
