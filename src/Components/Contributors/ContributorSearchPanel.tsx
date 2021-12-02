@@ -10,6 +10,10 @@ import styled from 'styled-components';
 import { Colors } from '../../assets/styles/StyleConstants';
 
 const StyledResultTypography = styled(Typography)`
+  &.MuiTypography-root {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
   color: ${Colors.Text.OPAQUE_87_BLACK};
 `;
 
