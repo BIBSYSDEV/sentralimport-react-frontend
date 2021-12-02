@@ -125,9 +125,7 @@ export default function ImportTableListItem({
                 <div style={monsterPostStyle}> ({importData.authors.length}) Stort antall bidragsytere </div>
               ) : (
                 <Typography paragraph variant="caption">
-                  {`(${countFoundPersons(importData.authors)} av ${
-                    importData.authors.length
-                  } bidragsytere har cristin ID)`}
+                  {`(${countFoundPersons(importData.authors)} av ${importData.authors.length} er verifisert)`}
                 </Typography>
               )}
               <p className={`journal-name`}>

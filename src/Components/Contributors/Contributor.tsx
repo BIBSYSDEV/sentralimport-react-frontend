@@ -23,7 +23,16 @@ import {
   UnitSelector,
 } from '../../types/InstitutionTypes';
 import { handlePotentialExpiredSession } from '../../api/api';
+import { ReactComponent as VerifiedBadge } from '../../assets/icons/verified-badge.svg';
 
+const StyledVerifiedBadge = styled(VerifiedBadge)`
+  margin-right: 0.5rem;
+  width: 1.7rem;
+  height: 1.7rem;
+  & path {
+    fill: ${Colors.Text.GREEN};
+  }
+`;
 const StyledResultTypography = styled(Typography)`
   color: ${Colors.Text.OPAQUE_87_BLACK};
 `;
@@ -145,7 +154,7 @@ const Contributor: FC<ContributorProps> = ({
         });
       }
 
-      if (selectedUnit) {
+      if (selectedUnit.value !== '') {
         affiliationsCopy = addUnit(affiliationsCopy);
       }
 
@@ -284,16 +293,22 @@ const Contributor: FC<ContributorProps> = ({
   }
 
   return (
-    <div className="content-wrapper">
+    <div>
       {!contributorData.isEditing ? (
         <div data-testid={`contributor-for-import-wrapper-${resultListIndex}`}>
           <Typography gutterBottom variant="h6">
-            {contributorData.toBeCreated.first_name + ' ' + contributorData.toBeCreated.surname}
+            {contributorData.toBeCreated.first_name + ' ' + contributorData.toBeCreated.surname}{' '}
+            {contributorData.toBeCreated.identified_cristin_person && (
+              <>
+                <StyledVerifiedBadge />
+                <Typography variant="srOnly">Har CristinId</Typography>
+              </>
+            )}
           </Typography>
           <div className={`metadata`}>
             {contributorData.toBeCreated.affiliations?.map((inst: Affiliation, instIndex: number) => (
-              <div style={{ fontStyle: `italic`, fontSize: '0.9rem' }} key={instIndex}>
-                <p key={instIndex}>{inst.institutionName}</p>
+              <div style={{ fontStyle: `italic`, fontSize: '0.9rem', marginBottom: '1rem' }} key={instIndex}>
+                <div key={instIndex}>{inst.institutionName}</div>
                 <ul style={{ marginBottom: '0.3rem' }}>
                   {inst.units &&
                     inst.units.map(
