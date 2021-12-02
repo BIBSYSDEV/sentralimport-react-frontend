@@ -307,8 +307,8 @@ const Contributor: FC<ContributorProps> = ({
           </Typography>
           <div className={`metadata`}>
             {contributorData.toBeCreated.affiliations?.map((inst: Affiliation, instIndex: number) => (
-              <div style={{ fontStyle: `italic`, fontSize: '0.9rem' }} key={instIndex}>
-                <p key={instIndex}>{inst.institutionName}</p>
+              <div style={{ fontStyle: `italic`, fontSize: '0.9rem', marginBottom: '1rem' }} key={instIndex}>
+                <div key={instIndex}>{inst.institutionName}</div>
                 <ul style={{ marginBottom: '0.3rem' }}>
                   {inst.units &&
                     inst.units.map(
