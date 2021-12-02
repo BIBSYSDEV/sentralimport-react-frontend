@@ -60,7 +60,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
   const [isTitleChecked, setIsTitleChecked] = useState(false);
   const [yearPublished, setYearPublished] = useState(importPublication.yearPublished);
   const [isYearPublishedChecked, setIsYearPublishedChecked] = useState(false);
-  const [issn, setIssn] = useState(importPublication.channel?.issn);
+  const [issn, setIssn] = useState(importPublication.channel?.issn ?? '');
   const [isIssnChecked, setIsIssnChecked] = useState(false);
   const [author, setAuthor] = useState(
     importPublication.authors[0].authorName ||
@@ -104,7 +104,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
         importPublication.authors[0].surname + ', ' + importPublication.authors[0]?.first_name?.substr(0, 1)
     );
     setYearPublished(importPublication.yearPublished);
-    setIssn(importPublication.channel?.issn);
+    setIssn(importPublication.channel?.issn ?? '');
     setIsDoiChecked(false);
     setIsTitleChecked(false);
     setIsAuthorChecked(false);
