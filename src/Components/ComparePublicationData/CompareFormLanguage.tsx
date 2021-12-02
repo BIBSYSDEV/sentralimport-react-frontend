@@ -15,8 +15,8 @@ import ButtonGroup from '@material-ui/core/ButtonGroup/ButtonGroup';
 
 interface CompareFormLanguageProps {
   importPublication: ImportPublication;
-  languages: Language;
-  selectedLang: any;
+  languages?: Language;
+  selectedLang?: any;
 }
 
 const CompareFormLanguage: FC<CompareFormLanguageProps> = ({ importPublication, selectedLang, languages }) => {

@@ -58,8 +58,6 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
 
   const handleSubmit = (values: CreateJournalFormValues) => {
     setExpanded(false);
-    //todo preventdefault
-    //old code :  const newJournal = {title: title,issn: issn,eissn: eissn,url: url,countryCode: publisher,id: 0};
     handleCreateJournal({ title: values.title, issn: values.issn, eissn: values.eissn });
   };
 
@@ -88,8 +86,8 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
             Felter merket med * er obligatoriske (ISSN eller e-ISSN må fylles ut)
           </Typography>
           <Formik onSubmit={handleSubmit} initialValues={emptyFormValues} validationSchema={formValidationSchema}>
-            {({ isValid }) => (
-              <Form>
+            {({ values, isValid }) => (
+              <>
                 <Field name="title">
                   {({ field, meta: { error, touched } }: FieldProps) => (
                     <StyledTextField
@@ -140,7 +138,11 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                     </Button>
                   </Grid>
                   <Grid item>
-                    <Button variant="contained" color="primary" type="submit" data-testid="submit-journal-button">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleSubmit(values)}
+                      data-testid="submit-journal-button">
                       Opprett
                     </Button>
                   </Grid>
@@ -151,7 +153,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                     errorMessage="Det er feil i tidskrift-skjema"
                   />
                 )}
-              </Form>
+              </>
             )}
           </Formik>
         </StyledFormWrapper>

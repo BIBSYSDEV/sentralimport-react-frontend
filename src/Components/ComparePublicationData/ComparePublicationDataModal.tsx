@@ -38,6 +38,7 @@ import CompareFormVolume from './CompareFormVolume';
 import CompareFormIssue from './CompareFormIssue';
 import CompareFormPages from './CompareFormPages';
 import CompareFormJournal from './CompareFormJournal';
+import CompareFormLanguage from './CompareFormLanguage';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -414,19 +415,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       return '';
     }
   }
-  //
-  // function updateJournals(journals: any) {
-  //   const tempArray: any[] = [];
-  //   for (let i = 0; i < journals.length; i++) {
-  //     tempArray.push({
-  //       value: journals[i].id,
-  //       label: journals[i].title,
-  //       issn: journals[i].issn,
-  //       eissn: journals[i].eissn,
-  //     });
-  //   }
-  //   setJournals(tempArray);
-  // }
 
   function formatDate(dateString: string) {
     const newDate = new Date(dateString);
@@ -454,7 +442,12 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     year: aarstall,
     doi: doi,
     language: selectedLang,
-    journal: selectedJournal,
+    journal: {
+      cristinTidsskriftNr: selectedJournal.value,
+      title: selectedJournal.label,
+      issn: selectedJournal.issn,
+      eissn: selectedJournal.eissn,
+    },
     category: selectedCategory,
     volume: importPublication?.channel?.volume ?? '',
     issue: importPublication?.channel?.issue ?? '',
@@ -538,6 +531,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         </StyledLineCristinValue>
                       </StyledLineWrapper>
 
+                      <CompareFormLanguage importPublication={importPublication} />
                       <CompareFormTitle importPublication={importPublication} selectedLang={selectedLang} />
                       <CompareFormJournal importPublication={importPublication} />
                       <CompareFormDoi importPublication={importPublication} />

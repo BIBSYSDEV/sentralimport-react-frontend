@@ -10,6 +10,8 @@ import {
 } from './CompareFormWrappers';
 import { compareFormValuesType } from './ComparePublicationDataModal';
 import { ImportPublication, Language } from '../../types/PublicationTypes';
+import { cleanTitleForMarkup } from '../../utils/stringUtils';
+import { Markup } from 'interweave';
 
 interface CompareFormTitleProps {
   importPublication: ImportPublication;
@@ -23,7 +25,9 @@ const CompareFormTitle: FC<CompareFormTitleProps> = ({ importPublication, select
     <StyledLineWrapper>
       <StyledLineLabelTypography htmlFor="Cristin-tittel">Tittel</StyledLineLabelTypography>
       <StyledLineImportValue>
-        <Typography data-testid="importdata-title">{selectedLang?.title}</Typography>
+        <Typography data-testid="importdata-title">
+          <Markup content={cleanTitleForMarkup(selectedLang?.title)} />
+        </Typography>
       </StyledLineImportValue>
       <ActionButtons
         isImportAndCristinEqual={values.title === selectedLang?.title}
