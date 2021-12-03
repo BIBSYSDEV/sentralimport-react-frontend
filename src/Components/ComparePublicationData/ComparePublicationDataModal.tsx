@@ -64,6 +64,11 @@ export interface JournalType {
   eissn?: string;
 }
 
+export const emptyJournal: JournalType = {
+  cristinTidsskriftNr: '0',
+  title: '',
+};
+
 export interface compareFormValuesType {
   title: string;
   year: string;
