@@ -1,6 +1,4 @@
-import { Button, TextField, Typography } from '@material-ui/core';
-import ActionButtons from './ActionButtons';
-import { ErrorMessage, Field, FieldProps, useFormikContext } from 'formik';
+import { Button, Typography } from '@material-ui/core';
 import React, { FC } from 'react';
 import {
   StyledActionButtonsPlaceHolder,
@@ -9,19 +7,16 @@ import {
   StyledLineLabelTypography,
   StyledLineWrapper,
 } from './CompareFormWrappers';
-import { compareFormValuesType } from './ComparePublicationDataModal';
-import { ImportPublication, Language } from '../../types/PublicationTypes';
+import { Language } from '../../types/PublicationTypes';
 import ButtonGroup from '@material-ui/core/ButtonGroup/ButtonGroup';
 
 interface CompareFormLanguageProps {
-  importPublication: ImportPublication;
-  languages?: Language;
-  selectedLang?: any;
+  setSelectedLang: (lang: Language) => void;
+  selectedLang?: Language;
+  languages: Language[];
 }
 
-const CompareFormLanguage: FC<CompareFormLanguageProps> = ({ importPublication, selectedLang, languages }) => {
-  const { values, setFieldValue } = useFormikContext<compareFormValuesType>();
-
+const CompareFormLanguage: FC<CompareFormLanguageProps> = ({ setSelectedLang, selectedLang, languages }) => {
   return (
     <StyledLineWrapper>
       <StyledLineLabelTypography>Språk</StyledLineLabelTypography>
@@ -30,58 +25,22 @@ const CompareFormLanguage: FC<CompareFormLanguageProps> = ({ importPublication, 
       </StyledLineImportValue>
       <StyledActionButtonsPlaceHolder />
       <StyledLineCristinValue>
-        //TODO: language buttons are used to change title on different languages
-        {/*  */}
-        {/*<ButtonGroup*/}
-        {/*  data-testid="cristindata-lang-buttongroup"*/}
-        {/*  className={`buttonGroup`}*/}
-        {/*  size="small"*/}
-        {/*  aria-label="language buttons">*/}
-        {/*  {languages.map((lang: Language, index: number) => (*/}
-        {/*    <Button*/}
-        {/*      key={lang.lang}*/}
-        {/*      variant="outlined"*/}
-        {/*      className={selectedLang === lang ? `selected` : ``}*/}
-        {/*      onClick={() => handleSelectedLang(lang)}>*/}
-        {/*      {lang.lang}*/}
-        {/*    </Button>*/}
-        {/*  ))}*/}
-        {/*</ButtonGroup>*/}
+        {selectedLang && (
+          <ButtonGroup data-testid="cristindata-lang-buttongroup" aria-label="language buttons">
+            {languages.map((language: Language) => (
+              <Button
+                key={language.lang}
+                color="primary"
+                variant={selectedLang?.lang === language.lang ? `contained` : `outlined`}
+                onClick={() => setSelectedLang(language)}>
+                {language.lang}
+              </Button>
+            ))}
+          </ButtonGroup>
+        )}
       </StyledLineCristinValue>
     </StyledLineWrapper>
   );
 };
-/*
-<StyledLineWrapper>
-  <StyledLineLabelTypography htmlFor="Cristin-tittel">Tittel</StyledLineLabelTypography>
-  <StyledLineImportValue>
-    <Typography data-testid="importdata-title">{selectedLang?.title}</Typography>
-  </StyledLineImportValue>
-  <ActionButtons
-    isImportAndCristinEqual={values.title === selectedLang?.title}
-    isCopyBottonDisabled={!importPublication.languages}
-    copyCommand={() => setFieldValue('title', selectedLang?.title ?? '', true)}
-  />
-  <StyledLineCristinValue>
-    <Field name="title">
-      {({ field, meta: { error } }: FieldProps) => (
-        <TextField
-          {...field}
-          id="Cristin-tittel"
-          name="title"
-          placeholder="Tittel"
-          data-testid="cristindata-title-textfield"
-          inputProps={{ 'data-testid': 'cristindata-title-textfield-input' }}
-          required
-          multiline
-          fullWidth
-          error={!!error}
-          helperText={<ErrorMessage name={field.name} />}
-        />
-      )}
-    </Field>
-  </StyledLineCristinValue>
-</StyledLineWrapper>
 
-*/
 export default CompareFormLanguage;

@@ -14,6 +14,7 @@ import CreateJournalPanel from './CreateJournalPanel';
 import SearchJournalPanel from './SearchJournalPanel';
 import styled from 'styled-components';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import CommonErrorMessage from '../CommonErrorMessage';
 
 const StyledJournalPresentationWrapper = styled.div`
   margin: 0.5rem 0;
@@ -39,7 +40,7 @@ export enum JournalPanels {
 }
 
 const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) => {
-  const { values, setFieldValue } = useFormikContext<compareFormValuesType>();
+  const { values, setFieldValue, errors } = useFormikContext<compareFormValuesType>();
   const [expandedPanel, setExpandedPanel] = useState<JournalPanels | undefined>();
 
   const createJournalFromImportPublication = {
@@ -74,6 +75,12 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) 
       <StyledLineCristinValue>
         <StyledJournalPresentationWrapper>
           <Typography data-testid="cristindata-journal">{values.journal?.title}</Typography>
+          {errors.journal?.cristinTidsskriftNr && (
+            <CommonErrorMessage
+              errorMessage={errors.journal.cristinTidsskriftNr}
+              datatestid="compare-form-journal-error"
+            />
+          )}
         </StyledJournalPresentationWrapper>
 
         <StyledAccordion

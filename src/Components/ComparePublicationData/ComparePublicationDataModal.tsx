@@ -3,7 +3,6 @@ import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Button, Grid, Typography } from '@material-ui/core';
 import ConfirmImportDialog from '../Dialogs/ConfirmImportDialog';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
-import Validation, { doiMatcher } from '../Validation/Validation';
 import { Context } from '../../Context';
 import '../../assets/styles/buttons.scss';
 import ContributorModal from '../Contributors/ContributorModal';
@@ -82,6 +81,8 @@ export interface compareFormValuesType {
   journal: JournalType;
 }
 
+export const doiMatcher = /^$|^([0-9]{2})[.]([0-9]{4,5})[/]([a-z0-9-.]+)/i;
+
 interface ComparePublicationDataModalProps {
   isComparePublicationDataModalOpen: boolean;
   handleComparePublicationDataModalClose: () => void;
@@ -108,7 +109,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     .reverse();
   const [languages, setLanguages] = useState(sortedLanguagesFromImportPublication);
   const originalImportLanguage = importPublication.languages?.find((lang: Language) => lang.original);
-  const [selectedLang, setSelectedLang] = useState<Language | undefined>(originalImportLanguage);
+  const [selectedLang, setSelectedLang] = useState<Language>(originalImportLanguage ?? importPublication.languages[0]);
   const [allContributorsFetched, setAllContributorsFetched] = useState(false);
   const [kilde, setKilde] = useState('');
   const [kildeId, setKildeId] = useState('');
@@ -238,14 +239,16 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
         setSelectedLang(
           workedOn
-            ? publicationFromLocalStorage?.languages.filter((language: any) => language.original)[0]
+            ? publicationFromLocalStorage?.languages.filter((language: Language) => language.original)[0] ??
+                importPublication.languages[0]
             : isDuplicate
             ? {
                 title: state.selectedPublication.title[state.selectedPublication.original_language],
                 lang: state.selectedPublication.original_language?.toUpperCase(),
                 original: true,
               }
-            : importPublication.languages.filter((language: any) => language.original)[0]
+            : importPublication.languages.filter((language: Language) => language.original)[0] ??
+              importPublication.languages[0]
         );
 
         setAarstall(
@@ -439,6 +442,12 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       .moreThan(999, 'Årstall må være større enn 999')
       .lessThan(new Date().getFullYear() + 1, 'Årstall kan ikke være et framtidig år'), //todo: nødvendige sjekker ?
     doi: Yup.string().matches(doiMatcher, 'Doi har galt format'),
+    journal: Yup.object().shape({
+      cristinTidsskriftNr: Yup.string()
+        .min(2, 'Tidskrift er et obligatorisk felt')
+        .required('Tidskrift er et obligatorisk felt'),
+      title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
+    }),
   });
 
   //todo: skrive om initiering og ta hensyn til isduplicate
@@ -481,6 +490,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 <Formik
                   onSubmit={NewAndImprovedHandleFormSubmit}
                   initialValues={formValues}
+                  validateOnMount
                   validationSchema={formValidationSchema}>
                   {({ isValid }) => (
                     <Form>
@@ -490,7 +500,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         <StyledActionButtonsPlaceHolder />
                         <StyledLineHeader variant="h4">Cristin-publikasjon</StyledLineHeader>
                       </StyledHeaderLineWrapper>
-
                       <StyledLineWrapper>
                         <StyledLineLabelTypography>Publication id</StyledLineLabelTypography>
                         <StyledLineImportValue>
@@ -505,7 +514,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                           </StyledDisabledTypography>
                         </StyledLineCristinValue>
                       </StyledLineWrapper>
-
                       <StyledLineWrapper>
                         <StyledLineLabelTypography>Dato registrert</StyledLineLabelTypography>
                         <StyledLineImportValue>
@@ -520,7 +528,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                           </StyledDisabledTypography>
                         </StyledLineCristinValue>
                       </StyledLineWrapper>
-
                       <StyledLineWrapper>
                         <StyledLineLabelTypography>Kilde</StyledLineLabelTypography>
                         <StyledLineImportValue>
@@ -535,8 +542,11 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                           </StyledDisabledTypography>
                         </StyledLineCristinValue>
                       </StyledLineWrapper>
-
-                      <CompareFormLanguage importPublication={importPublication} />
+                      <CompareFormLanguage
+                        languages={languages}
+                        selectedLang={selectedLang}
+                        setSelectedLang={setSelectedLang}
+                      />
                       <CompareFormTitle importPublication={importPublication} selectedLang={selectedLang} />
                       <CompareFormJournal importPublication={importPublication} />
                       <CompareFormDoi importPublication={importPublication} />
@@ -545,7 +555,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                       <CompareFormVolume importPublication={importPublication} />
                       <CompareFormIssue importPublication={importPublication} />
                       <CompareFormPages importPublication={importPublication} />
-
                       {!isValid && (
                         <CommonErrorMessage datatestid="compare-form-error" errorMessage="Det er feil i skjema" />
                       )}
@@ -575,12 +584,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
             <ModalFooter>
               <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline">
-                <Grid item>
-                  <Validation
-                    publication={isDuplicate ? state.selectedPublication : importPublication}
-                    duplicate={isDuplicate}
-                  />
-                </Grid>
                 <Grid item>
                   {state.contributorErrors?.length >= 1 ? <div> Feil i bidragsyterlisten. </div> : ''}
                   {!state.contributorsLoaded ? <div> Henter bidragsytere. </div> : ''}

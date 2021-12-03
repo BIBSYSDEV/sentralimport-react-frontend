@@ -65,7 +65,7 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
         fullWidth
         id="cristindata-journal"
         loading={isLoadingJournals}
-        noOptionsText="ingen tidskrift funnet"
+        noOptionsText="ingen tidsskrift funnet"
         data-testid="cristindata-journal-select"
         options={journals ?? []}
         value={selectedJournal}
