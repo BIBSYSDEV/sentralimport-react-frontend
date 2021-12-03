@@ -8,6 +8,7 @@ import { getAffiliationDetails } from '../../utils/contributorUtils';
 import { handlePotentialExpiredSession } from '../../api/api';
 import styled from 'styled-components';
 import { Colors } from '../../assets/styles/StyleConstants';
+import clone from 'just-clone';
 
 const StyledResultTypography = styled(Typography)`
   &.MuiTypography-root {
@@ -123,9 +124,10 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     }
     const temp = contributorData;
     if (temp.toBeCreated.affiliations) {
-      temp.toBeCreated.affiliations.push(newaffiliation);
+      //Deep copy required to prevent editing affiliations later causes change in search result item
+      temp.toBeCreated.affiliations.push(clone(newaffiliation));
     } else {
-      temp.toBeCreated.affiliations = [newaffiliation];
+      temp.toBeCreated.affiliations = [clone(newaffiliation)];
     }
     setAddAffiliationSuccessful(newaffiliation.cristinInstitutionNr);
     updateContributor(temp, resultListIndex);

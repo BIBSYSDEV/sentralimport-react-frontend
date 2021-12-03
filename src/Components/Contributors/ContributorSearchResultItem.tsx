@@ -92,7 +92,11 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({
           )}
         </Grid>
         <Grid item sm={4}>
-          <Button onClick={() => handleChooseOnlyAuthor(contributor)} size="small" color="primary">
+          <Button
+            data-testid={`add-only-person-${contributor.cristin_person_id}`}
+            onClick={() => handleChooseOnlyAuthor(contributor)}
+            size="small"
+            color="primary">
             Velg kun person
           </Button>
         </Grid>
@@ -136,7 +140,12 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({
           </StyledTypography>
         </StyledAffiliationsWrapper>
       )}
-      <StyledChooseButton size="small" variant="outlined" color="primary" onClick={() => handleChoose(contributor)}>
+      <StyledChooseButton
+        data-testid={`add-person-and-affiliations-${contributor.cristin_person_id}`}
+        size="small"
+        variant="outlined"
+        color="primary"
+        onClick={() => handleChoose(contributor)}>
         {contributor.affiliations && contributor.affiliations.length > 0
           ? 'Velg person og tilknyttning'
           : 'Velg person og fjern tilknytninger'}

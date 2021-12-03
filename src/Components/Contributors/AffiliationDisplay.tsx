@@ -78,7 +78,11 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
           </Grid>
           <Grid item sm={4}>
             {handleAddAffiliationButtonClick ? (
-              <Button onClick={() => handleAddAffiliationButtonClick()} size="small" color="primary">
+              <Button
+                data-testid={`add-only-affiliation-button-${dataTestid}`}
+                onClick={() => handleAddAffiliationButtonClick()}
+                size="small"
+                color="primary">
                 Velg kun tilknyttning
               </Button>
             ) : (
@@ -90,14 +94,14 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
             {addAffiliationError &&
               affiliation.cristinInstitutionNr &&
               addAffiliationError.institutionId.toString() === affiliation.cristinInstitutionNr.toString() && (
-                <Typography color="error" data-testid={`add-affiliation-error-${dataTestid}`} variant="body2">
+                <Typography color="error" data-testid={`add-only-affiliation-error-${dataTestid}`} variant="body2">
                   {addAffiliationError.message}
                 </Typography>
               )}
             {addAffiliationSuccessful &&
               affiliation.cristinInstitutionNr &&
               addAffiliationSuccessful.toString() === affiliation.cristinInstitutionNr.toString() && (
-                <StyledSuccessTypography data-testid={`add-affiliation-error-${dataTestid}`} variant="body2">
+                <StyledSuccessTypography data-testid={`add-affiliation-success-${dataTestid}`} variant="body2">
                   La til institusjon
                 </StyledSuccessTypography>
               )}
