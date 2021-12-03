@@ -79,7 +79,7 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
           setInputValue(inputValue);
         }}
         getOptionLabel={(option) => option.title}
-        getOptionSelected={(option, value) => option.cristinTidsskriftNr === value.cristinTidsskriftNr}
+        getOptionSelected={() => true} //hack for å få bort warnings - funker læll 🙈
         renderInput={(params) => (
           <TextField
             {...params}
