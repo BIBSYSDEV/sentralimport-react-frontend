@@ -29,7 +29,8 @@ context('duplication-check-modal', () => {
     cy.get(`[data-testid="search-panel-year-checkbox"].Mui-checked`).should('not.exist');
     cy.get(`[data-testid="search-panel-author-checkbox"]`).should('exist');
     cy.get(`[data-testid="search-panel-author-checkbox"].Mui-checked`).should('not.exist');
-    cy.get(`[data-testid="search-panel-issn-checkbox"]`).should('not.exist');
+    cy.get(`[data-testid="search-panel-issn-checkbox"]`).should('exist');
+    cy.get(`[data-testid="search-panel-issn-checkbox"].Mui-checked`).should('not.exist');
     //inputfields
     cy.get(`[data-testid="search-panel-title-textfield"] .MuiInputBase-input`).should(
       'have.value',
@@ -46,6 +47,10 @@ context('duplication-check-modal', () => {
     cy.get(`[data-testid="search-panel-doi-textfield"] .MuiInputBase-input`).should(
       'have.value',
       mockImportData[0].doi
+    );
+    cy.get(`[data-testid="search-panel-issn-textfield"] .MuiInputBase-input`).should(
+      'have.value',
+      mockImportData[0].channel.issn
     );
     //resultlist
     cy.get(`[data-testid="duplication-result-${mockCristinPublications[0].cristin_result_id}"]`).contains(
@@ -93,6 +98,7 @@ context('duplication-check-modal', () => {
     cy.get(`[data-testid="search-panel-title-checkbox"].Mui-checked`).should('not.exist');
     cy.get(`[data-testid="search-panel-year-checkbox"].Mui-checked`).should('not.exist');
     cy.get(`[data-testid="search-panel-author-checkbox"].Mui-checked`).should('not.exist');
+    cy.get(`[data-testid="search-panel-issn-checkbox"].Mui-checked`).should('not.exist');
 
     cy.get(`[data-testid="search-panel-title-checkbox"]`).click();
     cy.get(`[data-testid="search-panel-doi-checkbox"].Mui-checked`).should('not.exist');
@@ -104,5 +110,6 @@ context('duplication-check-modal', () => {
     cy.get(`[data-testid="search-panel-title-checkbox"].Mui-checked`).should('not.exist');
     cy.get(`[data-testid="search-panel-year-checkbox"].Mui-checked`).should('not.exist');
     cy.get(`[data-testid="search-panel-author-checkbox"].Mui-checked`).should('not.exist');
+    cy.get(`[data-testid="search-panel-issn-checkbox"].Mui-checked`).should('not.exist');
   });
 });
