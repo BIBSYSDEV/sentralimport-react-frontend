@@ -8,13 +8,14 @@ import {
   StyledLineLabelTypography,
   StyledLineWrapper,
 } from './CompareFormWrappers';
-import { compareFormValuesType } from './ComparePublicationDataModal';
+import { CompareFormValuesType } from './ComparePublicationDataModal';
 import { ImportPublication, Journal } from '../../types/PublicationTypes';
 import CreateJournalPanel from './CreateJournalPanel';
 import SearchJournalPanel from './SearchJournalPanel';
 import styled from 'styled-components';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import CommonErrorMessage from '../CommonErrorMessage';
+import { Colors } from '../../assets/styles/StyleConstants';
 
 const StyledJournalPresentationWrapper = styled.div`
   margin: 0.5rem 0;
@@ -22,10 +23,11 @@ const StyledJournalPresentationWrapper = styled.div`
 
 const StyledAccordion = styled(Accordion)`
   && {
-    border: 1px solid rgb(61, 79, 178); //primary
-    border-radius: 4px; //like button
+    //should look like buttons
+    border: 1px solid ${Colors.PRIMARY};
+    border-radius: 4px;
     box-shadow: none;
-    color: rgb(61, 79, 178); //primary
+    color: ${Colors.PRIMARY};
     margin-bottom: 0.3rem;
   }
 `;
@@ -40,7 +42,7 @@ export enum JournalPanels {
 }
 
 const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) => {
-  const { values, setFieldValue, errors } = useFormikContext<compareFormValuesType>();
+  const { values, setFieldValue, errors } = useFormikContext<CompareFormValuesType>();
   const [expandedPanel, setExpandedPanel] = useState<JournalPanels | undefined>();
 
   const createJournalFromImportPublication = {

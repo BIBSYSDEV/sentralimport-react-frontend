@@ -8,7 +8,7 @@ import {
   StyledLineLabelTypography,
   StyledLineWrapper,
 } from './CompareFormWrappers';
-import { compareFormValuesType } from './ComparePublicationDataModal';
+import { CompareFormValuesType } from './ComparePublicationDataModal';
 import { ImportPublication, Language } from '../../types/PublicationTypes';
 import { cleanTitleForMarkup } from '../../utils/stringUtils';
 import { Markup } from 'interweave';
@@ -19,7 +19,7 @@ interface CompareFormTitleProps {
 }
 
 const CompareFormTitle: FC<CompareFormTitleProps> = ({ importPublication, selectedLang }) => {
-  const { values, setFieldValue } = useFormikContext<compareFormValuesType>();
+  const { values, setFieldValue } = useFormikContext<CompareFormValuesType>();
 
   return (
     <StyledLineWrapper>

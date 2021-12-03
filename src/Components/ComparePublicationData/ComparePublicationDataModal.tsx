@@ -68,7 +68,7 @@ export const emptyJournal: JournalType = {
   title: '',
 };
 
-export interface compareFormValuesType {
+export interface CompareFormValuesType {
   title: string;
   year: string;
   doi: string;
@@ -81,7 +81,7 @@ export interface compareFormValuesType {
   journal: JournalType;
 }
 
-export const doiMatcher = /^$|^([0-9]{2})[.]([0-9]{4,5})[/]([a-z0-9-.]+)/i;
+export const doiMatcher = /(10)[.](.+)[/](.+)/i;
 
 interface ComparePublicationDataModalProps {
   isComparePublicationDataModalOpen: boolean;
@@ -102,7 +102,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   isDuplicate,
 }) => {
   const { enqueueSnackbar } = useSnackbar();
-  const { useRef, useLayoutEffect } = React;
   const { state, dispatch } = useContext(Context);
   const sortedLanguagesFromImportPublication = clone(importPublication)
     .languages.sort((a: any, b: any) => a.original - b.original)
@@ -142,19 +141,12 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   );
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [dialogAbortOpen, setDialogAbortOpen] = useState(false);
-  const firstUpdate = useRef(true);
   const [fetchDataError, setFetchDataError] = useState<Error | undefined>();
   const [importPublicationError, setImportPublicationError] = useState<Error | undefined>();
 
-  useLayoutEffect(() => {
-    if (firstUpdate.current) {
-      firstUpdate.current = false;
-      return;
-    }
-    saveToLocalStorage();
-  }, [selectedCategory, selectedJournal, doi, aarstall, selectedLang, publishingDetails]);
-
   useEffect(() => {
+    //todo: skrive om initiering og ta hensyn til isduplicate
+
     async function setFields() {
       try {
         setFetchDataError(undefined);
@@ -299,27 +291,28 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     setFields().then();
   }, [isDuplicate, state.selectedPublication, importPublication]);
 
-  function saveToLocalStorage() {
+  function saveToLocalStorage(values: CompareFormValuesType) {
+    console.log(values);
     if (state.doSave)
       localStorage.setItem(
         'tempPublication',
         JSON.stringify({
           publication: {
             cristinResultId: isDuplicate ? cristinPublication.cristin_result_id : '',
-            category: selectedCategory.value,
-            categoryName: selectedCategory.label,
+            category: values.category.value,
+            categoryName: values.category.label,
             channel: {
-              ...publishingDetails,
-              cristinTidsskriftNr: selectedJournal.value,
-              title: selectedJournal.label,
-              issn: selectedJournal.issn,
-              eissn: selectedJournal.eissn,
+              ...importPublication.channel,
+              cristinTidsskriftNr: values.journal.cristinTidsskriftNr,
+              title: values.journal.title,
+              issn: values.journal.issn,
+              eissn: values.journal.eissn,
             },
-            doi: doi,
+            doi: values.doi,
             languages: languages,
             pubId: importPublication.pubId,
             registered: importPublication.registered,
-            yearPublished: aarstall,
+            yearPublished: values.year,
             duplicate: isDuplicate,
             import_sources: [
               {
@@ -351,14 +344,14 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     }
   }
 
-  function handleFormSubmit() {
-    setImportPublicationError(undefined);
-    saveToLocalStorage();
+  const handleSubmit = (values: CompareFormValuesType) => {
+    saveToLocalStorage(values);
     if (state.contributors === null) {
       dispatch({ type: 'contributors', payload: contributors });
     }
     setIsConfirmDialogOpen(true);
-  }
+    //TODO: later: sette formValues som parameter i confirmdialogOpen
+  };
 
   function handleAbort() {
     setDialogAbortOpen(true);
@@ -393,7 +386,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     setDialogAbortOpen(false);
     handleComparePublicationDataModalClose();
     handleDuplicateCheckModalClose();
-    dispatch({ type: 'setContributorErrors', payload: 0 });
     dispatch({ type: 'setContributorsLoaded', payload: false });
   }
 
@@ -450,8 +442,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     }),
   });
 
-  //todo: skrive om initiering og ta hensyn til isduplicate
-  const formValues: compareFormValuesType = {
+  const formValues: CompareFormValuesType = {
     title: selectedLang?.title ?? '',
     year: aarstall,
     doi: doi,
@@ -469,30 +460,21 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     pageTo: importPublication?.channel?.pageTo ?? '',
   };
 
-  const NewAndImprovedHandleFormSubmit = () => {
-    saveToLocalStorage(); //tja ?
-    if (state.contributors === null) {
-      dispatch({ type: 'contributors', payload: contributors });
-    }
-    setIsConfirmDialogOpen(true);
-    //later: sette formValues som parameter i confirmdialogOpen
-  };
-
   return (
     <>
       {fetchDataError ? (
         <Typography color="error">Noe gikk galt. {fetchDataError.message}</Typography>
       ) : (
         <div>
-          <StyledModal isOpen={isComparePublicationDataModalOpen} size="lg" data-testid="compare-modal">
-            <ModalBody>
-              <StyledFormWrapper>
-                <Formik
-                  onSubmit={NewAndImprovedHandleFormSubmit}
-                  initialValues={formValues}
-                  validateOnMount
-                  validationSchema={formValidationSchema}>
-                  {({ isValid }) => (
+          <Formik
+            onSubmit={handleSubmit}
+            initialValues={formValues}
+            validateOnMount
+            validationSchema={formValidationSchema}>
+            {({ isValid }) => (
+              <StyledModal isOpen={isComparePublicationDataModalOpen} size="lg" data-testid="compare-modal">
+                <ModalBody>
+                  <StyledFormWrapper>
                     <Form>
                       <StyledHeaderLineWrapper>
                         <StyledLineLabelTypography />
@@ -559,62 +541,63 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         <CommonErrorMessage datatestid="compare-form-error" errorMessage="Det er feil i skjema" />
                       )}
                     </Form>
-                  )}
-                </Formik>
-              </StyledFormWrapper>
-              <StyledOpenContributorsButtonWrapper>
-                <Button
-                  size="large"
-                  data-testid="open-contributors-modal-button"
-                  onClick={openContributorModal}
-                  variant="contained"
-                  color="primary">
-                  Vis bidragsytere
-                </Button>
-              </StyledOpenContributorsButtonWrapper>
-              <StyledErrorMessageWrapper>
-                {state.contributorErrors.length >= 1 && <ContributorErrorMessage />}
-                {importPublicationError && (
-                  <Typography color="error" data-testid="import-publication-errors">
-                    {importPublicationError.message}
-                  </Typography>
-                )}
-              </StyledErrorMessageWrapper>
-            </ModalBody>
+                  </StyledFormWrapper>
+                  <StyledOpenContributorsButtonWrapper>
+                    <Button
+                      size="large"
+                      data-testid="open-contributors-modal-button"
+                      onClick={openContributorModal}
+                      variant="contained"
+                      color="primary">
+                      Vis bidragsytere
+                    </Button>
+                  </StyledOpenContributorsButtonWrapper>
+                  <StyledErrorMessageWrapper>
+                    {state.contributorErrors.length >= 1 && <ContributorErrorMessage />}
+                    {importPublicationError && (
+                      <Typography color="error" data-testid="import-publication-errors">
+                        {importPublicationError.message}
+                      </Typography>
+                    )}
+                  </StyledErrorMessageWrapper>
+                </ModalBody>
 
-            <ModalFooter>
-              <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline">
-                <Grid item>
-                  {state.contributorErrors?.length >= 1 ? <div> Feil i bidragsyterlisten. </div> : ''}
-                  {!state.contributorsLoaded ? <div> Henter bidragsytere. </div> : ''}
-                </Grid>
-                <Grid item>
-                  <Button
-                    onClick={handleAbort}
-                    variant="outlined"
-                    color="secondary"
-                    data-testid="import-publication-cancel-button">
-                    Avbryt
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button
-                    disabled={
-                      state.formErrors.length >= 1 ||
-                      !!importPublication?.cristin_id ||
-                      state.contributorErrors.length >= 1 ||
-                      !state.contributorsLoaded
-                    }
-                    color="primary"
-                    onClick={handleFormSubmit}
-                    variant="contained"
-                    data-testid="import-publication-button">
-                    Importer
-                  </Button>
-                </Grid>
-              </Grid>
-            </ModalFooter>
-          </StyledModal>
+                <ModalFooter>
+                  <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline">
+                    <Grid item>
+                      {state.contributorErrors?.length >= 1 ? <div> Feil i bidragsyterlisten. </div> : ''}
+                      {!state.contributorsLoaded ? <div> Henter bidragsytere. </div> : ''}
+                    </Grid>
+                    <Grid item>
+                      <Button
+                        onClick={handleAbort}
+                        variant="outlined"
+                        color="secondary"
+                        data-testid="import-publication-cancel-button">
+                        Avbryt
+                      </Button>
+                    </Grid>
+                    <Grid item>
+                      <Button
+                        disabled={
+                          !isValid ||
+                          !!importPublication?.cristin_id ||
+                          state.contributorErrors.length >= 1 ||
+                          !state.contributorsLoaded
+                        }
+                        color="primary"
+                        type="submit"
+                        variant="contained"
+                        data-testid="import-publication-button">
+                        Importer
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </ModalFooter>
+              </StyledModal>
+            )}
+          </Formik>
+
           <ConfirmDialog
             doFunction={emptyGlobalFormErrors}
             title={'Avbryt import'}

@@ -8,7 +8,7 @@ import {
   StyledLineLabelTypography,
   StyledLineWrapper,
 } from './CompareFormWrappers';
-import { compareFormValuesType } from './ComparePublicationDataModal';
+import { CompareFormValuesType } from './ComparePublicationDataModal';
 import { ImportPublication } from '../../types/PublicationTypes';
 
 interface CompareFormDoiProps {
@@ -16,7 +16,7 @@ interface CompareFormDoiProps {
 }
 
 const CompareFormDoi: FC<CompareFormDoiProps> = ({ importPublication }) => {
-  const { values, setFieldValue } = useFormikContext<compareFormValuesType>();
+  const { values, setFieldValue } = useFormikContext<CompareFormValuesType>();
 
   return (
     <StyledLineWrapper>

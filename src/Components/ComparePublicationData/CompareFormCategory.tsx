@@ -8,7 +8,7 @@ import {
   StyledLineLabelTypography,
   StyledLineWrapper,
 } from './CompareFormWrappers';
-import { CategoryOption, compareFormValuesType } from './ComparePublicationDataModal';
+import { CategoryOption, CompareFormValuesType } from './ComparePublicationDataModal';
 import { CategoryItem, ImportPublication } from '../../types/PublicationTypes';
 import { Autocomplete } from '@material-ui/lab';
 import { getCategories } from '../../api/publicationApi';
@@ -19,7 +19,7 @@ interface CompareFormCategoryProps {
 }
 
 const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }) => {
-  const { values, setFieldValue } = useFormikContext<compareFormValuesType>();
+  const { values, setFieldValue } = useFormikContext<CompareFormValuesType>();
   const [categories, setCategories] = useState<CategoryOption[]>();
   const [fetchCategoriesError, setFetchCategoriesError] = useState<Error | undefined>();
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
