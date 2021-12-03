@@ -180,7 +180,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
         data-testid={`contributor-search-button-${resultListIndex}`}
         onClick={() => retrySearch()}
         disabled={contributorData.toBeCreated.first_name === '' || contributorData.toBeCreated.surname === ''}>
-        {contributorData.toBeCreated.cristin_person_id ? 'Søk og erstatt person' : 'Søk etter person'}
+        Søk etter person
       </Button>
       {!searching && searchError && (
         <Typography color="error">{searchError.message ?? 'Noe gikk galt med søket, prøv igjen'} </Typography>
