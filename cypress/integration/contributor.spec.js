@@ -303,6 +303,6 @@ context('contributor', () => {
     cy.get(
       `[data-testid="add-only-affiliation-error-institution-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}"]`
     ).should('exist');
-    cy.get('#lastName2').contains(mockImportData[1].authors[2].surname);
+    cy.get('[data-testid="input-surname-2"]').should('have.value', mockImportData[1].authors[2].surname);
   });
 });

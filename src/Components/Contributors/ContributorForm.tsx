@@ -177,8 +177,8 @@ const ContributorForm: FC<ContributorFormProps> = ({
       </FormGroup>
       <FormGroup>
         <TextField
-          data-testid={`input-surname-${resultListIndex}`}
           id={'lastName' + resultListIndex}
+          inputProps={{ 'data-testid': `input-surname-${resultListIndex}` }}
           label="Etternavn"
           value={contributorData.toBeCreated.surname}
           margin="normal"
