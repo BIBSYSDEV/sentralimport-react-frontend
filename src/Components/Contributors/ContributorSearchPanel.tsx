@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Button, Card, CardContent, CircularProgress, Collapse, Typography } from '@material-ui/core';
 import { ContributorType, ContributorWrapper } from '../../types/ContributorTypes';
 import ContributorSearchResultItem from './ContributorSearchResultItem';
@@ -17,6 +17,10 @@ const StyledResultTypography = styled(Typography)`
   color: ${Colors.Text.OPAQUE_87_BLACK};
 `;
 
+export interface AddAffiliationError extends Error {
+  institutionId: string;
+}
+
 interface ContributorSearchPanelProps {
   resultListIndex: number;
   contributorData: ContributorWrapper;
@@ -32,6 +36,8 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState<Error | undefined>();
   const [openContributorSearchPanel, setOpenContributorSearchPanel] = useState(false);
+  const [addAffiliationSuccessful, setAddAffiliationSuccessful] = useState<string | undefined>(undefined);
+  const [addAffiliationError, setAddAffiliationError] = useState<AddAffiliationError | undefined>();
 
   function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
     const cristinIdSet = new Set();
@@ -95,6 +101,52 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     }
   }
 
+  function handleChooseOnlyAffiliation(newaffiliation: Affiliation) {
+    setAddAffiliationError(undefined);
+    setAddAffiliationSuccessful(undefined);
+    if (
+      contributorData.toBeCreated.affiliations &&
+      contributorData.toBeCreated.affiliations.find((oldAffiliation) => {
+        if (oldAffiliation.cristinInstitutionNr && newaffiliation.cristinInstitutionNr) {
+          return oldAffiliation.cristinInstitutionNr.toString() === newaffiliation.cristinInstitutionNr.toString();
+        }
+
+        return false;
+      })
+    ) {
+      setAddAffiliationError({
+        name: 'Add institution error',
+        message: 'Institusjonen finnes allerede',
+        institutionId: newaffiliation.cristinInstitutionNr ?? '',
+      });
+      return;
+    }
+    const temp = contributorData;
+    if (temp.toBeCreated.affiliations) {
+      temp.toBeCreated.affiliations.push(newaffiliation);
+    } else {
+      temp.toBeCreated.affiliations = [newaffiliation];
+    }
+    setAddAffiliationSuccessful(newaffiliation.cristinInstitutionNr);
+    updateContributor(temp, resultListIndex);
+  }
+
+  function handleChooseOnlyAuthor(author: ContributorType) {
+    const newAuthor = author;
+    if (newAuthor.affiliations) {
+      delete newAuthor.affiliations;
+    }
+    if (contributorData.toBeCreated.affiliations) {
+      newAuthor.affiliations = contributorData.toBeCreated.affiliations;
+    }
+
+    handleChooseThis(newAuthor);
+  }
+
+  useEffect(() => {
+    setAddAffiliationError(undefined);
+  }, [contributorData.toBeCreated.affiliations]);
+
   function handleChooseThis(author: ContributorType) {
     const temp = contributorData;
     temp.cristin = author;
@@ -109,7 +161,6 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     }
     temp.toBeCreated.isEditing = false;
     temp.toBeCreated.order = resultListIndex + 1;
-    temp.isEditing = false;
     setOpenContributorSearchPanel(false);
     updateContributor(temp, resultListIndex);
   }
@@ -139,24 +190,26 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
         <StyledResultTypography>Fant {searchResults.length} bidragsytere</StyledResultTypography>
       )}
 
-      {searchResults.length > 0 && (
-        <Collapse in={openContributorSearchPanel && !searching}>
-          <Card>
-            <CardContent>
-              {searchResults.map((author: ContributorType) => (
-                <ContributorSearchResultItem
-                  key={author.cristin_person_id}
-                  contributor={author}
-                  handleChoose={handleChooseThis}
-                />
-              ))}
-            </CardContent>
-            <Button color="primary" onClick={handleContributorSearchPanelClose}>
-              Lukk
-            </Button>
-          </Card>
-        </Collapse>
-      )}
+      <Collapse in={openContributorSearchPanel && !searching}>
+        <Card>
+          <CardContent>
+            {searchResults.map((author: ContributorType) => (
+              <ContributorSearchResultItem
+                addAffiliationError={addAffiliationError}
+                addAffiliationSuccessful={addAffiliationSuccessful}
+                handleChooseOnlyAffiliation={handleChooseOnlyAffiliation}
+                handleChooseOnlyAuthor={handleChooseOnlyAuthor}
+                key={author.cristin_person_id}
+                contributor={author}
+                handleChoose={handleChooseThis}
+              />
+            ))}
+          </CardContent>
+          <Button color="primary" onClick={handleContributorSearchPanelClose}>
+            Lukk
+          </Button>
+        </Card>
+      </Collapse>
     </>
   );
 };

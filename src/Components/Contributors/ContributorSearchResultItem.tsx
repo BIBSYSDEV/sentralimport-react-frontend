@@ -1,14 +1,16 @@
 import React, { FC, useState } from 'react';
 import { ContributorType } from '../../types/ContributorTypes';
 import styled from 'styled-components';
-import { Button, Typography } from '@material-ui/core';
+import { Button, Grid, Typography } from '@material-ui/core';
 import { Colors } from '../../assets/styles/StyleConstants';
+import { Affiliation } from '../../types/InstitutionTypes';
 import {
   StyledNotVerifiedBadge,
   StyledUnknownVerifiedBadge,
   StyledVerifiedBadge,
 } from '../../assets/styles/StyledComponents';
 import AffiliationDisplay from './AffiliationDisplay';
+import { AddAffiliationError } from './ContributorSearchPanel';
 
 const StyledChooseButton = styled(Button)`
   &.MuiButtonBase-root {
@@ -37,9 +39,20 @@ const StyledInactivePersonNameTypography = styled(Typography)`
 interface ContributorSearchResultItemProps {
   contributor: ContributorType;
   handleChoose: (author: ContributorType) => void;
+  handleChooseOnlyAuthor: (author: ContributorType) => void;
+  handleChooseOnlyAffiliation: (affiliation: Affiliation) => void;
+  addAffiliationSuccessful: string | undefined;
+  addAffiliationError: AddAffiliationError | undefined;
 }
 
-const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({ contributor, handleChoose }) => {
+const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({
+  contributor,
+  handleChoose,
+  handleChooseOnlyAuthor,
+  handleChooseOnlyAffiliation,
+  addAffiliationSuccessful,
+  addAffiliationError,
+}) => {
   const [isActive] = useState(
     contributor.affiliations &&
       contributor.affiliations.some((affiliation) => affiliation.isCristinInstitution) &&
@@ -48,29 +61,42 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({ con
 
   return (
     <div>
-      {isActive ? (
-        <StyledActivePersonNameTypography data-testid={`author-name-${contributor.cristin_person_id}`} variant="h6">
-          <StyledVerifiedBadge data-testid={`author-name-${contributor.cristin_person_id}-verified-badge`} />
+      <Grid container spacing={1}>
+        <Grid item sm={8}>
+          {isActive ? (
+            <StyledActivePersonNameTypography data-testid={`author-name-${contributor.cristin_person_id}`} variant="h6">
+              <StyledVerifiedBadge data-testid={`author-name-${contributor.cristin_person_id}-verified-badge`} />
 
-          {`${contributor.first_name_preferred ?? contributor.first_name} ${
-            contributor.surname_preferred ?? contributor.surname
-          }`}
-        </StyledActivePersonNameTypography>
-      ) : (
-        <StyledInactivePersonNameTypography data-testid={`author-name-${contributor.cristin_person_id}`} variant="h6">
-          {contributor.require_higher_authorization ? (
-            <StyledUnknownVerifiedBadge
-              data-testid={`author-name-${contributor.cristin_person_id}-uknown-verified-badge`}
-              title="Ukjent verifikasjonsstatus"
-            />
+              {`${contributor.first_name_preferred ?? contributor.first_name} ${
+                contributor.surname_preferred ?? contributor.surname
+              }`}
+            </StyledActivePersonNameTypography>
           ) : (
-            <StyledNotVerifiedBadge data-testid={`author-name-${contributor.cristin_person_id}-not-verified-badge`} />
+            <StyledInactivePersonNameTypography
+              data-testid={`author-name-${contributor.cristin_person_id}`}
+              variant="h6">
+              {contributor.require_higher_authorization ? (
+                <StyledUnknownVerifiedBadge
+                  data-testid={`author-name-${contributor.cristin_person_id}-uknown-verified-badge`}
+                  title="Ukjent verifikasjonsstatus"
+                />
+              ) : (
+                <StyledNotVerifiedBadge
+                  data-testid={`author-name-${contributor.cristin_person_id}-not-verified-badge`}
+                />
+              )}
+              {`${contributor.first_name_preferred ?? contributor.first_name} ${
+                contributor.surname_preferred ?? contributor.surname
+              }`}
+            </StyledInactivePersonNameTypography>
           )}
-          {`${contributor.first_name_preferred ?? contributor.first_name} ${
-            contributor.surname_preferred ?? contributor.surname
-          }`}
-        </StyledInactivePersonNameTypography>
-      )}
+        </Grid>
+        <Grid item sm={4}>
+          <Button onClick={() => handleChooseOnlyAuthor(contributor)} size="small" color="primary">
+            Velg kun person
+          </Button>
+        </Grid>
+      </Grid>
       {contributor.affiliations
         ?.sort((affiliationA, affiliationB) => {
           if (affiliationA.institutionName && affiliationB.institutionName) {
@@ -78,10 +104,14 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({ con
           }
           return 0;
         })
-        .map((affiliation) => (
+        .map((affiliation, affiliationIndex) => (
           <AffiliationDisplay
+            addAffiliationSuccessful={addAffiliationSuccessful}
+            handleAddAffiliationButtonClick={() => handleChooseOnlyAffiliation(affiliation)}
+            key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
             affiliation={{
               institutionName: affiliation.institutionName ?? '',
+              cristinInstitutionNr: affiliation.cristinInstitutionNr,
               units: affiliation.units
                 ? affiliation.units
                     .filter((unit) => unit.unitName !== affiliation.institutionName)
@@ -95,6 +125,7 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({ con
             }}
             dataTestid={`institution-${affiliation.cristinInstitutionNr}`}
             backgroundcolor={Colors.LIGHT_GREY}
+            addAffiliationError={addAffiliationError}
           />
         ))}
 
@@ -106,7 +137,9 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({ con
         </StyledAffiliationsWrapper>
       )}
       <StyledChooseButton size="small" variant="outlined" color="primary" onClick={() => handleChoose(contributor)}>
-        Velg denne
+        {contributor.affiliations && contributor.affiliations.length > 0
+          ? 'Velg person og tilknyttning'
+          : 'Velg person og fjern tilknytninger'}
       </StyledChooseButton>
       <hr />
     </div>
