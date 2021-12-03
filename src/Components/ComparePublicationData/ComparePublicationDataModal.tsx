@@ -4,7 +4,7 @@ import { Button, FormControl, Grid, TextField, Typography } from '@material-ui/c
 import Select from 'react-select';
 import ConfirmImportDialog from '../Dialogs/ConfirmImportDialog';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
-import Validation, { doiMatcher } from '../Validation/Validation';
+import Validation from '../Validation/Validation';
 import { Context } from '../../Context';
 import '../../assets/styles/buttons.scss';
 import ContributorModal from '../Contributors/ContributorModal';
@@ -21,6 +21,7 @@ import { Colors } from '../../assets/styles/StyleConstants';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
 import { getCategories, getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
+import { DOI_REGEX } from '../../utils/stringUtils';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -826,8 +827,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         data-testid="cristindata-doi-textfield"
                         onChange={(event: any) => handleChangeDoi(event)}
                         margin="normal"
-                        error={!doi?.match(doiMatcher)}
-                        helperText={doi && !doi.match(doiMatcher) ? 'Doi har galt format' : ''}
+                        error={!doi?.match(DOI_REGEX)}
+                        helperText={doi && !doi.match(DOI_REGEX) ? 'Doi har galt format' : ''}
                       />
                     </FormControl>
                   </StyledLineCristinValue>

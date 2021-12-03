@@ -142,7 +142,7 @@ export default function Validation(props) {
           !tittelValid ? fieldErrors.push(tittelError) : fieldErrors.push();
           break;
         case 'doi':
-          const doiValid = data[i].value.match(doiMatcher);
+          const doiValid = data[i].value.match(DOI_REGEX);
           const doiError = 'Doi har galt format';
           !doiValid ? fieldErrors.push(doiError) : fieldErrors.push();
           break;
