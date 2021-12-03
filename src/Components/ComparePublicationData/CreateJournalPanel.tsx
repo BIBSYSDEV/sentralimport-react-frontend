@@ -35,13 +35,13 @@ interface CreateJournalPanelProps {
 
 const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }) => {
   const handleSubmit = (values: CreateJournalFormValues) => {
-    handleCreateJournal({ title: values.title, issn: values.issn, eissn: values.eissn });
+    handleCreateJournal({ title: values.title.trim(), issn: values.issn.trim(), eissn: values.eissn.trim() });
   };
 
   const formValidationSchema = Yup.object().shape({
     title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
-    issn: Yup.string().matches(ISSNCodeFormat, 'ISSN er ikke på korrekt format (NNNN-NNNC)'),
-    eissn: Yup.string().matches(ISSNCodeFormat, 'e-ISSN er ikke på korrekt format (NNNN-NNNC)'),
+    issn: Yup.string().trim().matches(ISSNCodeFormat, 'ISSN er ikke på korrekt format (NNNN-NNNC)'),
+    eissn: Yup.string().trim().matches(ISSNCodeFormat, 'e-ISSN er ikke på korrekt format (NNNN-NNNC)'),
   });
 
   return (
