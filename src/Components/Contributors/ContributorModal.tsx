@@ -139,11 +139,7 @@ const StyledContributorLineWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: flex-start;
-<<<<<<< HEAD
   align-items: start;
-=======
-  align-items: flex-start;
->>>>>>> c09e6cc546fbf22dcbfadc5d11255e0b80862bb9
   padding: 0.5rem;
 `;
 
