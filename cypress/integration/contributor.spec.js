@@ -261,7 +261,6 @@ context('contributor', () => {
       `[data-testid="list-item-author-${mockImportData[1].authors[4].surname}-affiliations-${mockImportData[1].authors[4].institutions[0].cristinInstitutionNr}-institution-name"]`
     ).should('exist');
     cy.get('[data-testid="contributor-search-button-2"]').click();
-    //[data-testid="add-only-person-1234567"]
     cy.get(`[data-testid="add-only-person-${mockPersonDetailed.cristin_person_id}"]`).click();
     cy.get(
       `[data-testid="list-item-author-${mockImportData[1].authors[4].surname}-affiliations-${mockImportData[1].authors[4].institutions[0].cristinInstitutionNr}-institution-name"]`
@@ -276,7 +275,6 @@ context('contributor', () => {
       `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}-institution-name"]`
     ).should('exist');
     cy.get('[data-testid="contributor-search-button-2"]').click();
-    //[data-testid="add-only-person-1234567"]
     cy.get(`[data-testid="add-person-and-affiliations-${mockPersonDetailed.cristin_person_id}"]`).click();
     cy.get(
       `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}-institution-name"]`
