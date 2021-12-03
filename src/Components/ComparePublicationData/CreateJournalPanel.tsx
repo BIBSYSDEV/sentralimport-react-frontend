@@ -47,7 +47,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
   return (
     <StyledFormWrapper>
       <Typography gutterBottom variant="caption">
-        Felter merket med * er obligatoriske (ISSN eller e-ISSN må fylles ut)
+        Felter merket med * er obligatoriske
       </Typography>
       <Formik onSubmit={handleSubmit} initialValues={emptyFormValues} validationSchema={formValidationSchema}>
         {({ values, isValid }) => (

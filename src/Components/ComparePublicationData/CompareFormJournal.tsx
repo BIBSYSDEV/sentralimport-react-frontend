@@ -1,7 +1,7 @@
 import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@material-ui/core';
 import ActionButtons from './ActionButtons';
 import { useFormikContext } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import {
   StyledLineCristinValue,
   StyledLineImportValue,
@@ -18,26 +18,29 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 const StyledJournalPresentationWrapper = styled.div`
   margin: 0.5rem 0;
 `;
-const StyledFormHeaderTypography = styled(Typography)`
+
+const StyledAccordion = styled(Accordion)`
   && {
-    font-weight: bold;
+    border: 1px solid rgb(61, 79, 178); //primary
+    border-radius: 4px; //like button
+    box-shadow: none;
+    color: rgb(61, 79, 178); //primary
+    margin-bottom: 0.3rem;
   }
 `;
 
 interface CompareFormJournalProps {
   importPublication: ImportPublication;
 }
-//TODO:
-// const [expanded, setExpanded] = React.useState(false);
-//
-// const handleChange = (panel) => (event, isExpanded) => {
-//   setExpanded(isExpanded ? panel : false);
-// };
-//
-// <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+
+export enum JournalPanels {
+  SEARCH_JOURNAL_PANEL = 'searchJournalPanel',
+  CREATE_JOURNAL_PANEL = 'createJournalPanel',
+}
 
 const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) => {
   const { values, setFieldValue } = useFormikContext<compareFormValuesType>();
+  const [expandedPanel, setExpandedPanel] = useState<JournalPanels | undefined>();
 
   const createJournalFromImportPublication = {
     cristinTidsskriftNr: importPublication.channel?.cristinTidsskriftNr?.toString(),
@@ -46,12 +49,13 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) 
     eissn: importPublication.channel?.eissn,
   };
 
-  const handleNewJournal = (newJournal: Journal) => {
-    setFieldValue('journal', newJournal);
+  const handleChangePanel = (panel: JournalPanels | undefined) => (event: any, isExpanded: boolean) => {
+    setExpandedPanel(isExpanded ? panel : undefined);
   };
-  const handleChooseJournal = (newJournal: Journal) => {
-    console.log(newJournal);
+
+  const handleSetJournal = (newJournal: Journal) => {
     setFieldValue('journal', newJournal);
+    setExpandedPanel(undefined);
   };
 
   return (
@@ -72,29 +76,33 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) 
           <Typography data-testid="cristindata-journal">{values.journal?.title}</Typography>
         </StyledJournalPresentationWrapper>
 
-        <Accordion>
+        <StyledAccordion
+          expanded={expandedPanel === JournalPanels.SEARCH_JOURNAL_PANEL}
+          onChange={handleChangePanel(JournalPanels.SEARCH_JOURNAL_PANEL)}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="search-journal-content"
             id="search-journal-header">
-            <StyledFormHeaderTypography>Søk opp tidsskrift</StyledFormHeaderTypography>
+            <Typography>Søk opp tidsskrift</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <SearchJournalPanel handleChooseJournal={handleChooseJournal} />
+            <SearchJournalPanel handleChooseJournal={handleSetJournal} />
           </AccordionDetails>
-        </Accordion>
+        </StyledAccordion>
 
-        <Accordion>
+        <StyledAccordion
+          expanded={expandedPanel === JournalPanels.CREATE_JOURNAL_PANEL}
+          onChange={handleChangePanel(JournalPanels.CREATE_JOURNAL_PANEL)}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="create-journal-content"
             id="create-journal-header">
-            <StyledFormHeaderTypography>Registrer nytt tidskrift</StyledFormHeaderTypography>
+            <Typography>Registrer nytt tidskrift</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <CreateJournalPanel handleCreateJournal={handleNewJournal} />
+            <CreateJournalPanel handleCreateJournal={handleSetJournal} />
           </AccordionDetails>
-        </Accordion>
+        </StyledAccordion>
       </StyledLineCristinValue>
     </StyledLineWrapper>
   );
