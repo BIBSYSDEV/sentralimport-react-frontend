@@ -11,4 +11,4 @@ export function cleanTitleForMarkup(title: string) {
 }
 
 //Following this DOI specification: https://www.doi.org/doi_handbook/2_Numbering.html
-export const DOI_REGEX = /^(10)[.](.+)[/](.+)/i;
+export const DOI_REGEX = /(10)[.](.+)[/](.+)/i;
