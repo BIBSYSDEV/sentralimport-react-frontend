@@ -52,7 +52,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
     try {
       setHandleOkButtonError(undefined);
       if (selectedRadioButton === SelectValues.CREATE_NEW) {
-        dispatch({ type: 'doSave', payload: true });
+        dispatch({ type: 'doSave', payload: true }); //TODO: trengs denne egentlig?
         setDuplicate(false);
         setIsComparePublicationDataModalOpen(true);
       } else if (selectedRadioButton === SelectValues.TOGGLE_RELEVANT) {
@@ -118,7 +118,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
           </Grid>
         </Grid>
       </ModalFooter>
-
+      {/*TODO: only render ComparePublicationDataModal on handleClickOkButton (and send inn duplicate istedenfor importpublikasjon) (dropp å sette i state: "setSelectedPublication")*/}
       <ComparePublicationDataModal
         isComparePublicationDataModalOpen={isComparePublicationDataModalOpen}
         handleComparePublicationDataModalClose={handleComparePublicationDataModalClose.bind(this)}

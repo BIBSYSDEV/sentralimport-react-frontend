@@ -40,6 +40,7 @@ import CompareFormPages from './CompareFormPages';
 import CompareFormJournal from './CompareFormJournal';
 import CompareFormLanguage from './CompareFormLanguage';
 import { CompareFormValuesType } from './CompareFormTypes';
+import { ContributorType } from '../../types/ContributorTypes';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -72,7 +73,6 @@ interface ComparePublicationDataModalProps {
   isDuplicate: boolean;
 }
 
-//TODO: tidsskrift id er ikke med i duplikat. må derfor matche på issn i stedet?
 const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   isComparePublicationDataModalOpen,
   handleComparePublicationDataModalClose,
@@ -83,7 +83,17 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Context);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [dialogAbortOpen, setDialogAbortOpen] = useState(false);
+  const [importPublicationError, setImportPublicationError] = useState<Error | undefined>();
 
+  //contributors-stuff
+  const [isContributorsLoading, setIsContributorsLoading] = useState(false);
+  const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
+  const [contributors] = useState(isDuplicate ? state.selectedPublication.authors : importPublication?.authors || []);
+  const [loadContributorsError, setLoadContributorsError] = useState<Error | undefined>();
+
+  //local-storage-stuff
   let workedOn = false;
   let publicationFromLocalStorage: ImportPublication | undefined;
   const localStorageData = localStorage.getItem('tempPublication');
@@ -97,6 +107,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       workedOn = true;
   }
 
+  //publication-form-stuff
+  const [formValues, setFormValues] = useState<CompareFormValuesType | undefined>();
   const sortedLanguagesFromImportPublication = clone(importPublication)
     .languages.sort((a: any, b: any) => a.original - b.original)
     .reverse();
@@ -105,27 +117,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       ? [generateLanguageObjectFromCristinPublication(state.selectedPublication)]
       : sortedLanguagesFromImportPublication
   );
-
-  //contributors-stuff
-  const [allContributorsFetched, setAllContributorsFetched] = useState(false);
-  const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
-  const [contributors] = useState(isDuplicate ? state.selectedPublication.authors : importPublication?.authors || []);
-  const [loadContributorsError, setLoadContributorsError] = useState<Error | undefined>();
-  const [formValues, setFormValues] = useState<CompareFormValuesType | undefined>();
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const [dialogAbortOpen, setDialogAbortOpen] = useState(false);
-  const [importPublicationError, setImportPublicationError] = useState<Error | undefined>();
-
-  const kildeId = isDuplicate
-    ? (state.selectedPublication.import_sources && state.selectedPublication.import_sources[0]?.source_reference_id) ||
-      'Ingen kildeId funnet'
-    : importPublication.externalId;
-
-  const kilde = isDuplicate
-    ? (state.selectedPublication.import_sources && state.selectedPublication.import_sources[0]?.source_name) ||
-      'Ingen kilde funnet'
-    : importPublication.sourceName;
-
   const [selectedLang, setSelectedLang] = useState<Language>(
     workedOn
       ? publicationFromLocalStorage?.languages?.find((lang: Language) => lang.original) ??
@@ -138,6 +129,14 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         }
       : importPublication.languages?.find((lang: Language) => lang.original) ?? importPublication.languages[0]
   );
+  const kildeId = isDuplicate
+    ? (state.selectedPublication.import_sources && state.selectedPublication.import_sources[0]?.source_reference_id) ||
+      'Ingen kildeId funnet'
+    : importPublication.externalId;
+  const kilde = isDuplicate
+    ? (state.selectedPublication.import_sources && state.selectedPublication.import_sources[0]?.source_name) ||
+      'Ingen kilde funnet'
+    : importPublication.sourceName;
 
   const updatePublicationLanguages = (title: string, lang: string) => {
     const index = publicationLanguages.map((lang: any) => lang.lang).indexOf(lang);
@@ -151,9 +150,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     async function getContributors() {
       try {
         setLoadContributorsError(undefined);
-        if (isDuplicate && !workedOn && !allContributorsFetched) {
+        if (isDuplicate && !workedOn && !isContributorsLoading) {
+          //merkelig å sjekke om isContributorsLoading
           fetchAllAuthors(state.selectedPublication.cristin_result_id).then();
-          setAllContributorsFetched(true);
+          setIsContributorsLoading(true);
         }
       } catch (error) {
         handlePotentialExpiredSession(error);
@@ -166,7 +166,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   useEffect(() => {
     const initFormik = async () => {
       //Formik is initiated from either localstorage, importPublication or state.selectedPublication (set in duplicate-modal)
-
       const generateFormValues = () => {
         if (workedOn && publicationFromLocalStorage) {
           return generateFormValuesFromImportPublication(publicationFromLocalStorage);
@@ -265,14 +264,15 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   async function fetchAllAuthors(resultId: string) {
     if (state.doSave) {
+      //TODO: dosave-check her også ?
       let page = 1;
-      let allAuthors: any[] = [];
+      let allAuthors: ContributorType[] = [];
       while (allAuthors.length < state.selectedPublication.authorTotalCount) {
         const contributorResponse = await getContributorsByPublicationCristinResultId(
           resultId,
           page,
           500,
-          SearchLanguage.Nb
+          SearchLanguage.Nb // Gir det mening med språk her ?
         );
         allAuthors = [...allAuthors, ...contributorResponse.data];
         page++;
@@ -282,13 +282,13 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     }
   }
 
-  const handleSubmit = (values: CompareFormValuesType) => {
+  const handleImportButtonClick = (values: CompareFormValuesType) => {
     saveToLocalStorage(values);
     if (state.contributors === null) {
       dispatch({ type: 'contributors', payload: contributors });
     }
     setIsConfirmDialogOpen(true);
-    //TODO: later: sette formValues som parameter i confirmdialogOpen
+    //TODO: later: droppe localstorage og sette formValues som parameter i confirmdialogOpen
   };
 
   function handleAbort() {
@@ -385,7 +385,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           <StyledModal isOpen={isComparePublicationDataModalOpen} size="lg" data-testid="compare-modal">
             {formValues && (
               <Formik
-                onSubmit={handleSubmit}
+                onSubmit={handleImportButtonClick}
                 initialValues={formValues}
                 validateOnMount
                 validationSchema={formValidationSchema}>
