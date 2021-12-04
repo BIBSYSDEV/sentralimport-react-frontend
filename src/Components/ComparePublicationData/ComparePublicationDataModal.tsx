@@ -10,13 +10,15 @@ import ContributorErrorMessage from './ContributorErrorMessage';
 import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
 import clone from 'just-clone';
-import { Channel, CristinPublication, ImportPublication, Language } from '../../types/PublicationTypes';
+import { CristinPublication, ImportPublication, Language } from '../../types/PublicationTypes';
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
 import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
+import { format } from 'date-fns';
+
 import {
   StyledActionButtonsPlaceHolder,
   StyledErrorMessageWrapper,
@@ -81,6 +83,14 @@ export interface CompareFormValuesType {
   journal: JournalType;
 }
 
+const generateLanguageObjectFromCristinPublication = (publ: CristinPublication) => {
+  return {
+    title: publ.title[publ.original_language],
+    lang: publ.original_language?.toUpperCase(),
+    original: true,
+  };
+};
+
 export const doiMatcher = /(10)[.](.+)[/](.+)/i;
 
 interface ComparePublicationDataModalProps {
@@ -103,197 +113,164 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Context);
+
+  let workedOn = false;
+  let publicationFromLocalStorage: ImportPublication | undefined;
+  const localStorageData = localStorage.getItem('tempPublication');
+  if (localStorageData) {
+    publicationFromLocalStorage = JSON.parse(localStorageData).publication;
+    if (
+      publicationFromLocalStorage &&
+      publicationFromLocalStorage.pubId === importPublication.pubId &&
+      publicationFromLocalStorage.duplicate === isDuplicate
+    )
+      workedOn = true;
+  }
+
   const sortedLanguagesFromImportPublication = clone(importPublication)
     .languages.sort((a: any, b: any) => a.original - b.original)
     .reverse();
-  const [languages, setLanguages] = useState(sortedLanguagesFromImportPublication);
-  const originalImportLanguage = importPublication.languages?.find((lang: Language) => lang.original);
-  const [selectedLang, setSelectedLang] = useState<Language>(originalImportLanguage ?? importPublication.languages[0]);
+  const [publicationLanguages, setPublicationLanguages] = useState(
+    isDuplicate
+      ? [generateLanguageObjectFromCristinPublication(state.selectedPublication)]
+      : sortedLanguagesFromImportPublication
+  );
+
+  //contributors-stuff
   const [allContributorsFetched, setAllContributorsFetched] = useState(false);
-  const [kilde, setKilde] = useState('');
-  const [kildeId, setKildeId] = useState('');
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors] = useState(isDuplicate ? state.selectedPublication.authors : importPublication?.authors || []);
-  const [aarstall, setAarstall] = useState('');
-  const [doi, setDoi] = useState('');
-  const [publishingDetails, setPublishingDetails] = useState<Channel | undefined>(importPublication?.channel);
-  const [selectedJournal, setSelectedJournal] = useState<any>(
-    isDuplicate
-      ? {
-          value: state.selectedPublication.journal?.name || '0',
-          label: state.selectedPublication.journal?.name || 'Ingen tidsskrift/journal funnet',
-        }
-      : {
-          value: importPublication.channel?.cristinTidsskriftNr?.toString() || '0',
-          label: importPublication.channel?.title || 'Ingen tidsskrift/journal funnet',
-        }
-  );
-  const [selectedCategory, setSelectedCategory] = useState(
-    isDuplicate
-      ? {
-          value: state.selectedPublication?.category,
-          label: state.selectedPublication?.categoryName,
-        }
-      : {
-          value: '',
-          label: 'Ingen kategori funnet',
-        }
-  );
+  const [loadContributorsError, setLoadContributorsError] = useState<Error | undefined>();
+  const [formValues, setFormValues] = useState<CompareFormValuesType | undefined>();
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [dialogAbortOpen, setDialogAbortOpen] = useState(false);
-  const [fetchDataError, setFetchDataError] = useState<Error | undefined>();
   const [importPublicationError, setImportPublicationError] = useState<Error | undefined>();
 
-  useEffect(() => {
-    //todo: skrive om initiering og ta hensyn til isduplicate
+  const kildeId = isDuplicate
+    ? (state.selectedPublication.import_sources && state.selectedPublication.import_sources[0]?.source_reference_id) ||
+      'Ingen kildeId funnet'
+    : importPublication.externalId;
 
-    async function setFields() {
-      try {
-        setFetchDataError(undefined);
-        let workedOn = false;
-        let publicationFromLocalStorage: ImportPublication | undefined;
-        const localStorageData = localStorage.getItem('tempPublication');
-        if (localStorageData) {
-          publicationFromLocalStorage = JSON.parse(localStorageData).publication;
-          if (
-            publicationFromLocalStorage &&
-            publicationFromLocalStorage.pubId === importPublication.pubId &&
-            publicationFromLocalStorage.duplicate === isDuplicate
-          )
-            workedOn = true;
+  const kilde = isDuplicate
+    ? (state.selectedPublication.import_sources && state.selectedPublication.import_sources[0]?.source_name) ||
+      'Ingen kilde funnet'
+    : importPublication.sourceName;
+
+  const [selectedLang, setSelectedLang] = useState<Language>(
+    workedOn
+      ? publicationFromLocalStorage?.languages?.find((lang: Language) => lang.original) ??
+          importPublication.languages[0]
+      : isDuplicate
+      ? {
+          title: state.selectedPublication.title[state.selectedPublication.original_language],
+          lang: state.selectedPublication.original_language?.toUpperCase(),
+          original: true,
         }
+      : importPublication.languages?.find((lang: Language) => lang.original) ?? importPublication.languages[0]
+  );
+
+  const updatePublicationLanguages = (title: string, lang: string) => {
+    const index = publicationLanguages.map((lang: any) => lang.lang).indexOf(lang);
+    if (publicationLanguages[index]) {
+      publicationLanguages[index].title = title;
+    }
+    setPublicationLanguages(publicationLanguages);
+  };
+
+  useEffect(() => {
+    async function getContributors() {
+      try {
+        setLoadContributorsError(undefined);
         if (isDuplicate && !workedOn && !allContributorsFetched) {
           fetchAllAuthors(state.selectedPublication.cristin_result_id).then();
           setAllContributorsFetched(true);
         }
-
-        setKilde(
-          isDuplicate
-            ? (state.selectedPublication.import_sources && state.selectedPublication.import_sources[0]?.source_name) ||
-                'Ingen kilde funnet'
-            : importPublication.sourceName
-        );
-        setKildeId(
-          isDuplicate
-            ? (state.selectedPublication.import_sources &&
-                state.selectedPublication.import_sources[0]?.source_reference_id) ||
-                'Ingen kildeId funnet'
-            : importPublication.externalId
-        );
-
-        setSelectedJournal(
-          workedOn
-            ? {
-                value: publicationFromLocalStorage?.channel?.cristinTidsskriftNr?.toString(),
-                label: publicationFromLocalStorage?.channel?.title,
-              }
-            : isDuplicate
-            ? {
-                value: (await getJournalId(state.selectedPublication.journal?.international_standard_numbers)) || '0',
-                label: state.selectedPublication.journal?.name || 'Ingen tidsskrift funnet',
-              }
-            : {
-                value: importPublication.channel?.cristinTidsskriftNr?.toString() || '0',
-                label: importPublication.channel?.title || 'Ingen tidsskrift funnet',
-              }
-        );
-
-        setSelectedCategory(
-          workedOn
-            ? {
-                value: publicationFromLocalStorage?.category,
-                label: publicationFromLocalStorage?.categoryName,
-              }
-            : isDuplicate
-            ? {
-                value: state.selectedPublication.category?.code,
-                label: state.selectedPublication.category?.name.nb,
-              }
-            : {
-                value: importPublication.category,
-                label: importPublication.categoryName,
-              }
-        );
-
-        setLanguages(
-          workedOn && publicationFromLocalStorage
-            ? publicationFromLocalStorage.languages
-            : isDuplicate
-            ? [
-                {
-                  title: state.selectedPublication.title[state.selectedPublication.original_language],
-                  lang: state.selectedPublication.original_language?.toUpperCase(),
-                  original: true,
-                },
-              ]
-            : sortedLanguagesFromImportPublication
-        );
-
-        setSelectedLang(
-          workedOn
-            ? publicationFromLocalStorage?.languages.filter((language: Language) => language.original)[0] ??
-                importPublication.languages[0]
-            : isDuplicate
-            ? {
-                title: state.selectedPublication.title[state.selectedPublication.original_language],
-                lang: state.selectedPublication.original_language?.toUpperCase(),
-                original: true,
-              }
-            : importPublication.languages.filter((language: Language) => language.original)[0] ??
-              importPublication.languages[0]
-        );
-
-        setAarstall(
-          workedOn
-            ? publicationFromLocalStorage?.yearPublished
-            : isDuplicate
-            ? state.selectedPublication.year_published
-            : importPublication.yearPublished
-        );
-
-        setDoi(
-          workedOn
-            ? publicationFromLocalStorage?.doi
-            : isDuplicate && state.selectedPublication.links
-            ? state.selectedPublication.links[state.selectedPublication.links.length - 1]?.url?.substring(
-                16,
-                state.selectedPublication.links[0]?.url?.length + 1
-              )
-            : importPublication.doi
-            ? importPublication.doi
-            : ''
-        );
-
-        setPublishingDetails(
-          workedOn
-            ? publicationFromLocalStorage?.channel
-            : isDuplicate
-            ? {
-                ...state.selectedPublication.journal,
-                volume: state.selectedPublication.volume || '',
-                pageFrom: state.selectedPublication.pages?.from || '',
-                pageTo: state.selectedPublication.pages?.to || '',
-                issue: state.selectedPublication.issue || '',
-              }
-            : {
-                ...importPublication.channel,
-                volume: importPublication.channel?.volume || '',
-                pageFrom: importPublication.channel?.pageFrom || '',
-                pageTo: importPublication.channel?.pageTo || '',
-                issue: importPublication.channel?.issue || '',
-              }
-        );
       } catch (error) {
         handlePotentialExpiredSession(error);
-        setFetchDataError(error as Error);
+        setLoadContributorsError(error as Error);
       }
     }
-    setFields().then();
+    getContributors().then();
+  }, [isDuplicate, state.selectedPublication]);
+
+  useEffect(() => {
+    const initFormik = async () => {
+      //Formik is initiated from either localstorage, importPublication or state.selectedPublication (set in duplicate-modal)
+      const formValuesFromLocalStorage = publicationFromLocalStorage && {
+        title: selectedLang.title ?? '',
+        year: publicationFromLocalStorage.yearPublished,
+        doi: publicationFromLocalStorage.doi,
+        language: selectedLang,
+        journal: {
+          cristinTidsskriftNr: publicationFromLocalStorage?.channel?.cristinTidsskriftNr?.toString(),
+          title: publicationFromLocalStorage?.channel?.title,
+        },
+        category: {
+          value: publicationFromLocalStorage.category,
+          label: publicationFromLocalStorage.categoryName,
+        },
+        volume: publicationFromLocalStorage.channel?.volume ?? '',
+        issue: publicationFromLocalStorage.channel?.issue ?? '',
+        pageFrom: publicationFromLocalStorage.channel?.pageFrom ?? '',
+        pageTo: publicationFromLocalStorage.channel?.pageTo ?? '',
+      };
+
+      const formValuesFromDuplicate = state.selectedPublication && {
+        title: selectedLang.title ?? '',
+        year: state.selectedPublication.year_published,
+        doi:
+          state.selectedPublication.links &&
+          state.selectedPublication.links[state.selectedPublication.links.length - 1]?.url?.substring(
+            16,
+            state.selectedPublication.links[0]?.url?.length + 1
+          ),
+        language: selectedLang,
+        journal: {
+          value: (await getJournalId(state.selectedPublication.journal?.international_standard_numbers)) || '0',
+          label: state.selectedPublication.journal?.name || 'Ingen tidsskrift funnet',
+        },
+        category: {
+          value: state.selectedPublication.category?.code,
+          label: state.selectedPublication.category?.name?.nb,
+        },
+        volume: state.selectedPublication.volume ?? '',
+        issue: state.selectedPublication.issue ?? '',
+        pageFrom: state.selectedPublication.pages?.from ?? '',
+        pageTo: state.selectedPublication.pages?.to ?? '',
+      };
+
+      const formValuesFromImportPublication = importPublication && {
+        title: selectedLang.title ?? '',
+        year: importPublication.yearPublished,
+        doi: importPublication.doi,
+        language: selectedLang,
+        journal: {
+          value: importPublication.channel?.cristinTidsskriftNr?.toString() || '0',
+          label: importPublication.channel?.title || 'Ingen tidsskrift funnet',
+        },
+        category: {
+          value: importPublication.category,
+          label: importPublication.categoryName,
+        },
+        volume: importPublication.channel?.volume ?? '',
+        issue: importPublication.channel?.issue ?? '',
+        pageFrom: importPublication.channel?.pageFrom ?? '',
+        pageTo: importPublication.channel?.pageTo ?? '',
+      };
+
+      setFormValues(
+        isDuplicate ? formValuesFromDuplicate : workedOn ? formValuesFromLocalStorage : formValuesFromImportPublication
+      );
+    };
+    initFormik().then();
   }, [isDuplicate, state.selectedPublication, importPublication]);
 
   function saveToLocalStorage(values: CompareFormValuesType) {
-    console.log(values);
+    const otherChannelDataIfAny = isDuplicate
+      ? { ...state.selectedPublication.journal }
+      : { ...importPublication.channel };
     if (state.doSave)
+      //why?
       localStorage.setItem(
         'tempPublication',
         JSON.stringify({
@@ -302,14 +279,14 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             category: values.category.value,
             categoryName: values.category.label,
             channel: {
-              ...importPublication.channel,
+              ...otherChannelDataIfAny,
               cristinTidsskriftNr: values.journal.cristinTidsskriftNr,
               title: values.journal.title,
               issn: values.journal.issn,
               eissn: values.journal.eissn,
             },
             doi: values.doi,
-            languages: languages,
+            languages: publicationLanguages,
             pubId: importPublication.pubId,
             registered: importPublication.registered,
             yearPublished: values.year,
@@ -405,9 +382,9 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'setFormErrors', payload: [] });
   }
 
-  async function getJournalId(issn: any[] | undefined) {
+  async function getJournalId(issn: string | undefined) {
     try {
-      const journalResponse = await getJournalsByQuery(issn ? issn[0].value : '0', QueryMethod.issn);
+      const journalResponse = await getJournalsByQuery(issn ?? '0', QueryMethod.issn);
       return journalResponse.data.length > 0 ? journalResponse.data[0].id : '0';
     } catch (error) {
       handlePotentialExpiredSession(error);
@@ -417,12 +394,13 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   }
 
   function formatDate(dateString: string) {
-    const newDate = new Date(dateString);
-    const tempDay = newDate.getDate();
-    const tempYear = newDate.getFullYear();
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const tempMonth = months[newDate.getMonth()];
-    return tempMonth + ' ' + tempDay + ', ' + tempYear;
+    return format(new Date(dateString), 'mmmm dd yy');
+    // const newDate = new Date(dateString);
+    // const tempDay = newDate.getDate();
+    // const tempYear = newDate.getFullYear();
+    // const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    // const tempMonth = months[newDate.getMonth()];
+    // return tempMonth + ' ' + tempDay + ', ' + tempYear;
   }
 
   const formValidationSchema = Yup.object().shape({
@@ -442,161 +420,151 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     }),
   });
 
-  const formValues: CompareFormValuesType = {
-    title: selectedLang?.title ?? '',
-    year: aarstall,
-    doi: doi,
-    language: selectedLang,
-    journal: {
-      cristinTidsskriftNr: selectedJournal.value,
-      title: selectedJournal.label,
-      issn: selectedJournal.issn,
-      eissn: selectedJournal.eissn,
-    },
-    category: selectedCategory,
-    volume: importPublication?.channel?.volume ?? '',
-    issue: importPublication?.channel?.issue ?? '',
-    pageFrom: importPublication?.channel?.pageFrom ?? '',
-    pageTo: importPublication?.channel?.pageTo ?? '',
-  };
-
   return (
     <>
-      {fetchDataError ? (
-        <Typography color="error">Noe gikk galt. {fetchDataError.message}</Typography>
+      {loadContributorsError ? (
+        <Typography color="error">Noe gikk galt. {loadContributorsError.message}</Typography>
       ) : (
         <div>
-          <Formik
-            onSubmit={handleSubmit}
-            initialValues={formValues}
-            validateOnMount
-            validationSchema={formValidationSchema}>
-            {({ isValid }) => (
-              <StyledModal isOpen={isComparePublicationDataModalOpen} size="lg" data-testid="compare-modal">
-                <ModalBody>
-                  <StyledFormWrapper>
-                    <Form>
-                      <StyledHeaderLineWrapper>
-                        <StyledLineLabelTypography />
-                        <StyledLineHeader variant="h4">Import-publikasjon</StyledLineHeader>
-                        <StyledActionButtonsPlaceHolder />
-                        <StyledLineHeader variant="h4">Cristin-publikasjon</StyledLineHeader>
-                      </StyledHeaderLineWrapper>
-                      <StyledLineWrapper>
-                        <StyledLineLabelTypography>Publication id</StyledLineLabelTypography>
-                        <StyledLineImportValue>
-                          <StyledDisabledTypography data-testid="importdata-pubid">
-                            {importPublication.pubId}
-                          </StyledDisabledTypography>
-                        </StyledLineImportValue>
-                        <StyledActionButtonsPlaceHolder />
-                        <StyledLineCristinValue>
-                          <StyledDisabledTypography data-testid="cristindata-id">
-                            {isDuplicate ? cristinPublication.cristin_result_id : 'Ingen Cristin-Id'}
-                          </StyledDisabledTypography>
-                        </StyledLineCristinValue>
-                      </StyledLineWrapper>
-                      <StyledLineWrapper>
-                        <StyledLineLabelTypography>Dato registrert</StyledLineLabelTypography>
-                        <StyledLineImportValue>
-                          <StyledDisabledTypography data-testid="importdata-date-registered">
-                            {importPublication.registered}
-                          </StyledDisabledTypography>
-                        </StyledLineImportValue>
-                        <StyledActionButtonsPlaceHolder />
-                        <StyledLineCristinValue data-testid="cristindata-created">
-                          <StyledDisabledTypography>
-                            {isDuplicate ? formatDate(cristinPublication.created.date.substring(0, 10)) : '-'}
-                          </StyledDisabledTypography>
-                        </StyledLineCristinValue>
-                      </StyledLineWrapper>
-                      <StyledLineWrapper>
-                        <StyledLineLabelTypography>Kilde</StyledLineLabelTypography>
-                        <StyledLineImportValue>
-                          <Typography data-testid="importdata-source">
-                            {importPublication.sourceName} ({importPublication.externalId})
+          <StyledModal isOpen={isComparePublicationDataModalOpen} size="lg" data-testid="compare-modal">
+            {formValues && (
+              <Formik
+                onSubmit={handleSubmit}
+                initialValues={formValues}
+                validateOnMount
+                validationSchema={formValidationSchema}>
+                {({ isValid }) => (
+                  <>
+                    <ModalBody>
+                      <StyledFormWrapper>
+                        <Form>
+                          <StyledHeaderLineWrapper>
+                            <StyledLineLabelTypography />
+                            <StyledLineHeader variant="h4">Import-publikasjon</StyledLineHeader>
+                            <StyledActionButtonsPlaceHolder />
+                            <StyledLineHeader variant="h4">Cristin-publikasjon</StyledLineHeader>
+                          </StyledHeaderLineWrapper>
+                          <StyledLineWrapper>
+                            <StyledLineLabelTypography>Publication id</StyledLineLabelTypography>
+                            <StyledLineImportValue>
+                              <StyledDisabledTypography data-testid="importdata-pubid">
+                                {importPublication.pubId}
+                              </StyledDisabledTypography>
+                            </StyledLineImportValue>
+                            <StyledActionButtonsPlaceHolder />
+                            <StyledLineCristinValue>
+                              <StyledDisabledTypography data-testid="cristindata-id">
+                                {isDuplicate ? cristinPublication.cristin_result_id : 'Ingen Cristin-Id'}
+                              </StyledDisabledTypography>
+                            </StyledLineCristinValue>
+                          </StyledLineWrapper>
+                          <StyledLineWrapper>
+                            <StyledLineLabelTypography>Dato registrert</StyledLineLabelTypography>
+                            <StyledLineImportValue>
+                              <StyledDisabledTypography data-testid="importdata-date-registered">
+                                {importPublication.registered}
+                              </StyledDisabledTypography>
+                            </StyledLineImportValue>
+                            <StyledActionButtonsPlaceHolder />
+                            <StyledLineCristinValue data-testid="cristindata-created">
+                              <StyledDisabledTypography>
+                                {isDuplicate ? formatDate(cristinPublication.created.date.substring(0, 10)) : '-'}
+                              </StyledDisabledTypography>
+                            </StyledLineCristinValue>
+                          </StyledLineWrapper>
+                          <StyledLineWrapper>
+                            <StyledLineLabelTypography>Kilde</StyledLineLabelTypography>
+                            <StyledLineImportValue>
+                              <Typography data-testid="importdata-source">
+                                {importPublication.sourceName} ({importPublication.externalId})
+                              </Typography>
+                            </StyledLineImportValue>
+                            <StyledActionButtonsPlaceHolder />
+                            <StyledLineCristinValue>
+                              <StyledDisabledTypography data-testid="cristindata-source">
+                                {kilde} ({kildeId})
+                              </StyledDisabledTypography>
+                            </StyledLineCristinValue>
+                          </StyledLineWrapper>
+                          <CompareFormLanguage
+                            languages={publicationLanguages}
+                            selectedLang={selectedLang}
+                            setSelectedLang={setSelectedLang}
+                          />
+                          <CompareFormTitle
+                            importPublication={importPublication}
+                            updatePublicationLanguages={updatePublicationLanguages}
+                            selectedLang={selectedLang}
+                          />
+                          <CompareFormJournal importPublication={importPublication} />
+                          <CompareFormDoi importPublication={importPublication} />
+                          <CompareFormYear importPublication={importPublication} />
+                          <CompareFormCategory importPublication={importPublication} />
+                          <CompareFormVolume importPublication={importPublication} />
+                          <CompareFormIssue importPublication={importPublication} />
+                          <CompareFormPages importPublication={importPublication} />
+                          {!isValid && (
+                            <CommonErrorMessage datatestid="compare-form-error" errorMessage="Det er feil i skjema" />
+                          )}
+                        </Form>
+                      </StyledFormWrapper>
+                      <StyledOpenContributorsButtonWrapper>
+                        <Button
+                          size="large"
+                          data-testid="open-contributors-modal-button"
+                          onClick={openContributorModal}
+                          variant="contained"
+                          color="primary">
+                          Vis bidragsytere
+                        </Button>
+                      </StyledOpenContributorsButtonWrapper>
+                      <StyledErrorMessageWrapper>
+                        {state.contributorErrors.length >= 1 && <ContributorErrorMessage />}
+                        {importPublicationError && (
+                          <Typography color="error" data-testid="import-publication-errors">
+                            {importPublicationError.message}
                           </Typography>
-                        </StyledLineImportValue>
-                        <StyledActionButtonsPlaceHolder />
-                        <StyledLineCristinValue>
-                          <StyledDisabledTypography data-testid="cristindata-source">
-                            {kilde} ({kildeId})
-                          </StyledDisabledTypography>
-                        </StyledLineCristinValue>
-                      </StyledLineWrapper>
-                      <CompareFormLanguage
-                        languages={languages}
-                        selectedLang={selectedLang}
-                        setSelectedLang={setSelectedLang}
-                      />
-                      <CompareFormTitle importPublication={importPublication} selectedLang={selectedLang} />
-                      <CompareFormJournal importPublication={importPublication} />
-                      <CompareFormDoi importPublication={importPublication} />
-                      <CompareFormYear importPublication={importPublication} />
-                      <CompareFormCategory importPublication={importPublication} />
-                      <CompareFormVolume importPublication={importPublication} />
-                      <CompareFormIssue importPublication={importPublication} />
-                      <CompareFormPages importPublication={importPublication} />
-                      {!isValid && (
-                        <CommonErrorMessage datatestid="compare-form-error" errorMessage="Det er feil i skjema" />
-                      )}
-                    </Form>
-                  </StyledFormWrapper>
-                  <StyledOpenContributorsButtonWrapper>
-                    <Button
-                      size="large"
-                      data-testid="open-contributors-modal-button"
-                      onClick={openContributorModal}
-                      variant="contained"
-                      color="primary">
-                      Vis bidragsytere
-                    </Button>
-                  </StyledOpenContributorsButtonWrapper>
-                  <StyledErrorMessageWrapper>
-                    {state.contributorErrors.length >= 1 && <ContributorErrorMessage />}
-                    {importPublicationError && (
-                      <Typography color="error" data-testid="import-publication-errors">
-                        {importPublicationError.message}
-                      </Typography>
-                    )}
-                  </StyledErrorMessageWrapper>
-                </ModalBody>
+                        )}
+                      </StyledErrorMessageWrapper>
+                    </ModalBody>
 
-                <ModalFooter>
-                  <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline">
-                    <Grid item>
-                      {state.contributorErrors?.length >= 1 ? <div> Feil i bidragsyterlisten. </div> : ''}
-                      {!state.contributorsLoaded ? <div> Henter bidragsytere. </div> : ''}
-                    </Grid>
-                    <Grid item>
-                      <Button
-                        onClick={handleAbort}
-                        variant="outlined"
-                        color="secondary"
-                        data-testid="import-publication-cancel-button">
-                        Avbryt
-                      </Button>
-                    </Grid>
-                    <Grid item>
-                      <Button
-                        disabled={
-                          !isValid ||
-                          !!importPublication?.cristin_id ||
-                          state.contributorErrors.length >= 1 ||
-                          !state.contributorsLoaded
-                        }
-                        color="primary"
-                        type="submit"
-                        variant="contained"
-                        data-testid="import-publication-button">
-                        Importer
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </ModalFooter>
-              </StyledModal>
+                    <ModalFooter>
+                      <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline">
+                        <Grid item>
+                          {state.contributorErrors?.length >= 1 ? <div> Feil i bidragsyterlisten. </div> : ''}
+                          {!state.contributorsLoaded ? <div> Henter bidragsytere. </div> : ''}
+                        </Grid>
+                        <Grid item>
+                          <Button
+                            onClick={handleAbort}
+                            variant="outlined"
+                            color="secondary"
+                            data-testid="import-publication-cancel-button">
+                            Avbryt
+                          </Button>
+                        </Grid>
+                        <Grid item>
+                          <Button
+                            disabled={
+                              !isValid ||
+                              !!importPublication?.cristin_id ||
+                              state.contributorErrors.length >= 1 ||
+                              !state.contributorsLoaded
+                            }
+                            color="primary"
+                            type="submit"
+                            variant="contained"
+                            data-testid="import-publication-button">
+                            Importer
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </ModalFooter>
+                  </>
+                )}
+              </Formik>
             )}
-          </Formik>
+          </StyledModal>
 
           <ConfirmDialog
             doFunction={emptyGlobalFormErrors}

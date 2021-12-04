@@ -15,24 +15,29 @@ import { Markup } from 'interweave';
 
 interface CompareFormTitleProps {
   importPublication: ImportPublication;
-  selectedLang?: Language; //todo: verdien vil vi få fra formik etterhvert
+  selectedLang: Language;
+  updatePublicationLanguages: any;
 }
 
-const CompareFormTitle: FC<CompareFormTitleProps> = ({ importPublication, selectedLang }) => {
-  const { values, setFieldValue } = useFormikContext<CompareFormValuesType>();
+const CompareFormTitle: FC<CompareFormTitleProps> = ({
+  importPublication,
+  selectedLang,
+  updatePublicationLanguages,
+}) => {
+  const { values, handleBlur, setFieldValue } = useFormikContext<CompareFormValuesType>();
 
   return (
     <StyledLineWrapper>
       <StyledLineLabelTypography htmlFor="Cristin-tittel">Tittel</StyledLineLabelTypography>
       <StyledLineImportValue>
         <Typography data-testid="importdata-title">
-          <Markup content={cleanTitleForMarkup(selectedLang?.title)} />
+          <Markup content={cleanTitleForMarkup(selectedLang.title)} />
         </Typography>
       </StyledLineImportValue>
       <ActionButtons
-        isImportAndCristinEqual={values.title === selectedLang?.title}
+        isImportAndCristinEqual={values.title === selectedLang.title}
         isCopyBottonDisabled={!importPublication.languages}
-        copyCommand={() => setFieldValue('title', selectedLang?.title ?? '', true)}
+        copyCommand={() => setFieldValue('title', selectedLang.title ?? '', true)}
       />
       <StyledLineCristinValue>
         <Field name="title">
@@ -46,6 +51,10 @@ const CompareFormTitle: FC<CompareFormTitleProps> = ({ importPublication, select
               inputProps={{ 'data-testid': 'cristindata-title-textfield-input' }}
               required
               multiline
+              onBlur={(event) => {
+                handleBlur(event);
+                updatePublicationLanguages(values.title, selectedLang.lang);
+              }}
               fullWidth
               error={!!error}
               helperText={<ErrorMessage name={field.name} />}

@@ -33,6 +33,7 @@
     "env-cmd": "^10.1.0",
     "interweave": "^12.9.0",
     "jsonwebtoken": "^8.5.1",
+    "date-fns": "^2.27.0",
     "just-clone": "^5.0.1",
     "node-sass": "^6.0.1",
     "notistack": "^1.0.10",
