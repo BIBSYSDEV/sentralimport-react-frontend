@@ -8,11 +8,11 @@ import {
   StyledLineLabelTypography,
   StyledLineWrapper,
 } from './CompareFormWrappers';
-import { CategoryOption, CompareFormValuesType } from './ComparePublicationDataModal';
 import { CategoryItem, ImportPublication } from '../../types/PublicationTypes';
 import { Autocomplete } from '@material-ui/lab';
 import { getCategories } from '../../api/publicationApi';
 import { SearchLanguage } from '../../api/contributorApi';
+import { CompareFormCategoryOption, CompareFormValuesType } from './CompareFormTypes';
 
 interface CompareFormCategoryProps {
   importPublication: ImportPublication;
@@ -20,7 +20,7 @@ interface CompareFormCategoryProps {
 
 const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }) => {
   const { values, setFieldValue } = useFormikContext<CompareFormValuesType>();
-  const [categories, setCategories] = useState<CategoryOption[]>();
+  const [categories, setCategories] = useState<CompareFormCategoryOption[]>();
   const [fetchCategoriesError, setFetchCategoriesError] = useState<Error | undefined>();
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
 
@@ -72,7 +72,7 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }
               options={categories ?? []}
               getOptionLabel={(option) => option.label}
               getOptionSelected={(option, value) => option.value === value.value}
-              onChange={(e, value: CategoryOption) => value && setFieldValue('category', value)}
+              onChange={(e, value: CompareFormCategoryOption) => value && setFieldValue('category', value)}
               renderInput={(params) => (
                 <TextField
                   {...params}

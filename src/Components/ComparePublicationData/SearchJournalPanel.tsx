@@ -4,9 +4,9 @@ import { Button, CircularProgress, TextField, Typography } from '@material-ui/co
 import styled from 'styled-components';
 
 import { Autocomplete } from '@material-ui/lab';
-import { emptyJournal, JournalType } from './ComparePublicationDataModal';
 import { ChannelLight } from '../../types/PublicationTypes';
 import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
+import { CompareFormJournalType, emptyJournal } from './CompareFormTypes';
 
 const StyledPanelWrapper = styled.div`
   display: flex;
@@ -23,10 +23,10 @@ interface SearchJournalPanelProps {
 }
 
 const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }) => {
-  const [journals, setJournals] = useState<JournalType[]>();
+  const [journals, setJournals] = useState<CompareFormJournalType[]>();
   const [fetchJournalsError, setFetchJournalsError] = useState<Error | undefined>();
   const [isLoadingJournals, setIsLoadingJournals] = useState(false);
-  const [selectedJournal, setSelectedJournal] = useState<JournalType>(emptyJournal);
+  const [selectedJournal, setSelectedJournal] = useState<CompareFormJournalType>(emptyJournal);
   const [inputValue, setInputValue] = useState('');
 
   //TODO: feilmeldinger
@@ -37,7 +37,7 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
       setFetchJournalsError(undefined);
       query = encodeURIComponent(query); // some journals returns '&' as '&amp';
       const resultJournals: ChannelLight[] = (await getJournalsByQuery(query, QueryMethod.title)).data;
-      const convertedJournals: JournalType[] = resultJournals.map((journal) => {
+      const convertedJournals: CompareFormJournalType[] = resultJournals.map((journal) => {
         return {
           cristinTidsskriftNr: journal.id,
           title: journal.title.replace(/&amp;/g, '&'), // some journals returns '&' as '&amp';
@@ -69,7 +69,7 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
         data-testid="cristindata-journal-select"
         options={journals ?? []}
         value={selectedJournal}
-        onChange={(event, newValue: JournalType | null) => {
+        onChange={(event, newValue: CompareFormJournalType | null) => {
           newValue && newValue.cristinTidsskriftNr !== '0' && setSelectedJournal(newValue);
           //TODO: triggers search on select as well (not necessary)
         }}

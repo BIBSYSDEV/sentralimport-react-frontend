@@ -8,7 +8,7 @@ import {
   StyledLineLabelTypography,
   StyledLineWrapper,
 } from './CompareFormWrappers';
-import { CompareFormValuesType } from './ComparePublicationDataModal';
+import { CompareFormValuesType } from './CompareFormTypes';
 import { ImportPublication, Language } from '../../types/PublicationTypes';
 import { cleanTitleForMarkup } from '../../utils/stringUtils';
 import { Markup } from 'interweave';

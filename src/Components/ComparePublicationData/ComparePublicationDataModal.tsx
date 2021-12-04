@@ -18,7 +18,6 @@ import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { format } from 'date-fns';
-
 import {
   StyledActionButtonsPlaceHolder,
   StyledErrorMessageWrapper,
@@ -40,6 +39,7 @@ import CompareFormIssue from './CompareFormIssue';
 import CompareFormPages from './CompareFormPages';
 import CompareFormJournal from './CompareFormJournal';
 import CompareFormLanguage from './CompareFormLanguage';
+import { CompareFormValuesType } from './CompareFormTypes';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -52,36 +52,6 @@ const StyledModal = styled(Modal)`
 const StyledDisabledTypography = styled(Typography)`
   color: #555555;
 `;
-
-export interface CategoryOption {
-  value: string;
-  label: string;
-}
-
-export interface JournalType {
-  cristinTidsskriftNr: string;
-  title: string;
-  issn?: string;
-  eissn?: string;
-}
-
-export const emptyJournal: JournalType = {
-  cristinTidsskriftNr: '0',
-  title: '',
-};
-
-export interface CompareFormValuesType {
-  title: string;
-  year: string;
-  doi?: string;
-  language: any;
-  category: CategoryOption;
-  volume?: string;
-  issue?: string;
-  pageFrom?: string;
-  pageTo?: string;
-  journal: JournalType;
-}
 
 const generateLanguageObjectFromCristinPublication = (publ: CristinPublication) => {
   return {

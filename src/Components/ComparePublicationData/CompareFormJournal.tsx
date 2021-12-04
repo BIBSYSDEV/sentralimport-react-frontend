@@ -8,7 +8,7 @@ import {
   StyledLineLabelTypography,
   StyledLineWrapper,
 } from './CompareFormWrappers';
-import { CompareFormValuesType } from './ComparePublicationDataModal';
+import { CompareFormValuesType } from './CompareFormTypes';
 import { ImportPublication, Journal } from '../../types/PublicationTypes';
 import CreateJournalPanel from './CreateJournalPanel';
 import SearchJournalPanel from './SearchJournalPanel';

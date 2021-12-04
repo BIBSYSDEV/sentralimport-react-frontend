@@ -8,7 +8,7 @@ import {
   StyledLineLabelTypography,
   StyledLineWrapper,
 } from './CompareFormWrappers';
-import { CompareFormValuesType } from './ComparePublicationDataModal';
+import { CompareFormValuesType } from './CompareFormTypes';
 import { ImportPublication } from '../../types/PublicationTypes';
 
 interface CompareFormDoiProps {
