@@ -73,13 +73,13 @@ export const emptyJournal: JournalType = {
 export interface CompareFormValuesType {
   title: string;
   year: string;
-  doi: string;
+  doi?: string;
   language: any;
   category: CategoryOption;
-  volume: string;
-  issue: string;
-  pageFrom: string;
-  pageTo: string;
+  volume?: string;
+  issue?: string;
+  pageFrom?: string;
+  pageTo?: string;
   journal: JournalType;
 }
 
@@ -196,26 +196,37 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   useEffect(() => {
     const initFormik = async () => {
       //Formik is initiated from either localstorage, importPublication or state.selectedPublication (set in duplicate-modal)
-      const formValuesFromLocalStorage = publicationFromLocalStorage && {
-        title: selectedLang.title ?? '',
-        year: publicationFromLocalStorage.yearPublished,
-        doi: publicationFromLocalStorage.doi,
-        language: selectedLang,
-        journal: {
-          cristinTidsskriftNr: publicationFromLocalStorage?.channel?.cristinTidsskriftNr?.toString(),
-          title: publicationFromLocalStorage?.channel?.title,
-        },
-        category: {
-          value: publicationFromLocalStorage.category,
-          label: publicationFromLocalStorage.categoryName,
-        },
-        volume: publicationFromLocalStorage.channel?.volume ?? '',
-        issue: publicationFromLocalStorage.channel?.issue ?? '',
-        pageFrom: publicationFromLocalStorage.channel?.pageFrom ?? '',
-        pageTo: publicationFromLocalStorage.channel?.pageTo ?? '',
+
+      const generateFormValues = () => {
+        if (workedOn && publicationFromLocalStorage) {
+          return generateFormValuesFromImportPublication(publicationFromLocalStorage);
+        } else {
+          return generateFormValuesFromImportPublication(importPublication);
+        }
       };
 
-      const formValuesFromDuplicate = state.selectedPublication && {
+      const generateFormValuesFromImportPublication = (publication: ImportPublication): CompareFormValuesType => {
+        return {
+          title: selectedLang.title ?? '',
+          year: publication.yearPublished,
+          doi: publication.doi,
+          language: selectedLang,
+          journal: {
+            cristinTidsskriftNr: publication?.channel?.cristinTidsskriftNr?.toString() ?? '0',
+            title: publication?.channel?.title ?? 'Ingen tidsskrift funnet',
+          },
+          category: {
+            value: publication.category,
+            label: publication.categoryName,
+          },
+          volume: publication.channel?.volume ?? '',
+          issue: publication.channel?.issue ?? '',
+          pageFrom: publication.channel?.pageFrom ?? '',
+          pageTo: publication.channel?.pageTo ?? '',
+        };
+      };
+
+      const formValuesFromDuplicate: CompareFormValuesType = state.selectedPublication && {
         title: selectedLang.title ?? '',
         year: state.selectedPublication.year_published,
         doi:
@@ -226,8 +237,9 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           ),
         language: selectedLang,
         journal: {
-          value: (await getJournalId(state.selectedPublication.journal?.international_standard_numbers)) || '0',
-          label: state.selectedPublication.journal?.name || 'Ingen tidsskrift funnet',
+          cristinTidsskriftNr:
+            (await getJournalId(state.selectedPublication.journal?.international_standard_numbers)) || '0',
+          title: state.selectedPublication.journal?.name || 'Ingen tidsskrift funnet',
         },
         category: {
           value: state.selectedPublication.category?.code,
@@ -239,28 +251,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         pageTo: state.selectedPublication.pages?.to ?? '',
       };
 
-      const formValuesFromImportPublication = importPublication && {
-        title: selectedLang.title ?? '',
-        year: importPublication.yearPublished,
-        doi: importPublication.doi,
-        language: selectedLang,
-        journal: {
-          value: importPublication.channel?.cristinTidsskriftNr?.toString() || '0',
-          label: importPublication.channel?.title || 'Ingen tidsskrift funnet',
-        },
-        category: {
-          value: importPublication.category,
-          label: importPublication.categoryName,
-        },
-        volume: importPublication.channel?.volume ?? '',
-        issue: importPublication.channel?.issue ?? '',
-        pageFrom: importPublication.channel?.pageFrom ?? '',
-        pageTo: importPublication.channel?.pageTo ?? '',
-      };
-
-      setFormValues(
-        isDuplicate ? formValuesFromDuplicate : workedOn ? formValuesFromLocalStorage : formValuesFromImportPublication
-      );
+      setFormValues(isDuplicate ? formValuesFromDuplicate : generateFormValues());
     };
     initFormik().then();
   }, [isDuplicate, state.selectedPublication, importPublication]);
@@ -384,6 +375,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   async function getJournalId(issn: string | undefined) {
     try {
+      //TODO : error handling
       const journalResponse = await getJournalsByQuery(issn ?? '0', QueryMethod.issn);
       return journalResponse.data.length > 0 ? journalResponse.data[0].id : '0';
     } catch (error) {
@@ -394,13 +386,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   }
 
   function formatDate(dateString: string) {
-    return format(new Date(dateString), 'mmmm dd yy');
-    // const newDate = new Date(dateString);
-    // const tempDay = newDate.getDate();
-    // const tempYear = newDate.getFullYear();
-    // const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    // const tempMonth = months[newDate.getMonth()];
-    // return tempMonth + ' ' + tempDay + ', ' + tempYear;
+    return format(new Date(dateString), 'LLL dd, yyyy');
   }
 
   const formValidationSchema = Yup.object().shape({
