@@ -2,7 +2,7 @@ import React, { FC, useContext, useEffect, useState } from 'react';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Button, Grid, Typography } from '@material-ui/core';
 import ConfirmImportDialog from '../Dialogs/ConfirmImportDialog';
-import ConfirmDialog from '../Dialogs/ConfirmDialog';
+import GenericConfirmDialog from '../Dialogs/GenericConfirmDialog';
 import { Context } from '../../Context';
 import '../../assets/styles/buttons.scss';
 import ContributorModal from '../Contributors/ContributorModal';
@@ -83,8 +83,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Context);
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const [dialogAbortOpen, setDialogAbortOpen] = useState(false);
+  const [isConfirmImportDialogOpen, setIsConfirmImportDialogOpen] = useState(false);
+  const [isConfirmAbortDialogOpen, setIsConfirmAbortDialogOpen] = useState(false);
   const [importPublicationError, setImportPublicationError] = useState<Error | undefined>();
 
   //contributors-stuff
@@ -287,12 +287,12 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     if (state.contributors === null) {
       dispatch({ type: 'contributors', payload: contributors });
     }
-    setIsConfirmDialogOpen(true);
+    setIsConfirmImportDialogOpen(true);
     //TODO: later: droppe localstorage og sette formValues som parameter i confirmdialogOpen
   };
 
   function handleAbort() {
-    setDialogAbortOpen(true);
+    setIsConfirmAbortDialogOpen(true);
   }
 
   function handleContributorModalClose() {
@@ -300,7 +300,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   }
 
   function handlePublicationImported(result: any) {
-    setIsConfirmDialogOpen(false);
+    setIsConfirmImportDialogOpen(false);
     if (result.status === 200) {
       enqueueSnackbar(
         'Importerte ny publikasjon (Cristin-id: ' + result.result.id + ' og tittel: ' + result.result.title + ')',
@@ -319,20 +319,20 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     }
   }
 
-  function abortToggle() {
+  function handleConfirmAbortDialogSubmit() {
     dispatch({ type: 'doSave', payload: false });
-    setDialogAbortOpen(false);
+    setIsConfirmAbortDialogOpen(false);
     handleComparePublicationDataModalClose();
     handleDuplicateCheckModalClose();
     dispatch({ type: 'setContributorsLoaded', payload: false });
   }
 
   function handleCloseConfirmImportDialog() {
-    setIsConfirmDialogOpen(false);
+    setIsConfirmImportDialogOpen(false);
   }
 
-  function toggleAbortDialog() {
-    setDialogAbortOpen(false);
+  function handleConfirmAbortDialogAbort() {
+    setIsConfirmAbortDialogOpen(false);
   }
 
   function openContributorModal() {
@@ -381,7 +381,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       {loadContributorsError ? (
         <Typography color="error">Noe gikk galt. {loadContributorsError.message}</Typography>
       ) : (
-        <div>
+        <>
           <StyledModal isOpen={isComparePublicationDataModalOpen} size="lg" data-testid="compare-modal">
             {formValues && (
               <Formik
@@ -389,80 +389,78 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 initialValues={formValues}
                 validateOnMount
                 validationSchema={formValidationSchema}>
-                {({ isValid }) => (
-                  <>
+                {({ isValid, handleSubmit }) => (
+                  <Form onSubmit={handleSubmit}>
                     <ModalBody>
                       <StyledFormWrapper>
-                        <Form>
-                          <StyledHeaderLineWrapper>
-                            <StyledLineLabelTypography />
-                            <StyledLineHeader variant="h4">Import-publikasjon</StyledLineHeader>
-                            <StyledActionButtonsPlaceHolder />
-                            <StyledLineHeader variant="h4">Cristin-publikasjon</StyledLineHeader>
-                          </StyledHeaderLineWrapper>
-                          <StyledLineWrapper>
-                            <StyledLineLabelTypography>Publication id</StyledLineLabelTypography>
-                            <StyledLineImportValue>
-                              <StyledDisabledTypography data-testid="importdata-pubid">
-                                {importPublication.pubId}
-                              </StyledDisabledTypography>
-                            </StyledLineImportValue>
-                            <StyledActionButtonsPlaceHolder />
-                            <StyledLineCristinValue>
-                              <StyledDisabledTypography data-testid="cristindata-id">
-                                {isDuplicate ? cristinPublication.cristin_result_id : 'Ingen Cristin-Id'}
-                              </StyledDisabledTypography>
-                            </StyledLineCristinValue>
-                          </StyledLineWrapper>
-                          <StyledLineWrapper>
-                            <StyledLineLabelTypography>Dato registrert</StyledLineLabelTypography>
-                            <StyledLineImportValue>
-                              <StyledDisabledTypography data-testid="importdata-date-registered">
-                                {importPublication.registered}
-                              </StyledDisabledTypography>
-                            </StyledLineImportValue>
-                            <StyledActionButtonsPlaceHolder />
-                            <StyledLineCristinValue data-testid="cristindata-created">
-                              <StyledDisabledTypography>
-                                {isDuplicate ? formatDate(cristinPublication.created.date.substring(0, 10)) : '-'}
-                              </StyledDisabledTypography>
-                            </StyledLineCristinValue>
-                          </StyledLineWrapper>
-                          <StyledLineWrapper>
-                            <StyledLineLabelTypography>Kilde</StyledLineLabelTypography>
-                            <StyledLineImportValue>
-                              <Typography data-testid="importdata-source">
-                                {importPublication.sourceName} ({importPublication.externalId})
-                              </Typography>
-                            </StyledLineImportValue>
-                            <StyledActionButtonsPlaceHolder />
-                            <StyledLineCristinValue>
-                              <StyledDisabledTypography data-testid="cristindata-source">
-                                {kilde} ({kildeId})
-                              </StyledDisabledTypography>
-                            </StyledLineCristinValue>
-                          </StyledLineWrapper>
-                          <CompareFormLanguage
-                            languages={publicationLanguages}
-                            selectedLang={selectedLang}
-                            setSelectedLang={setSelectedLang}
-                          />
-                          <CompareFormTitle
-                            importPublication={importPublication}
-                            updatePublicationLanguages={updatePublicationLanguages}
-                            selectedLang={selectedLang}
-                          />
-                          <CompareFormJournal importPublication={importPublication} />
-                          <CompareFormDoi importPublication={importPublication} />
-                          <CompareFormYear importPublication={importPublication} />
-                          <CompareFormCategory importPublication={importPublication} />
-                          <CompareFormVolume importPublication={importPublication} />
-                          <CompareFormIssue importPublication={importPublication} />
-                          <CompareFormPages importPublication={importPublication} />
-                          {!isValid && (
-                            <CommonErrorMessage datatestid="compare-form-error" errorMessage="Det er feil i skjema" />
-                          )}
-                        </Form>
+                        <StyledHeaderLineWrapper>
+                          <StyledLineLabelTypography />
+                          <StyledLineHeader variant="h4">Import-publikasjon</StyledLineHeader>
+                          <StyledActionButtonsPlaceHolder />
+                          <StyledLineHeader variant="h4">Cristin-publikasjon</StyledLineHeader>
+                        </StyledHeaderLineWrapper>
+                        <StyledLineWrapper>
+                          <StyledLineLabelTypography>Publication id</StyledLineLabelTypography>
+                          <StyledLineImportValue>
+                            <StyledDisabledTypography data-testid="importdata-pubid">
+                              {importPublication.pubId}
+                            </StyledDisabledTypography>
+                          </StyledLineImportValue>
+                          <StyledActionButtonsPlaceHolder />
+                          <StyledLineCristinValue>
+                            <StyledDisabledTypography data-testid="cristindata-id">
+                              {isDuplicate ? cristinPublication.cristin_result_id : 'Ingen Cristin-Id'}
+                            </StyledDisabledTypography>
+                          </StyledLineCristinValue>
+                        </StyledLineWrapper>
+                        <StyledLineWrapper>
+                          <StyledLineLabelTypography>Dato registrert</StyledLineLabelTypography>
+                          <StyledLineImportValue>
+                            <StyledDisabledTypography data-testid="importdata-date-registered">
+                              {importPublication.registered}
+                            </StyledDisabledTypography>
+                          </StyledLineImportValue>
+                          <StyledActionButtonsPlaceHolder />
+                          <StyledLineCristinValue data-testid="cristindata-created">
+                            <StyledDisabledTypography>
+                              {isDuplicate ? formatDate(cristinPublication.created.date.substring(0, 10)) : '-'}
+                            </StyledDisabledTypography>
+                          </StyledLineCristinValue>
+                        </StyledLineWrapper>
+                        <StyledLineWrapper>
+                          <StyledLineLabelTypography>Kilde</StyledLineLabelTypography>
+                          <StyledLineImportValue>
+                            <Typography data-testid="importdata-source">
+                              {importPublication.sourceName} ({importPublication.externalId})
+                            </Typography>
+                          </StyledLineImportValue>
+                          <StyledActionButtonsPlaceHolder />
+                          <StyledLineCristinValue>
+                            <StyledDisabledTypography data-testid="cristindata-source">
+                              {kilde} ({kildeId})
+                            </StyledDisabledTypography>
+                          </StyledLineCristinValue>
+                        </StyledLineWrapper>
+                        <CompareFormLanguage
+                          languages={publicationLanguages}
+                          selectedLang={selectedLang}
+                          setSelectedLang={setSelectedLang}
+                        />
+                        <CompareFormTitle
+                          importPublication={importPublication}
+                          updatePublicationLanguages={updatePublicationLanguages}
+                          selectedLang={selectedLang}
+                        />
+                        <CompareFormJournal importPublication={importPublication} />
+                        <CompareFormDoi importPublication={importPublication} />
+                        <CompareFormYear importPublication={importPublication} />
+                        <CompareFormCategory importPublication={importPublication} />
+                        <CompareFormVolume importPublication={importPublication} />
+                        <CompareFormIssue importPublication={importPublication} />
+                        <CompareFormPages importPublication={importPublication} />
+                        {!isValid && (
+                          <CommonErrorMessage datatestid="compare-form-error" errorMessage="Det er feil i skjema" />
+                        )}
                       </StyledFormWrapper>
                       <StyledOpenContributorsButtonWrapper>
                         <Button
@@ -516,24 +514,23 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         </Grid>
                       </Grid>
                     </ModalFooter>
-                  </>
+                  </Form>
                 )}
               </Formik>
             )}
           </StyledModal>
-
-          <ConfirmDialog
+          <GenericConfirmDialog
             doFunction={emptyGlobalFormErrors}
             title={'Avbryt import'}
             text={
               'Er du sikker på at du vil lukke denne publikasjonen? Endringer vil bli lagret fram til man åpner en ny publikasjon'
             }
-            open={dialogAbortOpen}
-            handleClose={abortToggle}
-            handleCloseDialog={toggleAbortDialog}
+            open={isConfirmAbortDialogOpen}
+            handleClose={handleConfirmAbortDialogSubmit}
+            handleCloseDialog={handleConfirmAbortDialogAbort}
           />
           <ConfirmImportDialog
-            open={isConfirmDialogOpen}
+            open={isConfirmImportDialogOpen}
             handleClose={handlePublicationImported}
             handleCloseDialog={handleCloseConfirmImportDialog}
             data={importPublication}
@@ -547,7 +544,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
               isDuplicate={isDuplicate}
             />
           )}
-        </div>
+        </>
       )}
     </>
   );
