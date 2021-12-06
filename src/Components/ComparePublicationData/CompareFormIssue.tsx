@@ -39,7 +39,6 @@ const CompareFormIssue: FC<CompareFormIssueProps> = ({ importPublication }) => {
               placeholder="Hefte"
               data-testid="cristindata-issue-textfield"
               inputProps={{ 'data-testid': 'cristindata-issue-textfield-input' }}
-              required
               fullWidth
               error={!!error}
               helperText={<ErrorMessage name={field.name} />}

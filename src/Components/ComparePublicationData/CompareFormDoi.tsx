@@ -47,7 +47,6 @@ const CompareFormDoi: FC<CompareFormDoiProps> = ({ importPublication }) => {
               placeholder="DOI"
               data-testid="cristindata-doi-textfield"
               inputProps={{ 'data-testid': 'cristindata-doi-textfield-input' }}
-              required
               fullWidth
               error={!!error}
               helperText={<ErrorMessage name={field.name} />}

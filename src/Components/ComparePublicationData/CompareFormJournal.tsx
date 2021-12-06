@@ -65,7 +65,7 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) 
     <StyledLineWrapper>
       <StyledLineLabelTypography>Tidskrift</StyledLineLabelTypography>
       <StyledLineImportValue>
-        <Typography data-testid="importdata-journal">{importPublication.channel?.title}</Typography>
+        <Typography data-testid="importdata-journal-title">{importPublication.channel?.title}</Typography>
       </StyledLineImportValue>
       <ActionButtons
         isImportAndCristinEqual={

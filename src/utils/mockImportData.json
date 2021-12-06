@@ -147,6 +147,11 @@
       }
     ],
     "channel": {
+      "cristinTidsskriftNr": 4271,
+      "title": "IEEE Transactions on Instrumentation and Measurement",
+      "issn": "0018-9456",
+      "eissn": "1557-9662",
+      "isbns": [],
       "volume": "70",
       "issue": "test-issue",
       "pageFrom": "32423",

@@ -39,7 +39,6 @@ const CompareFormVolume: FC<CompareFormVolumeProps> = ({ importPublication }) =>
               placeholder="Volum"
               data-testid="cristindata-volume-textfield"
               inputProps={{ 'data-testid': 'cristindata-volume-textfield-input' }}
-              required
               fullWidth
               error={!!error}
               helperText={<ErrorMessage name={field.name} />}
