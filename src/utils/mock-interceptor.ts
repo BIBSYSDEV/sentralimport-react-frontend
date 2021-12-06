@@ -2,11 +2,12 @@ import Axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import { CRIST_REST_API, PIA_REST_API } from './constants';
 import {
-  cristinIdForbiddenPerson,
+  mockCristinIdForbiddenPerson,
   cristinIDWithoutActiveAffiliation,
-  cristinIDWithoutAffiliationAttribute,
+  mockCristinIDWithoutAffiliationAttribute,
   mockAllCategories,
   mockAllJournals,
+  mockCristinPersonNotFoundResponse,
   mockForbiddenPerson,
   mockImportPublication1,
   mockInstitutions,
@@ -25,15 +26,15 @@ import {
   responseCountryInstitutionCN,
   responseCountryInstitutionIT,
   resultInstitutionNTNU,
+  mockDoiForEmptyCristinSearch,
+  mockTitleForEmptyCristinSearch,
+  mockCristinPersonNotFound,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
 import mockCristinPublications from './mockCristinPublications.json';
 import mockCristinContributors from './mockCristinContributors.json';
 import { PostPublication } from '../types/PublicationTypes';
-
-export const mockDoiForEmptyCristinSearch = '123456789';
-export const mockTitleForEmptyCristinSearch = 'this_is_a_mocked_title';
 
 // AXIOS INTERCEPTOR
 export const interceptRequestsOnMock = () => {
@@ -136,13 +137,16 @@ export const interceptRequestsOnMock = () => {
 
   //get person-details by id
   mock
-    .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIdForbiddenPerson}`))
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockCristinIdForbiddenPerson}`))
     .reply(403, mockNotAuthorizedForThisPersonDetailResponse);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockCristinPersonNotFound}`))
+    .reply(404, mockCristinPersonNotFoundResponse);
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIDWithoutActiveAffiliation}`))
     .reply(200, mockPersonDetailedWithoutActiveAffiliations);
   mock
-    .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIDWithoutAffiliationAttribute}`))
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockCristinIDWithoutAffiliationAttribute}`))
     .reply(200, mockPersonDetailedWithoutAffiliationAttribute);
   mock.onGet(new RegExp(`${CRIST_REST_API}/persons/\\d+`)).reply(200, mockPersonDetailed);
 

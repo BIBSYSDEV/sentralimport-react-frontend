@@ -5,8 +5,8 @@ import {
   mockPersonDetailedWithoutActiveAffiliations,
   mockUnits,
   cristinIDWithoutActiveAffiliation,
-  cristinIDWithoutAffiliationAttribute,
-  cristinIdForbiddenPerson,
+  mockCristinIDWithoutAffiliationAttribute,
+  mockCristinIdForbiddenPerson,
 } from '../../src/utils/mockdata';
 import mockImportData from '../../src/utils/mockImportData.json';
 import { Colors } from '../../src/assets/styles/StyleConstants';
@@ -15,6 +15,15 @@ context('contributor', () => {
   beforeEach(() => {
     cy.login();
     cy.visit('/');
+  });
+
+  it('handles publication with contributor-errors', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[3].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('[data-testid="contributor-loading-error"]').contains(
+      'Feil ved lasting av bidragsytere: (Request failed with status code 404)'
+    );
   });
 
   it('shows contributor-list', () => {
@@ -151,7 +160,7 @@ context('contributor', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid=contributor-search-button-2]').click();
-    cy.get(`[data-testid=author-name-${cristinIDWithoutAffiliationAttribute}]`).should('exist');
+    cy.get(`[data-testid=author-name-${mockCristinIDWithoutAffiliationAttribute}]`).should('exist');
   });
 
   it('handles contributors with limited access', () => {
@@ -159,7 +168,7 @@ context('contributor', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid=contributor-search-button-2]').click();
-    cy.get(`[data-testid=person-limited-access-${cristinIdForbiddenPerson}]`).should(
+    cy.get(`[data-testid=person-limited-access-${mockCristinIdForbiddenPerson}]`).should(
       'have.text',
       'Kan ikke hente inn institusjoner for denne bidragsyteren.'
     );
@@ -191,10 +200,10 @@ context('contributor', () => {
       'color',
       Colors.Text.OPAQUE_41_BLACK
     );
-    cy.get(`[data-testid="author-name-${cristinIdForbiddenPerson}-uknown-verified-badge"]`)
+    cy.get(`[data-testid="author-name-${mockCristinIdForbiddenPerson}-uknown-verified-badge"]`)
       .children('title')
       .should('have.text', unknownVerificationText);
-    cy.get(`[data-testid="author-name-${cristinIdForbiddenPerson}"]`).should(
+    cy.get(`[data-testid="author-name-${mockCristinIdForbiddenPerson}"]`).should(
       'have.css',
       'color',
       Colors.Text.OPAQUE_41_BLACK
