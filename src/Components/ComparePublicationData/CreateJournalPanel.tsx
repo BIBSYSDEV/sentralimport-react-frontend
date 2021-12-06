@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { ErrorMessage, Field, FieldProps, Formik } from 'formik';
 import * as Yup from 'yup';
 import CommonErrorMessage from '../CommonErrorMessage';
+import { ISSNCodeFormat } from '../../utils/stringUtils';
 
 const StyledFormWrapper = styled.div`
   padding: 1rem;
@@ -20,7 +21,6 @@ const StyledTextField = styled(TextField)`
   }
 `;
 
-const ISSNCodeFormat = /^[0-9]{4}-[0-9]{3}[0-9xX]$/g;
 const emptyFormValues: CreateJournalFormValues = { title: '', issn: '', eissn: '' };
 
 interface CreateJournalFormValues {

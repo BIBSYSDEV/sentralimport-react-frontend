@@ -15,6 +15,8 @@ interface CompareFormDoiProps {
   importPublication: ImportPublication;
 }
 
+const DoiBaseUrl = 'https://doi.org/';
+
 const CompareFormDoi: FC<CompareFormDoiProps> = ({ importPublication }) => {
   const { values, setFieldValue } = useFormikContext<CompareFormValuesType>();
 
@@ -24,7 +26,7 @@ const CompareFormDoi: FC<CompareFormDoiProps> = ({ importPublication }) => {
       <StyledLineImportValue>
         <Typography data-testid="importdata-doi">
           {importPublication.doi ? (
-            <a href={`https://doi.org/${importPublication.doi}`} target="_blank" rel="noopener noreferrer">
+            <a href={`${DoiBaseUrl}${importPublication.doi}`} target="_blank" rel="noopener noreferrer">
               {importPublication.doi}
             </a>
           ) : (
