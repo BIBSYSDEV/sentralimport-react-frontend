@@ -53,7 +53,6 @@ const CompareFormDoi: FC<CompareFormDoiProps> = ({ importPublication }) => {
             />
           )}
         </Field>
-        {/*<FormControl fullWidth>*/}
       </StyledLineCristinValue>
     </StyledLineWrapper>
   );
