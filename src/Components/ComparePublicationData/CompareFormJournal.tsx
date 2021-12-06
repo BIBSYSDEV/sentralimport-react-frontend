@@ -32,16 +32,17 @@ const StyledAccordion = styled(Accordion)`
   }
 `;
 
-interface CompareFormJournalProps {
-  importPublication: ImportPublication;
-}
-
 export enum JournalPanels {
   SEARCH_JOURNAL_PANEL = 'searchJournalPanel',
   CREATE_JOURNAL_PANEL = 'createJournalPanel',
 }
 
-const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) => {
+interface CompareFormJournalProps {
+  importPublication: ImportPublication;
+  loadJournalIdError?: Error;
+}
+
+const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication, loadJournalIdError }) => {
   const { values, setFieldValue, errors } = useFormikContext<CompareFormValuesType>();
   const [expandedPanel, setExpandedPanel] = useState<JournalPanels | undefined>();
 
@@ -81,6 +82,12 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) 
             <CommonErrorMessage
               errorMessage={errors.journal.cristinTidsskriftNr}
               datatestid="compare-form-journal-error"
+            />
+          )}
+          {loadJournalIdError && (
+            <CommonErrorMessage
+              errorMessage="Could not load the journal id from Cristin"
+              datatestid="compare-form-journal-load-error"
             />
           )}
         </StyledJournalPresentationWrapper>

@@ -86,6 +86,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [isConfirmImportDialogOpen, setIsConfirmImportDialogOpen] = useState(false);
   const [isConfirmAbortDialogOpen, setIsConfirmAbortDialogOpen] = useState(false);
   const [importPublicationError, setImportPublicationError] = useState<Error | undefined>();
+  const [loadJournalIdError, setLoadJournalIdError] = useState<Error | undefined>();
 
   //contributors-stuff
   const [isContributorsLoading, setIsContributorsLoading] = useState(false);
@@ -350,12 +351,12 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   async function getJournalId(issn: string | undefined) {
     try {
-      //TODO : error handling
+      setLoadJournalIdError(undefined);
       const journalResponse = await getJournalsByQuery(issn ?? '0', QueryMethod.issn);
       return journalResponse.data.length > 0 ? journalResponse.data[0].id : '0';
     } catch (error) {
       handlePotentialExpiredSession(error);
-      console.log('There was an error while getting the journal id', error);
+      setLoadJournalIdError(error as Error);
       return '';
     }
   }
@@ -454,7 +455,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                           updatePublicationLanguages={updatePublicationLanguages}
                           selectedLang={selectedLang}
                         />
-                        <CompareFormJournal importPublication={importPublication} />
+                        <CompareFormJournal
+                          importPublication={importPublication}
+                          loadJournalIdError={loadJournalIdError}
+                        />
                         <CompareFormDoi importPublication={importPublication} />
                         <CompareFormYear importPublication={importPublication} />
                         <CompareFormCategory importPublication={importPublication} />
