@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Button, Card, CardContent, CircularProgress, Collapse, Typography } from '@material-ui/core';
+import { Button, Card, CardContent, CircularProgress, Collapse, Grid, Typography } from '@material-ui/core';
 import { ContributorType, ContributorWrapper } from '../../types/ContributorTypes';
 import ContributorSearchResultItem from './ContributorSearchResultItem';
 import { getPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
@@ -16,6 +16,17 @@ const StyledResultTypography = styled(Typography)`
     margin-bottom: 1rem;
   }
   color: ${Colors.Text.OPAQUE_87_BLACK};
+`;
+
+const StyledCircularProgress = styled(CircularProgress)`
+  margin-top: 0.3rem;
+`;
+
+const StyledCard = styled(Card)`
+  &.MuiPaper-outlined {
+    border: 3px solid ${Colors.PURPLE};
+    border-radius: 5px;
+  }
 `;
 
 export interface AddAffiliationError extends Error {
@@ -175,44 +186,55 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   }
 
   return (
-    <>
-      <Button
-        variant="outlined"
-        color="primary"
-        data-testid={`contributor-search-button-${resultListIndex}`}
-        onClick={() => retrySearch()}
-        disabled={contributorData.toBeCreated.first_name === '' || contributorData.toBeCreated.surname === ''}>
-        Søk etter person
-      </Button>
+    <Grid container spacing={2} alignItems="center">
+      <Grid item>
+        <Button
+          variant="outlined"
+          color="primary"
+          data-testid={`contributor-search-button-${resultListIndex}`}
+          onClick={() => retrySearch()}
+          disabled={contributorData.toBeCreated.first_name === '' || contributorData.toBeCreated.surname === ''}>
+          Søk etter person
+        </Button>
+      </Grid>
       {!searching && searchError && (
-        <Typography color="error">{searchError.message ?? 'Noe gikk galt med søket, prøv igjen'} </Typography>
+        <Grid item>
+          <Typography color="error">{searchError.message ?? 'Noe gikk galt med søket, prøv igjen'} </Typography>
+        </Grid>
       )}
-      {searching && <CircularProgress />}
+      {searching && (
+        <Grid item>
+          <StyledCircularProgress size={'2rem'} />
+        </Grid>
+      )}
       {openContributorSearchPanel && !searching && (
-        <StyledResultTypography>Fant {searchResults.length} bidragsytere</StyledResultTypography>
+        <Grid item>
+          <StyledResultTypography variant="h6">Fant {searchResults.length} bidragsytere</StyledResultTypography>
+        </Grid>
       )}
-
-      <Collapse in={openContributorSearchPanel && !searching}>
-        <Card>
-          <CardContent>
-            {searchResults.map((author: ContributorType) => (
-              <ContributorSearchResultItem
-                addAffiliationError={addAffiliationError}
-                addAffiliationSuccessful={addAffiliationSuccessful}
-                handleChooseOnlyAffiliation={handleChooseOnlyAffiliation}
-                handleChooseOnlyAuthor={handleChooseOnlyAuthor}
-                key={author.cristin_person_id}
-                contributor={author}
-                handleChoose={handleChooseThis}
-              />
-            ))}
-          </CardContent>
-          <Button color="primary" onClick={handleContributorSearchPanelClose}>
-            Lukk
-          </Button>
-        </Card>
-      </Collapse>
-    </>
+      <Grid item xs={12}>
+        <Collapse in={openContributorSearchPanel && !searching}>
+          <StyledCard variant="outlined">
+            <CardContent>
+              {searchResults.map((author: ContributorType) => (
+                <ContributorSearchResultItem
+                  addAffiliationError={addAffiliationError}
+                  addAffiliationSuccessful={addAffiliationSuccessful}
+                  handleChooseOnlyAffiliation={handleChooseOnlyAffiliation}
+                  handleChooseOnlyAuthor={handleChooseOnlyAuthor}
+                  key={author.cristin_person_id}
+                  contributor={author}
+                  handleChoose={handleChooseThis}
+                />
+              ))}
+            </CardContent>
+            <Button color="primary" onClick={handleContributorSearchPanelClose}>
+              Lukk resultatliste
+            </Button>
+          </StyledCard>
+        </Collapse>
+      </Grid>
+    </Grid>
   );
 };
 

@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Form } from 'reactstrap';
-import { Button, Card, FormGroup, TextField } from '@material-ui/core';
+import { Button, Card, FormGroup, Grid, TextField } from '@material-ui/core';
 import ContributorSearchPanel from './ContributorSearchPanel';
 import {
   Affiliation,
@@ -196,7 +196,9 @@ const ContributorForm: FC<ContributorFormProps> = ({
         resultListIndex={resultListIndex}
         updateContributor={updateContributor}
       />
-      <Card variant="outlined" style={{ overflow: 'visible', padding: '0.5rem', marginTop: '0.5rem' }}>
+      <Card
+        variant="outlined"
+        style={{ overflow: 'visible', padding: '0.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
         <InstitutionCountrySelect
           handleInstitutionChange={handleInstitutionChange}
           handleUnitChange={handleUnitChange}
@@ -224,29 +226,36 @@ const ContributorForm: FC<ContributorFormProps> = ({
           OK
         </Button>
       </Card>
-      <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
-        <StyledFlexEndButtons
-          variant="outlined"
-          data-testid={`contributor-delete-button-form-${resultListIndex}`}
-          color="secondary"
-          onClick={() => deleteContributor(resultListIndex)}>
-          Slett person
-        </StyledFlexEndButtons>
-        <StyledFlexEndButtons
-          variant="outlined"
-          data-testid={`contributor-save-button-${resultListIndex}`}
-          color="primary"
-          onClick={() => handleSubmit(true)}>
-          Lagre endringer
-        </StyledFlexEndButtons>
-        <StyledFlexEndButtons
-          variant="outlined"
-          data-testid={`contributor-save-and-close-button-${resultListIndex}`}
-          color="primary"
-          onClick={() => handleSubmit(false)}>
-          Lagre endringer og lukk
-        </StyledFlexEndButtons>
-      </div>
+
+      <Grid container spacing={2}>
+        <Grid item>
+          <StyledFlexEndButtons
+            variant="outlined"
+            data-testid={`contributor-delete-button-form-${resultListIndex}`}
+            color="secondary"
+            onClick={() => deleteContributor(resultListIndex)}>
+            Slett person
+          </StyledFlexEndButtons>
+        </Grid>
+        <Grid item>
+          <StyledFlexEndButtons
+            variant="outlined"
+            data-testid={`contributor-save-button-${resultListIndex}`}
+            color="primary"
+            onClick={() => handleSubmit(true)}>
+            Lagre endringer
+          </StyledFlexEndButtons>
+        </Grid>
+        <Grid item>
+          <StyledFlexEndButtons
+            variant="outlined"
+            data-testid={`contributor-save-and-close-button-${resultListIndex}`}
+            color="primary"
+            onClick={() => handleSubmit(false)}>
+            Lagre endringer og lukk
+          </StyledFlexEndButtons>
+        </Grid>
+      </Grid>
     </Form>
   );
 };

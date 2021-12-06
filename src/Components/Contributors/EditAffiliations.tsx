@@ -8,6 +8,7 @@ import { Button, Grid, Typography } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import UnitSelect from '../InstitutionSelect/UnitSelect';
+import { generateAffiliationDisplayData } from './ContributorSearchResultItem';
 
 const StyledInstitutionList = styled.div`
   margin-top: 1rem;
@@ -122,17 +123,7 @@ const EditAffiliations: FC<EditAffiliationsProps> = ({ contributorData, updateCo
           <AffiliationDisplay
             key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
             showCardActions={true}
-            affiliation={{
-              institutionName: affiliation.institutionName ?? '',
-              units: affiliation.units
-                ? affiliation.units.map((unit) => ({
-                    cristin_unit_id: unit.unitNr,
-                    unit_name: { nb: unit.unitName },
-                  }))
-                : [],
-              countryCode: affiliation.countryCode ?? '',
-              cristinInstitutionNr: affiliation.cristinInstitutionNr,
-            }}
+            affiliation={generateAffiliationDisplayData(affiliation)}
             dataTestid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}`}
             backgroundcolor={Colors.LIGHT_GREY}
             handleDeleteUnitClick={(unit) => {
@@ -150,7 +141,6 @@ const EditAffiliations: FC<EditAffiliationsProps> = ({ contributorData, updateCo
                   }
                   data-testid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}-delete-institution`}
                   startIcon={<DeleteIcon />}
-                  variant="outlined"
                   color="secondary">
                   Fjern tilknyttning
                 </Button>
@@ -163,7 +153,6 @@ const EditAffiliations: FC<EditAffiliationsProps> = ({ contributorData, updateCo
                     data-testid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}-add-unit`}
                     onClick={() => setShowUnitSelector(true)}
                     startIcon={<AddIcon />}
-                    variant="outlined"
                     color="primary">
                     Legg til enhet
                   </Button>
@@ -186,7 +175,6 @@ const EditAffiliations: FC<EditAffiliationsProps> = ({ contributorData, updateCo
                         size="small"
                         data-testid={`cancel-list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}-add-unit`}
                         onClick={() => setShowUnitSelector(false)}
-                        variant="outlined"
                         color="secondary">
                         Avbryt
                       </Button>

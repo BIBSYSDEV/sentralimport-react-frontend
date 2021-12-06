@@ -8,19 +8,24 @@ import {
   StyledNotVerifiedBadge,
   StyledUnknownVerifiedBadge,
   StyledVerifiedBadge,
-} from '../../assets/styles/StyledComponents';
+} from '../../assets/styles/StyledBadges';
 import AffiliationDisplay from './AffiliationDisplay';
 import { AddAffiliationError } from './ContributorSearchPanel';
 
-const StyledChooseButton = styled(Button)`
-  &.MuiButtonBase-root {
-    margin-top: 1rem;
+const StyledNameGridContainer = styled(Grid)`
+  &.MuiGrid-container {
+    margin-bottom: 1rem;
   }
+`;
+
+const ContributorSearchResultWrapper = styled.div`
+  margin-bottom: 1rem;
 `;
 
 const StyledAffiliationsWrapper = styled.div`
   font-style: italic;
   margin-left: 10px;
+  margin-bottom: 1rem;
 `;
 
 const StyledTypography = styled(Typography)`
@@ -35,6 +40,31 @@ const StyledActivePersonNameTypography = styled(Typography)`
 const StyledInactivePersonNameTypography = styled(Typography)`
   color: ${Colors.Text.OPAQUE_41_BLACK};
 `;
+
+const sortContributorAffiliations = (affiliations: Affiliation[] | undefined) => {
+  return affiliations?.sort((affiliationA, affiliationB) => {
+    if (affiliationA.institutionName && affiliationB.institutionName) {
+      return affiliationA.institutionName.localeCompare(affiliationB.institutionName);
+    }
+    return 0;
+  });
+};
+
+export const generateAffiliationDisplayData = (affiliation: Affiliation) => {
+  return {
+    institutionName: affiliation.institutionName ?? '',
+    cristinInstitutionNr: affiliation.cristinInstitutionNr,
+    units: affiliation.units
+      ? affiliation.units
+          .filter((unit) => unit.unitName !== affiliation.institutionName)
+          .map((unit) => ({
+            cristin_unit_id: unit.unitNr,
+            unit_name: { nb: unit.unitName },
+          }))
+      : [],
+    countryCode: affiliation.countryCode ?? '',
+  };
+};
 
 interface ContributorSearchResultItemProps {
   contributor: ContributorType;
@@ -60,8 +90,8 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({
   );
 
   return (
-    <div>
-      <Grid container spacing={1}>
+    <ContributorSearchResultWrapper>
+      <StyledNameGridContainer container spacing={1}>
         <Grid item sm={8}>
           {isActive ? (
             <StyledActivePersonNameTypography data-testid={`author-name-${contributor.cristin_person_id}`} variant="h6">
@@ -100,39 +130,18 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({
             Velg kun person
           </Button>
         </Grid>
-      </Grid>
-      {contributor.affiliations
-        ?.sort((affiliationA, affiliationB) => {
-          if (affiliationA.institutionName && affiliationB.institutionName) {
-            return affiliationA.institutionName.localeCompare(affiliationB.institutionName);
-          }
-          return 0;
-        })
-        .map((affiliation, affiliationIndex) => (
-          <AffiliationDisplay
-            addAffiliationSuccessful={addAffiliationSuccessful}
-            handleAddAffiliationButtonClick={() => handleChooseOnlyAffiliation(affiliation)}
-            key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
-            affiliation={{
-              institutionName: affiliation.institutionName ?? '',
-              cristinInstitutionNr: affiliation.cristinInstitutionNr,
-              units: affiliation.units
-                ? affiliation.units
-                    .filter((unit) => unit.unitName !== affiliation.institutionName)
-                    .map((unit) => ({
-                      cristin_unit_id: unit.unitNr,
-                      unit_name: { nb: unit.unitName },
-                    }))
-                    .reverse()
-                : [],
-              countryCode: affiliation.countryCode ?? '',
-            }}
-            dataTestid={`institution-${affiliation.cristinInstitutionNr}`}
-            backgroundcolor={Colors.LIGHT_GREY}
-            addAffiliationError={addAffiliationError}
-          />
-        ))}
-
+      </StyledNameGridContainer>
+      {sortContributorAffiliations(contributor.affiliations)?.map((affiliation, affiliationIndex) => (
+        <AffiliationDisplay
+          addAffiliationSuccessful={addAffiliationSuccessful}
+          handleAddAffiliationButtonClick={() => handleChooseOnlyAffiliation(affiliation)}
+          key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
+          affiliation={generateAffiliationDisplayData(affiliation)}
+          dataTestid={`institution-${affiliation.cristinInstitutionNr}`}
+          backgroundcolor={Colors.LIGHT_GREY}
+          addAffiliationError={addAffiliationError}
+        />
+      ))}
       {contributor.affiliations?.length === 0 && contributor.require_higher_authorization && (
         <StyledAffiliationsWrapper>
           <StyledTypography data-testid={`person-limited-access-${contributor.cristin_person_id}`} color="error">
@@ -140,7 +149,7 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({
           </StyledTypography>
         </StyledAffiliationsWrapper>
       )}
-      <StyledChooseButton
+      <Button
         data-testid={`add-person-and-affiliations-${contributor.cristin_person_id}`}
         size="small"
         variant="outlined"
@@ -149,9 +158,9 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({
         {contributor.affiliations && contributor.affiliations.length > 0
           ? 'Velg person og tilknyttning'
           : 'Velg person og fjern tilknytninger'}
-      </StyledChooseButton>
+      </Button>
       <hr />
-    </div>
+    </ContributorSearchResultWrapper>
   );
 };
 

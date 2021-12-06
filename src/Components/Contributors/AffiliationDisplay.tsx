@@ -17,7 +17,7 @@ import { AddAffiliationError } from './ContributorSearchPanel';
 import { Colors } from '../../assets/styles/StyleConstants';
 
 const StyledAffiliationsWrapper = styled(Card)<{ backgroundcolor: string }>`
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   &&.MuiPaper-outlined {
     border: none;
     background-color: ${(props) => props.backgroundcolor};
@@ -120,7 +120,6 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
                   size="small"
                   data-testid={`${dataTestid}-delete-unit-${unitIndex}`}
                   startIcon={<DeleteIcon />}
-                  variant="outlined"
                   color="secondary">
                   Fjern enhet
                 </Button>
