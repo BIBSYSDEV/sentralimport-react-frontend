@@ -6,17 +6,12 @@ import { patchPiaPublication, patchPublication, postPublication } from '../../ap
 import { handlePotentialExpiredSession } from '../../api/api';
 
 const getNumberOfPages = (pageFrom, pageTo) => {
+  //Dette har blitt lagt inn pga. edge-casen med sidetall med bokstaven "e" i seg.
+  //pageTo 2086.e8, pageFrom: 2083
   const reg = new RegExp('^[0-9]+$');
-  if (
-    pageFrom === null ||
-    pageTo === null ||
-    !isNaN(pageTo) ||
-    !isNaN(pageFrom) ||
-    !reg.test(pageTo.toString()) ||
-    !reg.test(pageFrom.toString())
-  ) {
+  if (pageFrom === null || pageTo === null || !reg.test(pageTo.toString()) || !reg.test(pageFrom.toString())) {
     return '0';
-    //Javascript håndterer 2^53 bit mønster, SQL hånterer 2^31 for integers.
+    //Javascript håndterer 2^53 integers, SQL hånterer 2^31 for integers.
   } else if (pageTo - pageFrom > Math.pow(2, 31)) {
     return '0';
   } else {
@@ -245,7 +240,6 @@ export default function ConfirmImportDialog(props) {
       }}
       disableEscapeKeyDown>
       <DialogTitle>Bekreft import</DialogTitle>
-      <pre style={{ maxWidth: '90%' }}>{JSON.stringify(createPublicationObject(), null, 2)}</pre>
       <DialogContent>
         <TextField
           placeholder="Om du ønsker å legge ved en merknad, skriv den inn her før du importerer"
