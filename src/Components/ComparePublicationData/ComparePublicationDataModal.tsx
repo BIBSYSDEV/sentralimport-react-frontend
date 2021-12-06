@@ -68,7 +68,7 @@ interface ComparePublicationDataModalProps {
   isComparePublicationDataModalOpen: boolean;
   handleComparePublicationDataModalClose: () => void;
   importPublication: ImportPublication;
-  cristinPublication: CristinPublication;
+  cristinPublication: CristinPublication; //TODO: Rydd i dette tullet
   handleDuplicateCheckModalClose: () => void;
   isDuplicate: boolean;
 }
@@ -92,6 +92,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors] = useState(isDuplicate ? state.selectedPublication.authors : importPublication?.authors || []);
   const [loadContributorsError, setLoadContributorsError] = useState<Error | undefined>();
+  const [isLoadingContributors, setIsLoadingContributors] = useState(false);
 
   //local-storage-stuff
   let workedOn = false;
@@ -150,6 +151,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     async function getContributors() {
       try {
         setLoadContributorsError(undefined);
+        setIsLoadingContributors(true);
+
         if (isDuplicate && !workedOn && !isContributorsLoading) {
           //merkelig å sjekke om isContributorsLoading
           fetchAllAuthors(state.selectedPublication.cristin_result_id).then();
@@ -158,6 +161,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       } catch (error) {
         handlePotentialExpiredSession(error);
         setLoadContributorsError(error as Error);
+      } finally {
+        setIsLoadingContributors(false);
       }
     }
     getContributors().then();
@@ -485,8 +490,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                     <ModalFooter>
                       <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline">
                         <Grid item>
-                          {state.contributorErrors?.length >= 1 ? <div> Feil i bidragsyterlisten. </div> : ''}
-                          {!state.contributorsLoaded ? <div> Henter bidragsytere. </div> : ''}
+                          {state.contributorErrors?.length >= 1 && <div> Feil i bidragsyterlisten. </div>}
+                          {isLoadingContributors && <div> Henter bidragsytere. </div>}
                         </Grid>
                         <Grid item>
                           <Button
