@@ -828,7 +828,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         onChange={(event: any) => handleChangeDoi(event)}
                         margin="normal"
                         error={!doi?.match(DOI_REGEX)}
-                        helperText={doi && !doi.match(DOI_REGEX) ? 'Doi har galt format' : ''}
+                        helperText={doi && !doi.match(DOI_REGEX) && 'Doi har galt format'}
                       />
                     </FormControl>
                   </StyledLineCristinValue>
