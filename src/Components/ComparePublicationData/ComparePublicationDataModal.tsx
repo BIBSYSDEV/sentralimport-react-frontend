@@ -41,6 +41,7 @@ import CompareFormJournal from './CompareFormJournal';
 import CompareFormLanguage from './CompareFormLanguage';
 import { CompareFormValuesType } from './CompareFormTypes';
 import { ContributorType } from '../../types/ContributorTypes';
+import { DoiFormat } from '../../utils/stringUtils';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -61,8 +62,6 @@ const generateLanguageObjectFromCristinPublication = (publ: CristinPublication) 
     original: true,
   };
 };
-
-export const doiMatcher = /(10)[.](.+)[/](.+)/i;
 
 interface ComparePublicationDataModalProps {
   isComparePublicationDataModalOpen: boolean;
@@ -373,7 +372,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       .integer('Årstall må være heltall')
       .moreThan(999, 'Årstall må være større enn 999')
       .lessThan(new Date().getFullYear() + 1, 'Årstall kan ikke være et framtidig år'), //todo: nødvendige sjekker ?
-    doi: Yup.string().matches(doiMatcher, 'Doi har galt format'),
+    doi: Yup.string().matches(DoiFormat, 'Doi har galt format'),
     journal: Yup.object().shape({
       cristinTidsskriftNr: Yup.string().required('Tidsskrift er et obligatorisk felt'),
       title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),

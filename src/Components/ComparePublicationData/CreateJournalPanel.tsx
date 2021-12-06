@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { ErrorMessage, Field, FieldProps, Formik } from 'formik';
 import * as Yup from 'yup';
 import CommonErrorMessage from '../CommonErrorMessage';
-import { ISSNCodeFormat } from '../../utils/stringUtils';
+import { IssnFormat } from '../../utils/stringUtils';
 
 const StyledFormWrapper = styled.div`
   padding: 1rem;
@@ -45,8 +45,8 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
 
   const formValidationSchema = Yup.object().shape({
     title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
-    issn: Yup.string().trim().matches(ISSNCodeFormat, 'ISSN er ikke på korrekt format (NNNN-NNNC)'),
-    eissn: Yup.string().trim().matches(ISSNCodeFormat, 'e-ISSN er ikke på korrekt format (NNNN-NNNC)'),
+    issn: Yup.string().trim().matches(IssnFormat, 'ISSN er ikke på korrekt format (NNNN-NNNC)'),
+    eissn: Yup.string().trim().matches(IssnFormat, 'e-ISSN er ikke på korrekt format (NNNN-NNNC)'),
   });
 
   return (
