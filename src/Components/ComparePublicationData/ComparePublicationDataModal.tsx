@@ -117,7 +117,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     isDuplicate
       ? [generateLanguageObjectFromCristinPublication(state.selectedPublication)]
       : sortedLanguagesFromImportPublication
-  );
+  ); //TODO: putt hele publicationLanguages i formik
   const [selectedLang, setSelectedLang] = useState<Language>(
     workedOn
       ? publicationFromLocalStorage?.languages?.find((lang: Language) => lang.original) ??
