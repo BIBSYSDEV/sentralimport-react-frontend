@@ -5,6 +5,25 @@ import TextField from '@material-ui/core/TextField';
 import { patchPiaPublication, patchPublication, postPublication } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
 
+const getNumberOfPages = (pageFrom, pageTo) => {
+  const reg = new RegExp('^[0-9]+$');
+  if (
+    pageFrom === null ||
+    pageTo === null ||
+    !isNaN(pageTo) ||
+    !isNaN(pageFrom) ||
+    !reg.test(pageTo.toString()) ||
+    !reg.test(pageFrom.toString())
+  ) {
+    return '0';
+    //Javascript håndterer 2^53 bit mønster, SQL hånterer 2^31 for integers.
+  } else if (pageTo - pageFrom > Math.pow(2, 31)) {
+    return '0';
+  } else {
+    return (pageTo - pageFrom).toString();
+  }
+};
+
 export default function ConfirmImportDialog(props) {
   let { dispatch } = React.useContext(Context);
   const [annotation, setAnnotation] = React.useState(null);
@@ -122,13 +141,7 @@ export default function ConfirmImportDialog(props) {
       pages: {
         from: publication.channel.pageFrom,
         to: publication.channel.pageTo,
-        count:
-          publication.channel.pageTo !== null &&
-          publication.channel.pageFrom !== null &&
-          !isNaN(publication.channel.pageTo) &&
-          !isNaN(publication.channel.pageFrom)
-            ? (publication.channel.pageTo - publication.channel.pageFrom).toString()
-            : '0',
+        count: getNumberOfPages(publication.channel.pageFrom, publication.channel.pageTo),
       },
       contributors: {
         list: createContributorObject(),
@@ -232,6 +245,7 @@ export default function ConfirmImportDialog(props) {
       }}
       disableEscapeKeyDown>
       <DialogTitle>Bekreft import</DialogTitle>
+      <pre style={{ maxWidth: '90%' }}>{JSON.stringify(createPublicationObject(), null, 2)}</pre>
       <DialogContent>
         <TextField
           placeholder="Om du ønsker å legge ved en merknad, skriv den inn her før du importerer"
