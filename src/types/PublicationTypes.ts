@@ -38,7 +38,6 @@ export interface CristinPublication {
 }
 
 export interface Channel {
-  issns?: any; //?????
   issn?: string;
   eissn?: string;
   cristinTidsskriftNr?: string;
