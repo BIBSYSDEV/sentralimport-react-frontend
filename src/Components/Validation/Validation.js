@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Context } from '../../Context';
+import { DOI_REGEX } from '../../utils/stringUtils';
 
-export const doiMatcher = /^$|^([0-9]{2})[.]([0-9]{4,5})[/]([a-z0-9-.]+)/i;
 const utgivelseMatcher = /^(Volum)[ ]([0-9a-z-:]+)[ ]([(]([0-9]{1,6})[-]([0-9]{1,6})[)])([\w-., ]*)/i;
 
 export default function Validation(props) {
@@ -50,7 +50,7 @@ export default function Validation(props) {
         tittelValid ? removeError(tittelError) : updateErrors(tittelError);
         break;
       case 'doi':
-        const doiValid = state.validation.match(doiMatcher);
+        const doiValid = state.validation.match(DOI_REGEX);
         const doiError = 'Doi har galt format';
         doiValid ? removeError(doiError) : updateErrors(doiError);
         break;
@@ -142,7 +142,7 @@ export default function Validation(props) {
           !tittelValid ? fieldErrors.push(tittelError) : fieldErrors.push();
           break;
         case 'doi':
-          const doiValid = data[i].value.match(doiMatcher);
+          const doiValid = data[i].value.match(DOI_REGEX);
           const doiError = 'Doi har galt format';
           !doiValid ? fieldErrors.push(doiError) : fieldErrors.push();
           break;
