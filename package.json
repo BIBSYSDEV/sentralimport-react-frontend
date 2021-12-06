@@ -30,10 +30,11 @@
     "@material-ui/styles": "^4.11.4",
     "axios": "^0.24.0",
     "bootstrap": "^4.6.0",
+    "date-fns": "^2.27.0",
     "env-cmd": "^10.1.0",
+    "formik": "^2.2.9",
     "interweave": "^12.9.0",
     "jsonwebtoken": "^8.5.1",
-    "date-fns": "^2.27.0",
     "just-clone": "^5.0.1",
     "node-sass": "^6.0.1",
     "notistack": "^1.0.10",
@@ -46,8 +47,7 @@
     "react-select": "^5.2.1",
     "reactstrap": "^8.0.1",
     "styled-components": "^5.3.3",
-    "yup": "^0.32.11",
-    "formik": "^2.2.9"
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.9.11",
