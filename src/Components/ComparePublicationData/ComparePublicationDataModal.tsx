@@ -186,7 +186,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           doi: publication.doi,
           language: selectedLang,
           journal: {
-            cristinTidsskriftNr: publication?.channel?.cristinTidsskriftNr?.toString() ?? '0',
+            cristinTidsskriftNr: publication?.channel?.cristinTidsskriftNr?.toString() ?? '',
             title: publication?.channel?.title ?? 'Ingen tidsskrift funnet',
           },
           category: {
@@ -212,7 +212,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         language: selectedLang,
         journal: {
           cristinTidsskriftNr:
-            (await getJournalId(state.selectedPublication.journal?.international_standard_numbers)) || '0',
+            (await getJournalId(state.selectedPublication.journal?.international_standard_numbers)) || '',
           title: state.selectedPublication.journal?.name || 'Ingen tidsskrift funnet',
         },
         category: {
@@ -374,9 +374,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       .lessThan(new Date().getFullYear() + 1, 'Årstall kan ikke være et framtidig år'), //todo: nødvendige sjekker ?
     doi: Yup.string().matches(doiMatcher, 'Doi har galt format'),
     journal: Yup.object().shape({
-      cristinTidsskriftNr: Yup.string()
-        .min(2, 'Tidskrift er et obligatorisk felt')
-        .required('Tidskrift er et obligatorisk felt'),
+      cristinTidsskriftNr: Yup.string().required('Tidskrift er et obligatorisk felt'),
       title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
     }),
   });

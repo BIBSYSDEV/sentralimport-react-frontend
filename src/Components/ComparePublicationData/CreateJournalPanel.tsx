@@ -34,8 +34,13 @@ interface CreateJournalPanelProps {
 }
 
 const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }) => {
-  const handleSubmit = (values: CreateJournalFormValues) => {
-    handleCreateJournal({ title: values.title.trim(), issn: values.issn.trim(), eissn: values.eissn.trim() });
+  const handleFormSubmit = (values: CreateJournalFormValues) => {
+    handleCreateJournal({
+      title: values.title.trim(),
+      issn: values.issn.trim(),
+      eissn: values.eissn.trim(),
+      cristinTidsskriftNr: '0',
+    });
   };
 
   const formValidationSchema = Yup.object().shape({
@@ -49,8 +54,8 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
       <Typography gutterBottom variant="caption">
         Felter merket med * er obligatoriske
       </Typography>
-      <Formik onSubmit={handleSubmit} initialValues={emptyFormValues} validationSchema={formValidationSchema}>
-        {({ values, isValid }) => (
+      <Formik initialValues={emptyFormValues} validationSchema={formValidationSchema} onSubmit={handleFormSubmit}>
+        {({ isValid, handleSubmit }) => (
           <>
             <Field name="title">
               {({ field, meta: { error, touched } }: FieldProps) => (
@@ -95,8 +100,11 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => handleSubmit(values)}
-                data-testid="submit-journal-button">
+                onClick={() => {
+                  //kan ikke bruke type=submit ettersom denne formiken er inni en annen formik
+                  handleSubmit();
+                }}
+                data-testid="submit-create-journal-button">
                 Opprett
               </Button>
             </StyledButtonWrapper>

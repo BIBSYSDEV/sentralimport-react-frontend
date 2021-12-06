@@ -29,8 +29,6 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
   const [selectedJournal, setSelectedJournal] = useState<CompareFormJournalType>(emptyJournal);
   const [inputValue, setInputValue] = useState('');
 
-  //TODO: feilmeldinger
-
   async function searchJournals(query: string) {
     try {
       setIsLoadingJournals(true);
@@ -71,7 +69,7 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
         value={selectedJournal}
         onChange={(event, newValue: CompareFormJournalType | null) => {
           newValue && newValue.cristinTidsskriftNr !== '0' && setSelectedJournal(newValue);
-          //TODO: triggers search on select as well (not necessary)
+          //TODO: this triggers search on select as well (not necessary)
         }}
         inputValue={inputValue}
         onInputChange={(event, inputValue) => {
@@ -105,7 +103,7 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
           variant="contained"
           color="primary"
           onClick={handleClickChooseButton}
-          data-testid="submit-journal-button">
+          data-testid="submit-search-journal-button">
           Velg
         </Button>
       </StyledButtonWrapper>

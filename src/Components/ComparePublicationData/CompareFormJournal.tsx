@@ -76,7 +76,7 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) 
       />
       <StyledLineCristinValue>
         <StyledJournalPresentationWrapper>
-          <Typography data-testid="cristindata-journal">{values.journal?.title}</Typography>
+          <Typography data-testid="cristindata-journal-title">{values.journal?.title}</Typography>
           {errors.journal?.cristinTidsskriftNr && (
             <CommonErrorMessage
               errorMessage={errors.journal.cristinTidsskriftNr}
@@ -84,7 +84,6 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) 
             />
           )}
         </StyledJournalPresentationWrapper>
-
         <StyledAccordion
           expanded={expandedPanel === JournalPanels.SEARCH_JOURNAL_PANEL}
           onChange={handleChangePanel(JournalPanels.SEARCH_JOURNAL_PANEL)}>

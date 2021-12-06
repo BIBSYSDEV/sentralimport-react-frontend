@@ -21,7 +21,6 @@ context('application', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="import-publication-button"]`).click();
-    cy.wait(500);
     cy.get(`[data-testid="confirm-import-dialog-ok"]`).click();
     cy.get(`[data-testid="import-publication-errors"]`).contains('Noe gikk galt med import av publikasjon med pub-id');
     cy.get(`[data-testid="import-publication-errors"]`).contains(mockSaveErrorResponse.errors[0]);
