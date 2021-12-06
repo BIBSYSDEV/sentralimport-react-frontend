@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { Context } from '../../Context';
 
-export default function ConfirmDialog(props) {
+export default function GenericConfirmDialog(props) {
   let { state } = React.useContext(Context);
 
   return (

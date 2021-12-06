@@ -2,7 +2,7 @@ import React, { FC, useContext, useEffect, useLayoutEffect, useRef, useState } f
 import { Modal, ModalBody, ModalHeader } from 'reactstrap';
 import { Context } from '../../Context';
 import { Button, CircularProgress, Divider, Typography } from '@material-ui/core';
-import ConfirmDialog from '../Dialogs/ConfirmDialog';
+import GenericConfirmDialog from '../Dialogs/GenericConfirmDialog';
 import { CRIST_REST_API } from '../../utils/constants';
 import { getInstitutionName, getPersonDetailById, SearchLanguage } from '../../api/contributorApi';
 import { getAffiliationDetails } from '../../utils/contributorUtils';
@@ -624,7 +624,7 @@ const ContributorModal: FC<ContributorProps> = ({
           </StyledContentWrapper>
         </ModalBody>
       </StyledModal>
-      <ConfirmDialog
+      <GenericConfirmDialog
         doFunction={removeContributor}
         title={'Slett bidragsyter'}
         text={'Er du sikker på at du vil slette denne bidragsyteren?'}
