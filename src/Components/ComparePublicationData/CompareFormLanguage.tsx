@@ -31,6 +31,7 @@ const CompareFormLanguage: FC<CompareFormLanguageProps> = ({ setSelectedLang, se
               <Button
                 key={language.lang}
                 color="primary"
+                data-testid={`compare-form-lang-button-${language.lang}`}
                 variant={selectedLang?.lang === language.lang ? `contained` : `outlined`}
                 onClick={() => setSelectedLang(language)}>
                 {language.lang}

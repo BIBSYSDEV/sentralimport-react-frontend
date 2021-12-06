@@ -109,7 +109,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
               </Button>
             </StyledButtonWrapper>
             {!isValid && (
-              <CommonErrorMessage datatestid="new-journal-form-error" errorMessage="Det er feil i tidskrift-skjema" />
+              <CommonErrorMessage datatestid="new-journal-form-error" errorMessage="Det er feil i tidsskrift-skjema" />
             )}
           </>
         )}

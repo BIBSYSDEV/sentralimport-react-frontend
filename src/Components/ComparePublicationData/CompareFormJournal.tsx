@@ -63,7 +63,7 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) 
 
   return (
     <StyledLineWrapper>
-      <StyledLineLabelTypography>Tidskrift</StyledLineLabelTypography>
+      <StyledLineLabelTypography>Tidsskrift</StyledLineLabelTypography>
       <StyledLineImportValue>
         <Typography data-testid="importdata-journal-title">{importPublication.channel?.title}</Typography>
       </StyledLineImportValue>
@@ -105,7 +105,7 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication }) 
             expandIcon={<ExpandMoreIcon />}
             aria-controls="create-journal-content"
             id="create-journal-header">
-            <Typography>Registrer nytt tidskrift</Typography>
+            <Typography>Registrer nytt tidsskrift</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <CreateJournalPanel handleCreateJournal={handleSetJournal} />

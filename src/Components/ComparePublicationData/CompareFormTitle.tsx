@@ -44,7 +44,7 @@ const CompareFormTitle: FC<CompareFormTitleProps> = ({
           {({ field, meta: { error } }: FieldProps) => (
             <TextField
               {...field}
-              id="Cristin-tittel"
+              id="Cristin-title"
               name="title"
               placeholder="Tittel"
               data-testid="cristindata-title-textfield"

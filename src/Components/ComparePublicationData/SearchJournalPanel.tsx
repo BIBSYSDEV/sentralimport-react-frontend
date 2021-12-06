@@ -96,7 +96,7 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
         )}
       />
       {fetchJournalsError && (
-        <Typography color="error">Kunne ikke laste inn tidskrift. {fetchJournalsError.message}</Typography>
+        <Typography color="error">Kunne ikke laste inn tidsskrift. {fetchJournalsError.message}</Typography>
       )}
       <StyledButtonWrapper>
         <Button

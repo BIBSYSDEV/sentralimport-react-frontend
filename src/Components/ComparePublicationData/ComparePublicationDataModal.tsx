@@ -374,7 +374,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       .lessThan(new Date().getFullYear() + 1, 'Årstall kan ikke være et framtidig år'), //todo: nødvendige sjekker ?
     doi: Yup.string().matches(doiMatcher, 'Doi har galt format'),
     journal: Yup.object().shape({
-      cristinTidsskriftNr: Yup.string().required('Tidskrift er et obligatorisk felt'),
+      cristinTidsskriftNr: Yup.string().required('Tidsskrift er et obligatorisk felt'),
       title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
     }),
   });
@@ -461,9 +461,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         <CompareFormVolume importPublication={importPublication} />
                         <CompareFormIssue importPublication={importPublication} />
                         <CompareFormPages importPublication={importPublication} />
-                        {!isValid && (
-                          <CommonErrorMessage datatestid="compare-form-error" errorMessage="Det er feil i skjema" />
-                        )}
                       </StyledFormWrapper>
                       <StyledOpenContributorsButtonWrapper>
                         <Button
@@ -501,19 +498,24 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                           </Button>
                         </Grid>
                         <Grid item>
-                          <Button
-                            disabled={
-                              !isValid ||
-                              !!importPublication?.cristin_id ||
-                              state.contributorErrors.length >= 1 ||
-                              !state.contributorsLoaded
-                            }
-                            color="primary"
-                            type="submit"
-                            variant="contained"
-                            data-testid="import-publication-button">
-                            Importer
-                          </Button>
+                          <div>
+                            <Button
+                              disabled={
+                                !isValid ||
+                                !!importPublication?.cristin_id ||
+                                state.contributorErrors.length >= 1 ||
+                                !state.contributorsLoaded
+                              }
+                              color="primary"
+                              type="submit"
+                              variant="contained"
+                              data-testid="import-publication-button">
+                              Importer
+                            </Button>
+                          </div>
+                          {!isValid && (
+                            <CommonErrorMessage datatestid="compare-form-error" errorMessage="Det er feil i skjema" />
+                          )}
                         </Grid>
                       </Grid>
                     </ModalFooter>

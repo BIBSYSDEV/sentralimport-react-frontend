@@ -47,7 +47,7 @@ const CompareFormPages: FC<CompareFormPagesProps> = ({ importPublication }) => {
                 name="pageFrom"
                 placeholder="Side fra"
                 data-testid="cristindata-pages-textfield"
-                inputProps={{ 'data-testid': 'cristindata-pages-textfield-input' }}
+                inputProps={{ 'data-testid': 'cristindata-pagesfrom-textfield-input' }}
                 error={!!error}
                 helperText={<ErrorMessage name={field.name} />}
               />
@@ -61,7 +61,7 @@ const CompareFormPages: FC<CompareFormPagesProps> = ({ importPublication }) => {
                 name="pageTo"
                 placeholder="Side til"
                 data-testid="cristindata-pages-textfield"
-                inputProps={{ 'data-testid': 'cristindata-pages-textfield-input' }}
+                inputProps={{ 'data-testid': 'cristindata-pagesto-textfield-input' }}
                 style={{ marginLeft: '2rem' }}
                 error={!!error}
                 helperText={<ErrorMessage name={field.name} />}
