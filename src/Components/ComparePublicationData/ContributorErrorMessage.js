@@ -6,8 +6,6 @@ export default function ContributorErrorMessage() {
   let { state } = React.useContext(Context);
 
   const errorMessageCard = {
-    textAlign: 'center',
-    width: '200px',
     display: 'inherit',
     alignItems: 'inherit',
     justifyContent: 'inherit',

@@ -57,6 +57,8 @@ export interface Language {
   lang: string;
   original: boolean;
   title: string;
+  langName?: string;
+  summary?: string;
 }
 
 export const emptyImportPublication: ImportPublication = {
@@ -93,6 +95,7 @@ export interface ChannelLight {
   type: string;
   title: string;
   issn?: string;
+  eissn?: string;
   issn_electronic?: string;
 }
 

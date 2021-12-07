@@ -22,13 +22,10 @@ export async function getInstitutionsByCountryCodes(
 }
 
 export async function getParentsUnitName(
-  cristinInstitutionNr: string | number,
-  searchLanguage: SearchLanguage
+  cristinInstitutionNr: string | number
 ): Promise<AxiosResponse<SimpleUnitResponse[]>> {
   return authenticatedApiRequest({
-    url: encodeURI(
-      `${CRIST_REST_API}/units?parent_unit_id=${cristinInstitutionNr}.0.0.0&per_page=900&lang=${searchLanguage}`
-    ),
+    url: encodeURI(`${CRIST_REST_API}/units?parent_unit_id=${cristinInstitutionNr}.0.0.0&per_page=900&lang=en,nb`),
     method: 'GET',
   });
 }
