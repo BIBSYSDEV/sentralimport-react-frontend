@@ -14,10 +14,15 @@ import { CristinPublication, ImportPublication, Language } from '../../types/Pub
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
-import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
+import {
+  getJournalsByQuery,
+  patchPiaPublication,
+  patchPublication,
+  postPublication,
+  QueryMethod,
+} from '../../api/publicationApi';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
-import { format } from 'date-fns';
 import {
   StyledActionButtonsPlaceHolder,
   StyledErrorMessageWrapper,
@@ -41,7 +46,8 @@ import CompareFormJournal from './CompareFormJournal';
 import CompareFormLanguage from './CompareFormLanguage';
 import { CompareFormValuesType } from './CompareFormTypes';
 import { ContributorType } from '../../types/ContributorTypes';
-import { DoiFormat } from '../../utils/stringUtils';
+import { DoiFormat, formatCristinCreatedDate } from '../../utils/stringUtils';
+import { createCristinPublicationForSaving } from './Helper';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -86,7 +92,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [isConfirmAbortDialogOpen, setIsConfirmAbortDialogOpen] = useState(false);
   const [importPublicationError, setImportPublicationError] = useState<Error | undefined>();
   const [loadJournalIdError, setLoadJournalIdError] = useState<Error | undefined>();
-  const [publicationToBeSaved, setPublicationToBeSaved] = useState<any | undefined>();
 
   //contributors-stuff
   const [isContributorsLoading, setIsContributorsLoading] = useState(false);
@@ -96,7 +101,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [isLoadingContributors, setIsLoadingContributors] = useState(false);
 
   //publication-form-stuff
-  const [formValues, setFormValues] = useState<CompareFormValuesType | undefined>();
+  const [initialFormValues, setInitialFormValues] = useState<CompareFormValuesType | undefined>();
+  const [formValuesToSave, setFormValuesToSave] = useState<CompareFormValuesType | undefined>();
   const sortedLanguagesFromImportPublication = clone(importPublication)
     .languages.sort((a: any, b: any) => a.original - b.original)
     .reverse();
@@ -136,9 +142,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       try {
         setLoadContributorsError(undefined);
         setIsLoadingContributors(true);
-
         if (isDuplicate && !isContributorsLoading) {
-          //merkelig å sjekke om isContributorsLoading
           fetchAllAuthors(state.selectedPublication.cristin_result_id).then();
           setIsContributorsLoading(true);
         }
@@ -153,9 +157,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   }, [isDuplicate, state.selectedPublication]);
 
   useEffect(() => {
+    //init ligger i en useeffect pga asynkront kall til getJournalId
     const initFormik = async () => {
       //Formik is initiated from either importPublication or state.selectedPublication (set in duplicate-modal)
-      setFormValues(
+      setInitialFormValues(
         isDuplicate && state.selectedPublication
           ? {
               title: selectedLang.title ?? '',
@@ -204,36 +209,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     initFormik().then();
   }, [isDuplicate, state.selectedPublication, importPublication]);
 
-  const createPublicationObjectForSaving = (values: CompareFormValuesType) => {
-    const otherChannelDataIfAny = isDuplicate
-      ? { ...state.selectedPublication.journal }
-      : { ...importPublication.channel };
-    return {
-      cristinResultId: isDuplicate ? cristinPublication.cristin_result_id : '',
-      category: values.category.value,
-      categoryName: values.category.label,
-      channel: {
-        ...otherChannelDataIfAny,
-        cristinTidsskriftNr: values.journal.cristinTidsskriftNr,
-        title: values.journal.title,
-        issn: values.journal.issn,
-        eissn: values.journal.eissn,
-      },
-      doi: values.doi,
-      languages: publicationLanguages,
-      pubId: importPublication.pubId,
-      registered: importPublication.registered,
-      yearPublished: values.year,
-      duplicate: isDuplicate,
-      import_sources: [
-        {
-          source_name: importPublication.sourceName,
-          source_reference_id: importPublication.externalId,
-        },
-      ],
-    };
-  };
-
   async function fetchAllAuthors(resultId: string) {
     if (state.doSave) {
       //TODO: dosave-check her også ?
@@ -252,22 +227,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       const tempPub = { ...state.selectedPublication, authors: allAuthors };
       dispatch({ type: 'setSelectedPublication', payload: tempPub });
     }
-  }
-
-  const handleImportButtonClick = (values: CompareFormValuesType) => {
-    setPublicationToBeSaved(createPublicationObjectForSaving(values));
-    if (state.contributors === null) {
-      dispatch({ type: 'contributors', payload: contributors });
-    }
-    setIsConfirmImportDialogOpen(true);
-  };
-
-  function handleAbort() {
-    setIsConfirmAbortDialogOpen(true);
-  }
-
-  function handleContributorModalClose() {
-    setIsContributorModalOpen(false);
   }
 
   function handlePublicationImported(result: any) {
@@ -298,18 +257,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'setContributorsLoaded', payload: false });
   }
 
-  function handleCloseConfirmImportDialog() {
-    setIsConfirmImportDialogOpen(false);
-  }
-
-  function handleConfirmAbortDialogAbort() {
-    setIsConfirmAbortDialogOpen(false);
-  }
-
-  function openContributorModal() {
-    setIsContributorModalOpen(true);
-  }
-
   function emptyGlobalFormErrors() {
     dispatch({ type: 'setFormErrors', payload: [] });
   }
@@ -326,8 +273,86 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     }
   }
 
-  function formatDate(dateString: string) {
-    return format(new Date(dateString), 'LLL dd, yyyy');
+  const generateErrorMessage = (error: any) => {
+    return {
+      result: null,
+      errorMessage:
+        error.response.data &&
+        `Feilkode: (${error.response.data.response_id}). Meldinger: ${
+          error.response.data.errors && error.response.data.errors.toString()
+        }`,
+      status: error.response ? error.response.status : 500,
+    };
+  };
+
+  async function handleCreatePublication(publication: any) {
+    try {
+      const postPublicationResponse = (await postPublication(publication)).data;
+      const cristinResultId = postPublicationResponse.cristin_result_id;
+      await patchPiaPublication(cristinResultId, publication.pub_id);
+      dispatch({ type: 'setFormErrors', payload: [] });
+      let title = publication.title[publication.original_language];
+      title = title.length > 50 ? title.substr(0, 49) : title;
+      let log = JSON.parse(localStorage.getItem('log') || '{}');
+      if (log === null) log = [];
+      else if (log.length > 15) log.shift();
+      log.push({ id: cristinResultId, title: title });
+      localStorage.setItem('log', JSON.stringify(log));
+      dispatch({ type: 'setContributorsLoaded', payload: false });
+      return { result: { id: cristinResultId, title: title }, status: 200 };
+    } catch (error) {
+      handlePotentialExpiredSession(error);
+      return generateErrorMessage(error);
+    }
+  }
+
+  async function handleUpdatePublication(publication: any) {
+    if (publication.pages.count === '0' && !(publication.pages.from && publication.pages.to)) {
+      //bugfix (if patch is used, all 3 properties must have a value)
+      delete publication.pages;
+    }
+    try {
+      await patchPublication(publication);
+      await patchPiaPublication(publication.cristinResultId, publication.pub_id);
+    } catch (error) {
+      handlePotentialExpiredSession(error);
+      return generateErrorMessage(error);
+    }
+    const title =
+      publication.title.en.length > 14 || publication.title.nb.length > 14
+        ? publication.title.hasOwnProperty('en')
+          ? publication.title.en.substring(0, 15)
+          : publication.title.nb.substring(0, 15)
+        : publication.title.hasOwnProperty('en')
+        ? publication.title.en
+        : publication.title.nb;
+    dispatch({ type: 'setContributorsLoaded', payload: false });
+    dispatch({ type: 'setFormErrors', payload: [] });
+    return { result: { id: publication.cristinResultId, title: title }, status: 200 };
+  }
+
+  const handleImportButtonClick = (values: CompareFormValuesType) => {
+    setFormValuesToSave(values);
+    if (state.contributors === null) {
+      dispatch({ type: 'contributors', payload: contributors }); //?
+    }
+    setIsConfirmImportDialogOpen(true);
+  };
+
+  function handleImportPublicationConfirmed(annotation: string) {
+    if (formValuesToSave) {
+      const publication = createCristinPublicationForSaving(
+        formValuesToSave,
+        importPublication,
+        state.selectedPublication,
+        publicationLanguages,
+        annotation,
+        isDuplicate
+      );
+      isDuplicate
+        ? handleUpdatePublication(publication).then((response) => handlePublicationImported(response))
+        : handleCreatePublication(publication).then((response) => handlePublicationImported(response));
+    }
   }
 
   const formValidationSchema = Yup.object().shape({
@@ -352,10 +377,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       ) : (
         <>
           <StyledModal isOpen={isComparePublicationDataModalOpen} size="lg" data-testid="compare-modal">
-            {formValues && (
+            {initialFormValues && (
               <Formik
                 onSubmit={handleImportButtonClick}
-                initialValues={formValues}
+                initialValues={initialFormValues}
                 validateOnMount
                 validationSchema={formValidationSchema}>
                 {({ isValid, handleSubmit }) => (
@@ -392,7 +417,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                           <StyledActionButtonsPlaceHolder />
                           <StyledLineCristinValue data-testid="cristindata-created">
                             <StyledDisabledTypography>
-                              {isDuplicate ? formatDate(cristinPublication.created.date.substring(0, 10)) : '-'}
+                              {isDuplicate && formatCristinCreatedDate(cristinPublication.created.date)}
                             </StyledDisabledTypography>
                           </StyledLineCristinValue>
                         </StyledLineWrapper>
@@ -435,7 +460,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         <Button
                           size="large"
                           data-testid="open-contributors-modal-button"
-                          onClick={openContributorModal}
+                          onClick={() => setIsContributorModalOpen(true)}
                           variant="contained"
                           color="primary">
                           Vis bidragsytere
@@ -459,7 +484,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         </Grid>
                         <Grid item>
                           <Button
-                            onClick={handleAbort}
+                            onClick={handleComparePublicationDataModalClose}
                             variant="outlined"
                             color="secondary"
                             data-testid="import-publication-cancel-button">
@@ -501,22 +526,18 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             }
             open={isConfirmAbortDialogOpen}
             handleClose={handleConfirmAbortDialogSubmit}
-            handleCloseDialog={handleConfirmAbortDialogAbort}
+            handleCloseDialog={() => setIsConfirmAbortDialogOpen(false)}
           />
-          {publicationToBeSaved && (
-            <ConfirmImportDialog
-              open={isConfirmImportDialogOpen}
-              publicationToBeSaved={publicationToBeSaved}
-              handleClose={handlePublicationImported}
-              handleCloseDialog={handleCloseConfirmImportDialog}
-              data={importPublication}
-              duplicate={isDuplicate}
-            />
-          )}
+          <ConfirmImportDialog
+            handleImportPublicationConfirmed={handleImportPublicationConfirmed}
+            isOpen={isConfirmImportDialogOpen}
+            handleAbort={() => setIsConfirmImportDialogOpen(false)}
+          />
+
           {importPublication && (
             <ContributorModal
               isContributorModalOpen={isContributorModalOpen}
-              handleContributorModalClose={handleContributorModalClose.bind(this)}
+              handleContributorModalClose={() => setIsContributorModalOpen(false)}
               importPublication={importPublication}
               isDuplicate={isDuplicate}
             />
