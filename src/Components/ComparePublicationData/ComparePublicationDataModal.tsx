@@ -165,10 +165,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         setIsLoadingContributors(false);
       }
     }
-    getContributors().then();
-  }, [isDuplicate, state.selectedPublication]);
 
-  useEffect(() => {
     const initFormik = async () => {
       //Formik is initiated from either localstorage, importPublication or state.selectedPublication (set in duplicate-modal)
       const generateFormValues = () => {
@@ -228,6 +225,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       setFormValues(isDuplicate ? formValuesFromDuplicate : generateFormValues());
     };
     initFormik().then();
+    getContributors().then();
   }, [isDuplicate, state.selectedPublication, importPublication]);
 
   function saveToLocalStorage(values: CompareFormValuesType) {
