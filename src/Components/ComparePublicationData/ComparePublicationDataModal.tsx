@@ -165,10 +165,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         setIsLoadingContributors(false);
       }
     }
-    getContributors().then();
-  }, [isDuplicate, state.selectedPublication]);
 
-  useEffect(() => {
     const initFormik = async () => {
       //Formik is initiated from either localstorage, importPublication or state.selectedPublication (set in duplicate-modal)
       const generateFormValues = () => {
@@ -228,6 +225,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       setFormValues(isDuplicate ? formValuesFromDuplicate : generateFormValues());
     };
     initFormik().then();
+    getContributors().then();
   }, [isDuplicate, state.selectedPublication, importPublication]);
 
   function saveToLocalStorage(values: CompareFormValuesType) {
@@ -365,7 +363,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   }
 
   const formValidationSchema = Yup.object().shape({
-    title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
+    title: Yup.string().required('Tittel er et obligatorisk felt'),
     year: Yup.number()
       .typeError('Årstall må være et nummer')
       .required('Årstall er et obligatorisk felt')
@@ -375,7 +373,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     doi: Yup.string().matches(DoiFormat, 'Doi har galt format'),
     journal: Yup.object().shape({
       cristinTidsskriftNr: Yup.string().required('Tidsskrift er et obligatorisk felt'),
-      title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
+      title: Yup.string().required('Tittel er et obligatorisk felt'),
     }),
   });
 
