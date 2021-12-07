@@ -491,8 +491,11 @@ export const mockPerson = {
 };
 
 export const cristinIDWithoutActiveAffiliation = '9456892';
-export const cristinIDWithoutAffiliationAttribute = '89754123';
-export const cristinIdForbiddenPerson = '1235412375';
+export const mockCristinIDWithoutAffiliationAttribute = '89754123';
+export const mockCristinIdForbiddenPerson = '1235412375';
+export const mockDoiForEmptyCristinSearch = '123456789';
+export const mockCristinPersonNotFound = '18799';
+export const mockTitleForEmptyCristinSearch = 'this_is_a_mocked_title';
 
 export const mockPersonWithoutActiveAffiliation = {
   first_name: 'Arne',
@@ -505,14 +508,14 @@ export const mockPersonWithoutAffiliationAttribute = {
   first_name: 'Arne',
   surname: 'Benoni',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
-  cristin_person_id: cristinIDWithoutAffiliationAttribute,
+  cristin_person_id: mockCristinIDWithoutAffiliationAttribute,
 };
 
 export const mockForbiddenPerson = {
   first_name: 'Arne',
   surname: 'Benoni',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
-  cristin_person_id: cristinIdForbiddenPerson,
+  cristin_person_id: mockCristinIdForbiddenPerson,
 };
 
 export const mockPersonDetailed = {
@@ -554,7 +557,7 @@ export const mockPersonDetailed = {
 };
 
 export const mockPersonDetailedWithoutAffiliationAttribute = {
-  cristin_person_id: cristinIDWithoutAffiliationAttribute,
+  cristin_person_id: mockCristinIDWithoutAffiliationAttribute,
   first_name: 'Arne',
   surname: 'Benoni',
   identified_cristin_person: true,
@@ -699,6 +702,12 @@ export const mockNotAuthorizedForThisPersonDetailResponse = {
   status: 403,
   response_id: 'svh6s12a',
   errors: ['Client lacks authorization.'],
+};
+
+export const mockCristinPersonNotFoundResponse = {
+  status: 404,
+  response_id: 'q81ba1ps',
+  errors: ['Person not found or not a Cristin person.'],
 };
 
 export const mockSaveErrorResponse = {
