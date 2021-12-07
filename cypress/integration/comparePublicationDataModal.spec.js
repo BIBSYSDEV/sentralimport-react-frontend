@@ -145,8 +145,8 @@ context('importModal', () => {
 
     cy.get(`[data-testid="new-journal-form-issn-input"]`).type(mockInvalidIssn);
     cy.get(`[data-testid="submit-create-journal-button"]`).click();
-    cy.get(`[data-testid="new-journal-form-title-field"]`).contains('Tittel er et obligatorisk felt');
-    cy.get(`[data-testid="new-journal-form-issn-field"]`).contains('SSN er ikke på korrekt format (NNNN-NNNC)');
+    cy.get(`#new-journal-title-helper-text`).contains('Tittel er et obligatorisk felt');
+    cy.get(`#new-journal-issn-helper-text`).contains('SSN er ikke på korrekt format (NNNN-NNNC)');
     cy.get(`[data-testid="new-journal-form-error"]`).contains('Det er feil i tidsskrift-skjema');
     cy.get(`[data-testid="submit-create-journal-button"]`).should('exist');
   });
