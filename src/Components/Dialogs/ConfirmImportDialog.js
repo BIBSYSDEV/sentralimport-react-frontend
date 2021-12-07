@@ -12,6 +12,8 @@ const getNumberOfPages = (pageFrom, pageTo) => {
   if (
     pageFrom === null ||
     pageTo === null ||
+    pageFrom === undefined ||
+    pageTo === undefined ||
     !pageFrom.toString().match(arabicNumberMatcher) ||
     !pageTo.toString().match(arabicNumberMatcher)
   ) {
