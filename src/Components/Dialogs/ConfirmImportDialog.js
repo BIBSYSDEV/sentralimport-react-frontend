@@ -8,8 +8,13 @@ import { handlePotentialExpiredSession } from '../../api/api';
 const getNumberOfPages = (pageFrom, pageTo) => {
   //Dette har blitt lagt inn pga. edge-casen med sidetall med bokstaven "e" i seg.
   //pageTo 2086.e8, pageFrom: 2083
-  const reg = /^[0-9]+$/i;
-  if (pageFrom === null || pageTo === null || !pageFrom.toString().match(reg) || !pageTo.toString().match(reg)) {
+  const arabicNumberMatcher = /^[0-9]+$/i;
+  if (
+    pageFrom === null ||
+    pageTo === null ||
+    !pageFrom.toString().match(arabicNumberMatcher) ||
+    !pageTo.toString().match(arabicNumberMatcher)
+  ) {
     return '0';
     //Javascript håndterer 2^53 integers, SQL hånterer 2^31 for integers.
   } else if (pageTo - pageFrom > Math.pow(2, 31)) {
