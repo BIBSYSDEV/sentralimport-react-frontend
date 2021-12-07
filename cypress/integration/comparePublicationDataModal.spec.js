@@ -115,8 +115,6 @@ context('importModal', () => {
     cy.get(`[data-testid="cristindata-title-textfield-input"]`).clear();
     cy.get(`[data-testid="import-publication-button"]`).focus().should('exist').should('be.disabled');
     cy.get(`#Cristin-title-helper-text`).contains('Tittel er et obligatorisk felt');
-    cy.get(`[data-testid="cristindata-title-textfield-input"]`).clear().type('ABC');
-    cy.get(`#Cristin-title-helper-text`).contains('Tittel må ha minimum');
 
     //doi
     cy.get(`[data-testid="cristindata-doi-textfield-input"]`).clear();
