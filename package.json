@@ -50,7 +50,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "^3.9.11",
+    "@cypress/code-coverage": "^3.9.12",
     "@cypress/instrument-cra": "^1.4.0",
     "@types/history": "^4.7.9",
     "@types/node": "^16.11.12",
