@@ -14,13 +14,7 @@ import { CristinPublication, ImportPublication, Language } from '../../types/Pub
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
-import {
-  getJournalsByQuery,
-  patchPiaPublication,
-  patchPublication,
-  postPublication,
-  QueryMethod,
-} from '../../api/publicationApi';
+import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import {
