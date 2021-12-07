@@ -363,7 +363,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   }
 
   const formValidationSchema = Yup.object().shape({
-    title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
+    title: Yup.string().required('Tittel er et obligatorisk felt'),
     year: Yup.number()
       .typeError('Årstall må være et nummer')
       .required('Årstall er et obligatorisk felt')
@@ -373,7 +373,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     doi: Yup.string().matches(DoiFormat, 'Doi har galt format'),
     journal: Yup.object().shape({
       cristinTidsskriftNr: Yup.string().required('Tidsskrift er et obligatorisk felt'),
-      title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
+      title: Yup.string().required('Tittel er et obligatorisk felt'),
     }),
   });
 

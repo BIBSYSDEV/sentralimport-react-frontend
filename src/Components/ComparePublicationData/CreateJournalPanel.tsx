@@ -44,7 +44,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
   };
 
   const formValidationSchema = Yup.object().shape({
-    title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
+    title: Yup.string().required('Tittel er et obligatorisk felt'),
     issn: Yup.string().trim().matches(IssnFormat, 'ISSN er ikke på korrekt format (NNNN-NNNC)'),
     eissn: Yup.string().trim().matches(IssnFormat, 'e-ISSN er ikke på korrekt format (NNNN-NNNC)'),
   });
