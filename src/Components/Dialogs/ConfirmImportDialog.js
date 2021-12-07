@@ -79,7 +79,7 @@ export default function ConfirmImportDialog(props) {
   }
 
   function createPublicationObject() {
-    const publication = JSON.parse(localStorage.getItem('tempPublication')).publication;
+    const publication = props.publicationToBeSaved;
     let title = {};
     for (let i = 0; i < publication.languages.length; i++) {
       title[publication.languages[i].lang.toLowerCase()] = publication.languages[i].title;
