@@ -1,5 +1,21 @@
 import { CristinPublication, ImportPublication, Language } from '../../types/PublicationTypes';
 import { CompareFormValuesType } from './CompareFormTypes';
+import { patchPiaPublication, patchPublication, postPublication } from '../../api/publicationApi';
+import { handlePotentialExpiredSession } from '../../api/api';
+
+const getNumberOfPages = (pageFrom?: string, pageTo?: string) => {
+  //Dette har blitt lagt inn pga. edge-casen med sidetall med bokstaven "e" i seg.
+  //pageTo 2086.e8, pageFrom: 2083
+  const arabicNumberMatcher = /^[0-9]+$/i;
+  if (!pageTo || !pageFrom || !pageFrom.match(arabicNumberMatcher) || !pageTo.match(arabicNumberMatcher)) {
+    return '0';
+    //Javascript håndterer 2^53 integers, SQL hånterer 2^31 for integers.
+  } else if (+pageTo - +pageFrom > Math.pow(2, 31)) {
+    return '0';
+  } else {
+    return (+pageTo - +pageFrom).toString();
+  }
+};
 
 export const createCristinPublicationForSaving = (
   values: CompareFormValuesType,
@@ -56,7 +72,7 @@ export const createCristinPublicationForSaving = (
     pages: {
       from: values.pageFrom,
       to: values.pageTo,
-      count: null, //TODO: merges
+      count: getNumberOfPages(values.pageFrom, values.pageTo),
     },
     contributors: {
       list: createContributorObject(),
@@ -71,7 +87,59 @@ export const createCristinPublicationForSaving = (
   return cristinPublication;
 };
 
-const createContributorObject = () => {
+export async function handleCreatePublication(publication: any, dispatch: any) {
+  try {
+    const postPublicationResponse = (await postPublication(publication)).data;
+    const cristinResultId = postPublicationResponse.cristin_result_id;
+    await patchPiaPublication(cristinResultId, publication.pub_id);
+    dispatch({ type: 'setFormErrors', payload: [] });
+    let title = publication.title[publication.original_language];
+    title = title.length > 50 ? title.substr(0, 49) : title;
+    let log = JSON.parse(localStorage.getItem('log') || '{}');
+    if (log === null) log = [];
+    else if (log.length > 15) log.shift();
+    log.push({ id: cristinResultId, title: title });
+    localStorage.setItem('log', JSON.stringify(log));
+    dispatch({ type: 'setContributorsLoaded', payload: false });
+    return { result: { id: cristinResultId, title: title }, status: 200 };
+  } catch (error) {
+    handlePotentialExpiredSession(error);
+    return generateErrorMessage(error);
+  }
+}
+const generateErrorMessage = (error: any) => {
+  return {
+    result: null,
+    errorMessage:
+      error.response.data &&
+      `Feilkode: (${error.response.data.response_id}). Meldinger: ${
+        error.response.data.errors && error.response.data.errors.toString()
+      }`,
+    status: error.response ? error.response.status : 500,
+  };
+};
+
+export async function handleUpdatePublication(publication: any, dispatch: any) {
+  if (publication.pages.count === '0' && !(publication.pages.from && publication.pages.to)) {
+    //bugfix (if patch is used, all 3 properties must have a value)
+    delete publication.pages;
+  }
+  try {
+    await patchPublication(publication);
+    await patchPiaPublication(publication.cristinResultId, publication.pub_id);
+  } catch (error) {
+    handlePotentialExpiredSession(error);
+    return generateErrorMessage(error);
+  }
+  dispatch({ type: 'setContributorsLoaded', payload: false });
+  dispatch({ type: 'setFormErrors', payload: [] });
+  return {
+    result: { id: publication.cristinResultId, title: publication.title.en ?? publication.title.no },
+    status: 200,
+  };
+}
+
+export const createContributorObject = () => {
   const temp = JSON.parse(localStorage.getItem('tempContributors') || '{}');
   let contributors = [];
   if (temp.contributors) {

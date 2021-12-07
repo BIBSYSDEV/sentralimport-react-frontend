@@ -47,7 +47,11 @@ import CompareFormLanguage from './CompareFormLanguage';
 import { CompareFormValuesType } from './CompareFormTypes';
 import { ContributorType } from '../../types/ContributorTypes';
 import { DoiFormat, formatCristinCreatedDate } from '../../utils/stringUtils';
-import { createCristinPublicationForSaving } from './Helper';
+import {
+  createCristinPublicationForSaving,
+  handleCreatePublication,
+  handleUpdatePublication,
+} from './ImportPublicationHelper';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -154,7 +158,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       }
     }
 
-  useEffect(() => {
     //init ligger i en useeffect pga asynkront kall til getJournalId
     const initFormik = async () => {
       //Formik is initiated from either importPublication or state.selectedPublication (set in duplicate-modal)
@@ -272,64 +275,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     }
   }
 
-  const generateErrorMessage = (error: any) => {
-    return {
-      result: null,
-      errorMessage:
-        error.response.data &&
-        `Feilkode: (${error.response.data.response_id}). Meldinger: ${
-          error.response.data.errors && error.response.data.errors.toString()
-        }`,
-      status: error.response ? error.response.status : 500,
-    };
-  };
-
-  async function handleCreatePublication(publication: any) {
-    try {
-      const postPublicationResponse = (await postPublication(publication)).data;
-      const cristinResultId = postPublicationResponse.cristin_result_id;
-      await patchPiaPublication(cristinResultId, publication.pub_id);
-      dispatch({ type: 'setFormErrors', payload: [] });
-      let title = publication.title[publication.original_language];
-      title = title.length > 50 ? title.substr(0, 49) : title;
-      let log = JSON.parse(localStorage.getItem('log') || '{}');
-      if (log === null) log = [];
-      else if (log.length > 15) log.shift();
-      log.push({ id: cristinResultId, title: title });
-      localStorage.setItem('log', JSON.stringify(log));
-      dispatch({ type: 'setContributorsLoaded', payload: false });
-      return { result: { id: cristinResultId, title: title }, status: 200 };
-    } catch (error) {
-      handlePotentialExpiredSession(error);
-      return generateErrorMessage(error);
-    }
-  }
-
-  async function handleUpdatePublication(publication: any) {
-    if (publication.pages.count === '0' && !(publication.pages.from && publication.pages.to)) {
-      //bugfix (if patch is used, all 3 properties must have a value)
-      delete publication.pages;
-    }
-    try {
-      await patchPublication(publication);
-      await patchPiaPublication(publication.cristinResultId, publication.pub_id);
-    } catch (error) {
-      handlePotentialExpiredSession(error);
-      return generateErrorMessage(error);
-    }
-    const title =
-      publication.title.en.length > 14 || publication.title.nb.length > 14
-        ? publication.title.hasOwnProperty('en')
-          ? publication.title.en.substring(0, 15)
-          : publication.title.nb.substring(0, 15)
-        : publication.title.hasOwnProperty('en')
-        ? publication.title.en
-        : publication.title.nb;
-    dispatch({ type: 'setContributorsLoaded', payload: false });
-    dispatch({ type: 'setFormErrors', payload: [] });
-    return { result: { id: publication.cristinResultId, title: title }, status: 200 };
-  }
-
   const handleImportButtonClick = (values: CompareFormValuesType) => {
     setFormValuesToSave(values);
     if (state.contributors === null) {
@@ -349,8 +294,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         isDuplicate
       );
       isDuplicate
-        ? handleUpdatePublication(publication).then((response) => handlePublicationImported(response))
-        : handleCreatePublication(publication).then((response) => handlePublicationImported(response));
+        ? handleUpdatePublication(publication, dispatch).then((response) => handlePublicationImported(response))
+        : handleCreatePublication(publication, dispatch).then((response) => handlePublicationImported(response));
     }
   }
 
