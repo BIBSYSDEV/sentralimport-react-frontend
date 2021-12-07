@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Form } from 'reactstrap';
-import { Button, Card, FormGroup, Grid, TextField } from '@material-ui/core';
+import { Button, Card, FormGroup, Grid, TextField, Typography } from '@material-ui/core';
 import ContributorSearchPanel from './ContributorSearchPanel';
 import {
   Affiliation,
@@ -15,6 +15,7 @@ import { getInstitutionName, SearchLanguage } from '../../api/contributorApi';
 
 import styled from 'styled-components';
 import EditAffiliations from './EditAffiliations';
+import { StyledVerifiedBadge } from '../../assets/styles/StyledBadges';
 
 const StyledFlexEndButtons = styled(Button)`
   &&.MuiButton-root {
@@ -40,6 +41,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
   const [selectedInstitution, setSetSelectedInstitution] = useState(emptyInstitutionSelector);
   const [selectedUnit, setSelectedUnit] = useState<UnitSelector>(emptyUnitSelector);
   const [addDisabled, setAddDisabled] = useState(false);
+  const [isEditingName, setIsEditingName] = useState(false);
 
   async function handleSubmit(continueEditing: boolean) {
     //TODO: finn ut om det er noen grunn til objekt-copy i det hele tatt ?
@@ -165,6 +167,18 @@ const ContributorForm: FC<ContributorFormProps> = ({
 
   return (
     <Form data-testid={`contributor-form-${resultListIndex}`}>
+      {contributorData.toBeCreated.cristin_person_id && contributorData.toBeCreated.cristin_person_id !== 0 ? (
+        <>
+          <Typography variant="h6">
+            {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`} <StyledVerifiedBadge />
+          </Typography>
+        </>
+      ) : (
+        <Typography variant="h6">
+          {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
+        </Typography>
+      )}
+
       <FormGroup>
         <TextField
           id={'firstName' + resultListIndex}
@@ -186,6 +200,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
           required
         />
       </FormGroup>
+
       <ContributorSearchPanel
         contributorData={contributorData}
         resultListIndex={resultListIndex}

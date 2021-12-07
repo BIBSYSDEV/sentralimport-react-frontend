@@ -1,5 +1,17 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Button, Card, CardContent, CircularProgress, Collapse, Grid, Typography } from '@material-ui/core';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  Collapse,
+  Grid,
+  TextField,
+  Typography,
+} from '@material-ui/core';
 import { ContributorType, ContributorWrapper } from '../../types/ContributorTypes';
 import ContributorSearchResultItem from './ContributorSearchResultItem';
 import { getPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
@@ -9,6 +21,8 @@ import { handlePotentialExpiredSession } from '../../api/api';
 import styled from 'styled-components';
 import { Colors } from '../../assets/styles/StyleConstants';
 import clone from 'just-clone';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import SearchIcon from '@material-ui/icons/Search';
 
 const StyledResultTypography = styled(Typography)`
   &.MuiTypography-root {
@@ -50,6 +64,9 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   const [openContributorSearchPanel, setOpenContributorSearchPanel] = useState(false);
   const [addAffiliationSuccessful, setAddAffiliationSuccessful] = useState<string | undefined>(undefined);
   const [addAffiliationError, setAddAffiliationError] = useState<AddAffiliationError | undefined>();
+  const [firstName, setFirstName] = useState(contributorData.toBeCreated.first_name);
+  const [surname, setSurname] = useState(contributorData.toBeCreated.surname);
+  const [isEditingName, setIsEditingName] = useState(true);
 
   function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
     const cristinIdSet = new Set();
@@ -66,10 +83,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     let unitNameCache = new Map();
     let institutionNameCache = new Map();
     try {
-      const authorResults = await searchPersonDetailByName(
-        `${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`
-      );
-
+      const authorResults = await searchPersonDetailByName(`${firstName} ${surname}`);
       if (authorResults.data.length > 0) {
         const fetchedAuthors: ContributorType[] = [];
         for (let i = 0; i < authorResults.data.length; i++) {
@@ -175,6 +189,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     temp.toBeCreated.isEditing = false;
     temp.toBeCreated.order = resultListIndex + 1;
     setOpenContributorSearchPanel(false);
+    setIsEditingName(false);
     updateContributor(temp, resultListIndex);
   }
 
@@ -185,35 +200,112 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     }
   }
 
+  function handleResetPersonWithCristinId() {
+    const temp = contributorData;
+    temp.toBeCreated.first_name_preferred = undefined;
+    temp.toBeCreated.surname_preferred = undefined;
+    temp.toBeCreated.first_name = firstName;
+    temp.toBeCreated.surname = surname;
+    temp.toBeCreated.cristin_person_id = 0;
+    updateContributor(temp, resultListIndex);
+    setOpenContributorSearchPanel(false);
+    setIsEditingName(false);
+  }
+
+  function handleSaveNameChangeContributorWithoutCristinId() {
+    const temp = contributorData;
+    temp.toBeCreated.first_name = firstName;
+    temp.toBeCreated.surname = surname;
+    updateContributor(temp, resultListIndex);
+    setOpenContributorSearchPanel(false);
+    setIsEditingName(false);
+  }
+
   return (
     <Grid container spacing={2} alignItems="center">
-      <Grid item>
-        <Button
-          variant="outlined"
-          color="primary"
-          data-testid={`contributor-search-button-${resultListIndex}`}
-          onClick={() => retrySearch()}
-          disabled={contributorData.toBeCreated.first_name === '' || contributorData.toBeCreated.surname === ''}>
-          Søk etter person
-        </Button>
-      </Grid>
-      {!searching && searchError && (
+      {!isEditingName && (
         <Grid item>
-          <Typography color="error">{searchError.message ?? 'Noe gikk galt med søket, prøv igjen'} </Typography>
+          <Button
+            onClick={() => {
+              setIsEditingName(true);
+              setOpenContributorSearchPanel(true);
+              retrySearch();
+            }}
+            variant="outlined"
+            color="primary">
+            Vis søk
+          </Button>
         </Grid>
       )}
-      {searching && (
+      {isEditingName && (
         <Grid item>
-          <StyledCircularProgress size={'2rem'} />
-        </Grid>
-      )}
-      {openContributorSearchPanel && !searching && (
-        <Grid item>
-          <StyledResultTypography variant="h6">Fant {searchResults.length} bidragsytere</StyledResultTypography>
+          <Button
+            color="primary"
+            variant="outlined"
+            onClick={() => {
+              setIsEditingName(false);
+            }}>
+            Skjul søk
+          </Button>
         </Grid>
       )}
       <Grid item xs={12}>
-        <Collapse in={openContributorSearchPanel && !searching}>
+        <Collapse in={isEditingName}>
+          <Grid container spacing={2}>
+            <Grid item>
+              <TextField
+                id={'firstName' + resultListIndex}
+                label="Fornavn"
+                value={firstName}
+                margin="normal"
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </Grid>
+            <Grid item>
+              <TextField
+                id={'firstName' + resultListIndex}
+                label="Fornavn"
+                value={surname}
+                margin="normal"
+                onChange={(e) => setSurname(e.target.value)}
+              />
+            </Grid>
+            <Grid item>
+              <Button
+                startIcon={<SearchIcon />}
+                variant="outlined"
+                color="primary"
+                data-testid={`contributor-search-button-${resultListIndex}`}
+                onClick={() => {
+                  setIsEditingName(true);
+                  retrySearch();
+                }}
+                disabled={contributorData.toBeCreated.first_name === '' || contributorData.toBeCreated.surname === ''}>
+                Søk etter person
+              </Button>
+            </Grid>
+            {!searching && searchError && (
+              <Grid item xs={12}>
+                <Typography color="error">{searchError.message ?? 'Noe gikk galt med søket, prøv igjen'} </Typography>
+              </Grid>
+            )}
+            {searching && (
+              <Grid item xs={12}>
+                <StyledCircularProgress size={'2rem'} />
+              </Grid>
+            )}
+
+            {isEditingName && !searching && (
+              <Grid item xs={12}>
+                <StyledResultTypography variant="h6">Fant {searchResults.length} bidragsytere</StyledResultTypography>
+              </Grid>
+            )}
+          </Grid>
+        </Collapse>
+      </Grid>
+
+      <Grid item xs={12}>
+        <Collapse in={openContributorSearchPanel && isEditingName && !searching && searchResults.length > 0}>
           <StyledCard variant="outlined">
             <CardContent>
               {searchResults.map((author: ContributorType) => (
