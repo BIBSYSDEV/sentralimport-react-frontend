@@ -88,6 +88,8 @@ context('importModal', () => {
     cy.get(`[data-testid="compare-form-journal-error"]`).contains('Tidsskrift er et obligatorisk felt');
     cy.get(`[data-testid="compare-form-error"]`).contains('Det er feil i skjema');
 
+    cy.get(`[data-testid="compare-form-journal-action-action-button"]`).should('be.disabled');
+
     //legg til tidskrift
     cy.get(`#search-journal-header`).click();
     cy.get(`[data-testid="cristindata-journal-select-textfield"]`).type('per');
@@ -95,8 +97,11 @@ context('importModal', () => {
     cy.get(`[data-testid="submit-search-journal-button"]`).click();
     cy.get(`[data-testid="compare-form-error"]`).should('not.exist');
     cy.get(`[data-testid="import-publication-button"]`).should('exist').should('not.be.disabled');
+    cy.get(`[data-testid="compare-form-journal-action-action-button"]`).should('be.disabled');
+    cy.get(`[data-testid="compare-form-pages-action-equals-icon"]`).should('exist');
 
     //årstall
+    cy.get(`[data-testid="compare-form-year-action-equals-icon"]`).should('exist');
     cy.get(`[data-testid="cristindata-year-textfield-input"]`).clear();
     cy.get(`[data-testid="import-publication-button"]`).focus().should('exist').should('be.disabled');
     cy.get(`#Cristin-year-helper-text`).contains('Årstall er et obligatorisk felt');
@@ -110,17 +115,28 @@ context('importModal', () => {
     cy.get(`#Cristin-year-helper-text`).contains('Årstall må være større enn');
     cy.get(`[data-testid="cristindata-year-textfield-input"]`).clear().type('20.1');
     cy.get(`#Cristin-year-helper-text`).contains('Årstall må være heltall');
+    cy.get(`[data-testid="compare-form-year-action-action-button"]`).should('not.be.disabled');
 
     //tittel
+    cy.get(`[data-testid="compare-form-title-action-equals-icon"]`).should('exist');
     cy.get(`[data-testid="cristindata-title-textfield-input"]`).clear();
     cy.get(`[data-testid="import-publication-button"]`).focus().should('exist').should('be.disabled');
     cy.get(`#Cristin-title-helper-text`).contains('Tittel er et obligatorisk felt');
+    cy.get(`[data-testid="compare-form-title-action-action-button"]`).should('not.be.disabled');
 
     //doi
+    cy.get(`[data-testid="compare-form-doi-action-equals-icon"]`).should('exist');
     cy.get(`[data-testid="cristindata-doi-textfield-input"]`).clear();
     cy.get(`[data-testid="import-publication-button"]`).focus().should('exist').should('be.disabled');
     cy.get(`[data-testid="cristindata-doi-textfield-input"]`).clear().type('ABC');
     cy.get(`#Cristin-doi-helper-text`).contains('Doi har galt format');
+    cy.get(`[data-testid="compare-form-doi-action-action-button"]`).should('exist').should('be.disabled');
+
+    //pages
+    cy.wait(400);
+    cy.get(`[data-testid="cristindata-pagesto-textfield-input"]`).should('have.value', '');
+    cy.get(`[data-testid="compare-form-pages-action-action-button"]`).should('not.exist');
+    cy.get(`[data-testid="compare-form-pages-action-equals-icon"]`).should('exist');
   });
 
   it('can registrate a new journal', () => {

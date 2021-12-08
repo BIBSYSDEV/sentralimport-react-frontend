@@ -247,6 +247,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
               title: values.journal.title,
               issn: values.journal.issn,
               eissn: values.journal.eissn,
+              pageFrom: values.pageFrom,
+              pageTo: values.pageTo,
             },
             doi: values.doi,
             languages: publicationLanguages,

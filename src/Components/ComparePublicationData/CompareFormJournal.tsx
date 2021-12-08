@@ -74,6 +74,7 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication, lo
         }
         isCopyBottonDisabled={!importPublication.channel?.title}
         copyCommand={() => setFieldValue('journal', createJournalFromImportPublication, true)}
+        dataTestid={'compare-form-journal-action'}
       />
       <StyledLineCristinValue>
         <StyledJournalPresentationWrapper>
