@@ -3,6 +3,8 @@ import { CompareFormValuesType } from './CompareFormTypes';
 import { patchPiaPublication, patchPublication, postPublication } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
 
+//TODO: fix types
+
 const getNumberOfPages = (pageFrom?: string, pageTo?: string) => {
   //Dette har blitt lagt inn pga. edge-casen med sidetall med bokstaven "e" i seg.
   //pageTo 2086.e8, pageFrom: 2083
@@ -51,7 +53,7 @@ export const createCristinPublicationForSaving = (
               },
             ],
           },
-    original_language: publicationLanguages.filter((l: any) => l.original)[0].lang.toLowerCase(),
+    original_language: publicationLanguages.filter((language: Language) => language.original)[0].lang.toLowerCase(),
     title: title,
     pub_id: importPublication.pubId,
     year_published: values.year.toString(),
@@ -93,30 +95,36 @@ export async function handleCreatePublication(publication: any, dispatch: any) {
     const cristinResultId = postPublicationResponse.cristin_result_id;
     await patchPiaPublication(cristinResultId, publication.pub_id);
     dispatch({ type: 'setFormErrors', payload: [] });
+    const log = JSON.parse(localStorage.getItem('log') || '[]') ?? [];
+    if (log.length > 15) log.shift();
     let title = publication.title[publication.original_language];
-    title = title.length > 50 ? title.substr(0, 49) : title;
-    let log = JSON.parse(localStorage.getItem('log') || '{}');
-    if (log === null) log = [];
-    else if (log.length > 15) log.shift();
+    title = title.length > 50 ? title.substring(0, 49) : title;
     log.push({ id: cristinResultId, title: title });
     localStorage.setItem('log', JSON.stringify(log));
     dispatch({ type: 'setContributorsLoaded', payload: false });
     return { result: { id: cristinResultId, title: title }, status: 200 };
   } catch (error) {
     handlePotentialExpiredSession(error);
-    return generateErrorMessage(error);
+    return generateErrorMessage(error as Error);
   }
 }
 const generateErrorMessage = (error: any) => {
-  return {
-    result: null,
-    errorMessage:
-      error.response.data &&
-      `Feilkode: (${error.response.data.response_id}). Meldinger: ${
-        error.response.data.errors && error.response.data.errors.toString()
-      }`,
-    status: error.response ? error.response.status : 500,
-  };
+  if (error.response) {
+    return {
+      result: null,
+      errorMessage:
+        error.response?.data &&
+        `Feilkode: (${error.response.data.response_id}). Meldinger: ${
+          error.response?.data?.errors && error.response.data.errors.toString()
+        }`,
+      status: error.response ? error.response.status : 500,
+    };
+  } else {
+    return {
+      result: null,
+      errorMessage: error.message,
+    };
+  }
 };
 
 export async function handleUpdatePublication(publication: any, dispatch: any) {
@@ -129,7 +137,7 @@ export async function handleUpdatePublication(publication: any, dispatch: any) {
     await patchPiaPublication(publication.cristinResultId, publication.pub_id);
   } catch (error) {
     handlePotentialExpiredSession(error);
-    return generateErrorMessage(error);
+    return generateErrorMessage(error as Error);
   }
   dispatch({ type: 'setContributorsLoaded', payload: false });
   dispatch({ type: 'setFormErrors', payload: [] });
