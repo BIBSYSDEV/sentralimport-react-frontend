@@ -9,6 +9,7 @@ phases:
     runtime-versions:
       nodejs: 12.x
     commands:
+      - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf && sysctl -p #requires environment set to privileged true in aws build details
       - pip3 install --upgrade cfn-lint
       - node -v
       - npm -v

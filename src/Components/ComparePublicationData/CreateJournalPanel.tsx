@@ -44,7 +44,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
   };
 
   const formValidationSchema = Yup.object().shape({
-    title: Yup.string().required('Tittel er et obligatorisk felt').min(6, 'Tittel må ha minimum 6 tegn'),
+    title: Yup.string().required('Tittel er et obligatorisk felt'),
     issn: Yup.string().trim().matches(IssnFormat, 'ISSN er ikke på korrekt format (NNNN-NNNC)'),
     eissn: Yup.string().trim().matches(IssnFormat, 'e-ISSN er ikke på korrekt format (NNNN-NNNC)'),
   });
@@ -61,6 +61,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
               {({ field, meta: { error, touched } }: FieldProps) => (
                 <StyledTextField
                   fullWidth
+                  id="new-journal-title"
                   label="Tittel *"
                   data-testid="new-journal-form-title-field"
                   inputProps={{ 'data-testid': 'new-journal-form-title-input' }}
@@ -75,6 +76,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                 <StyledTextField
                   fullWidth
                   label="ISSN "
+                  id="new-journal-issn"
                   data-testid="new-journal-form-issn-field"
                   inputProps={{ 'data-testid': 'new-journal-form-issn-input' }}
                   {...field}
@@ -88,6 +90,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                 <StyledTextField
                   fullWidth
                   label="e-ISSN "
+                  id="new-journal-eissn"
                   data-testid="new-journal-form-eissn-field"
                   inputProps={{ 'data-testid': 'new-journal-form-eissn-input' }}
                   {...field}

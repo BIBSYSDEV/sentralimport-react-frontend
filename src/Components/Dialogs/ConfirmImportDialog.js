@@ -5,6 +5,27 @@ import TextField from '@material-ui/core/TextField';
 import { patchPiaPublication, patchPublication, postPublication } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
 
+const getNumberOfPages = (pageFrom, pageTo) => {
+  //Dette har blitt lagt inn pga. edge-casen med sidetall med bokstaven "e" i seg.
+  //pageTo 2086.e8, pageFrom: 2083
+  const arabicNumberMatcher = /^[0-9]+$/i;
+  if (
+    pageFrom === null ||
+    pageTo === null ||
+    pageFrom === undefined ||
+    pageTo === undefined ||
+    !pageFrom.toString().match(arabicNumberMatcher) ||
+    !pageTo.toString().match(arabicNumberMatcher)
+  ) {
+    return '0';
+    //Javascript håndterer 2^53 integers, SQL hånterer 2^31 for integers.
+  } else if (pageTo - pageFrom > Math.pow(2, 31)) {
+    return '0';
+  } else {
+    return (pageTo - pageFrom).toString();
+  }
+};
+
 export default function ConfirmImportDialog(props) {
   let { dispatch } = React.useContext(Context);
   const [annotation, setAnnotation] = React.useState(null);
@@ -122,13 +143,7 @@ export default function ConfirmImportDialog(props) {
       pages: {
         from: publication.channel.pageFrom,
         to: publication.channel.pageTo,
-        count:
-          publication.channel.pageTo !== null &&
-          publication.channel.pageFrom !== null &&
-          !isNaN(publication.channel.pageTo) &&
-          !isNaN(publication.channel.pageFrom)
-            ? (publication.channel.pageTo - publication.channel.pageFrom).toString()
-            : '0',
+        count: getNumberOfPages(publication.channel.pageFrom, publication.channel.pageTo),
       },
       contributors: {
         list: createContributorObject(),
