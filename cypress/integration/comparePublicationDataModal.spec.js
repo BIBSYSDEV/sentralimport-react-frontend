@@ -87,7 +87,6 @@ context('importModal', () => {
     cy.get(`[data-testid="import-publication-button"]`).should('exist').should('be.disabled');
     cy.get(`[data-testid="compare-form-journal-error"]`).contains('Tidsskrift er et obligatorisk felt');
     cy.get(`[data-testid="compare-form-error"]`).contains('Det er feil i skjema');
-
     cy.get(`[data-testid="compare-form-journal-action-action-button"]`).should('be.disabled');
 
     //legg til tidskrift
