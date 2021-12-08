@@ -227,6 +227,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   function handlePublicationImported(result: any) {
     setIsConfirmImportDialogOpen(false);
+    //TODO! NB! this should be removed as soon as contributors does not use localstorage anymore
+    window.localStorage.removeItem('tempContributors');
     if (result.status === 200) {
       enqueueSnackbar(
         'Importerte ny publikasjon (Cristin-id: ' + result.result.id + ' og tittel: ' + result.result.title + ')',
@@ -246,6 +248,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   }
 
   function handleConfirmAbortDialogSubmit() {
+    //TODO! NB! this should be removed as soon as contributors does not use localstorage anymore
+    window.localStorage.removeItem('tempContributors');
     dispatch({ type: 'doSave', payload: false });
     setIsConfirmAbortDialogOpen(false);
     handleComparePublicationDataModalClose();
@@ -464,7 +468,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             }
             open={isConfirmAbortDialogOpen}
             handleClose={handleConfirmAbortDialogSubmit}
-            handleCloseDialog={() => setIsConfirmAbortDialogOpen(false)}
+            handleAbort={() => setIsConfirmAbortDialogOpen(false)}
           />
           <ConfirmImportDialog
             handleImportPublicationConfirmed={handleImportPublicationConfirmed}
