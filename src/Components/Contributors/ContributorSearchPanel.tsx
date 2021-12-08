@@ -250,6 +250,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     <StyledCard variant="outlined">
       {!openContributorSearchPanel && (
         <StyledAccordionLikeButton
+          data-testid={`contributor-search-button-${resultListIndex}`}
           size="large"
           onClick={() => {
             setOpenContributorSearchPanel(true);
@@ -327,7 +328,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
               startIcon={<SearchIcon />}
               variant="outlined"
               color="primary"
-              data-testid={`contributor-search-button-${resultListIndex}`}
+              data-testid={`contributor-retry-search-button-${resultListIndex}`}
               onClick={() => {
                 searchForContributors(firstName, surname);
               }}

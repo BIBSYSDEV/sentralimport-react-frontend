@@ -1,6 +1,5 @@
 import React, { FC, useState } from 'react';
-import { Form } from 'reactstrap';
-import { Button, Card, Collapse, FormGroup, Grid, TextField, Typography } from '@material-ui/core';
+import { Button, Card, Grid, Typography } from '@material-ui/core';
 import ContributorSearchPanel from './ContributorSearchPanel';
 import {
   Affiliation,
@@ -146,18 +145,16 @@ const ContributorForm: FC<ContributorFormProps> = ({
   }
 
   return (
-    <Form data-testid={`contributor-form-${resultListIndex}`}>
-      {contributorData.toBeCreated.cristin_person_id && contributorData.toBeCreated.cristin_person_id !== 0 ? (
-        <>
-          <Typography variant="h6">
-            {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`} <StyledVerifiedBadge />
-          </Typography>
-        </>
-      ) : (
-        <Typography variant="h6">
-          {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
-        </Typography>
-      )}
+    <div data-testid={`contributor-form-${resultListIndex}`}>
+      <Typography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
+        {contributorData.toBeCreated.cristin_person_id && contributorData.toBeCreated.cristin_person_id !== 0 ? (
+          <>
+            `${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}` <StyledVerifiedBadge />
+          </>
+        ) : (
+          `${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`
+        )}
+      </Typography>
       <ContributorSearchPanel
         contributorData={contributorData}
         resultListIndex={resultListIndex}
@@ -218,7 +215,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
           </StyledFlexEndButtons>
         </Grid>
       </Grid>
-    </Form>
+    </div>
   );
 };
 
