@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -23,6 +23,7 @@ import { Colors } from '../../assets/styles/StyleConstants';
 import clone from 'just-clone';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
+import EditNameDialog from './EditNameDialog';
 
 const StyledResultTypography = styled(Typography)`
   &.MuiTypography-root {
@@ -64,9 +65,10 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   const [openContributorSearchPanel, setOpenContributorSearchPanel] = useState(false);
   const [addAffiliationSuccessful, setAddAffiliationSuccessful] = useState<string | undefined>(undefined);
   const [addAffiliationError, setAddAffiliationError] = useState<AddAffiliationError | undefined>();
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [name, setName] = useState(`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`);
   const [firstName, setFirstName] = useState(contributorData.toBeCreated.first_name);
   const [surname, setSurname] = useState(contributorData.toBeCreated.surname);
-  const [isEditingName, setIsEditingName] = useState(true);
 
   function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
     const cristinIdSet = new Set();
@@ -77,55 +79,66 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     });
   }
 
-  async function retrySearch() {
-    setSearching(true);
-    setSearchError(undefined);
-    let unitNameCache = new Map();
-    let institutionNameCache = new Map();
-    try {
-      const authorResults = await searchPersonDetailByName(`${firstName} ${surname}`);
-      if (authorResults.data.length > 0) {
-        const fetchedAuthors: ContributorType[] = [];
-        for (let i = 0; i < authorResults.data.length; i++) {
-          const resultAffiliations: Affiliation[] = [];
-          const fetchedAuthor = await getPersonDetailById(authorResults.data[i]);
-          if (fetchedAuthor && fetchedAuthor.affiliations) {
-            const activeAffiliations = fetchedAuthor.affiliations.filter(
-              (affiliation: Affiliation) => affiliation.active
-            );
-            for (const activeAffiliation of activeAffiliations) {
-              const detailedAffiliationAndCache = await getAffiliationDetails(
-                activeAffiliation,
-                unitNameCache,
-                institutionNameCache
+  const getSurname = (name: string) => {
+    return name.split(' ').slice(-1).join(' ');
+  };
+
+  const getFirstName = (name: string) => {
+    return name.split(' ').slice(0, -1).join(' ');
+  };
+
+  const searchForContributors = useCallback((name) => {
+    async function retrySearch() {
+      setSearching(true);
+      setSearchError(undefined);
+      let unitNameCache = new Map();
+      let institutionNameCache = new Map();
+      try {
+        const authorResults = await searchPersonDetailByName(name);
+        if (authorResults.data.length > 0) {
+          const fetchedAuthors: ContributorType[] = [];
+          for (let i = 0; i < authorResults.data.length; i++) {
+            const resultAffiliations: Affiliation[] = [];
+            const fetchedAuthor = await getPersonDetailById(authorResults.data[i]);
+            if (fetchedAuthor && fetchedAuthor.affiliations) {
+              const activeAffiliations = fetchedAuthor.affiliations.filter(
+                (affiliation: Affiliation) => affiliation.active
               );
-              unitNameCache = detailedAffiliationAndCache.unitNameCache;
-              institutionNameCache = detailedAffiliationAndCache.institutionNameCache;
-              detailedAffiliationAndCache.affiliation &&
-                resultAffiliations.push(detailedAffiliationAndCache.affiliation);
+              for (const activeAffiliation of activeAffiliations) {
+                const detailedAffiliationAndCache = await getAffiliationDetails(
+                  activeAffiliation,
+                  unitNameCache,
+                  institutionNameCache
+                );
+                unitNameCache = detailedAffiliationAndCache.unitNameCache;
+                institutionNameCache = detailedAffiliationAndCache.institutionNameCache;
+                detailedAffiliationAndCache.affiliation &&
+                  resultAffiliations.push(detailedAffiliationAndCache.affiliation);
+              }
+              fetchedAuthor.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(resultAffiliations);
+            } else if (fetchedAuthor && !fetchedAuthor.affiliations) {
+              fetchedAuthor.affiliations = [];
             }
-            fetchedAuthor.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(resultAffiliations);
-          } else if (fetchedAuthor && !fetchedAuthor.affiliations) {
-            fetchedAuthor.affiliations = [];
+            if (fetchedAuthor) {
+              fetchedAuthors.push(fetchedAuthor);
+            }
           }
-          if (fetchedAuthor) {
-            fetchedAuthors.push(fetchedAuthor);
-          }
+          setSearchResults(fetchedAuthors);
+          setOpenContributorSearchPanel(true);
+        } else {
+          setSearchResults([]);
+          setOpenContributorSearchPanel(true);
         }
-        setSearchResults(fetchedAuthors);
-        setOpenContributorSearchPanel(true);
-      } else {
+      } catch (error: any) {
+        handlePotentialExpiredSession(error);
+        setSearchError(error);
         setSearchResults([]);
-        setOpenContributorSearchPanel(true);
+      } finally {
+        setSearching(false);
       }
-    } catch (error: any) {
-      handlePotentialExpiredSession(error);
-      setSearchError(error);
-      setSearchResults([]);
-    } finally {
-      setSearching(false);
     }
-  }
+    retrySearch().then();
+  }, []);
 
   function handleChooseOnlyAffiliation(newaffiliation: Affiliation) {
     setAddAffiliationError(undefined);
@@ -189,7 +202,6 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     temp.toBeCreated.isEditing = false;
     temp.toBeCreated.order = resultListIndex + 1;
     setOpenContributorSearchPanel(false);
-    setIsEditingName(false);
     updateContributor(temp, resultListIndex);
   }
 
@@ -200,36 +212,17 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     }
   }
 
-  function handleResetPersonWithCristinId() {
-    const temp = contributorData;
-    temp.toBeCreated.first_name_preferred = undefined;
-    temp.toBeCreated.surname_preferred = undefined;
-    temp.toBeCreated.first_name = firstName;
-    temp.toBeCreated.surname = surname;
-    temp.toBeCreated.cristin_person_id = 0;
-    updateContributor(temp, resultListIndex);
-    setOpenContributorSearchPanel(false);
-    setIsEditingName(false);
-  }
-
-  function handleSaveNameChangeContributorWithoutCristinId() {
-    const temp = contributorData;
-    temp.toBeCreated.first_name = firstName;
-    temp.toBeCreated.surname = surname;
-    updateContributor(temp, resultListIndex);
-    setOpenContributorSearchPanel(false);
-    setIsEditingName(false);
-  }
-
   return (
     <Grid container spacing={2} alignItems="center">
-      {!isEditingName && (
+      {!openContributorSearchPanel && (
         <Grid item>
           <Button
             onClick={() => {
-              setIsEditingName(true);
               setOpenContributorSearchPanel(true);
-              retrySearch();
+              setName(`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`);
+              setFirstName(contributorData.toBeCreated.first_name);
+              setSurname(contributorData.toBeCreated.surname);
+              searchForContributors(name);
             }}
             variant="outlined"
             color="primary">
@@ -237,37 +230,33 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
           </Button>
         </Grid>
       )}
-      {isEditingName && (
+      {openContributorSearchPanel && (
         <Grid item>
           <Button
             color="primary"
             variant="outlined"
             onClick={() => {
-              setIsEditingName(false);
+              setOpenContributorSearchPanel(false);
             }}>
             Skjul søk
           </Button>
         </Grid>
       )}
       <Grid item xs={12}>
-        <Collapse in={isEditingName}>
+        <Collapse in={openContributorSearchPanel}>
           <Grid container spacing={2}>
-            <Grid item>
+            <Grid item xs={12}>
               <TextField
                 id={'firstName' + resultListIndex}
-                label="Fornavn"
-                value={firstName}
+                label="Søk navn"
+                value={name}
                 margin="normal"
-                onChange={(e) => setFirstName(e.target.value)}
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                id={'firstName' + resultListIndex}
-                label="Fornavn"
-                value={surname}
-                margin="normal"
-                onChange={(e) => setSurname(e.target.value)}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setFirstName(getFirstName(e.target.value));
+                  setSurname(getSurname(e.target.value));
+                }}
+                fullWidth
               />
             </Grid>
             <Grid item>
@@ -277,13 +266,33 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
                 color="primary"
                 data-testid={`contributor-search-button-${resultListIndex}`}
                 onClick={() => {
-                  setIsEditingName(true);
-                  retrySearch();
+                  searchForContributors(name);
                 }}
                 disabled={contributorData.toBeCreated.first_name === '' || contributorData.toBeCreated.surname === ''}>
                 Søk etter person
               </Button>
             </Grid>
+            <Grid item>
+              <Button
+                onClick={() => {
+                  setIsEditingName((prevState) => !prevState);
+                }}
+                variant="outlined"
+                color="primary">
+                Lag ny bidragsyter
+              </Button>
+            </Grid>
+            <EditNameDialog
+              showEditNameDialog={isEditingName}
+              setShowEditNameDialog={setIsEditingName}
+              initialFirstName={firstName}
+              initialSurname={surname}
+              contributorData={contributorData}
+              resultListIndex={resultListIndex}
+              updateContributor={updateContributor}
+              setOpenContributorSearchPanel={setOpenContributorSearchPanel}
+            />
+
             {!searching && searchError && (
               <Grid item xs={12}>
                 <Typography color="error">{searchError.message ?? 'Noe gikk galt med søket, prøv igjen'} </Typography>
@@ -295,7 +304,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
               </Grid>
             )}
 
-            {isEditingName && !searching && (
+            {openContributorSearchPanel && !searching && (
               <Grid item xs={12}>
                 <StyledResultTypography variant="h6">Fant {searchResults.length} bidragsytere</StyledResultTypography>
               </Grid>
@@ -305,7 +314,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       </Grid>
 
       <Grid item xs={12}>
-        <Collapse in={openContributorSearchPanel && isEditingName && !searching && searchResults.length > 0}>
+        <Collapse in={openContributorSearchPanel && !searching && searchResults.length > 0}>
           <StyledCard variant="outlined">
             <CardContent>
               {searchResults.map((author: ContributorType) => (
