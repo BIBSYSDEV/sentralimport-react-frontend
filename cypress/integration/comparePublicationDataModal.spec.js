@@ -132,7 +132,6 @@ context('importModal', () => {
     cy.get(`[data-testid="compare-form-doi-action-action-button"]`).should('exist').should('be.disabled');
 
     //pages
-    cy.wait(400);
     cy.get(`[data-testid="cristindata-pagesto-textfield-input"]`).should('have.value', '');
     cy.get(`[data-testid="compare-form-pages-action-action-button"]`).should('not.exist');
     cy.get(`[data-testid="compare-form-pages-action-equals-icon"]`).should('exist');
