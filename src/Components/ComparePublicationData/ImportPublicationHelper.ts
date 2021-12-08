@@ -94,37 +94,23 @@ export async function handleCreatePublication(publication: any, dispatch: any) {
     const postPublicationResponse = (await postPublication(publication)).data;
     const cristinResultId = postPublicationResponse.cristin_result_id;
     await patchPiaPublication(cristinResultId, publication.pub_id);
+    addToLog(publication, cristinResultId);
     dispatch({ type: 'setFormErrors', payload: [] });
-    const log = JSON.parse(localStorage.getItem('log') || '[]') ?? [];
-    if (log.length > 15) log.shift();
-    let title = publication.title[publication.original_language];
-    title = title.length > 50 ? title.substring(0, 49) : title;
-    log.push({ id: cristinResultId, title: title });
-    localStorage.setItem('log', JSON.stringify(log));
     dispatch({ type: 'setContributorsLoaded', payload: false });
-    return { result: { id: cristinResultId, title: title }, status: 200 };
+    return { result: { id: cristinResultId, title: publication.title[publication.original_language] }, status: 200 };
   } catch (error) {
     handlePotentialExpiredSession(error);
     return generateErrorMessage(error);
   }
 }
-const generateErrorMessage = (error: any) => {
-  if (error.response) {
-    return {
-      result: null,
-      errorMessage:
-        error.response?.data &&
-        `Feilkode: (${error.response.data.response_id}). Meldinger: ${
-          error.response?.data?.errors && error.response.data.errors.toString()
-        }`,
-      status: error.response ? error.response.status : 500,
-    };
-  } else {
-    return {
-      result: null,
-      errorMessage: error.message,
-    };
-  }
+
+const addToLog = (publication: any, cristinResultId: any) => {
+  const log = JSON.parse(localStorage.getItem('log') || '[]') ?? [];
+  if (log.length > 15) log.shift();
+  let title = publication.title[publication.original_language];
+  title = title.length > 50 ? title.substring(0, 49) : title;
+  log.push({ id: cristinResultId, title: title });
+  localStorage.setItem('log', JSON.stringify(log));
 };
 
 export async function handleUpdatePublication(publication: any, dispatch: any) {
@@ -218,4 +204,23 @@ export const createContributorObject = () => {
     }));
   }
   return contributors;
+};
+
+const generateErrorMessage = (error: any) => {
+  if (error.response) {
+    return {
+      result: null,
+      errorMessage:
+        error.response?.data &&
+        `Feilkode: (${error.response.data.response_id}). Meldinger: ${
+          error.response?.data?.errors && error.response.data.errors.toString()
+        }`,
+      status: error.response ? error.response.status : 500,
+    };
+  } else {
+    return {
+      result: null,
+      errorMessage: error.message,
+    };
+  }
 };
