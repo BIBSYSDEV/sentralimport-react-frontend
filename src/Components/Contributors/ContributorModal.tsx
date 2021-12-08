@@ -652,7 +652,7 @@ const ContributorModal: FC<ContributorProps> = ({
         text={'Er du sikker på at du vil slette denne bidragsyteren?'}
         open={isClosingDialogOpen}
         handleClose={handleCloseDeleteConfirmDialog}
-        handleCloseDialog={handleCloseDeleteConfirmDialog}
+        handleAbort={handleCloseDeleteConfirmDialog}
       />
     </>
   );
