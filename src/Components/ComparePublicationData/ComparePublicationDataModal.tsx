@@ -201,6 +201,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             }
       );
     };
+    //TODO! NB! this should be removed as soon as contributors does not use localstorage anymore
+    window.localStorage.removeItem('tempContributors');
     initFormik().then();
     getContributors().then();
   }, [isDuplicate, state.selectedPublication, importPublication]);
@@ -229,6 +231,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     setIsConfirmImportDialogOpen(false);
     //TODO! NB! this should be removed as soon as contributors does not use localstorage anymore
     window.localStorage.removeItem('tempContributors');
+    console.log('TØMMER LOCALSTORAGE');
+
     if (result.status === 200) {
       enqueueSnackbar(
         'Importerte ny publikasjon (Cristin-id: ' + result.result.id + ' og tittel: ' + result.result.title + ')',
@@ -250,6 +254,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   function handleConfirmAbortDialogSubmit() {
     //TODO! NB! this should be removed as soon as contributors does not use localstorage anymore
     window.localStorage.removeItem('tempContributors');
+    console.log('TØMMER LOCALSTORAGE');
+
     dispatch({ type: 'doSave', payload: false });
     setIsConfirmAbortDialogOpen(false);
     handleComparePublicationDataModalClose();

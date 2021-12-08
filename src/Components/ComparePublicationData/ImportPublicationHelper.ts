@@ -54,7 +54,7 @@ export const createCristinPublicationForSaving = (
     original_language: publicationLanguages.filter((l: any) => l.original)[0].lang.toLowerCase(),
     title: title,
     pub_id: importPublication.pubId,
-    year_published: values.year,
+    year_published: values.year.toString(),
     import_sources: [
       {
         source_name: importPublication.sourceName,
