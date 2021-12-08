@@ -105,7 +105,7 @@ export async function handleCreatePublication(publication: any, dispatch: any) {
     return { result: { id: cristinResultId, title: title }, status: 200 };
   } catch (error) {
     handlePotentialExpiredSession(error);
-    return generateErrorMessage(error as Error);
+    return generateErrorMessage(error);
   }
 }
 const generateErrorMessage = (error: any) => {
@@ -137,7 +137,7 @@ export async function handleUpdatePublication(publication: any, dispatch: any) {
     await patchPiaPublication(publication.cristinResultId, publication.pub_id);
   } catch (error) {
     handlePotentialExpiredSession(error);
-    return generateErrorMessage(error as Error);
+    return generateErrorMessage(error);
   }
   dispatch({ type: 'setContributorsLoaded', payload: false });
   dispatch({ type: 'setFormErrors', payload: [] });
