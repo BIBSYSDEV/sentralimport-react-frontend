@@ -40,7 +40,7 @@ import CompareFormJournal from './CompareFormJournal';
 import CompareFormLanguage from './CompareFormLanguage';
 import { CompareFormValuesType } from './CompareFormTypes';
 import { ContributorType } from '../../types/ContributorTypes';
-import { DoiFormat, formatCristinCreatedDate } from '../../utils/stringUtils';
+import { DoiFormat, formatCristinCreatedDate, NoDatePlaceHolder } from '../../utils/stringUtils';
 import {
   createCristinPublicationForSaving,
   handleCreatePublication,
@@ -365,7 +365,9 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                           <StyledActionButtonsPlaceHolder />
                           <StyledLineCristinValue data-testid="cristindata-created">
                             <StyledDisabledTypography>
-                              {isDuplicate && formatCristinCreatedDate(cristinPublication.created.date)}
+                              {isDuplicate && cristinPublication
+                                ? formatCristinCreatedDate(cristinPublication.created.date)
+                                : NoDatePlaceHolder}
                             </StyledDisabledTypography>
                           </StyledLineCristinValue>
                         </StyledLineWrapper>
