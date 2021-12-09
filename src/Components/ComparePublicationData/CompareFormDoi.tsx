@@ -38,6 +38,7 @@ const CompareFormDoi: FC<CompareFormDoiProps> = ({ importPublication }) => {
         isImportAndCristinEqual={values.doi === importPublication.doi}
         isCopyBottonDisabled={!importPublication.doi}
         copyCommand={() => setFieldValue('doi', importPublication.doi, true)}
+        dataTestid={'compare-form-doi-action'}
       />
       <StyledLineCristinValue>
         <Field name="doi">

@@ -22,22 +22,28 @@ interface ComparePublicationDataModalProps {
   isImportAndCristinEqual: boolean;
   isCopyBottonDisabled: boolean;
   copyCommand: () => void;
+  dataTestid: string;
 }
 
 const ActionButtons: FC<ComparePublicationDataModalProps> = ({
   isImportAndCristinEqual,
   isCopyBottonDisabled,
   copyCommand,
+  dataTestid,
 }) => {
   return (
-    <StyledLineAction>
+    <StyledLineAction data-testid={dataTestid}>
       {isImportAndCristinEqual ? (
         <Wrapper>
-          <DragHandleIcon />
+          <DragHandleIcon data-testid={`${dataTestid}-equals-icon`} />
         </Wrapper>
       ) : (
         <div>
-          <IconButton color="secondary" onClick={copyCommand} disabled={isCopyBottonDisabled}>
+          <IconButton
+            data-testid={`${dataTestid}-action-button`}
+            color="secondary"
+            onClick={copyCommand}
+            disabled={isCopyBottonDisabled}>
             <DoubleArrowIcon />
           </IconButton>
         </div>

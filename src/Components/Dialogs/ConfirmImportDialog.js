@@ -141,8 +141,8 @@ export default function ConfirmImportDialog(props) {
         },
       ],
       pages: {
-        from: publication.channel.pageFrom,
-        to: publication.channel.pageTo,
+        from: publication.channel.pageFrom ?? '',
+        to: publication.channel.pageTo ?? '',
         count: getNumberOfPages(publication.channel.pageFrom, publication.channel.pageTo),
       },
       contributors: {

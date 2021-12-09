@@ -29,13 +29,17 @@ const CompareFormPages: FC<CompareFormPagesProps> = ({ importPublication }) => {
       </StyledLineImportValue>
       <ActionButtons
         isImportAndCristinEqual={
-          importPublication.channel?.pageFrom === values.pageFrom && importPublication.channel?.pageTo === values.pageTo
+          ((!importPublication.channel?.pageFrom && values.pageFrom === '') ||
+            importPublication.channel?.pageFrom === values.pageFrom) &&
+          ((!importPublication.channel?.pageTo && values.pageTo === '') ||
+            importPublication.channel?.pageTo === values.pageTo)
         }
         isCopyBottonDisabled={!(importPublication.channel?.pageFrom || importPublication.channel?.pageTo)}
         copyCommand={() => {
           setFieldValue('pageFrom', importPublication.channel?.pageFrom ?? '', true);
           setFieldValue('pageTo', importPublication.channel?.pageTo ?? '', true);
         }}
+        dataTestid={'compare-form-pages-action'}
       />
       <StyledLineCristinValue>
         <div style={{ display: 'flex' }}>

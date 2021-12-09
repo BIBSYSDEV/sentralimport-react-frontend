@@ -57,6 +57,7 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }
         copyCommand={() =>
           setFieldValue('category', { value: importPublication.category, label: importPublication.categoryName }, true)
         }
+        dataTestid={'compare-form-category-action'}
       />
       <StyledLineCristinValue data-testid="cristindata-category-select">
         <Field name="category">

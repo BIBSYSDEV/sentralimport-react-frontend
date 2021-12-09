@@ -28,6 +28,7 @@ const CompareFormYear: FC<CompareFormYearProps> = ({ importPublication }) => {
         isImportAndCristinEqual={+values.year === +importPublication.yearPublished}
         isCopyBottonDisabled={!importPublication.yearPublished}
         copyCommand={() => setFieldValue('year', importPublication.yearPublished, true)}
+        dataTestid={'compare-form-year-action'}
       />
       <StyledLineCristinValue>
         <Field name="year">
