@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 export function cleanTitleForMarkup(title: string | undefined) {
   if (title) {
     while (title.indexOf('&lt;') !== -1) {
@@ -10,6 +12,11 @@ export function cleanTitleForMarkup(title: string | undefined) {
     }
   }
   return title;
+}
+
+export const NoDatePlaceHolder = '-';
+export function formatCristinCreatedDate(dateString: string) {
+  return format(new Date(dateString.substring(0, 10)), 'LLL dd, yyyy');
 }
 
 export const DoiFormat = /^$|^(10)[.](.+)[/](.+)/i; //Following this DOI specification: https://www.doi.org/doi_handbook/2_Numbering.html

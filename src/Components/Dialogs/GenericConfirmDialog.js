@@ -19,7 +19,7 @@ export default function GenericConfirmDialog(props) {
         <DialogContentText>{props.text}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button data-testid="dialog-deny-button" color="secondary" onClick={props.handleCloseDialog} variant="outlined">
+        <Button data-testid="dialog-deny-button" color="secondary" onClick={props.handleAbort} variant="outlined">
           Nei
         </Button>
         <Button
