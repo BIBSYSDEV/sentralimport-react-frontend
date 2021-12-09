@@ -38,6 +38,7 @@ const CompareFormTitle: FC<CompareFormTitleProps> = ({
         isImportAndCristinEqual={values.title === selectedLang.title}
         isCopyBottonDisabled={!importPublication.languages}
         copyCommand={() => setFieldValue('title', selectedLang.title ?? '', true)}
+        dataTestid={'compare-form-title-action'}
       />
       <StyledLineCristinValue>
         <Field name="title">
