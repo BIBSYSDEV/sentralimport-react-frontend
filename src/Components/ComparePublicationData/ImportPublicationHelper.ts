@@ -72,8 +72,8 @@ export const createCristinPublicationForSaving = (
       },
     ],
     pages: {
-      from: values.pageFrom,
-      to: values.pageTo,
+      from: values.pageFrom ?? '',
+      to: values.pageTo ?? '',
       count: getNumberOfPages(values.pageFrom, values.pageTo),
     },
     contributors: {
