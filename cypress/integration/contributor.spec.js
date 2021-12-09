@@ -312,4 +312,15 @@ context('contributor', () => {
     ).should('exist');
     cy.get('[data-testid="input-surname-2"]').should('have.value', mockImportData[1].authors[2].surname);
   });
+
+  it('should handle countributors without firstname, and non divisible single authorName ', () => {
+    //EdgeCase :
+    //"surname": "Kinshuk",
+    //"authorName": "Kinshuk",
+    //no firstname
+    cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('[data-testid="contributor-loading-error"]').should('not.exist');
+  });
 });
