@@ -32,5 +32,6 @@ yarn-error.log*
 cypress/screenshots
 cypress/videos
 cypress/downloads
+cypress/fixtures/example.json
 /coverage
 .nyc_output
