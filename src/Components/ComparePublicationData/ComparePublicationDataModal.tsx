@@ -241,6 +241,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       );
       handleComparePublicationDataModalClose();
       handleDuplicateCheckModalClose();
+      dispatch({ type: 'triggerImportDataSearch', payload: !state.triggerImportDataSearch });
     } else {
       const errorMessage = `Noe gikk galt med import av publikasjon med pub-id: ${importPublication.pubId}.
        Dine endringer er fortsatt lagret i browseren. ${result.errorMessage}`;
@@ -298,7 +299,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         ? handleUpdatePublication(publication, dispatch).then((response) => handlePublicationImported(response))
         : handleCreatePublication(publication, dispatch).then((response) => handlePublicationImported(response));
     }
-    dispatch({ type: 'triggerImportDataSearch', payload: !state.triggerImportDataSearch });
   }
 
   const formValidationSchema = Yup.object().shape({
