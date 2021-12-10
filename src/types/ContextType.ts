@@ -19,7 +19,6 @@ export interface ContextType {
   formErrors: string[];
   identified: any[];
   identifiedImported: any[];
-  importDone: boolean;
   institutions: null | InstitutionSelector[];
   institutionsEnglish: null | InstitutionSelector[];
   isSampublikasjon: boolean;
@@ -28,6 +27,7 @@ export interface ContextType {
   selectedPublication: SelectedPublication | any; //TODO: code-cleanup, selectedPublication changes interface throughout the application (possibly only the initial state is incorrect)
   totalCount: number;
   validation: string;
+  triggerImportDataSearch: boolean;
 }
 
 export interface CurrentImportYear {

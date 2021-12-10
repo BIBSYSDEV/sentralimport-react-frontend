@@ -58,7 +58,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
       } else if (selectedRadioButton === SelectValues.TOGGLE_RELEVANT) {
         await toggleRelevantStatus();
         handleDuplicateCheckModalClose();
-        dispatch({ type: 'importDone', payload: !state.importDone });
+        dispatch({ type: 'triggerImportDataSearch', payload: !state.triggerImportDataSearch });
       } else {
         dispatch({ type: 'doSave', payload: true });
         setDuplicate(true);
