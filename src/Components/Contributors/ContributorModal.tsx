@@ -217,6 +217,24 @@ const ContributorModal: FC<ContributorProps> = ({
     handleSaveToLocalStorage();
   }, [contributors]);
 
+  const generateFirstName = (author: ImportPublicationPerson): string => {
+    if (author.firstname) {
+      return author.firstname;
+    } else {
+      const authorNameParts = author.authorName?.replace(',', '').split(' ');
+      return authorNameParts?.length > 1 ? authorNameParts[1] : '';
+    }
+  };
+
+  const generateLastName = (author: ImportPublicationPerson): string => {
+    if (author.surname) {
+      return author.surname;
+    } else {
+      const authorNameParts = author.authorName?.replace(',', '').split(' ');
+      return authorNameParts?.length > 0 ? authorNameParts[0] : '';
+    }
+  };
+
   const createContributorWrapper = (
     authorsFromImportPublication: ImportPublicationPerson[],
     index: number,
@@ -227,8 +245,8 @@ const ContributorModal: FC<ContributorProps> = ({
       authorsFromImportPublication.length > index && author
         ? {
             cristin_person_id: author.cristinId,
-            first_name: author.firstname ? author.firstname : author.authorName?.split(' ')[1].replace(',', ''),
-            surname: author.surname ? author.surname : author.authorName?.split(' ')[0].replace(',', ''),
+            first_name: generateFirstName(author),
+            surname: generateLastName(author),
             authorName: author.authorName,
             order: author.sequenceNr,
             affiliations: author.institutions,
