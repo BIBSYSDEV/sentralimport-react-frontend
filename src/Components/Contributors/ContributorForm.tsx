@@ -148,8 +148,12 @@ const ContributorForm: FC<ContributorFormProps> = ({
     <div data-testid={`contributor-form-${resultListIndex}`}>
       <Typography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
         {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
-        {contributorData.toBeCreated.cristin_person_id && contributorData.toBeCreated.cristin_person_id !== 0 && (
-          <StyledVerifiedBadge />
+        {contributorData.toBeCreated.identified_cristin_person && (
+          <>
+            <StyledVerifiedBadge
+              data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
+            />
+          </>
         )}
       </Typography>
       <ContributorSearchPanel

@@ -246,18 +246,20 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     updateContributor(temp, resultListIndex);
   }
 
+  const handleOpenSearchPanelClick = () => {
+    setOpenContributorSearchPanel(true);
+    setFirstName(contributorData.toBeCreated.first_name);
+    setSurname(contributorData.toBeCreated.surname);
+    searchForContributors(contributorData.toBeCreated.first_name, contributorData.toBeCreated.surname);
+  };
+
   return (
     <StyledCard variant="outlined">
       {!openContributorSearchPanel && (
         <StyledAccordionLikeButton
           data-testid={`contributor-search-button-${resultListIndex}`}
           size="large"
-          onClick={() => {
-            setOpenContributorSearchPanel(true);
-            setFirstName(contributorData.toBeCreated.first_name);
-            setSurname(contributorData.toBeCreated.surname);
-            searchForContributors(contributorData.toBeCreated.first_name, contributorData.toBeCreated.surname);
-          }}
+          onClick={handleOpenSearchPanelClick}
           endIcon={<ExpandMoreIcon />}
           color="primary">
           Vis søk
@@ -307,7 +309,11 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
               <Grid item xs={4}>
                 <Grid container>
                   <Grid item>
-                    <Button size="small" onClick={handleSwitchPersonClick} color="primary">
+                    <Button
+                      data-testid={`choose-text-field-person-${resultListIndex}`}
+                      size="small"
+                      onClick={handleSwitchPersonClick}
+                      color="primary">
                       Velg person
                     </Button>
                   </Grid>
