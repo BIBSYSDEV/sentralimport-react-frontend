@@ -243,7 +243,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       handleDuplicateCheckModalClose();
     } else {
       const errorMessage = `Noe gikk galt med import av publikasjon med pub-id: ${importPublication.pubId}.
-       Dine endringer er fortsatt lagret i browseren. ${result.errorMessage}`;
+       Dine endringer er fortsatt lagret i browseren. ${result.errorMessage ?? ''}`;
       setImportPublicationError(new Error(errorMessage));
       dispatch({ type: 'importDone', payload: false });
       // dispatch({ type: 'setContributorsLoaded', payload: false });
