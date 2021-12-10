@@ -124,12 +124,8 @@ export default function ImportTable(this: any) {
   ]);
 
   useEffect(() => {
-    if (state.importDone) {
-      setTimeout(function () {
-        getRows().then();
-      }, 500);
-    }
-  }, [state.importDone]);
+    getRows().then();
+  }, [state.triggerImportDataSearch]);
 
   useEffect(() => {
     handleChangeRowsPerPage(state.currentPerPage);

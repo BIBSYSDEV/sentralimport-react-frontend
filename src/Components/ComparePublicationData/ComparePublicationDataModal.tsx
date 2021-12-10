@@ -245,7 +245,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       const errorMessage = `Noe gikk galt med import av publikasjon med pub-id: ${importPublication.pubId}.
        Dine endringer er fortsatt lagret i browseren. ${result.errorMessage}`;
       setImportPublicationError(new Error(errorMessage));
-      dispatch({ type: 'importDone', payload: false });
       // dispatch({ type: 'setContributorsLoaded', payload: false });
     }
   }
@@ -299,6 +298,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         ? handleUpdatePublication(publication, dispatch).then((response) => handlePublicationImported(response))
         : handleCreatePublication(publication, dispatch).then((response) => handlePublicationImported(response));
     }
+    dispatch({ type: 'triggerImportDataSearch', payload: !state.triggerImportDataSearch });
   }
 
   const formValidationSchema = Yup.object().shape({
