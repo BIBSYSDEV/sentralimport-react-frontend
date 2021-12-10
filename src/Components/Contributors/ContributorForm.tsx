@@ -11,10 +11,13 @@ import {
 import InstitutionCountrySelect from '../InstitutionSelect/InstitutionCountrySelect';
 import { ContributorWrapper } from '../../types/ContributorTypes';
 import { getInstitutionName, SearchLanguage } from '../../api/contributorApi';
-
 import styled from 'styled-components';
-import EditAffiliations from './EditAffiliations';
 import { StyledVerifiedBadge } from '../../assets/styles/StyledBadges';
+import EditAffiliation from './EditAffiliation';
+
+const StyledInstitutionList = styled.div`
+  margin-top: 1rem;
+`;
 
 const StyledFlexEndButtons = styled(Button)`
   &&.MuiButton-root {
@@ -161,11 +164,21 @@ const ContributorForm: FC<ContributorFormProps> = ({
         resultListIndex={resultListIndex}
         updateContributor={updateContributor}
       />
-      <EditAffiliations
-        contributorData={contributorData}
-        resultListIndex={resultListIndex}
-        updateContributor={updateContributor}
-      />
+      <StyledInstitutionList>
+        {contributorData.toBeCreated.affiliations
+          ?.filter(
+            (item: Affiliation, number: number) => contributorData.toBeCreated.affiliations?.indexOf(item) === number
+          )
+          .map((affiliation, affiliationIndex) => (
+            <EditAffiliation
+              key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
+              affiliation={affiliation}
+              contributorData={contributorData}
+              resultListIndex={resultListIndex}
+              updateContributor={updateContributor}
+            />
+          ))}
+      </StyledInstitutionList>
       <Card
         variant="outlined"
         style={{ overflow: 'visible', padding: '0.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
