@@ -57,6 +57,7 @@ export default function App() {
             cristinInstitutionNr: cristinInstitution.cristin_institution_id,
           });
         });
+        dispatch({ type: 'globalInstitutions', payload: cristinInstitutions });
         dispatch({ type: 'institutions', payload: institutionsNorwegian });
         dispatch({ type: 'institutionsEnglish', payload: institutionsEnglish });
       } catch (error) {

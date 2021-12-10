@@ -1,5 +1,5 @@
 import { Order } from './PublicationTypes';
-import { InstitutionSelector } from './InstitutionTypes';
+import { Institution, InstitutionSelector } from './InstitutionTypes';
 
 export interface ContextType {
   allChecked: boolean;
@@ -20,6 +20,7 @@ export interface ContextType {
   identified: any[];
   identifiedImported: any[];
   institutions: null | InstitutionSelector[];
+  globalInstitutions: Institution[];
   institutionsEnglish: null | InstitutionSelector[];
   isSampublikasjon: boolean;
   param: null | any;

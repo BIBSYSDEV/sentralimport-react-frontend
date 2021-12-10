@@ -40,6 +40,7 @@ const initialState: ContextType = {
   identified: [],
   identifiedImported: [],
   triggerImportDataSearch: false,
+  globalInstitutions: [],
 };
 
 const Context = React.createContext<{ state: ContextType; dispatch: Dispatch<any> }>({
@@ -105,6 +106,8 @@ const reducer = (state: ContextType, action: { type: string; payload: any }) => 
       return { ...state, identifiedImported: action.payload };
     case 'triggerImportDataSearch':
       return { ...state, triggerImportDataSearch: action.payload };
+    case 'globalInstitutions':
+      return { ...state, globalInstitutions: action.payload };
     default:
       return state;
   }
