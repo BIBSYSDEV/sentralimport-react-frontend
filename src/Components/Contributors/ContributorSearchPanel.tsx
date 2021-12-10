@@ -34,7 +34,7 @@ const StyledAccordionLikeButton = styled(Button)`
 
 const StyledCard = styled(Card)`
   &.MuiPaper-outlined {
-    border: 3px solid ${Colors.PURPLE};
+    border: 2px solid ${Colors.PRIMARY};
     border-radius: 5px;
     min-height: 3rem;
   }
