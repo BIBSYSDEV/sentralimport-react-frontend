@@ -44,10 +44,12 @@ const Contributor: FC<ContributorProps> = ({
       {!contributorData.isEditing ? (
         <div data-testid={`contributor-for-import-wrapper-${resultListIndex}`}>
           <Typography gutterBottom variant="h6">
-            {contributorData.toBeCreated.first_name + ' ' + contributorData.toBeCreated.surname}{' '}
+            {contributorData.toBeCreated.first_name + ' ' + contributorData.toBeCreated.surname}
             {contributorData.toBeCreated.identified_cristin_person && (
               <>
-                <StyledVerifiedBadge />
+                <StyledVerifiedBadge
+                  data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
+                />
                 <Typography variant="srOnly">Har CristinId</Typography>
               </>
             )}

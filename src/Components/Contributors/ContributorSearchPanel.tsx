@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useState } from 'react';
-import { Button, Card, CardContent, CircularProgress, Collapse, Grid, Typography } from '@material-ui/core';
+import React, { FC, useCallback, useEffect, useState } from 'react';
+import { Button, Card, CircularProgress, Collapse, Grid, TextField, Typography } from '@material-ui/core';
 import { ContributorType, ContributorWrapper } from '../../types/ContributorTypes';
 import ContributorSearchResultItem from './ContributorSearchResultItem';
 import { getPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
@@ -9,6 +9,9 @@ import { handlePotentialExpiredSession } from '../../api/api';
 import styled from 'styled-components';
 import { Colors } from '../../assets/styles/StyleConstants';
 import clone from 'just-clone';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import SearchIcon from '@material-ui/icons/Search';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
 const StyledResultTypography = styled(Typography)`
   &.MuiTypography-root {
@@ -22,12 +25,30 @@ const StyledCircularProgress = styled(CircularProgress)`
   margin-top: 0.3rem;
 `;
 
-const StyledCard = styled(Card)`
-  &.MuiPaper-outlined {
-    border: 3px solid ${Colors.PURPLE};
-    border-radius: 5px;
+const StyledAccordionLikeButton = styled(Button)`
+  width: 100%;
+  &.MuiButtonBase-root {
+    justify-content: space-between;
   }
 `;
+
+const StyledCard = styled(Card)`
+  &.MuiPaper-outlined {
+    border: 2px solid ${Colors.PRIMARY};
+    border-radius: 5px;
+    min-height: 3rem;
+  }
+`;
+
+const StyledCollapse = styled(Collapse)`
+  &.MuiCollapse-root {
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+`;
+
+const customTimeout = 800;
 
 export interface AddAffiliationError extends Error {
   institutionId: string;
@@ -50,6 +71,13 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   const [openContributorSearchPanel, setOpenContributorSearchPanel] = useState(false);
   const [addAffiliationSuccessful, setAddAffiliationSuccessful] = useState<string | undefined>(undefined);
   const [addAffiliationError, setAddAffiliationError] = useState<AddAffiliationError | undefined>();
+  const [firstName, setFirstName] = useState(contributorData.toBeCreated.first_name);
+  const [surname, setSurname] = useState(contributorData.toBeCreated.surname);
+  const [firstnameDirty, setFirstNameDirty] = useState(false);
+  const [surnameDirty, setSurnameDirty] = useState(false);
+  const [firstNameError, setFirstnameError] = useState(false);
+  const [surnameError, setSurnameError] = useState(false);
+  const [isNotPossibleToSwitchPerson, setIsNotPossibleToSwitchPerson] = useState(false);
 
   function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
     const cristinIdSet = new Set();
@@ -60,58 +88,98 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     });
   }
 
-  async function retrySearch() {
-    setSearching(true);
-    setSearchError(undefined);
-    let unitNameCache = new Map();
-    let institutionNameCache = new Map();
-    try {
-      const authorResults = await searchPersonDetailByName(
-        `${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`
-      );
-
-      if (authorResults.data.length > 0) {
-        const fetchedAuthors: ContributorType[] = [];
-        for (let i = 0; i < authorResults.data.length; i++) {
-          const resultAffiliations: Affiliation[] = [];
-          const fetchedAuthor = await getPersonDetailById(authorResults.data[i]);
-          if (fetchedAuthor && fetchedAuthor.affiliations) {
-            const activeAffiliations = fetchedAuthor.affiliations.filter(
-              (affiliation: Affiliation) => affiliation.active
-            );
-            for (const activeAffiliation of activeAffiliations) {
-              const detailedAffiliationAndCache = await getAffiliationDetails(
-                activeAffiliation,
-                unitNameCache,
-                institutionNameCache
-              );
-              unitNameCache = detailedAffiliationAndCache.unitNameCache;
-              institutionNameCache = detailedAffiliationAndCache.institutionNameCache;
-              detailedAffiliationAndCache.affiliation &&
-                resultAffiliations.push(detailedAffiliationAndCache.affiliation);
-            }
-            fetchedAuthor.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(resultAffiliations);
-          } else if (fetchedAuthor && !fetchedAuthor.affiliations) {
-            fetchedAuthor.affiliations = [];
-          }
-          if (fetchedAuthor) {
-            fetchedAuthors.push(fetchedAuthor);
-          }
-        }
-        setSearchResults(fetchedAuthors);
-        setOpenContributorSearchPanel(true);
-      } else {
-        setSearchResults([]);
-        setOpenContributorSearchPanel(true);
-      }
-    } catch (error: any) {
-      handlePotentialExpiredSession(error);
-      setSearchError(error);
-      setSearchResults([]);
-    } finally {
-      setSearching(false);
+  const handleFirstNameChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFirstName(event.target.value);
+    const firstNameError = event.target.value.trim().length === 0;
+    if (!firstNameError && !surnameError) {
+      setIsNotPossibleToSwitchPerson(false);
     }
-  }
+    setFirstnameError(firstNameError);
+  };
+
+  const firstNameIsDirtyAndHasError = () => {
+    return firstnameDirty && firstNameError;
+  };
+
+  const handleSurnameChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setSurname(event.target.value);
+    const surnameError = event.target.value.trim().length === 0;
+    if (!firstNameError && !surnameError) {
+      setIsNotPossibleToSwitchPerson(false);
+    }
+    setSurnameError(surnameError);
+  };
+
+  const surnameIsDirtyAndHasError = () => {
+    return surnameDirty && surnameError;
+  };
+
+  const handleSwitchPersonClick = () => {
+    if (firstNameError || surnameError) {
+      setIsNotPossibleToSwitchPerson(true);
+    } else {
+      const temp = contributorData;
+      temp.toBeCreated.first_name_preferred = undefined;
+      temp.toBeCreated.surname_preferred = undefined;
+      temp.toBeCreated.first_name = firstName;
+      temp.toBeCreated.surname = surname;
+      temp.toBeCreated.cristin_person_id = 0;
+      updateContributor(temp, resultListIndex);
+      setOpenContributorSearchPanel(false);
+      setIsNotPossibleToSwitchPerson(false);
+    }
+  };
+
+  const searchForContributors = useCallback((firstName: string, surname: string) => {
+    async function retrySearch() {
+      setSearching(true);
+      setSearchError(undefined);
+      let unitNameCache = new Map();
+      let institutionNameCache = new Map();
+      try {
+        const authorResults = await searchPersonDetailByName(`${firstName} ${surname}`);
+        if (authorResults.data.length > 0) {
+          const fetchedAuthors: ContributorType[] = [];
+          for (let i = 0; i < authorResults.data.length; i++) {
+            const resultAffiliations: Affiliation[] = [];
+            const fetchedAuthor = await getPersonDetailById(authorResults.data[i]);
+            if (fetchedAuthor && fetchedAuthor.affiliations) {
+              const activeAffiliations = fetchedAuthor.affiliations.filter(
+                (affiliation: Affiliation) => affiliation.active
+              );
+              for (const activeAffiliation of activeAffiliations) {
+                const detailedAffiliationAndCache = await getAffiliationDetails(
+                  activeAffiliation,
+                  unitNameCache,
+                  institutionNameCache
+                );
+                unitNameCache = detailedAffiliationAndCache.unitNameCache;
+                institutionNameCache = detailedAffiliationAndCache.institutionNameCache;
+                detailedAffiliationAndCache.affiliation &&
+                  resultAffiliations.push(detailedAffiliationAndCache.affiliation);
+              }
+              fetchedAuthor.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(resultAffiliations);
+            } else if (fetchedAuthor && !fetchedAuthor.affiliations) {
+              fetchedAuthor.affiliations = [];
+            }
+            if (fetchedAuthor) {
+              fetchedAuthors.push(fetchedAuthor);
+            }
+          }
+          setSearchResults(fetchedAuthors);
+        } else {
+          setSearchResults([]);
+        }
+      } catch (error: any) {
+        handlePotentialExpiredSession(error);
+        setSearchError(error);
+        setSearchResults([]);
+      } finally {
+        setSearching(false);
+      }
+    }
+    retrySearch().then();
+  }, []);
 
   function handleChooseOnlyAffiliation(newaffiliation: Affiliation) {
     setAddAffiliationError(undefined);
@@ -178,63 +246,136 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     updateContributor(temp, resultListIndex);
   }
 
-  function handleContributorSearchPanelClose() {
-    setOpenContributorSearchPanel(false);
-    if (searchResults.length > 0) {
-      setSearchResults([]);
-    }
-  }
+  const handleOpenSearchPanelClick = () => {
+    setOpenContributorSearchPanel(true);
+    setFirstName(contributorData.toBeCreated.first_name);
+    setSurname(contributorData.toBeCreated.surname);
+    searchForContributors(contributorData.toBeCreated.first_name, contributorData.toBeCreated.surname);
+  };
 
   return (
-    <Grid container spacing={2} alignItems="center">
-      <Grid item>
-        <Button
-          variant="outlined"
-          color="primary"
+    <StyledCard variant="outlined">
+      {!openContributorSearchPanel && (
+        <StyledAccordionLikeButton
           data-testid={`contributor-search-button-${resultListIndex}`}
-          onClick={() => retrySearch()}
-          disabled={contributorData.toBeCreated.first_name === '' || contributorData.toBeCreated.surname === ''}>
-          Søk etter person
-        </Button>
-      </Grid>
-      {!searching && searchError && (
-        <Grid item>
-          <Typography color="error">{searchError.message ?? 'Noe gikk galt med søket, prøv igjen'} </Typography>
-        </Grid>
+          size="large"
+          onClick={handleOpenSearchPanelClick}
+          endIcon={<ExpandMoreIcon />}
+          color="primary">
+          Vis søk
+        </StyledAccordionLikeButton>
       )}
-      {searching && (
-        <Grid item>
-          <StyledCircularProgress size={'2rem'} />
-        </Grid>
+      {openContributorSearchPanel && (
+        <StyledAccordionLikeButton
+          size="large"
+          color="primary"
+          endIcon={<ExpandLessIcon />}
+          onClick={() => {
+            setOpenContributorSearchPanel(false);
+          }}>
+          Skjul søk
+        </StyledAccordionLikeButton>
       )}
-      {openContributorSearchPanel && !searching && (
-        <Grid item>
-          <StyledResultTypography variant="h6">Fant {searchResults.length} bidragsytere</StyledResultTypography>
-        </Grid>
-      )}
-      <Grid item xs={12}>
-        <Collapse in={openContributorSearchPanel && !searching}>
-          <StyledCard variant="outlined">
-            <CardContent>
-              {searchResults.map((author: ContributorType) => (
-                <ContributorSearchResultItem
-                  addAffiliationError={addAffiliationError}
-                  addAffiliationSuccessful={addAffiliationSuccessful}
-                  handleChooseOnlyAffiliation={handleChooseOnlyAffiliation}
-                  handleChooseOnlyAuthor={handleChooseOnlyAuthor}
-                  key={author.cristin_person_id}
-                  contributor={author}
-                  handleChoose={handleChooseThis}
+
+      <StyledCollapse timeout={customTimeout} in={openContributorSearchPanel}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item sm={4}>
+                <TextField
+                  id={'firstName' + resultListIndex}
+                  label="Fornavn"
+                  error={firstNameIsDirtyAndHasError()}
+                  value={firstName}
+                  helperText={firstNameIsDirtyAndHasError() && 'Fornavn er påkrevd'}
+                  onBlur={() => setFirstNameDirty(true)}
+                  margin="normal"
+                  onChange={handleFirstNameChange}
                 />
-              ))}
-            </CardContent>
-            <Button color="primary" onClick={handleContributorSearchPanelClose}>
-              Lukk resultatliste
+              </Grid>
+              <Grid item sm={4}>
+                <TextField
+                  id={'surname' + resultListIndex}
+                  onBlur={() => setSurnameDirty(true)}
+                  label="Etternavn"
+                  error={surnameIsDirtyAndHasError()}
+                  helperText={surnameIsDirtyAndHasError() && 'Etternavn er påkrevd'}
+                  value={surname}
+                  margin="normal"
+                  onChange={handleSurnameChange}
+                />
+              </Grid>
+
+              <Grid item xs={4}>
+                <Grid container>
+                  <Grid item>
+                    <Button
+                      data-testid={`choose-text-field-person-${resultListIndex}`}
+                      size="small"
+                      onClick={handleSwitchPersonClick}
+                      color="primary">
+                      Velg person
+                    </Button>
+                  </Grid>
+                  {isNotPossibleToSwitchPerson && (
+                    <Grid item>
+                      <Typography variant="body2" color="error">
+                        Feil i navn
+                      </Typography>
+                    </Grid>
+                  )}
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item>
+            <Button
+              startIcon={<SearchIcon />}
+              variant="outlined"
+              color="primary"
+              data-testid={`contributor-retry-search-button-${resultListIndex}`}
+              onClick={() => {
+                searchForContributors(firstName, surname);
+              }}
+              disabled={contributorData.toBeCreated.first_name === '' || contributorData.toBeCreated.surname === ''}>
+              Søk etter person
             </Button>
-          </StyledCard>
-        </Collapse>
-      </Grid>
-    </Grid>
+          </Grid>
+
+          {!searching && searchError && (
+            <Grid item xs={12}>
+              <Typography color="error">{searchError.message ?? 'Noe gikk galt med søket, prøv igjen'} </Typography>
+            </Grid>
+          )}
+          {searching && (
+            <Grid item xs={12}>
+              <StyledCircularProgress size={'2rem'} />
+            </Grid>
+          )}
+
+          {openContributorSearchPanel && !searching && (
+            <Grid item xs={12}>
+              <StyledResultTypography variant="h6">Fant {searchResults.length} bidragsytere:</StyledResultTypography>
+            </Grid>
+          )}
+        </Grid>
+      </StyledCollapse>
+
+      <StyledCollapse timeout={customTimeout} in={openContributorSearchPanel && !searching && searchResults.length > 0}>
+        {searchResults.map((author: ContributorType) => (
+          <ContributorSearchResultItem
+            addAffiliationError={addAffiliationError}
+            addAffiliationSuccessful={addAffiliationSuccessful}
+            handleChooseOnlyAffiliation={handleChooseOnlyAffiliation}
+            handleChooseOnlyAuthor={handleChooseOnlyAuthor}
+            key={author.cristin_person_id}
+            contributor={author}
+            handleChoose={handleChooseThis}
+          />
+        ))}
+      </StyledCollapse>
+    </StyledCard>
   );
 };
 
