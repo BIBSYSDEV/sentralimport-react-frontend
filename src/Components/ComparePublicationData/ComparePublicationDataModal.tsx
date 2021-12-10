@@ -229,8 +229,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   function handlePublicationImported(result: any) {
     setIsConfirmImportDialogOpen(false);
-    //TODO! NB! this should be removed as soon as contributors does not use localstorage anymore
-    window.localStorage.removeItem('tempContributors');
 
     if (result.status === 200) {
       enqueueSnackbar(
@@ -241,6 +239,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       );
       handleComparePublicationDataModalClose();
       handleDuplicateCheckModalClose();
+      //TODO! NB! this should be removed as soon as contributors does not use localstorage anymore
+      window.localStorage.removeItem('tempContributors');
     } else {
       const errorMessage = `Noe gikk galt med import av publikasjon med pub-id: ${importPublication.pubId}.
        Dine endringer er fortsatt lagret i browseren. ${result.errorMessage ?? ''}`;
