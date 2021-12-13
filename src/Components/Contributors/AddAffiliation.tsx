@@ -156,6 +156,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
         <Grid container spacing={2}>
           <Grid item xs={12} xl={8}>
             <Autocomplete
+              loading={loading}
               value={selectedInstitution}
               onChange={(_event, value: any, reason) => {
                 handleAutoCompleteValueChange(value, reason);
@@ -163,7 +164,6 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
               onInputChange={(event, newInputValue, _reason) => {
                 setInstitutionInputFieldValue(newInputValue);
               }}
-              freeSolo
               inputValue={institutionInputFieldValue}
               groupBy={(option) => (option.cristin_user_institution ? 'cristin-institusjoner' : 'annet')}
               noOptionsText="fant ingen institusjon"
