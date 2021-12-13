@@ -123,7 +123,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
   };
 
   const handleAutoCompleteValueChange = (value: string | Institution | null, reason: AutocompleteChangeReason) => {
-    if ((value === null || !(value instanceof String)) && reason !== 'clear') {
+    if (!(value instanceof String) && reason !== 'clear') {
       setSelectedInstitution(value as Institution | null);
       if ((value as Institution).institution_name.en || (value as Institution).institution_name.nb) {
         setInstitutionInputFieldValue(
@@ -142,6 +142,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
     <AddAffiliationWrapper>
       {!showAddAffiliationSelector && (
         <Button
+          data-testid={`show-institution-selector-${resultListIndex}`}
           startIcon={<AddIcon />}
           color="primary"
           onClick={() => {
@@ -178,7 +179,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  data-testid="filter-institution-select"
+                  data-testid={`filter-institution-select-${resultListIndex}`}
                   multiline
                   label="velg institusjon"
                   variant="outlined"
@@ -198,6 +199,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
           </Grid>
           <Grid item xl={2}>
             <Button
+              data-testid={`add-institution-button-${resultListIndex}`}
               disabled={selectedInstitution === null}
               onClick={handleSelectInstitutionClick}
               startIcon={<AddIcon />}
@@ -213,13 +215,13 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
           {errorFetchingAdditionalInstitutions && (
             <Grid item xs={12}>
               <Typography variant="body2" color="error">
-                Noe gikk galt under henting av institusjoner: {JSON.stringify(errorFetchingAdditionalInstitutions)}
+                Noe gikk galt under henting av institusjoner: {errorFetchingAdditionalInstitutions.message}
               </Typography>
             </Grid>
           )}
           {addInstitutionError && (
             <Grid item xs={12}>
-              <Typography variant="body2" color="error">
+              <Typography data-testid={`add-institution-error-${resultListIndex}`} variant="body2" color="error">
                 {addInstitutionError.message}
               </Typography>
             </Grid>

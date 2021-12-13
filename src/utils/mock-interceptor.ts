@@ -30,6 +30,7 @@ import {
   mockDoiForEmptyCristinSearch,
   mockTitleForEmptyCristinSearch,
   mockCristinPersonNotFound,
+  mockInstitutionSearchByName,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
@@ -63,6 +64,11 @@ export const interceptRequestsOnMock = () => {
   //get cristin institutions by id
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/([1-9][0-9]*).*`)).reply(200, resultInstitutionNTNU);
   //crisrest-utv.dataporten-api.no/institutions/7492?lang=en
+
+  //get institution by name
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/institutions\\?cristin_institution=false&lang=en&name.*`))
+    .reply(200, mockInstitutionSearchByName);
 
   //get country institutions
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/country/CN.*`)).reply(200, [responseCountryInstitutionCN]);

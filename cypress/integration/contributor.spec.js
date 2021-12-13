@@ -334,4 +334,25 @@ context('contributor', () => {
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid="contributor-loading-error"]').should('not.exist');
   });
+
+  it('is possible to add more affiliations', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+
+    //adds institution:
+    cy.get('[data-testid="list-item-author-Saus-affiliations-5737-institution-name"]').should('not.exist');
+    cy.get('[data-testid="show-institution-selector-2"]').click();
+    cy.get('[data-testid="filter-institution-select-2"]').click();
+    cy.get('[data-testid="5737-option"]').click();
+    cy.get('[data-testid="add-institution-button-2"]').click();
+    cy.get('[data-testid="list-item-author-Saus-affiliations-5737-institution-name"]').should('exist');
+
+    //not possible to add the same institution twice:
+    cy.get('[data-testid="show-institution-selector-2"]').click();
+    cy.get('[data-testid="filter-institution-select-2"]').click();
+    cy.get('[data-testid="5737-option"]').click();
+    cy.get('[data-testid="add-institution-button-2"]').click();
+    cy.get('[data-testid="add-institution-error-2"]').should('have.text', 'institusjonen finnes alerede fra før av');
+  });
 });
