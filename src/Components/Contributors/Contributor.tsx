@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Button, Typography } from '@material-ui/core';
 import '../../assets/styles/common.scss';
 import { Colors } from '../../assets/styles/StyleConstants';
@@ -8,6 +8,7 @@ import { Affiliation } from '../../types/InstitutionTypes';
 import AffiliationDisplay from './AffiliationDisplay';
 import { ReactComponent as VerifiedBadge } from '../../assets/icons/verified-badge.svg';
 import ContributorForm from './ContributorForm';
+import { Alert } from '@material-ui/lab';
 
 const StyledVerifiedBadge = styled(VerifiedBadge)`
   margin-right: 0.5rem;
@@ -16,6 +17,11 @@ const StyledVerifiedBadge = styled(VerifiedBadge)`
   & path {
     fill: ${Colors.Text.GREEN};
   }
+`;
+
+const StyledAlert = styled(Alert)`
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 `;
 
 interface ContributorProps {
@@ -33,18 +39,41 @@ const Contributor: FC<ContributorProps> = ({
   handleChosenAuthorAffiliations,
   deleteContributor,
 }) => {
+  const [duplicateWarning, setDuplicateWarning] = useState('');
+
   function updateEditing() {
     const temp = contributorData;
     temp.isEditing = true;
     updateContributor(temp, resultListIndex);
   }
 
+  useEffect(() => {
+    const checkContributorsForDuplicates = () => {
+      setDuplicateWarning('');
+      const contributorsFromLocalStorage = JSON.parse(localStorage.getItem('tempContributors') || '{}');
+      if (contributorsFromLocalStorage.contributors?.length > 0) {
+        const contributorsWithSameName = contributorsFromLocalStorage.contributors.filter(
+          (contributor: ContributorWrapper) => {
+            return (
+              contributorData.toBeCreated.first_name === contributor.toBeCreated.first_name &&
+              contributorData.toBeCreated.surname === contributor.toBeCreated.surname
+            );
+          }
+        );
+        if (contributorsWithSameName.length > 1) {
+          setDuplicateWarning('Det finnes flere bidragsytere med samme navn');
+        }
+      }
+    };
+    checkContributorsForDuplicates();
+  }, [contributorData]);
+
   return (
     <div>
       {!contributorData.isEditing ? (
         <div data-testid={`contributor-for-import-wrapper-${resultListIndex}`}>
           <Typography gutterBottom variant="h6">
-            {contributorData.toBeCreated.first_name + ' ' + contributorData.toBeCreated.surname}
+            {contributorData.toBeCreated.first_name + '  ' + contributorData.toBeCreated.surname}
             {contributorData.toBeCreated.identified_cristin_person && (
               <>
                 <StyledVerifiedBadge
@@ -83,6 +112,7 @@ const Contributor: FC<ContributorProps> = ({
                 />
               ))}
           </div>
+          {duplicateWarning && <StyledAlert severity="warning">{duplicateWarning}</StyledAlert>}
           <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
             <Button data-testid={`contributor-edit-button-${resultListIndex}`} color="primary" onClick={updateEditing}>
               Rediger

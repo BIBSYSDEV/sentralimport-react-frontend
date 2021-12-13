@@ -31,8 +31,8 @@
         "cristinId": 0,
         "roleCode": "FORFATTER",
         "sequenceNr": 2,
-        "surname": "Petter",
-        "firstname": "Olsen",
+        "surname": "Mocklastname",
+        "firstname": "Mockfirstname",
         "authorName": "Olsen P.",
         "institutions": [
           {
@@ -65,8 +65,8 @@
         "cristinId": 0,
         "roleCode": "FORFATTER",
         "sequenceNr": 4,
-        "surname": "Zhang",
-        "firstname": "Yao",
+        "surname": "Mocklastname",
+        "firstname": "Mockfirstname",
         "authorName": "Zhang Y.",
         "institutions": [
           {
