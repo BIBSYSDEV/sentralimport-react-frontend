@@ -145,7 +145,6 @@ context('contributor', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid=contributor-search-button-2]').click();
-
     cy.get(
       `[data-testid=list-item-author-${mockPerson.cristin_person_id}-affiliations-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}]`
     ).should('exist');
@@ -310,7 +309,19 @@ context('contributor', () => {
     cy.get(
       `[data-testid="add-only-affiliation-error-institution-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}"]`
     ).should('exist');
-    cy.get('[data-testid="input-surname-2"]').should('have.value', mockImportData[1].authors[2].surname);
+    cy.get('[data-testid="contributor-form-2-name"]').should('include.text', mockImportData[1].authors[2].surname);
+  });
+
+  it('is possible to swap verified contributor with non-verified contributor', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('[data-testid="contributor-search-button-2"]').click();
+    cy.get('[data-testid="add-only-person-9456892"]').click();
+    cy.get('[data-testid="verified-contributor-badge-9456892"]').should('exist');
+    cy.get('[data-testid="contributor-search-button-2"]').click();
+    cy.get('[data-testid="choose-text-field-person-2"]').click();
+    cy.get('[data-testid="verified-contributor-badge-9456892"]').should('not.exist');
   });
 
   it('should handle countributors without firstname, and non divisible single authorName ', () => {

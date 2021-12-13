@@ -241,11 +241,11 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       handleDuplicateCheckModalClose();
       //TODO! NB! this should be removed as soon as contributors does not use localstorage anymore
       window.localStorage.removeItem('tempContributors');
+      dispatch({ type: 'triggerImportDataSearch', payload: !state.triggerImportDataSearch });
     } else {
       const errorMessage = `Noe gikk galt med import av publikasjon med pub-id: ${importPublication.pubId}.
        Dine endringer er fortsatt lagret i browseren. ${result.errorMessage ?? ''}`;
       setImportPublicationError(new Error(errorMessage));
-      dispatch({ type: 'importDone', payload: false });
       // dispatch({ type: 'setContributorsLoaded', payload: false });
     }
   }

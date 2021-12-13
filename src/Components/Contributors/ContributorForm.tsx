@@ -1,6 +1,5 @@
 import React, { FC, useState } from 'react';
-import { Form } from 'reactstrap';
-import { Button, Card, FormGroup, Grid, TextField } from '@material-ui/core';
+import { Button, Card, Grid, Typography } from '@material-ui/core';
 import ContributorSearchPanel from './ContributorSearchPanel';
 import {
   Affiliation,
@@ -12,9 +11,13 @@ import {
 import InstitutionCountrySelect from '../InstitutionSelect/InstitutionCountrySelect';
 import { ContributorWrapper } from '../../types/ContributorTypes';
 import { getInstitutionName, SearchLanguage } from '../../api/contributorApi';
-
 import styled from 'styled-components';
-import EditAffiliations from './EditAffiliations';
+import { StyledVerifiedBadge } from '../../assets/styles/StyledBadges';
+import EditAffiliation from './EditAffiliation';
+
+const StyledInstitutionList = styled.div`
+  margin-top: 1rem;
+`;
 
 const StyledFlexEndButtons = styled(Button)`
   &&.MuiButton-root {
@@ -41,12 +44,12 @@ const ContributorForm: FC<ContributorFormProps> = ({
   const [selectedUnit, setSelectedUnit] = useState<UnitSelector>(emptyUnitSelector);
   const [addDisabled, setAddDisabled] = useState(false);
 
-  async function handleSubmit(continueEditing: boolean) {
+  async function handleSubmit() {
     //TODO: finn ut om det er noen grunn til objekt-copy i det hele tatt ?
     const temp = JSON.parse(JSON.stringify(contributorData));
     const cleanedAffiliations = await handleChosenAuthorAffiliations(temp.toBeCreated.affiliations);
     temp.toBeCreated.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(cleanedAffiliations);
-    temp.isEditing = continueEditing;
+    temp.isEditing = false;
     await updateContributor(temp, resultListIndex);
     setSetSelectedInstitution(emptyInstitutionSelector);
   }
@@ -58,25 +61,6 @@ const ContributorForm: FC<ContributorFormProps> = ({
       cristinIdSet.add(affiliation.cristinInstitutionNr);
       return true;
     });
-  }
-
-  //TODO: TO BE REPLACED BY FORMIK
-  //Krav fra sidelinjen: bidragsyter uten noen institusjoner er en formik feil
-  function handleFieldChange(event: any, obj: any, property: string) {
-    if (!obj.authorName) {
-      obj.authorName = '';
-    }
-    const firstName = property === 'first' ? event.target.value : obj.toBeCreated.first_name;
-    const lastName = property === 'last' ? event.target.value : obj.toBeCreated.surname;
-    const authorName = property === 'authorName' ? event.target.value : obj.toBeCreated.authorName;
-    if (property === 'first') {
-      obj.toBeCreated.first_name = firstName;
-    } else if (property === 'last') {
-      obj.toBeCreated.surname = lastName;
-    } else {
-      obj.toBeCreated.authorName = authorName;
-    }
-    updateContributor(obj, resultListIndex);
   }
 
   function handleInstitutionChange(institutionSelector: InstitutionSelector) {
@@ -164,38 +148,37 @@ const ContributorForm: FC<ContributorFormProps> = ({
   }
 
   return (
-    <Form data-testid={`contributor-form-${resultListIndex}`}>
-      <FormGroup>
-        <TextField
-          id={'firstName' + resultListIndex}
-          label="Fornavn"
-          value={contributorData.toBeCreated.first_name}
-          margin="normal"
-          onChange={(e) => handleFieldChange(e, contributorData, 'first')}
-          required
-        />
-      </FormGroup>
-      <FormGroup>
-        <TextField
-          id={'lastName' + resultListIndex}
-          inputProps={{ 'data-testid': `input-surname-${resultListIndex}` }}
-          label="Etternavn"
-          value={contributorData.toBeCreated.surname}
-          margin="normal"
-          onChange={(e) => handleFieldChange(e, contributorData, 'last')}
-          required
-        />
-      </FormGroup>
+    <div data-testid={`contributor-form-${resultListIndex}`}>
+      <Typography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
+        {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
+        {contributorData.toBeCreated.identified_cristin_person && (
+          <>
+            <StyledVerifiedBadge
+              data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
+            />
+          </>
+        )}
+      </Typography>
       <ContributorSearchPanel
         contributorData={contributorData}
         resultListIndex={resultListIndex}
         updateContributor={updateContributor}
       />
-      <EditAffiliations
-        contributorData={contributorData}
-        resultListIndex={resultListIndex}
-        updateContributor={updateContributor}
-      />
+      <StyledInstitutionList>
+        {contributorData.toBeCreated.affiliations
+          ?.filter(
+            (item: Affiliation, number: number) => contributorData.toBeCreated.affiliations?.indexOf(item) === number
+          )
+          .map((affiliation, affiliationIndex) => (
+            <EditAffiliation
+              key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
+              affiliation={affiliation}
+              contributorData={contributorData}
+              resultListIndex={resultListIndex}
+              updateContributor={updateContributor}
+            />
+          ))}
+      </StyledInstitutionList>
       <Card
         variant="outlined"
         style={{ overflow: 'visible', padding: '0.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
@@ -226,7 +209,6 @@ const ContributorForm: FC<ContributorFormProps> = ({
           OK
         </Button>
       </Card>
-
       <Grid container spacing={2}>
         <Grid item>
           <StyledFlexEndButtons
@@ -240,23 +222,14 @@ const ContributorForm: FC<ContributorFormProps> = ({
         <Grid item>
           <StyledFlexEndButtons
             variant="outlined"
-            data-testid={`contributor-save-button-${resultListIndex}`}
-            color="primary"
-            onClick={() => handleSubmit(true)}>
-            Lagre endringer
-          </StyledFlexEndButtons>
-        </Grid>
-        <Grid item>
-          <StyledFlexEndButtons
-            variant="outlined"
             data-testid={`contributor-save-and-close-button-${resultListIndex}`}
             color="primary"
-            onClick={() => handleSubmit(false)}>
-            Lagre endringer og lukk
+            onClick={handleSubmit}>
+            Lukk
           </StyledFlexEndButtons>
         </Grid>
       </Grid>
-    </Form>
+    </div>
   );
 };
 
