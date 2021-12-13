@@ -1,5 +1,6 @@
 import mockImportData from '../../src/utils/mockImportData.json';
 import { mockSaveErrorResponse } from '../../src/utils/mockdata';
+import mockCristinPublications from '../../src/utils/mockCristinPublications.json';
 
 context('application', () => {
   beforeEach(() => {
@@ -9,6 +10,17 @@ context('application', () => {
 
   it('can save an publication', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.get(`[data-testid="import-publication-button"]`).click();
+    cy.get(`[data-testid="confirm-import-dialog-ok"]`).click();
+    cy.get('#notistack-snackbar').contains('Importerte publikasjon (Cristin-id:');
+    cy.get(`[data-testid="duplicate-check-modal"]`).should('not.exist');
+    cy.get(`[data-testid="import-modal"]`).should('not.exist');
+  });
+
+  it('can update an publication', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-${mockCristinPublications[0].cristin_result_id}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="import-publication-button"]`).click();
     cy.get(`[data-testid="confirm-import-dialog-ok"]`).click();

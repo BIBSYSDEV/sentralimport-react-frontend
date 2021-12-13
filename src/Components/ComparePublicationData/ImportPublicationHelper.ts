@@ -1,4 +1,4 @@
-import { CristinPublication, ImportPublication, Language } from '../../types/PublicationTypes';
+import { ImportPublication, Language } from '../../types/PublicationTypes';
 import { CompareFormValuesType } from './CompareFormTypes';
 import { patchPiaPublication, patchPublication, postPublication } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';

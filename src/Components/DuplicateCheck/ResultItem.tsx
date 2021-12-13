@@ -32,7 +32,11 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
         className={`card-horiz basic-background card-horiz-hover result`}
         key={cristinPublication.cristin_result_id}
         data-testid={`duplication-result-${cristinPublication.cristin_result_id}`}>
-        <Radio value={cristinPublication.cristin_result_id} aria-label="Duplikat" />
+        <Radio
+          data-testid={`duplication-result-radio-${cristinPublication.cristin_result_id}`}
+          value={cristinPublication.cristin_result_id}
+          aria-label="Duplikat"
+        />
         <a
           className={`result result`}
           href={process.env.REACT_APP_LINK_URL + '/results/show.jsf?id=' + cristinPublication.cristin_result_id}
@@ -42,9 +46,7 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
             <img src={ResultIcon} alt="result" />
           </div>
           <div className="content-wrapper">
-            <StyledTitle data-testid="mytitle">
-              {cristinPublication.title[cristinPublication.original_language]}
-            </StyledTitle>
+            <StyledTitle>{cristinPublication.title[cristinPublication.original_language]}</StyledTitle>
             <div className={`metacristinPublication`}>
               <p>{generateAuthorPresentation(cristinPublication)}</p>
               <p className={`active`}>{cristinPublication.category.name.en}</p>
