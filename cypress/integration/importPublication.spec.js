@@ -12,7 +12,7 @@ context('application', () => {
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="import-publication-button"]`).click();
     cy.get(`[data-testid="confirm-import-dialog-ok"]`).click();
-    cy.get('#notistack-snackbar').contains('Importerte ny publikasjon (Cristin-id:');
+    cy.get('#notistack-snackbar').contains('Importerte publikasjon (Cristin-id:');
     cy.get(`[data-testid="duplicate-check-modal"]`).should('not.exist');
     cy.get(`[data-testid="import-modal"]`).should('not.exist');
   });

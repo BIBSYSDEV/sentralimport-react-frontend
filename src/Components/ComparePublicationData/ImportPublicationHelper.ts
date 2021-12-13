@@ -22,10 +22,9 @@ const getNumberOfPages = (pageFrom?: string, pageTo?: string) => {
 export const createCristinPublicationForSaving = (
   values: CompareFormValuesType,
   importPublication: ImportPublication,
-  selectedPublication: CristinPublication,
   publicationLanguages: Language[],
   annotation: string,
-  isDuplicate: boolean
+  cristinResultId?: string
 ) => {
   const title: any = {};
   for (let i = 0; i < publicationLanguages.length; i++) {
@@ -80,8 +79,8 @@ export const createCristinPublicationForSaving = (
       list: createContributorObject(),
     },
   };
-  if (isDuplicate) {
-    cristinPublication.cristinResultId = cristinPublication.cristin_result_id;
+  if (cristinResultId) {
+    cristinPublication.cristinResultId = cristinResultId;
   }
   if (annotation) {
     cristinPublication.annotation = annotation;

@@ -4,7 +4,6 @@ import '../../assets/styles/Results.scss';
 import { Radio } from '@material-ui/core';
 import { CristinPublication, InternationalStandardNumber } from '../../types/PublicationTypes';
 import styled from 'styled-components';
-import { ImportPublicationPerson } from '../../types/ContributorTypes';
 
 const StyledTitle = styled.div`
   display: block;
@@ -17,6 +16,14 @@ const StyledTitle = styled.div`
 interface ResultItemProps {
   cristinPublication: CristinPublication;
 }
+
+const generateAuthorPresentation = (cristinPublication: CristinPublication) => {
+  return cristinPublication.authors
+    .slice(0, 3)
+    .map((author: any) => [author.surname, author.first_name].join(', '))
+    .join('; ')
+    .concat(cristinPublication.authors.length > 3 ? ' et al.' : '');
+};
 
 const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
   return (
@@ -39,11 +46,7 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
               {cristinPublication.title[cristinPublication.original_language]}
             </StyledTitle>
             <div className={`metacristinPublication`}>
-              <p>
-                {cristinPublication.authors.map(
-                  (author: ImportPublicationPerson) => author.surname + ', ' + author.firstname + '; '
-                ) + (cristinPublication.authors.length < cristinPublication.authorTotalCount && ' et al')}
-              </p>
+              <p>{generateAuthorPresentation(cristinPublication)}</p>
               <p className={`active`}>{cristinPublication.category.name.en}</p>
               <p className={`italic`}>
                 {cristinPublication.international_standard_numbers &&
