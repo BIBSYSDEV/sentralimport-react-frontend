@@ -1,12 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Button, CircularProgress, Collapse, TextField, Typography } from '@material-ui/core';
+import React, { FC, useContext, useEffect, useState } from 'react';
+import { Button, CircularProgress, Collapse, Grid, TextField, Typography } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import { Autocomplete, FilterOptionsState } from '@material-ui/lab';
+import { Autocomplete, AutocompleteChangeReason, FilterOptionsState } from '@material-ui/lab';
 import { Context } from '../../Context';
 import { Institution } from '../../types/InstitutionTypes';
 import useDebounce from '../../utils/useDebounce';
 import { searchForInstitutionsByName } from '../../api/institutionApi';
 import { SearchLanguage } from '../../api/contributorApi';
+import { ContributorWrapper } from '../../types/ContributorTypes';
+import styled from 'styled-components';
+
+const AddAffiliationWrapper = styled.div`
+  margin-bottom: 1rem;
+`;
 
 function filterByInstitutionNameAndAcronym(
   options: Institution[],
@@ -38,17 +44,24 @@ const sortInstitutions = (institutions: Institution[]) => {
   });
 };
 
-const AddAffiliation = () => {
+interface AddAffiliationProps {
+  contributorData: ContributorWrapper;
+  updateContributor: (contributorData: ContributorWrapper, rowIndex: number) => void;
+  resultListIndex: number;
+}
+
+const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIndex, updateContributor }) => {
   const { state } = useContext(Context);
   const [showAddAffiliationSelector, setShowAddAffiliationSelector] = useState(false);
   const [institutionsWithGlobalInstitutions, setInstitutionsWithGlobalInstitutions] = useState(
     state.globalInstitutions
   );
-  const [institutionInputFieldValue, setinstitutionInputFieldValue] = useState('');
+  const [institutionInputFieldValue, setInstitutionInputFieldValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedInstitution, setSelectedInstitution] = useState<Institution | null>(null);
   const debouncedInputValue = useDebounce(institutionInputFieldValue);
   const [errorFetchingAdditionalInstitutions, setErrorFetchingAdditionalInstitutions] = useState<Error | undefined>();
+  const [addInstitutionError, setAddInstitutionError] = useState<Error | undefined>();
 
   useEffect(() => {
     const fetchAdditionalInstitutions = async () => {
@@ -69,73 +82,151 @@ const AddAffiliation = () => {
     }
   }, [debouncedInputValue]);
 
+  const handleSelectInstitutionClick = () => {
+    try {
+      setAddInstitutionError(undefined);
+      addInstitution();
+      setShowAddAffiliationSelector(false);
+      setSelectedInstitution(null);
+      setInstitutionInputFieldValue('');
+    } catch (error) {
+      setAddInstitutionError(error as Error);
+    }
+  };
+
+  const addInstitution = () => {
+    const institutionAlreadyExists = contributorData.toBeCreated.affiliations
+      ? contributorData.toBeCreated.affiliations.some(
+          (existingAffiliation) =>
+            existingAffiliation.cristinInstitutionNr?.toString() ===
+            selectedInstitution?.cristin_institution_id.toString()
+        )
+      : false;
+    if (institutionAlreadyExists) {
+      throw new Error('institusjonen finnes alerede fra før av');
+    }
+    if (selectedInstitution === null) {
+      throw new Error('ingen institusjon valgt');
+    }
+
+    contributorData.toBeCreated.affiliations = [
+      ...(contributorData.toBeCreated.affiliations ?? []),
+      {
+        institution: selectedInstitution,
+        cristinInstitutionNr: selectedInstitution.cristin_institution_id,
+        institutionName: selectedInstitution.institution_name.en ?? selectedInstitution.institution_name.nb,
+        isCristinInstitution: true,
+        countryCode: selectedInstitution.country,
+      },
+    ];
+    updateContributor(contributorData, resultListIndex);
+  };
+
+  const handleAutoCompleteValueChange = (value: string | Institution | null, reason: AutocompleteChangeReason) => {
+    if ((value === null || !(value instanceof String)) && reason !== 'clear') {
+      setSelectedInstitution(value as Institution | null);
+      if ((value as Institution).institution_name.en || (value as Institution).institution_name.nb) {
+        setInstitutionInputFieldValue(
+          (value as Institution).institution_name.en ?? (value as Institution).institution_name.nb
+        );
+      } else {
+        setInstitutionInputFieldValue('');
+      }
+    } else {
+      setInstitutionInputFieldValue('');
+      setSelectedInstitution(null);
+    }
+  };
+
   return (
-    <>
+    <AddAffiliationWrapper>
       {!showAddAffiliationSelector && (
-        <Button startIcon={<AddIcon />} color="primary" onClick={() => setShowAddAffiliationSelector(true)}>
+        <Button
+          startIcon={<AddIcon />}
+          color="primary"
+          onClick={() => {
+            setShowAddAffiliationSelector(true);
+            setAddInstitutionError(undefined);
+            setErrorFetchingAdditionalInstitutions(undefined);
+          }}>
           Legg til tilknyttning
         </Button>
       )}
       <Collapse in={showAddAffiliationSelector}>
-        <Autocomplete
-          value={selectedInstitution}
-          onChange={(_event, value: any, reason) => {
-            console.log('detecting change');
-            setSelectedInstitution(value);
-            if (reason === 'clear') {
-              setinstitutionInputFieldValue('');
-            } else {
-              if (value && value.institution_name.en) {
-                setinstitutionInputFieldValue(value.institution_name.en);
-              } else if (value && value.institution_name.nb) {
-                setinstitutionInputFieldValue(value.institution_name.nb);
-              } else {
-                setinstitutionInputFieldValue('');
-              }
-            }
-          }}
-          onInputChange={(event, newInputValue, _reason) => {
-            setinstitutionInputFieldValue(newInputValue);
-          }}
-          freeSolo
-          inputValue={institutionInputFieldValue}
-          groupBy={(option) => (option.cristin_user_institution ? 'cristin-institusjoner' : 'annet')}
-          noOptionsText="fant ingen institusjon"
-          filterOptions={(options: Institution[], state) => filterByInstitutionNameAndAcronym(options, state)}
-          renderOption={(option) => (
-            <div data-testid={`${option.cristin_institution_id}-option`}>
-              <Typography>{option.institution_name.en ?? ''}</Typography>
-              <Typography variant="body2">{option.institution_name.nb ?? ''}</Typography>
-            </div>
-          )}
-          getOptionLabel={(option) => option.institution_name.en ?? option.institution_name.nb}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              data-testid="filter-institution-select"
-              multiline
-              label="velg institusjon"
-              variant="outlined"
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <>
-                    {loading ? <CircularProgress color="inherit" size={'1rem'} /> : null}
-                    {params.InputProps.endAdornment}
-                  </>
-                ),
+        <Grid container spacing={2}>
+          <Grid item xs={12} xl={8}>
+            <Autocomplete
+              value={selectedInstitution}
+              onChange={(_event, value: any, reason) => {
+                handleAutoCompleteValueChange(value, reason);
               }}
+              onInputChange={(event, newInputValue, _reason) => {
+                setInstitutionInputFieldValue(newInputValue);
+              }}
+              freeSolo
+              inputValue={institutionInputFieldValue}
+              groupBy={(option) => (option.cristin_user_institution ? 'cristin-institusjoner' : 'annet')}
+              noOptionsText="fant ingen institusjon"
+              filterOptions={(options: Institution[], state) => filterByInstitutionNameAndAcronym(options, state)}
+              renderOption={(option) => (
+                <div data-testid={`${option.cristin_institution_id}-option`}>
+                  <Typography>{option.institution_name.en ?? ''}</Typography>
+                  <Typography variant="body2">{option.institution_name.nb ?? ''}</Typography>
+                </div>
+              )}
+              getOptionLabel={(option) => option.institution_name.en ?? option.institution_name.nb}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  data-testid="filter-institution-select"
+                  multiline
+                  label="velg institusjon"
+                  variant="outlined"
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <>
+                        {loading ? <CircularProgress color="inherit" size={'1rem'} /> : null}
+                        {params.InputProps.endAdornment}
+                      </>
+                    ),
+                  }}
+                />
+              )}
+              options={sortInstitutions(institutionsWithGlobalInstitutions)}
             />
+          </Grid>
+          <Grid item xl={2}>
+            <Button
+              disabled={selectedInstitution === null}
+              onClick={handleSelectInstitutionClick}
+              startIcon={<AddIcon />}
+              color="primary">
+              Legg til
+            </Button>
+          </Grid>
+          <Grid item xl={2}>
+            <Button onClick={() => setShowAddAffiliationSelector(false)} size="small" color="secondary">
+              Avbryt
+            </Button>
+          </Grid>
+          {errorFetchingAdditionalInstitutions && (
+            <Grid item xs={12}>
+              <Typography variant="body2" color="error">
+                Noe gikk galt under henting av institusjoner: {JSON.stringify(errorFetchingAdditionalInstitutions)}
+              </Typography>
+            </Grid>
           )}
-          options={sortInstitutions(institutionsWithGlobalInstitutions)}
-        />
-        {errorFetchingAdditionalInstitutions && (
-          <Typography variant="caption" color="error">
-            Noe gikk galt under henting av institusjoner: {errorFetchingAdditionalInstitutions.message}
-          </Typography>
-        )}
+          {addInstitutionError && (
+            <Grid item xs={12}>
+              <Typography variant="body2" color="error">
+                {addInstitutionError.message}
+              </Typography>
+            </Grid>
+          )}
+        </Grid>
       </Collapse>
-    </>
+    </AddAffiliationWrapper>
   );
 };
 
