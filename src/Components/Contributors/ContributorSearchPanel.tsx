@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Button, Card, CircularProgress, Collapse, Grid, TextField, Typography } from '@material-ui/core';
-import { ContributorType, ContributorWrapper } from '../../types/ContributorTypes';
+import { BadgeType, ContributorType, ContributorWrapper } from '../../types/ContributorTypes';
 import ContributorSearchResultItem from './ContributorSearchResultItem';
 import { getPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
 import { Affiliation } from '../../types/InstitutionTypes';
@@ -123,7 +123,9 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       temp.toBeCreated.surname_preferred = undefined;
       temp.toBeCreated.first_name = firstName;
       temp.toBeCreated.surname = surname;
+      temp.toBeCreated.badge_type = BadgeType.NotVerified;
       temp.toBeCreated.cristin_person_id = 0;
+      temp.toBeCreated.require_higher_authorization = false;
       updateContributor(temp, resultListIndex);
       setOpenContributorSearchPanel(false);
       setIsNotPossibleToSwitchPerson(false);
@@ -163,6 +165,12 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
               fetchedAuthor.affiliations = [];
             }
             if (fetchedAuthor) {
+              if (fetchedAuthor.affiliations && fetchedAuthor.affiliations.length > 0) {
+                //This horribleness should really come from the backend, not be calculated on frontend.
+                fetchedAuthor.badge_type = BadgeType.Verified;
+              } else if (!fetchedAuthor.require_higher_authorization) {
+                fetchedAuthor.badge_type = BadgeType.NotVerified;
+              }
               fetchedAuthors.push(fetchedAuthor);
             }
           }
@@ -241,6 +249,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       temp.toBeCreated.surname = temp.toBeCreated.surname_preferred;
     }
     temp.toBeCreated.isEditing = false;
+    temp.toBeCreated.require_higher_authorization = author.require_higher_authorization;
     temp.toBeCreated.order = resultListIndex + 1;
     setOpenContributorSearchPanel(false);
     updateContributor(temp, resultListIndex);

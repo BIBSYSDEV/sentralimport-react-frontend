@@ -2,11 +2,24 @@ import React, { FC } from 'react';
 import { Button, Grid, Typography } from '@material-ui/core';
 import ContributorSearchPanel from './ContributorSearchPanel';
 import { Affiliation } from '../../types/InstitutionTypes';
-import { ContributorWrapper } from '../../types/ContributorTypes';
+import { BadgeType, ContributorWrapper } from '../../types/ContributorTypes';
 import styled from 'styled-components';
-import { StyledVerifiedBadge } from '../../assets/styles/StyledBadges';
+import {
+  StyledVerifiedBadge,
+  StyledNotVerifiedBadge,
+  StyledUnknownVerifiedBadge,
+} from '../../assets/styles/StyledBadges';
 import AddAffiliation from './AddAffiliation';
 import EditAffiliation from './EditAffiliation';
+import { Colors } from '../../assets/styles/StyleConstants';
+
+const StyledVerifiedNameTypography = styled(Typography)`
+  color: ${Colors.Text.GREEN};
+`;
+
+const StyledGreyTypography = styled(Typography)`
+  color: ${Colors.Text.OPAQUE_54_BLACK};
+`;
 
 const StyledInstitutionList = styled.div`
   margin-top: 1rem;
@@ -54,16 +67,28 @@ const ContributorForm: FC<ContributorFormProps> = ({
 
   return (
     <div data-testid={`contributor-form-${resultListIndex}`}>
-      <Typography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
-        {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
-        {contributorData.toBeCreated.identified_cristin_person && (
-          <>
-            <StyledVerifiedBadge
+      {contributorData.toBeCreated.badge_type && contributorData.toBeCreated.badge_type === BadgeType.Verified ? (
+        <StyledVerifiedNameTypography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
+          <StyledVerifiedBadge
+            data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
+          />
+          {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
+        </StyledVerifiedNameTypography>
+      ) : (
+        <StyledGreyTypography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
+          {contributorData.toBeCreated.require_higher_authorization ? (
+            <StyledUnknownVerifiedBadge
               data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
             />
-          </>
-        )}
-      </Typography>
+          ) : (
+            <StyledNotVerifiedBadge
+              data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
+            />
+          )}
+          {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
+        </StyledGreyTypography>
+      )}
+
       <ContributorSearchPanel
         contributorData={contributorData}
         resultListIndex={resultListIndex}

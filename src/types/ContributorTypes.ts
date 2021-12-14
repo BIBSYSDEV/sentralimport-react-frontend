@@ -14,6 +14,13 @@ export interface ContributorType {
   url?: string;
   affiliations?: Affiliation[];
   require_higher_authorization?: boolean;
+  badge_type?: BadgeType;
+}
+
+export enum BadgeType {
+  Verified = 'verified',
+  NotVerified = 'not_verified',
+  Unknown = 'unknown',
 }
 
 export interface ImportPublicationPerson {

@@ -2,7 +2,7 @@ import axios, { AxiosPromise, AxiosResponse } from 'axios';
 import { CRIST_REST_API } from '../utils/constants';
 import { authenticatedApiRequest, handlePotentialExpiredSession } from './api';
 import { Affiliation, Institution, UnitResponse } from '../types/InstitutionTypes';
-import { ContributorType } from '../types/ContributorTypes';
+import { BadgeType, ContributorType } from '../types/ContributorTypes';
 
 export enum SearchLanguage {
   En = 'en',
@@ -94,6 +94,7 @@ export async function getPersonDetailById(person: ContributorType): Promise<Cont
         surname: person.surname,
         identified_cristin_person: true,
         require_higher_authorization: true,
+        badge_type: BadgeType.Unknown,
       };
     }
     throw error;
