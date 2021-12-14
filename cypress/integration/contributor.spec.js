@@ -1,13 +1,13 @@
 import {
+  cristinIDWithoutActiveAffiliation,
+  mockCristinIdForbiddenPerson,
+  mockCristinIDWithoutAffiliationAttribute,
   mockImportPublication1,
   mockPerson,
   mockPersonDetailed,
   mockPersonDetailedWithoutActiveAffiliations,
-  mockUnits,
-  cristinIDWithoutActiveAffiliation,
   mockSimpleUnitResponse,
-  mockCristinIDWithoutAffiliationAttribute,
-  mockCristinIdForbiddenPerson,
+  mockUnits,
 } from '../../src/utils/mockdata';
 import mockImportData from '../../src/utils/mockImportData.json';
 import { Colors } from '../../src/assets/styles/StyleConstants';
@@ -333,5 +333,14 @@ context('contributor', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid="contributor-loading-error"]').should('not.exist');
+  });
+
+  it('Shows a warning about duplicate authors', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get(`[data-testid=contributor-form-1-duplicate-warning]`).contains('Det finnes bidragsytere med samme navn');
+    cy.get(`[data-testid="contributor-save-and-close-button-1"]`).click();
+    cy.get(`[data-testid=list-item-author-1-duplicate-warning]`).contains('Det finnes bidragsytere med samme navn');
   });
 });

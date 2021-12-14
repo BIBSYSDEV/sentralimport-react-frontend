@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Button, Card, Grid, Typography } from '@material-ui/core';
 import ContributorSearchPanel from './ContributorSearchPanel';
 import {
@@ -14,6 +14,7 @@ import { getInstitutionName, SearchLanguage } from '../../api/contributorApi';
 import styled from 'styled-components';
 import { StyledVerifiedBadge } from '../../assets/styles/StyledBadges';
 import EditAffiliation from './EditAffiliation';
+import { Alert } from '@material-ui/lab';
 
 const StyledInstitutionList = styled.div`
   margin-top: 1rem;
@@ -25,12 +26,18 @@ const StyledFlexEndButtons = styled(Button)`
   }
 `;
 
+const StyledAlert = styled(Alert)`
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+`;
+
 interface ContributorFormProps {
   resultListIndex: number;
   contributorData: ContributorWrapper;
   updateContributor: (contributorData: ContributorWrapper, rowIndex: number) => void;
   deleteContributor: (index: number) => void;
   handleChosenAuthorAffiliations: (affiliations: Affiliation[]) => Promise<Affiliation[]>;
+  duplicateWarning: string;
 }
 
 const ContributorForm: FC<ContributorFormProps> = ({
@@ -39,6 +46,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
   deleteContributor,
   updateContributor,
   handleChosenAuthorAffiliations,
+  duplicateWarning,
 }) => {
   const [selectedInstitution, setSetSelectedInstitution] = useState(emptyInstitutionSelector);
   const [selectedUnit, setSelectedUnit] = useState<UnitSelector>(emptyUnitSelector);
@@ -159,6 +167,11 @@ const ContributorForm: FC<ContributorFormProps> = ({
           </>
         )}
       </Typography>
+      {duplicateWarning && (
+        <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
+          {duplicateWarning}
+        </StyledAlert>
+      )}
       <ContributorSearchPanel
         contributorData={contributorData}
         resultListIndex={resultListIndex}

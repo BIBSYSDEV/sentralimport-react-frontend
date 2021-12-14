@@ -9,6 +9,7 @@ import AffiliationDisplay from './AffiliationDisplay';
 import { ReactComponent as VerifiedBadge } from '../../assets/icons/verified-badge.svg';
 import ContributorForm from './ContributorForm';
 import { Alert } from '@material-ui/lab';
+import { checkLocalstorageForDuplicates } from './duplicateCheckHelper';
 
 const StyledVerifiedBadge = styled(VerifiedBadge)`
   margin-right: 0.5rem;
@@ -47,24 +48,33 @@ const Contributor: FC<ContributorProps> = ({
     updateContributor(temp, resultListIndex);
   }
 
+  const checkContributorsForDuplicates = () => {
+    setDuplicateWarning('');
+    const duplicateList = checkLocalstorageForDuplicates(contributorData);
+    if (duplicateList.length > 1) {
+      const duplicatesIndex = duplicateList
+        .filter(
+          (contributor: ContributorWrapper) => contributor.toBeCreated.order !== contributorData.toBeCreated.order
+        )
+        .map((item: ContributorWrapper) => item.toBeCreated.order);
+      setDuplicateWarning(`Det finnes bidragsytere med samme navn på plass: ${duplicatesIndex.toString()}`);
+    }
+  };
+
+  const checkContributorsForDuplicatesAfterUpdate = (tempContributorData: ContributorWrapper) => {
+    setDuplicateWarning('');
+    const duplicateList = checkLocalstorageForDuplicates(contributorData);
+    if (duplicateList.length > 0) {
+      const duplicatesIndex = duplicateList
+        .filter(
+          (contributor: ContributorWrapper) => contributor.toBeCreated.order !== tempContributorData.toBeCreated.order
+        )
+        .map((item: ContributorWrapper) => item.toBeCreated.order);
+      setDuplicateWarning(`Det finnes bidragsytere med samme navn på plass: ${duplicatesIndex.toString()}`);
+    }
+  };
+
   useEffect(() => {
-    const checkContributorsForDuplicates = () => {
-      setDuplicateWarning('');
-      const contributorsFromLocalStorage = JSON.parse(localStorage.getItem('tempContributors') || '{}');
-      if (contributorsFromLocalStorage.contributors?.length > 0) {
-        const contributorsWithSameName = contributorsFromLocalStorage.contributors.filter(
-          (contributor: ContributorWrapper) => {
-            return (
-              contributorData.toBeCreated.first_name === contributor.toBeCreated.first_name &&
-              contributorData.toBeCreated.surname === contributor.toBeCreated.surname
-            );
-          }
-        );
-        if (contributorsWithSameName.length > 1) {
-          setDuplicateWarning('Det finnes flere bidragsytere med samme navn');
-        }
-      }
-    };
     checkContributorsForDuplicates();
   }, [contributorData]);
 
@@ -112,7 +122,11 @@ const Contributor: FC<ContributorProps> = ({
                 />
               ))}
           </div>
-          {duplicateWarning && <StyledAlert severity="warning">{duplicateWarning}</StyledAlert>}
+          {duplicateWarning && (
+            <StyledAlert data-testid={`list-item-author-${resultListIndex}-duplicate-warning`} severity="warning">
+              {duplicateWarning}
+            </StyledAlert>
+          )}
           <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
             <Button data-testid={`contributor-edit-button-${resultListIndex}`} color="primary" onClick={updateEditing}>
               Rediger
@@ -129,9 +143,13 @@ const Contributor: FC<ContributorProps> = ({
         <ContributorForm
           resultListIndex={resultListIndex}
           contributorData={contributorData}
-          updateContributor={updateContributor}
+          updateContributor={(tempContributorData, resultListIndex) => {
+            updateContributor(tempContributorData, resultListIndex);
+            checkContributorsForDuplicatesAfterUpdate(tempContributorData);
+          }}
           deleteContributor={deleteContributor}
           handleChosenAuthorAffiliations={handleChosenAuthorAffiliations}
+          duplicateWarning={duplicateWarning}
         />
       )}
     </div>
