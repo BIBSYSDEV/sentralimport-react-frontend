@@ -232,7 +232,6 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   function handleChooseThis(author: ContributorType) {
     const temp = contributorData;
     temp.cristin = author;
-    temp.cristin.isEditing = false;
     temp.cristin.order = resultListIndex + 1;
     temp.toBeCreated = author;
     if (temp.toBeCreated.first_name_preferred) {
@@ -241,7 +240,6 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     if (temp.toBeCreated.surname_preferred) {
       temp.toBeCreated.surname = temp.toBeCreated.surname_preferred;
     }
-    temp.toBeCreated.isEditing = false;
     temp.toBeCreated.order = resultListIndex + 1;
     setOpenContributorSearchPanel(false);
     updateContributor(temp, resultListIndex);
