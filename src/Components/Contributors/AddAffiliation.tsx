@@ -11,7 +11,7 @@ import { ContributorWrapper } from '../../types/ContributorTypes';
 import styled from 'styled-components';
 
 const AddAffiliationWrapper = styled.div`
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
 `;
 
 function filterByInstitutionNameAndAcronym(
@@ -199,17 +199,17 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
           </Grid>
           <Grid item xl={2}>
             <Button
+              variant="contained"
               data-testid={`add-institution-button-${resultListIndex}`}
               disabled={selectedInstitution === null}
               onClick={handleSelectInstitutionClick}
-              startIcon={<AddIcon />}
               color="primary">
-              Legg til
+              bruk valgt institusjon
             </Button>
           </Grid>
           <Grid item xl={2}>
-            <Button onClick={() => setShowAddAffiliationSelector(false)} size="small" color="secondary">
-              Avbryt
+            <Button variant="outlined" onClick={() => setShowAddAffiliationSelector(false)} color="secondary">
+              Avbryt institusjonsvalg
             </Button>
           </Grid>
           {errorFetchingAdditionalInstitutions && (
