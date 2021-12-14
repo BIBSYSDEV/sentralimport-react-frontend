@@ -44,22 +44,15 @@ export default function App() {
         const cristinInstitutions = institutionListResponse.data.filter((i) => i.cristin_user_institution);
         //TODO: there is no need for institutionNorwegian and institutionEnglish, it should be possible to use cristinInstitutions as is.
         const institutionsNorwegian: InstitutionSelector[] = [];
-        const institutionsEnglish: InstitutionSelector[] = [];
         cristinInstitutions.forEach((cristinInstitution) => {
           institutionsNorwegian.push({
             value: cristinInstitution.acronym,
             label: cristinInstitution.institution_name.nb ?? cristinInstitution.institution_name.en,
             cristinInstitutionNr: cristinInstitution.cristin_institution_id,
           });
-          institutionsEnglish.push({
-            value: cristinInstitution.acronym,
-            label: cristinInstitution.institution_name.en ?? cristinInstitution.institution_name.nb,
-            cristinInstitutionNr: cristinInstitution.cristin_institution_id,
-          });
         });
         dispatch({ type: 'globalInstitutions', payload: cristinInstitutions });
         dispatch({ type: 'institutions', payload: institutionsNorwegian });
-        dispatch({ type: 'institutionsEnglish', payload: institutionsEnglish });
       } catch (error) {
         handlePotentialExpiredSession(error);
       }

@@ -30,7 +30,6 @@ const initialState: ContextType = {
   totalCount: 0,
   contributors: null,
   institutions: null,
-  institutionsEnglish: null,
   doSave: false,
   allChecked: false,
   param: null,

@@ -4,7 +4,6 @@ import { Institution, InstitutionSelector } from './InstitutionTypes';
 export interface ContextType {
   allChecked: boolean;
   contributorErrors: number[];
-
   contributors: null | any;
   contributorsLoaded: boolean;
   currentImportStatus: string;
@@ -21,7 +20,6 @@ export interface ContextType {
   identifiedImported: any[];
   institutions: null | InstitutionSelector[];
   globalInstitutions: Institution[];
-  institutionsEnglish: null | InstitutionSelector[];
   isSampublikasjon: boolean;
   param: null | any;
   selectedField: string;
