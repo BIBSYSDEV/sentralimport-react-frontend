@@ -3,7 +3,6 @@ import AffiliationDisplay from './AffiliationDisplay';
 import { generateAffiliationDisplayData } from './ContributorSearchResultItem';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { Button, Grid, Typography } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import UnitSelect from '../InstitutionSelect/UnitSelect';
 import { Affiliation, SimpleUnitResponse } from '../../types/InstitutionTypes';
@@ -116,6 +115,7 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
 
   return (
     <AffiliationDisplay
+      removeInstitutionByCristinNrOrName={removeInstitutionByCristinNrOrName}
       showCardActions={true}
       affiliation={generateAffiliationDisplayData(affiliation)}
       dataTestid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}`}
@@ -123,20 +123,7 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
       handleDeleteUnitClick={(unit) => {
         deleteUnitToInstitutionAndHandleError(unit, affiliation.cristinInstitutionNr ?? '');
       }}>
-      <Grid container spacing={3}>
-        <Grid item>
-          <Button
-            size="small"
-            onClick={() =>
-              removeInstitutionByCristinNrOrName(affiliation.cristinInstitutionNr, affiliation.institutionName ?? '')
-            }
-            data-testid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}-delete-institution`}
-            startIcon={<DeleteIcon />}
-            color="secondary">
-            Fjern tilknyttning
-          </Button>
-        </Grid>
-
+      <Grid container spacing={2}>
         {affiliation.isCristinInstitution === true && (
           <Grid item>
             <Button
