@@ -816,3 +816,36 @@ export const mockSimpleUnitResponse = [
     acronym: 'OD-KOMM',
   },
 ];
+
+export const mockInstitutionSearchByName = [
+  {
+    cristin_institution_id: '65200000',
+    institution_name: {
+      en: 'Mexico',
+    },
+    acronym: 'MEXICO',
+    country: 'MX',
+    cristin_user_institution: false,
+    url: 'https://api.cristin-test.uio.no/v2/institutions/65200000',
+  },
+  {
+    cristin_institution_id: '65220000',
+    institution_name: {
+      en: 'Hospital General de Mexico',
+    },
+    acronym: 'HGM',
+    country: 'MX',
+    cristin_user_institution: false,
+    url: 'https://api.cristin-test.uio.no/v2/institutions/65220000',
+  },
+  {
+    cristin_institution_id: '82007415',
+    institution_name: {
+      en: 'Northern New Mexico College',
+    },
+    acronym: 'NNMC',
+    country: 'US',
+    cristin_user_institution: false,
+    url: 'https://api.cristin-test.uio.no/v2/institutions/82007415',
+  },
+];
