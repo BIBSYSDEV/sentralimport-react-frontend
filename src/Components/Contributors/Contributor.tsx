@@ -9,7 +9,7 @@ import AffiliationDisplay from './AffiliationDisplay';
 import { ReactComponent as VerifiedBadge } from '../../assets/icons/verified-badge.svg';
 import ContributorForm from './ContributorForm';
 import { Alert } from '@material-ui/lab';
-import { checkLocalstorageForDuplicates } from './duplicateCheckHelper';
+import { checkContributorsForDuplicates } from './duplicateCheckHelper';
 
 const StyledVerifiedBadge = styled(VerifiedBadge)`
   margin-right: 0.5rem;
@@ -48,34 +48,8 @@ const Contributor: FC<ContributorProps> = ({
     updateContributor(temp, resultListIndex);
   }
 
-  const checkContributorsForDuplicates = () => {
-    setDuplicateWarning('');
-    const duplicateList = checkLocalstorageForDuplicates(contributorData);
-    if (duplicateList.length > 1) {
-      const duplicatesIndex = duplicateList
-        .filter(
-          (contributor: ContributorWrapper) => contributor.toBeCreated.order !== contributorData.toBeCreated.order
-        )
-        .map((item: ContributorWrapper) => item.toBeCreated.order);
-      setDuplicateWarning(`Det finnes bidragsytere med samme navn på plass: ${duplicatesIndex.toString()}`);
-    }
-  };
-
-  const checkContributorsForDuplicatesAfterUpdate = (tempContributorData: ContributorWrapper) => {
-    setDuplicateWarning('');
-    const duplicateList = checkLocalstorageForDuplicates(contributorData);
-    if (duplicateList.length > 0) {
-      const duplicatesIndex = duplicateList
-        .filter(
-          (contributor: ContributorWrapper) => contributor.toBeCreated.order !== tempContributorData.toBeCreated.order
-        )
-        .map((item: ContributorWrapper) => item.toBeCreated.order);
-      setDuplicateWarning(`Det finnes bidragsytere med samme navn på plass: ${duplicatesIndex.toString()}`);
-    }
-  };
-
   useEffect(() => {
-    checkContributorsForDuplicates();
+    checkContributorsForDuplicates(contributorData, setDuplicateWarning, false);
   }, [contributorData]);
 
   return (
@@ -145,7 +119,7 @@ const Contributor: FC<ContributorProps> = ({
           contributorData={contributorData}
           updateContributor={(tempContributorData, resultListIndex) => {
             updateContributor(tempContributorData, resultListIndex);
-            checkContributorsForDuplicatesAfterUpdate(tempContributorData);
+            checkContributorsForDuplicates(tempContributorData, setDuplicateWarning, true);
           }}
           deleteContributor={deleteContributor}
           handleChosenAuthorAffiliations={handleChosenAuthorAffiliations}
