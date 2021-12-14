@@ -8,6 +8,7 @@ import {
   mockSimpleUnitResponse,
   mockCristinIDWithoutAffiliationAttribute,
   mockCristinIdForbiddenPerson,
+  mockInstitutions,
 } from '../../src/utils/mockdata';
 import mockImportData from '../../src/utils/mockImportData.json';
 import { Colors } from '../../src/assets/styles/StyleConstants';
@@ -341,17 +342,21 @@ context('contributor', () => {
     cy.get('[data-testid="open-contributors-modal-button"]').click();
 
     //adds institution:
-    cy.get('[data-testid="list-item-author-Saus-affiliations-5737-institution-name"]').should('not.exist');
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockInstitutions[0].cristin_institution_id}-institution-name"]`
+    ).should('not.exist');
     cy.get('[data-testid="show-institution-selector-2"]').click();
     cy.get('[data-testid="filter-institution-select-2"]').click();
-    cy.get('[data-testid="5737-option"]').click();
+    cy.get(`[data-testid="${mockInstitutions[0].cristin_institution_id}-option"]`).click();
     cy.get('[data-testid="add-institution-button-2"]').click();
-    cy.get('[data-testid="list-item-author-Saus-affiliations-5737-institution-name"]').should('exist');
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockInstitutions[0].cristin_institution_id}-institution-name"]`
+    ).should('exist');
 
     //not possible to add the same institution twice:
     cy.get('[data-testid="show-institution-selector-2"]').click();
     cy.get('[data-testid="filter-institution-select-2"]').click();
-    cy.get('[data-testid="5737-option"]').click();
+    cy.get(`[data-testid="${mockInstitutions[0].cristin_institution_id}-option"]`).click();
     cy.get('[data-testid="add-institution-button-2"]').click();
     cy.get('[data-testid="add-institution-error-2"]').should('have.text', 'institusjonen finnes alerede fra før av');
   });
