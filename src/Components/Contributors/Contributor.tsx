@@ -50,7 +50,7 @@ const Contributor: FC<ContributorProps> = ({
 
   useEffect(() => {
     checkContributorsForDuplicates(contributorData, setDuplicateWarning, false);
-  }, [contributorData]);
+  }, [contributorData.toBeCreated.first_name, contributorData.toBeCreated.surname]);
 
   return (
     <div>
