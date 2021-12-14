@@ -29,7 +29,7 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
   function addUnitToInstitution(newUnit: SimpleUnitResponse, institutionNr: string) {
     const affiliationIndex = contributorData.toBeCreated.affiliations
       ? contributorData.toBeCreated.affiliations.findIndex(
-          (affiliation) => affiliation.cristinInstitutionNr === institutionNr
+          (affiliation) => affiliation.cristinInstitutionNr?.toString() === institutionNr.toString()
         )
       : -1;
     if (contributorData.toBeCreated.affiliations && contributorData.toBeCreated.affiliations[affiliationIndex]) {
@@ -39,7 +39,8 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
       };
       if (
         contributorData.toBeCreated.affiliations[affiliationIndex].units?.some(
-          (existingUnit) => existingUnit.unitNr === newUnit.cristin_unit_id
+          (existingUnit) => existingUnit.unitNr.toString() === newUnit.cristin_unit_id,
+          toString()
         )
       ) {
         throw new Error(`Enhet eksisterer allerede, enhet : ${newUnit.unit_name.en ?? newUnit.unit_name.nb}`);
@@ -67,7 +68,7 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
   function deleteUnitToInstitution(unitToBeDeleted: SimpleUnitResponse, institutionNr: string) {
     const affiliationIndex = contributorData.toBeCreated.affiliations
       ? contributorData.toBeCreated.affiliations.findIndex(
-          (affiliation) => affiliation.cristinInstitutionNr === institutionNr
+          (affiliation) => affiliation.cristinInstitutionNr?.toString() === institutionNr.toString()
         )
       : -1;
     if (contributorData.toBeCreated.affiliations && contributorData.toBeCreated.affiliations[affiliationIndex]) {
@@ -76,7 +77,7 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
           (existingUnit) => existingUnit.unitNr === unitToBeDeleted.cristin_unit_id
         ) ?? -1;
       if (unitIndex < 0) {
-        throw new Error('Fant ikke enhet');
+        throw new Error(`Fant ikke enhet: ${unitToBeDeleted.cristin_unit_id}`);
       } else {
         contributorData.toBeCreated.affiliations[affiliationIndex].units?.splice(unitIndex, 1);
         updateContributor(contributorData, resultListIndex);
@@ -102,7 +103,7 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
       const temp = contributorData;
       if (cristinInstitutionNr) {
         temp.toBeCreated.affiliations = [...contributorData.toBeCreated.affiliations].filter(
-          (affiliation) => affiliation.cristinInstitutionNr !== cristinInstitutionNr
+          (affiliation) => affiliation.cristinInstitutionNr?.toString() !== cristinInstitutionNr.toString()
         );
       } else {
         temp.toBeCreated.affiliations = [...contributorData.toBeCreated.affiliations].filter(
