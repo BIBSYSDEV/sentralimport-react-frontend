@@ -124,6 +124,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       temp.toBeCreated.first_name = firstName;
       temp.toBeCreated.surname = surname;
       temp.toBeCreated.cristin_person_id = 0;
+      temp.toBeCreated.identified_cristin_person = false;
       updateContributor(temp, resultListIndex);
       setOpenContributorSearchPanel(false);
       setIsNotPossibleToSwitchPerson(false);

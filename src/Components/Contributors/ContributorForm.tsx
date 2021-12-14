@@ -14,15 +14,10 @@ import { getInstitutionName, SearchLanguage } from '../../api/contributorApi';
 import styled from 'styled-components';
 import { StyledVerifiedBadge } from '../../assets/styles/StyledBadges';
 import EditAffiliation from './EditAffiliation';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const StyledInstitutionList = styled.div`
   margin-top: 1rem;
-`;
-
-const StyledFlexEndButtons = styled(Button)`
-  &&.MuiButton-root {
-    margin-left: 1rem;
-  }
 `;
 
 interface ContributorFormProps {
@@ -38,14 +33,14 @@ const ContributorForm: FC<ContributorFormProps> = ({
   contributorData,
   deleteContributor,
   updateContributor,
-  handleChosenAuthorAffiliations,
 }) => {
   const [selectedInstitution, setSetSelectedInstitution] = useState(emptyInstitutionSelector);
   const [selectedUnit, setSelectedUnit] = useState<UnitSelector>(emptyUnitSelector);
   const [addDisabled, setAddDisabled] = useState(false);
 
+  /*
+  //TODO: denne funksjonen eksisterte på "lukk" knappen. Den bør kjøres på annet vis.
   async function handleSubmit() {
-    //TODO: finn ut om det er noen grunn til objekt-copy i det hele tatt ?
     const temp = JSON.parse(JSON.stringify(contributorData));
     const cleanedAffiliations = await handleChosenAuthorAffiliations(temp.toBeCreated.affiliations);
     temp.toBeCreated.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(cleanedAffiliations);
@@ -53,6 +48,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
     await updateContributor(temp, resultListIndex);
     setSetSelectedInstitution(emptyInstitutionSelector);
   }
+   */
 
   function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
     const cristinIdSet = new Set();
@@ -149,36 +145,55 @@ const ContributorForm: FC<ContributorFormProps> = ({
 
   return (
     <div data-testid={`contributor-form-${resultListIndex}`}>
-      <Typography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
-        {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
-        {contributorData.toBeCreated.identified_cristin_person && (
-          <>
-            <StyledVerifiedBadge
-              data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
-            />
-          </>
-        )}
-      </Typography>
-      <ContributorSearchPanel
-        contributorData={contributorData}
-        resultListIndex={resultListIndex}
-        updateContributor={updateContributor}
-      />
-      <StyledInstitutionList>
-        {contributorData.toBeCreated.affiliations
-          ?.filter(
-            (item: Affiliation, number: number) => contributorData.toBeCreated.affiliations?.indexOf(item) === number
-          )
-          .map((affiliation, affiliationIndex) => (
-            <EditAffiliation
-              key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
-              affiliation={affiliation}
-              contributorData={contributorData}
-              resultListIndex={resultListIndex}
-              updateContributor={updateContributor}
-            />
-          ))}
-      </StyledInstitutionList>
+      <Grid container spacing={2} justifyContent="space-between">
+        <Grid item>
+          <Typography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
+            {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
+            {contributorData.toBeCreated.identified_cristin_person && (
+              <>
+                <StyledVerifiedBadge
+                  data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
+                />
+              </>
+            )}
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Button
+            startIcon={<DeleteIcon />}
+            data-testid={`contributor-delete-button-form-${resultListIndex}`}
+            color="secondary"
+            onClick={() => deleteContributor(resultListIndex)}>
+            Fjern bidragsyter
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <ContributorSearchPanel
+            contributorData={contributorData}
+            resultListIndex={resultListIndex}
+            updateContributor={updateContributor}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <StyledInstitutionList>
+            {contributorData.toBeCreated.affiliations
+              ?.filter(
+                (item: Affiliation, number: number) =>
+                  contributorData.toBeCreated.affiliations?.indexOf(item) === number
+              )
+              .map((affiliation, affiliationIndex) => (
+                <EditAffiliation
+                  key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
+                  affiliation={affiliation}
+                  contributorData={contributorData}
+                  resultListIndex={resultListIndex}
+                  updateContributor={updateContributor}
+                />
+              ))}
+          </StyledInstitutionList>
+        </Grid>
+      </Grid>
+
       <Card
         variant="outlined"
         style={{ overflow: 'visible', padding: '0.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
@@ -209,26 +224,6 @@ const ContributorForm: FC<ContributorFormProps> = ({
           OK
         </Button>
       </Card>
-      <Grid container spacing={2}>
-        <Grid item>
-          <StyledFlexEndButtons
-            variant="outlined"
-            data-testid={`contributor-delete-button-form-${resultListIndex}`}
-            color="secondary"
-            onClick={() => deleteContributor(resultListIndex)}>
-            Slett person
-          </StyledFlexEndButtons>
-        </Grid>
-        <Grid item>
-          <StyledFlexEndButtons
-            variant="outlined"
-            data-testid={`contributor-save-and-close-button-${resultListIndex}`}
-            color="primary"
-            onClick={handleSubmit}>
-            Lukk
-          </StyledFlexEndButtons>
-        </Grid>
-      </Grid>
     </div>
   );
 };
