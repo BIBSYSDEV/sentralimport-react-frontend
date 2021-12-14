@@ -70,7 +70,7 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
       <Typography>{JSON.stringify(addAffiliationSuccessful)}</Typography>
       <StyledCardContent>
         <Grid container justifyContent="space-between" spacing={2}>
-          <Grid item>
+          <Grid item xs={6}>
             <Typography data-testid={`${dataTestid}-institution-name`} display="inline" variant="subtitle1">
               {affiliation.institutionName}
             </Typography>
