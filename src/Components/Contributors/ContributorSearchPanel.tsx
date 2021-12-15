@@ -126,6 +126,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       temp.toBeCreated.badge_type = BadgeType.None;
       temp.toBeCreated.cristin_person_id = 0;
       temp.toBeCreated.require_higher_authorization = false;
+      temp.toBeCreated.identified_cristin_person = false;
       updateContributor(temp, resultListIndex);
       setOpenContributorSearchPanel(false);
       setIsNotPossibleToSwitchPerson(false);
@@ -239,7 +240,6 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   function handleChooseThis(author: ContributorType) {
     const temp = contributorData;
     temp.cristin = author;
-    temp.cristin.isEditing = false;
     temp.cristin.order = resultListIndex + 1;
     temp.toBeCreated = author;
     if (temp.toBeCreated.first_name_preferred) {
@@ -248,7 +248,6 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     if (temp.toBeCreated.surname_preferred) {
       temp.toBeCreated.surname = temp.toBeCreated.surname_preferred;
     }
-    temp.toBeCreated.isEditing = false;
     temp.toBeCreated.require_higher_authorization = author.require_higher_authorization;
     temp.toBeCreated.order = resultListIndex + 1;
     setOpenContributorSearchPanel(false);

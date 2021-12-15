@@ -20,10 +20,10 @@ import {
 } from '../../types/ContributorTypes';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { getInstitutionsByCountryCodes } from '../../api/institutionApi';
-import Contributor from './Contributor';
 import { ImportPublication } from '../../types/PublicationTypes';
 import { Affiliation, ImportPublicationPersonInstutution } from '../../types/InstitutionTypes';
 import CommonErrorMessage from '../CommonErrorMessage';
+import ContributorForm from './ContributorForm';
 
 const Foreign_educational_institution_generic_code = '9127';
 const Other_institutions_generic_code = '9126';
@@ -107,7 +107,6 @@ async function searchCristinPersons(authors: ImportPublicationPerson[]) {
         surname: cristinPerson.surname_preferred ?? cristinPerson.surname,
         affiliations: affiliations.filter((item: Affiliation, index: number) => affiliations.indexOf(item) === index),
         url: CRIST_REST_API + '/persons/' + cristinPerson.cristin_person_id + '?lang=' + SearchLanguage.En,
-        isEditing: false,
         order: i + 1,
         identified_cristin_person: cristinPerson.identified_cristin_person,
         require_higher_authorization: cristinPerson.require_higher_authorization,
@@ -361,7 +360,6 @@ const ContributorModal: FC<ContributorProps> = ({
               }
               identified[i] = cristinAuthors[i].identified_cristin_person || false;
               tempContributors[i] = createContributorWrapper(authorsFromImportPublication, i, cristinAuthors);
-              tempContributors[i].isEditing = tempContributors[i].cristin.cristin_person_id === 0;
               tempContributors[i].toBeCreated = await generateToBeCreatedContributor(
                 tempContributors[i],
                 cristinAuthors[i],
@@ -481,7 +479,6 @@ const ContributorModal: FC<ContributorProps> = ({
       temp[toBeCreatedOrder - 1].toBeCreated.cristin_person_id = author.cristin.cristin_person_id
         ? author.cristin.cristin_person_id
         : author.imported.cristin_person_id;
-      temp[toBeCreatedOrder - 1].isEditing = false;
     }
     setContributors(temp);
   }
@@ -630,9 +627,9 @@ const ContributorModal: FC<ContributorProps> = ({
                       </StyledContributorColumn>
                       <StyledContributorColumn>
                         <div>
-                          <Contributor
-                            contributorData={row}
+                          <ContributorForm
                             resultListIndex={index}
+                            contributorData={row}
                             updateContributor={updateContributor}
                             deleteContributor={handleCloseDeleteConfirmDialog}
                             handleChosenAuthorAffiliations={handleChosenAuthorAffiliations}

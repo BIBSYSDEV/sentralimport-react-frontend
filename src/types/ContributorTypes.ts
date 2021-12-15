@@ -9,7 +9,6 @@ export interface ContributorType {
   cristin_person_id?: number;
   role_code?: string;
   authorName?: string;
-  isEditing?: boolean;
   identified_cristin_person?: boolean;
   url?: string;
   affiliations?: Affiliation[];
@@ -55,7 +54,6 @@ export const emptyContributor: ContributorType = {
   surname: '',
   affiliations: [],
   url: '',
-  isEditing: true,
 };
 
 export const emptyContributorWrapper: ContributorWrapper = {

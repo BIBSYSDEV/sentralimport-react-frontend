@@ -29,7 +29,7 @@ context('Search contributor panel', () => {
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid=contributor-search-button-2]').click();
     cy.get(
-      `[data-testid=list-item-author-${mockPerson.cristin_person_id}-affiliations-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}]`
+      `[data-testid=list-item-author-${mockPerson.surname}-affiliations-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}]`
     ).should('exist');
     cy.get(`[data-testid=author-name-${cristinIDWithoutActiveAffiliation}]`).should('exist');
     cy.get(
