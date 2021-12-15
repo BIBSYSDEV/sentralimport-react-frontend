@@ -89,6 +89,9 @@ export const interceptRequestsOnMock = () => {
     .reply(400, mockSaveErrorResponse);
   mock.onPost(new RegExp(`${CRIST_REST_API}/results`)).reply(200, mockSavedPublication);
 
+  //update publication
+  mock.onPatch(new RegExp(`${CRIST_REST_API}/results`)).reply(200, mockSavedPublication);
+
   //get all categories
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/categories.*`)).reply(200, mockAllCategories);
 

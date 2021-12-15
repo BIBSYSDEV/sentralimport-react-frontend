@@ -4,7 +4,6 @@ import '../../assets/styles/Results.scss';
 import { Radio } from '@material-ui/core';
 import { CristinPublication, InternationalStandardNumber } from '../../types/PublicationTypes';
 import styled from 'styled-components';
-import { ImportPublicationPerson } from '../../types/ContributorTypes';
 
 const StyledTitle = styled.div`
   display: block;
@@ -18,6 +17,14 @@ interface ResultItemProps {
   cristinPublication: CristinPublication;
 }
 
+const generateAuthorPresentation = (cristinPublication: CristinPublication) => {
+  return cristinPublication.authors
+    .slice(0, 3)
+    .map((author: any) => [author.surname, author.first_name].join(', '))
+    .join('; ')
+    .concat(cristinPublication.authors.length > 3 ? ' et al.' : '');
+};
+
 const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
   return (
     <div>
@@ -25,7 +32,11 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
         className={`card-horiz basic-background card-horiz-hover result`}
         key={cristinPublication.cristin_result_id}
         data-testid={`duplication-result-${cristinPublication.cristin_result_id}`}>
-        <Radio value={cristinPublication.cristin_result_id} aria-label="Duplikat" />
+        <Radio
+          data-testid={`duplication-result-radio-${cristinPublication.cristin_result_id}`}
+          value={cristinPublication.cristin_result_id}
+          aria-label="Duplikat"
+        />
         <a
           className={`result result`}
           href={process.env.REACT_APP_LINK_URL + '/results/show.jsf?id=' + cristinPublication.cristin_result_id}
@@ -35,15 +46,9 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
             <img src={ResultIcon} alt="result" />
           </div>
           <div className="content-wrapper">
-            <StyledTitle data-testid="mytitle">
-              {cristinPublication.title[cristinPublication.original_language]}
-            </StyledTitle>
+            <StyledTitle>{cristinPublication.title[cristinPublication.original_language]}</StyledTitle>
             <div className={`metacristinPublication`}>
-              <p>
-                {cristinPublication.authors.map(
-                  (author: ImportPublicationPerson) => author.surname + ', ' + author.firstname + '; '
-                ) + (cristinPublication.authors.length < cristinPublication.authorTotalCount && ' et al')}
-              </p>
+              <p>{generateAuthorPresentation(cristinPublication)}</p>
               <p className={`active`}>{cristinPublication.category.name.en}</p>
               <p className={`italic`}>
                 {cristinPublication.international_standard_numbers &&

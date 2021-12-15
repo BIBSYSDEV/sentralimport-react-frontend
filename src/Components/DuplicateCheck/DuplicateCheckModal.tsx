@@ -119,14 +119,16 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
         </Grid>
       </ModalFooter>
       {/*TODO: only render ComparePublicationDataModal on handleClickOkButton (dropp å sette i state: "setSelectedPublication")*/}
-      <ComparePublicationDataModal
-        isComparePublicationDataModalOpen={isComparePublicationDataModalOpen}
-        handleComparePublicationDataModalClose={handleComparePublicationDataModalClose.bind(this)}
-        handleDuplicateCheckModalClose={handleDuplicateCheckModalClose}
-        importPublication={importPublication}
-        cristinPublication={state.selectedPublication}
-        isDuplicate={isDuplicate}
-      />
+      {isComparePublicationDataModalOpen && (
+        <ComparePublicationDataModal
+          isComparePublicationDataModalOpen={isComparePublicationDataModalOpen}
+          handleComparePublicationDataModalClose={handleComparePublicationDataModalClose.bind(this)}
+          handleDuplicateCheckModalClose={handleDuplicateCheckModalClose}
+          importPublication={importPublication}
+          cristinPublication={state.selectedPublication}
+          isDuplicate={isDuplicate}
+        />
+      )}
     </StyledModal>
   );
 };

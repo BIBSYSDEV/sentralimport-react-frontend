@@ -155,6 +155,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     //init ligger i en useeffect pga asynkront kall til getJournalId
     const initFormik = async () => {
       //Formik is initiated from either importPublication or state.selectedPublication (set in duplicate-modal)
+
       setInitialFormValues(
         isDuplicate && state.selectedPublication
           ? {
@@ -232,7 +233,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
     if (result.status === 200) {
       enqueueSnackbar(
-        'Importerte ny publikasjon (Cristin-id: ' + result.result.id + ' og tittel: ' + result.result.title + ')',
+        'Importerte publikasjon (Cristin-id: ' + result.result.id + ' og tittel: ' + result.result.title + ')',
         {
           variant: 'success',
         }
@@ -290,10 +291,9 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       const publication = createCristinPublicationForSaving(
         formValuesToSave,
         importPublication,
-        state.selectedPublication,
         publicationLanguages,
         annotation,
-        isDuplicate
+        isDuplicate && state.selectedPublication.cristin_result_id
       );
       isDuplicate
         ? handleUpdatePublication(publication, dispatch).then((response) => handlePublicationImported(response))
