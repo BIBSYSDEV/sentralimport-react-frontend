@@ -8,9 +8,15 @@ import { StyledVerifiedBadge } from '../../assets/styles/StyledBadges';
 import AddAffiliation from './AddAffiliation';
 import EditAffiliation from './EditAffiliation';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { Alert } from '@material-ui/lab';
 
 const StyledInstitutionList = styled.div`
   margin-top: 1rem;
+`;
+
+const StyledAlert = styled(Alert)`
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 `;
 
 interface ContributorFormProps {
@@ -19,6 +25,7 @@ interface ContributorFormProps {
   updateContributor: (contributorData: ContributorWrapper, rowIndex: number) => void;
   deleteContributor: (index: number) => void;
   handleChosenAuthorAffiliations: (affiliations: Affiliation[]) => Promise<Affiliation[]>;
+  duplicateWarning: string;
 }
 
 const ContributorForm: FC<ContributorFormProps> = ({
@@ -26,6 +33,8 @@ const ContributorForm: FC<ContributorFormProps> = ({
   contributorData,
   deleteContributor,
   updateContributor,
+  handleChosenAuthorAffiliations,
+  duplicateWarning,
 }) => {
   //TODO: denne funksjonen eksisterte på "lukk" knappen. Den bør kjøres på annet vis.
   /*
@@ -64,6 +73,11 @@ const ContributorForm: FC<ContributorFormProps> = ({
             )}
           </Typography>
         </Grid>
+        {duplicateWarning && (
+          <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
+            {duplicateWarning}
+          </StyledAlert>
+        )}
         <Grid item>
           <Button
             startIcon={<DeleteIcon />}
