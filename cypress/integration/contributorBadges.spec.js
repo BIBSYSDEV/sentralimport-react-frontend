@@ -1,6 +1,6 @@
 import mockImportData from '../../src/utils/mockImportData.json';
 import { Colors } from '../../src/assets/styles/StyleConstants';
-import { mockForbiddenPerson, mockPersonWithoutAffiliationAttribute } from '../../src/utils/mockdata';
+import { mockForbiddenPerson, mockPerson, mockPersonWithoutAffiliationAttribute } from '../../src/utils/mockdata';
 
 context('contributor badges', () => {
   beforeEach(() => {

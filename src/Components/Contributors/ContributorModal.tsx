@@ -110,12 +110,7 @@ async function searchCristinPersons(authors: ImportPublicationPerson[]) {
         order: i + 1,
         identified_cristin_person: cristinPerson.identified_cristin_person,
         require_higher_authorization: cristinPerson.require_higher_authorization,
-        badge_type: getBadgeForContributor(
-          affiliations,
-          cristinPerson.require_higher_authorization,
-          cristinPerson.identified_cristin_person,
-          cristinPerson.cristin_person_id
-        ),
+        badge_type: getBadgeForContributor(cristinPerson),
       };
     }
     suggestedAuthors[i] = cristinPerson;

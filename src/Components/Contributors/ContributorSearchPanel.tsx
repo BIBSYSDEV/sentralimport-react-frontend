@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Button, Card, CircularProgress, Collapse, Grid, TextField, Typography } from '@material-ui/core';
-import { BadgeType, ContributorType, ContributorWrapper } from '../../types/ContributorTypes';
+import { ContributorStatus, ContributorType, ContributorWrapper } from '../../types/ContributorTypes';
 import ContributorSearchResultItem from './ContributorSearchResultItem';
 import { getPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
 import { Affiliation } from '../../types/InstitutionTypes';
@@ -123,7 +123,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       temp.toBeCreated.surname_preferred = undefined;
       temp.toBeCreated.first_name = firstName;
       temp.toBeCreated.surname = surname;
-      temp.toBeCreated.badge_type = BadgeType.None;
+      temp.toBeCreated.badge_type = ContributorStatus.None;
       temp.toBeCreated.cristin_person_id = 0;
       temp.toBeCreated.require_higher_authorization = false;
       temp.toBeCreated.identified_cristin_person = false;
@@ -166,12 +166,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
               fetchedAuthor.affiliations = [];
             }
             if (fetchedAuthor) {
-              fetchedAuthor.badge_type = getBadgeForContributor(
-                fetchedAuthor.affiliations,
-                fetchedAuthor.require_higher_authorization,
-                fetchedAuthor.identified_cristin_person,
-                fetchedAuthor.cristin_person_id
-              );
+              fetchedAuthor.badge_type = getBadgeForContributor(fetchedAuthor);
               fetchedAuthors.push(fetchedAuthor);
             }
           }

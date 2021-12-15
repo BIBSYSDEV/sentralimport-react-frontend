@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { Button, Grid, Typography } from '@material-ui/core';
 import ContributorSearchPanel from './ContributorSearchPanel';
 import { Affiliation } from '../../types/InstitutionTypes';
-import { BadgeType, ContributorWrapper } from '../../types/ContributorTypes';
+import { ContributorStatus, ContributorWrapper } from '../../types/ContributorTypes';
 import styled from 'styled-components';
 import {
   StyledNotVerifiedBadge,
@@ -80,7 +80,8 @@ const ContributorForm: FC<ContributorFormProps> = ({
     <div data-testid={`contributor-form-${resultListIndex}`}>
       <Grid container spacing={2} justifyContent="space-between">
         <Grid item>
-          {contributorData.toBeCreated.badge_type && contributorData.toBeCreated.badge_type === BadgeType.Verified ? (
+          {contributorData.toBeCreated.badge_type &&
+          contributorData.toBeCreated.badge_type === ContributorStatus.Verified ? (
             <StyledVerifiedNameTypography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
               <StyledVerifiedBadge
                 data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
@@ -89,12 +90,12 @@ const ContributorForm: FC<ContributorFormProps> = ({
             </StyledVerifiedNameTypography>
           ) : (
             <StyledGreyTypography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
-              {contributorData.toBeCreated.badge_type === BadgeType.Unknown && (
+              {contributorData.toBeCreated.badge_type === ContributorStatus.Unknown && (
                 <StyledUnknownVerifiedBadge
                   data-testid={`unknown-verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
                 />
               )}
-              {contributorData.toBeCreated.badge_type === BadgeType.NotVerified && (
+              {contributorData.toBeCreated.badge_type === ContributorStatus.NotVerified && (
                 <StyledNotVerifiedBadge
                   data-testid={`not-verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
                 />

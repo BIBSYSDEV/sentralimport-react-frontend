@@ -4,7 +4,7 @@ import {
   SearchLanguage,
 } from '../api/contributorApi';
 import { Affiliation } from '../types/InstitutionTypes';
-import { BadgeType } from '../types/ContributorTypes';
+import { ContributorStatus, ContributorType } from '../types/ContributorTypes';
 
 export async function getAffiliationDetails(
   affiliation: Affiliation | undefined,
@@ -45,19 +45,18 @@ export async function getAffiliationDetails(
 }
 
 //This is hacky and should have been done at backend instead of being calculated on frontend
-export const getBadgeForContributor = (
-  activeAffiliations: Affiliation[] | undefined,
-  require_higher_authorization: boolean | undefined,
-  identified_cristin_person: boolean | undefined,
-  cristin_person_id: number | undefined
-) => {
-  if (activeAffiliations && activeAffiliations.length > 0 && identified_cristin_person) {
-    return BadgeType.Verified;
-  } else if (require_higher_authorization) {
-    return BadgeType.Unknown;
-  } else if (cristin_person_id && cristin_person_id !== 0) {
-    return BadgeType.NotVerified;
+export const getBadgeForContributor = (contributor: ContributorType) => {
+  if (
+    contributor.affiliations &&
+    contributor.affiliations.some((affiliation) => affiliation.active) &&
+    contributor.identified_cristin_person
+  ) {
+    return ContributorStatus.Verified;
+  } else if (contributor.require_higher_authorization) {
+    return ContributorStatus.Unknown;
+  } else if (contributor.cristin_person_id && contributor.cristin_person_id !== 0) {
+    return ContributorStatus.NotVerified;
   } else {
-    return BadgeType.None;
+    return ContributorStatus.None;
   }
 };
