@@ -91,7 +91,7 @@ context('contributor', () => {
 
     cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].firstname);
     cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[0].surname);
-    cy.get(`[data-testid="contributor-delete-button-0"]`).click();
+    cy.get(`[data-testid="contributor-delete-button-form-0"]`).click();
     cy.get(`[data-testid="dialog-confirm-button"]`).click();
     cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[1].firstname);
     cy.get(`[data-testid="creator-name-1"]`).contains(mockImportData[0].authors[1].surname);
@@ -106,8 +106,9 @@ context('contributor', () => {
     cy.get(`[data-testid="contributor-form-0"]`).contains(
       mockImportPublication1.authors[0].institutions[0].institutionName
     );
-    cy.get(`[data-testid="contributor-save-and-close-button-0"]`).click();
-    cy.get(`[data-testid="contributor-for-import-wrapper-0"]`).contains(
+    //cy.get('[data-testid="list-item-author-Capriolo-affiliations-12300052-institution-name"]')
+    //cy.get(`[data-testid="list-item-author-Capriolo-affiliations-12300052-institution-name"]`);
+    cy.get(`[data-testid="contributor-form-0"]`).contains(
       mockImportPublication1.authors[0].institutions[0].institutionName
     );
   });
@@ -117,8 +118,6 @@ context('contributor', () => {
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="open-contributors-modal-button"]`).click();
     cy.get(`[data-testid="contributor-form-1"]`).contains('China (Ukjent institusjon');
-    cy.get(`[data-testid="contributor-save-and-close-button-1"]`).click();
-    cy.get(`[data-testid="contributor-for-import-wrapper-1"]`).contains('China (Ukjent institusjon');
   });
 
   it('hides inactive affiliations for authors with cristin-id', () => {
@@ -126,12 +125,12 @@ context('contributor', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(
-      `[data-testid="list-item-author-${mockPersonDetailed.cristin_person_id}-affiliations-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}-list-item-text-unit-${mockPersonDetailed.affiliations[1].unit.cristin_unit_id}"]`
+      `[data-testid="list-item-author-${mockPersonDetailed.surname}-affiliations-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}-list-item-text-unit-${mockPersonDetailed.affiliations[1].unit.cristin_unit_id}"]`
     )
       .first()
       .should('have.text', `${mockUnits.unit_name.en}`);
     cy.get(
-      `[data-testid="list-item-author-${mockPersonDetailed.cristin_person_id}-affiliations-${mockPersonDetailed.affiliations[0].institution.cristin_institution_id}-list-item-text-unit-${mockPersonDetailed.affiliations[0].unit.cristin_unit_id}"]`
+      `[data-testid="list-item-author-${mockPersonDetailed.surname}-affiliations-${mockPersonDetailed.affiliations[0].institution.cristin_institution_id}-list-item-text-unit-${mockPersonDetailed.affiliations[0].unit.cristin_unit_id}"]`
     ).should('not.exist');
   });
 
@@ -228,7 +227,5 @@ context('contributor', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(`[data-testid=contributor-form-1-duplicate-warning]`).contains('Det finnes bidragsytere med samme navn');
-    cy.get(`[data-testid="contributor-save-and-close-button-1"]`).click();
-    cy.get(`[data-testid=list-item-author-1-duplicate-warning]`).contains('Det finnes bidragsytere med samme navn');
   });
 });

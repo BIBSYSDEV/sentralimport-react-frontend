@@ -1,15 +1,5 @@
 import React, { FC } from 'react';
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Grid,
-  List,
-  ListItem,
-  ListItemText,
-  Typography,
-} from '@material-ui/core';
+import { Button, Card, CardContent, Grid, List, ListItem, ListItemText, Typography } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import styled from 'styled-components';
 import { SimpleUnitResponse } from '../../types/InstitutionTypes';
@@ -30,13 +20,19 @@ const StyledSuccessTypography = styled(Typography)`
 
 const StyledCardContent = styled(CardContent)`
   &&.MuiCardContent-root:last-child {
-    padding-bottom: 0;
+    padding-bottom: 0.3rem;
   }
 `;
 
 const StyledListItemText = styled(ListItemText)`
   & .MuiListItemText-primary {
     font-size: 0.9rem;
+  }
+`;
+
+const StyledRemoveUnitButton = styled(Button)`
+  &.MuiButton-root {
+    margin-right: 2.3rem;
   }
 `;
 
@@ -54,6 +50,7 @@ interface AffiliationDisplayProps {
   handleAddAffiliationButtonClick?: () => void;
   addAffiliationError?: AddAffiliationError | undefined;
   addAffiliationSuccessful?: string | undefined;
+  removeInstitutionByCristinNrOrName?: (cristinInstitutionNr: string | undefined, institutionName: string) => void;
 }
 
 const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
@@ -62,22 +59,48 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
   dataTestid,
   backgroundcolor,
   handleDeleteUnitClick,
-  showCardActions,
   handleAddAffiliationButtonClick,
   addAffiliationError,
   addAffiliationSuccessful,
+  removeInstitutionByCristinNrOrName,
 }) => {
+  console.log(addAffiliationSuccessful);
   return (
     <StyledAffiliationsWrapper backgroundcolor={backgroundcolor} variant="outlined" data-testid={dataTestid}>
+      <Typography>{JSON.stringify(addAffiliationSuccessful)}</Typography>
       <StyledCardContent>
-        <Grid container spacing={2}>
-          <Grid item sm={8}>
+        <Grid container justifyContent="space-between" spacing={2}>
+          <Grid item xs={6}>
             <Typography data-testid={`${dataTestid}-institution-name`} display="inline" variant="subtitle1">
               {affiliation.institutionName}
             </Typography>
           </Grid>
-          <Grid item sm={4}>
-            {handleAddAffiliationButtonClick ? (
+          {affiliation.countryCode && (
+            <Grid item>
+              <Typography data-testid={`${dataTestid}-country-code`} display="inline" variant="caption">
+                {affiliation.countryCode && 'Land: ' + affiliation.countryCode}
+              </Typography>
+            </Grid>
+          )}
+          {removeInstitutionByCristinNrOrName && (
+            <Grid item>
+              <Button
+                size="small"
+                onClick={() =>
+                  removeInstitutionByCristinNrOrName(
+                    affiliation.cristinInstitutionNr,
+                    affiliation.institutionName ?? ''
+                  )
+                }
+                data-testid={`${dataTestid}-delete-institution`}
+                startIcon={<DeleteIcon />}
+                color="secondary">
+                Fjern tilknyttning
+              </Button>
+            </Grid>
+          )}
+          {handleAddAffiliationButtonClick && (
+            <Grid item>
               <Button
                 data-testid={`add-only-affiliation-button-${dataTestid}`}
                 onClick={() => handleAddAffiliationButtonClick()}
@@ -85,50 +108,54 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
                 color="primary">
                 Velg kun tilknyttning
               </Button>
-            ) : (
-              <Typography data-testid={`${dataTestid}-country-code`} display="inline" variant="caption">
-                {affiliation.countryCode && 'Land: ' + affiliation.countryCode}
-              </Typography>
-            )}
 
-            {addAffiliationError &&
-              affiliation.cristinInstitutionNr &&
-              addAffiliationError.institutionId.toString() === affiliation.cristinInstitutionNr.toString() && (
-                <Typography color="error" data-testid={`add-only-affiliation-error-${dataTestid}`} variant="body2">
-                  {addAffiliationError.message}
-                </Typography>
-              )}
-            {addAffiliationSuccessful &&
-              affiliation.cristinInstitutionNr &&
-              addAffiliationSuccessful.toString() === affiliation.cristinInstitutionNr.toString() && (
-                <StyledSuccessTypography data-testid={`add-affiliation-success-${dataTestid}`} variant="body2">
-                  La til institusjon
-                </StyledSuccessTypography>
-              )}
-          </Grid>
+              {addAffiliationError &&
+                affiliation.cristinInstitutionNr &&
+                addAffiliationError.institutionId.toString() === affiliation.cristinInstitutionNr.toString() && (
+                  <Typography color="error" data-testid={`add-only-affiliation-error-${dataTestid}`} variant="body2">
+                    {addAffiliationError.message}
+                  </Typography>
+                )}
+              {addAffiliationSuccessful &&
+                affiliation.cristinInstitutionNr &&
+                addAffiliationSuccessful.toString() === affiliation.cristinInstitutionNr.toString() && (
+                  <StyledSuccessTypography data-testid={`add-affiliation-success-${dataTestid}`} variant="body2">
+                    La til institusjon
+                  </StyledSuccessTypography>
+                )}
+            </Grid>
+          )}
         </Grid>
-        <List>
-          {affiliation.units.map((unit, unitIndex) => (
-            <ListItem key={`{$unitIndex}-${unitIndex}`} dense={true}>
-              <StyledListItemText
-                data-testid={`${dataTestid}-list-item-text-unit-${unit.cristin_unit_id ?? unitIndex}`}
-                primary={unit.unit_name.en ?? unit.unit_name.nb}
-              />
-              {handleDeleteUnitClick && (
-                <Button
-                  onClick={() => handleDeleteUnitClick(unit)}
-                  size="small"
-                  data-testid={`${dataTestid}-delete-unit-${unitIndex}`}
-                  startIcon={<DeleteIcon />}
-                  color="secondary">
-                  Fjern enhet
-                </Button>
-              )}
-            </ListItem>
-          ))}
-        </List>
+        <Grid item xs={12}>
+          <List>
+            {affiliation.units.map((unit, unitIndex) => (
+              <ListItem key={`{$unitIndex}-${unitIndex}`} dense={true}>
+                <Grid justifyContent="space-between" container spacing={2}>
+                  <Grid item>
+                    <StyledListItemText
+                      data-testid={`${dataTestid}-list-item-text-unit-${unit.cristin_unit_id ?? unitIndex}`}
+                      primary={unit.unit_name.en ?? unit.unit_name.nb}
+                    />
+                  </Grid>
+                  {handleDeleteUnitClick && (
+                    <Grid item>
+                      <StyledRemoveUnitButton
+                        onClick={() => handleDeleteUnitClick(unit)}
+                        size="small"
+                        data-testid={`${dataTestid}-delete-unit-${unitIndex}`}
+                        startIcon={<DeleteIcon />}
+                        color="secondary">
+                        Fjern enhet
+                      </StyledRemoveUnitButton>
+                    </Grid>
+                  )}
+                </Grid>
+              </ListItem>
+            ))}
+          </List>
+        </Grid>
+        {children}
       </StyledCardContent>
-      {showCardActions && <CardActions>{children}</CardActions>}
     </StyledAffiliationsWrapper>
   );
 };

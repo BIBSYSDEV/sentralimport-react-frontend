@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Button, Grid, Typography } from '@material-ui/core';
 import ContributorSearchPanel from './ContributorSearchPanel';
 import { Affiliation } from '../../types/InstitutionTypes';
@@ -7,16 +7,12 @@ import styled from 'styled-components';
 import { StyledVerifiedBadge } from '../../assets/styles/StyledBadges';
 import AddAffiliation from './AddAffiliation';
 import EditAffiliation from './EditAffiliation';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { Alert } from '@material-ui/lab';
+import { checkContributorsForDuplicates } from './duplicateCheckHelper';
 
 const StyledInstitutionList = styled.div`
   margin-top: 1rem;
-`;
-
-const StyledFlexEndButtons = styled(Button)`
-  &&.MuiButton-root {
-    margin-left: 1rem;
-  }
 `;
 
 const StyledAlert = styled(Alert)`
@@ -30,7 +26,6 @@ interface ContributorFormProps {
   updateContributor: (contributorData: ContributorWrapper, rowIndex: number) => void;
   deleteContributor: (index: number) => void;
   handleChosenAuthorAffiliations: (affiliations: Affiliation[]) => Promise<Affiliation[]>;
-  duplicateWarning: string;
 }
 
 const ContributorForm: FC<ContributorFormProps> = ({
@@ -39,10 +34,10 @@ const ContributorForm: FC<ContributorFormProps> = ({
   deleteContributor,
   updateContributor,
   handleChosenAuthorAffiliations,
-  duplicateWarning,
 }) => {
+  //TODO: denne funksjonen eksisterte på "lukk" knappen. Den bør kjøres på annet vis.
+  /*
   async function handleSubmit() {
-    //TODO: finn ut om det er noen grunn til objekt-copy i det hele tatt ?
     const temp = JSON.parse(JSON.stringify(contributorData));
     const cleanedAffiliations = await handleChosenAuthorAffiliations(temp.toBeCreated.affiliations);
     //removeInstitutionsDuplicatesBasedOnCristinId trengs fordi dubletter kan komme inn med importdata.
@@ -50,6 +45,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
     temp.isEditing = false;
     await updateContributor(temp, resultListIndex);
   }
+   
 
   function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
     const cristinIdSet = new Set();
@@ -59,69 +55,74 @@ const ContributorForm: FC<ContributorFormProps> = ({
       return true;
     });
   }
+  */
+
+  const [duplicateWarning, setDuplicateWarning] = useState('');
+
+  useEffect(() => {
+    checkContributorsForDuplicates(contributorData, setDuplicateWarning, false);
+  }, [contributorData.toBeCreated.first_name, contributorData.toBeCreated.surname]);
 
   return (
     <div data-testid={`contributor-form-${resultListIndex}`}>
-      <Typography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
-        {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
-        {contributorData.toBeCreated.identified_cristin_person && (
-          <>
-            <StyledVerifiedBadge
-              data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
-            />
-          </>
+      <Grid container spacing={2} justifyContent="space-between">
+        <Grid item>
+          <Typography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
+            {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
+            {contributorData.toBeCreated.identified_cristin_person && (
+              <>
+                <StyledVerifiedBadge
+                  data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
+                />
+              </>
+            )}
+          </Typography>
+        </Grid>
+        {duplicateWarning && (
+          <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
+            {duplicateWarning}
+          </StyledAlert>
         )}
-      </Typography>
-      {duplicateWarning && (
-        <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
-          {duplicateWarning}
-        </StyledAlert>
-      )}
-      <ContributorSearchPanel
-        contributorData={contributorData}
-        resultListIndex={resultListIndex}
-        updateContributor={updateContributor}
-      />
-      <StyledInstitutionList>
-        {contributorData.toBeCreated.affiliations
-          ?.filter(
-            (item: Affiliation, number: number) => contributorData.toBeCreated.affiliations?.indexOf(item) === number
-          )
-          .map((affiliation, affiliationIndex) => (
-            <EditAffiliation
-              key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
-              affiliation={affiliation}
-              contributorData={contributorData}
-              resultListIndex={resultListIndex}
-              updateContributor={updateContributor}
-            />
-          ))}
-      </StyledInstitutionList>
+        <Grid item>
+          <Button
+            startIcon={<DeleteIcon />}
+            data-testid={`contributor-delete-button-form-${resultListIndex}`}
+            color="secondary"
+            onClick={() => deleteContributor(resultListIndex)}>
+            Fjern bidragsyter
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <ContributorSearchPanel
+            contributorData={contributorData}
+            resultListIndex={resultListIndex}
+            updateContributor={updateContributor}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <StyledInstitutionList>
+            {contributorData.toBeCreated.affiliations
+              ?.filter(
+                (item: Affiliation, number: number) =>
+                  contributorData.toBeCreated.affiliations?.indexOf(item) === number
+              )
+              .map((affiliation, affiliationIndex) => (
+                <EditAffiliation
+                  key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
+                  affiliation={affiliation}
+                  contributorData={contributorData}
+                  resultListIndex={resultListIndex}
+                  updateContributor={updateContributor}
+                />
+              ))}
+          </StyledInstitutionList>
+        </Grid>
+      </Grid>
       <AddAffiliation
         contributorData={contributorData}
         resultListIndex={resultListIndex}
         updateContributor={updateContributor}
       />
-      <Grid container spacing={2}>
-        <Grid item>
-          <StyledFlexEndButtons
-            variant="outlined"
-            data-testid={`contributor-delete-button-form-${resultListIndex}`}
-            color="secondary"
-            onClick={() => deleteContributor(resultListIndex)}>
-            Slett person
-          </StyledFlexEndButtons>
-        </Grid>
-        <Grid item>
-          <StyledFlexEndButtons
-            variant="outlined"
-            data-testid={`contributor-save-and-close-button-${resultListIndex}`}
-            color="primary"
-            onClick={handleSubmit}>
-            Lukk
-          </StyledFlexEndButtons>
-        </Grid>
-      </Grid>
     </div>
   );
 };

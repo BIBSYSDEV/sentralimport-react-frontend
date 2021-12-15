@@ -10,6 +10,12 @@ const StyledActionWrapper = styled.div`
   margin-top: 1rem;
 `;
 
+const StyledNameTypography = styled(Typography)`
+  &.MuiTypography-root {
+    margin-bottom: 2rem;
+  }
+`;
+
 interface AffiliationDisplayType {
   units: SimpleUnitResponse[];
   institutionName: string;
@@ -55,11 +61,11 @@ const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, ha
 
   return (
     <>
-      <Typography variant="h6" gutterBottom data-testid={`creator-name-${row.toBeCreated.order}`}>
+      <StyledNameTypography variant="h6" gutterBottom data-testid={`creator-name-${row.toBeCreated.order}`}>
         {row.imported.surname && row.imported.first_name
           ? row.imported.first_name + ' ' + row.imported.surname
           : row.imported.authorName}
-      </Typography>
+      </StyledNameTypography>
       {affiliations.map((affiliation, affiliationIndex) => (
         <AffiliationDisplay
           key={`${affiliationIndex}`}
