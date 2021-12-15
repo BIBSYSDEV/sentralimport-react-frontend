@@ -78,61 +78,32 @@ const ContributorForm: FC<ContributorFormProps> = ({
 
   return (
     <div data-testid={`contributor-form-${resultListIndex}`}>
-      <Typography>{JSON.stringify(contributorData.toBeCreated)}</Typography>
-      {contributorData.toBeCreated.badge_type && contributorData.toBeCreated.badge_type === BadgeType.Verified ? (
-        <StyledVerifiedNameTypography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
-          <StyledVerifiedBadge
-            data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
-          />
-          {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
-        </StyledVerifiedNameTypography>
-      ) : (
-        <StyledGreyTypography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
-          {contributorData.toBeCreated.badge_type === BadgeType.Unknown && (
-            <StyledUnknownVerifiedBadge
-              data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
-            />
+      <Grid container spacing={2} justifyContent="space-between">
+        <Grid item>
+          {contributorData.toBeCreated.badge_type && contributorData.toBeCreated.badge_type === BadgeType.Verified ? (
+            <StyledVerifiedNameTypography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
+              <StyledVerifiedBadge
+                data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
+              />
+              {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
+            </StyledVerifiedNameTypography>
+          ) : (
+            <StyledGreyTypography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
+              {contributorData.toBeCreated.badge_type === BadgeType.Unknown && (
+                <StyledUnknownVerifiedBadge
+                  data-testid={`unknown-verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
+                />
+              )}
+              {contributorData.toBeCreated.badge_type === BadgeType.NotVerified && (
+                <StyledNotVerifiedBadge
+                  data-testid={`not-verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
+                />
+              )}
+              {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
+            </StyledGreyTypography>
           )}
-          {contributorData.toBeCreated.badge_type === BadgeType.NotVerified && (
-            <StyledNotVerifiedBadge
-              data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
-            />
-          )}
-          {`${contributorData.toBeCreated.first_name} ${contributorData.toBeCreated.surname}`}
-        </StyledGreyTypography>
-      )}
-      {duplicateWarning && (
-        <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
-          {duplicateWarning}
-        </StyledAlert>
-      )}
+        </Grid>
 
-      <ContributorSearchPanel
-        contributorData={contributorData}
-        resultListIndex={resultListIndex}
-        updateContributor={updateContributor}
-      />
-      <StyledInstitutionList>
-        {contributorData.toBeCreated.affiliations
-          ?.filter(
-            (item: Affiliation, number: number) => contributorData.toBeCreated.affiliations?.indexOf(item) === number
-          )
-          .map((affiliation, affiliationIndex) => (
-            <EditAffiliation
-              key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
-              affiliation={affiliation}
-              contributorData={contributorData}
-              resultListIndex={resultListIndex}
-              updateContributor={updateContributor}
-            />
-          ))}
-      </StyledInstitutionList>
-      <AddAffiliation
-        contributorData={contributorData}
-        resultListIndex={resultListIndex}
-        updateContributor={updateContributor}
-      />
-      <Grid container spacing={2}>
         <Grid item>
           <Button
             startIcon={<DeleteIcon />}
@@ -142,6 +113,13 @@ const ContributorForm: FC<ContributorFormProps> = ({
             Fjern bidragsyter
           </Button>
         </Grid>
+        {duplicateWarning && (
+          <Grid item xs={12}>
+            <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
+              {duplicateWarning}
+            </StyledAlert>
+          </Grid>
+        )}
         <Grid item xs={12}>
           <ContributorSearchPanel
             contributorData={contributorData}
