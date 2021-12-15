@@ -64,10 +64,8 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
   addAffiliationSuccessful,
   removeInstitutionByCristinNrOrName,
 }) => {
-  console.log(addAffiliationSuccessful);
   return (
     <StyledAffiliationsWrapper backgroundcolor={backgroundcolor} variant="outlined" data-testid={dataTestid}>
-      <Typography>{JSON.stringify(addAffiliationSuccessful)}</Typography>
       <StyledCardContent>
         <Grid container justifyContent="space-between" spacing={2}>
           <Grid item xs={6}>
