@@ -21,6 +21,7 @@ export enum BadgeType {
   Verified = 'verified',
   NotVerified = 'not_verified',
   Unknown = 'unknown',
+  None = 'none',
 }
 
 export interface ImportPublicationPerson {

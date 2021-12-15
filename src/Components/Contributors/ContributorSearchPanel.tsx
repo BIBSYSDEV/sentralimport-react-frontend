@@ -4,7 +4,7 @@ import { BadgeType, ContributorType, ContributorWrapper } from '../../types/Cont
 import ContributorSearchResultItem from './ContributorSearchResultItem';
 import { getPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
 import { Affiliation } from '../../types/InstitutionTypes';
-import { getAffiliationDetails } from '../../utils/contributorUtils';
+import { getAffiliationDetails, getBadgeForContributor } from '../../utils/contributorUtils';
 import { handlePotentialExpiredSession } from '../../api/api';
 import styled from 'styled-components';
 import { Colors } from '../../assets/styles/StyleConstants';
@@ -123,7 +123,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       temp.toBeCreated.surname_preferred = undefined;
       temp.toBeCreated.first_name = firstName;
       temp.toBeCreated.surname = surname;
-      temp.toBeCreated.badge_type = BadgeType.NotVerified;
+      temp.toBeCreated.badge_type = BadgeType.None;
       temp.toBeCreated.cristin_person_id = 0;
       temp.toBeCreated.require_higher_authorization = false;
       updateContributor(temp, resultListIndex);
@@ -165,12 +165,12 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
               fetchedAuthor.affiliations = [];
             }
             if (fetchedAuthor) {
-              if (fetchedAuthor.affiliations && fetchedAuthor.affiliations.length > 0) {
-                //This horribleness should really come from the backend, not be calculated on frontend.
-                fetchedAuthor.badge_type = BadgeType.Verified;
-              } else if (!fetchedAuthor.require_higher_authorization) {
-                fetchedAuthor.badge_type = BadgeType.NotVerified;
-              }
+              fetchedAuthor.badge_type = getBadgeForContributor(
+                fetchedAuthor.affiliations,
+                fetchedAuthor.require_higher_authorization,
+                fetchedAuthor.identified_cristin_person,
+                fetchedAuthor.cristin_person_id
+              );
               fetchedAuthors.push(fetchedAuthor);
             }
           }

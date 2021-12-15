@@ -67,6 +67,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
 
   return (
     <div data-testid={`contributor-form-${resultListIndex}`}>
+      <Typography>{JSON.stringify(contributorData.toBeCreated)}</Typography>
       {contributorData.toBeCreated.badge_type && contributorData.toBeCreated.badge_type === BadgeType.Verified ? (
         <StyledVerifiedNameTypography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
           <StyledVerifiedBadge
@@ -76,11 +77,12 @@ const ContributorForm: FC<ContributorFormProps> = ({
         </StyledVerifiedNameTypography>
       ) : (
         <StyledGreyTypography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
-          {contributorData.toBeCreated.badge_type === BadgeType.Unknown ? (
+          {contributorData.toBeCreated.badge_type === BadgeType.Unknown && (
             <StyledUnknownVerifiedBadge
               data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
             />
-          ) : (
+          )}
+          {contributorData.toBeCreated.badge_type === BadgeType.NotVerified && (
             <StyledNotVerifiedBadge
               data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
             />
