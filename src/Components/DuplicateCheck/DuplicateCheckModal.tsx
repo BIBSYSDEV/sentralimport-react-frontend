@@ -51,6 +51,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
   async function handleClickOkButton() {
     try {
       setHandleOkButtonError(undefined);
+      console.log('BJARNE', selectedRadioButton);
       if (selectedRadioButton === SelectValues.CREATE_NEW) {
         dispatch({ type: 'doSave', payload: true }); //TODO: trengs denne egentlig?
         setDuplicate(false);
@@ -119,14 +120,16 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
         </Grid>
       </ModalFooter>
       {/*TODO: only render ComparePublicationDataModal on handleClickOkButton (dropp å sette i state: "setSelectedPublication")*/}
-      <ComparePublicationDataModal
-        isComparePublicationDataModalOpen={isComparePublicationDataModalOpen}
-        handleComparePublicationDataModalClose={handleComparePublicationDataModalClose.bind(this)}
-        handleDuplicateCheckModalClose={handleDuplicateCheckModalClose}
-        importPublication={importPublication}
-        cristinPublication={state.selectedPublication}
-        isDuplicate={isDuplicate}
-      />
+      {isComparePublicationDataModalOpen && (
+        <ComparePublicationDataModal
+          isComparePublicationDataModalOpen={isComparePublicationDataModalOpen}
+          handleComparePublicationDataModalClose={handleComparePublicationDataModalClose.bind(this)}
+          handleDuplicateCheckModalClose={handleDuplicateCheckModalClose}
+          importPublication={importPublication}
+          cristinPublication={state.selectedPublication}
+          isDuplicate={isDuplicate}
+        />
+      )}
     </StyledModal>
   );
 };

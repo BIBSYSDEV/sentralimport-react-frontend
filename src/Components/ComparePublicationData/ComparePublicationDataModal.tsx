@@ -155,6 +155,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     //init ligger i en useeffect pga asynkront kall til getJournalId
     const initFormik = async () => {
       //Formik is initiated from either importPublication or state.selectedPublication (set in duplicate-modal)
+
       setInitialFormValues(
         isDuplicate && state.selectedPublication
           ? {
@@ -331,6 +332,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 {({ isValid, handleSubmit }) => (
                   <Form onSubmit={handleSubmit}>
                     <ModalBody>
+                      <pre style={{ maxWidth: '90%' }}>{JSON.stringify(initialFormValues, null, 2)}</pre>
+
                       <StyledFormWrapper>
                         <StyledHeaderLineWrapper>
                           <StyledLineLabelTypography />
