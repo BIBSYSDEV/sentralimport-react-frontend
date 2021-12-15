@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Button, Grid, Typography } from '@material-ui/core';
 import ContributorSearchPanel from './ContributorSearchPanel';
 import { Affiliation } from '../../types/InstitutionTypes';
@@ -9,6 +9,7 @@ import AddAffiliation from './AddAffiliation';
 import EditAffiliation from './EditAffiliation';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Alert } from '@material-ui/lab';
+import { checkContributorsForDuplicates } from './duplicateCheckHelper';
 
 const StyledInstitutionList = styled.div`
   margin-top: 1rem;
@@ -25,7 +26,6 @@ interface ContributorFormProps {
   updateContributor: (contributorData: ContributorWrapper, rowIndex: number) => void;
   deleteContributor: (index: number) => void;
   handleChosenAuthorAffiliations: (affiliations: Affiliation[]) => Promise<Affiliation[]>;
-  duplicateWarning: string;
 }
 
 const ContributorForm: FC<ContributorFormProps> = ({
@@ -34,7 +34,6 @@ const ContributorForm: FC<ContributorFormProps> = ({
   deleteContributor,
   updateContributor,
   handleChosenAuthorAffiliations,
-  duplicateWarning,
 }) => {
   //TODO: denne funksjonen eksisterte på "lukk" knappen. Den bør kjøres på annet vis.
   /*
@@ -57,6 +56,12 @@ const ContributorForm: FC<ContributorFormProps> = ({
     });
   }
   */
+
+  const [duplicateWarning, setDuplicateWarning] = useState('');
+
+  useEffect(() => {
+    checkContributorsForDuplicates(contributorData, setDuplicateWarning, false);
+  }, [contributorData.toBeCreated.first_name, contributorData.toBeCreated.surname]);
 
   return (
     <div data-testid={`contributor-form-${resultListIndex}`}>
