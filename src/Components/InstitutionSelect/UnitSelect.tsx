@@ -56,7 +56,6 @@ const UnitSelect: FC<UnitSelectProps> = ({ cristinInstitutionNr, handleUnitChang
         <>Klarte ikke å laste enheter {loadingUnitError.message}</>
       ) : (
         <Autocomplete
-          debug={true}
           defaultValue={null}
           loading={isLoadingUnits}
           fullWidth
