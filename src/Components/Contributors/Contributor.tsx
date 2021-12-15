@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Button, Typography } from '@material-ui/core';
 import '../../assets/styles/common.scss';
 import { Colors } from '../../assets/styles/StyleConstants';
@@ -8,6 +8,8 @@ import { Affiliation } from '../../types/InstitutionTypes';
 import AffiliationDisplay from './AffiliationDisplay';
 import { ReactComponent as VerifiedBadge } from '../../assets/icons/verified-badge.svg';
 import ContributorForm from './ContributorForm';
+import { Alert } from '@material-ui/lab';
+import { checkContributorsForDuplicates } from './duplicateCheckHelper';
 
 const StyledVerifiedBadge = styled(VerifiedBadge)`
   margin-right: 0.5rem;
@@ -16,6 +18,11 @@ const StyledVerifiedBadge = styled(VerifiedBadge)`
   & path {
     fill: ${Colors.Text.GREEN};
   }
+`;
+
+const StyledAlert = styled(Alert)`
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 `;
 
 interface ContributorProps {
@@ -33,11 +40,17 @@ const Contributor: FC<ContributorProps> = ({
   handleChosenAuthorAffiliations,
   deleteContributor,
 }) => {
+  const [duplicateWarning, setDuplicateWarning] = useState('');
+
   function updateEditing() {
     const temp = contributorData;
     temp.isEditing = true;
     updateContributor(temp, resultListIndex);
   }
+
+  useEffect(() => {
+    checkContributorsForDuplicates(contributorData, setDuplicateWarning, false);
+  }, [contributorData.toBeCreated.first_name, contributorData.toBeCreated.surname]);
 
   return (
     <div>
@@ -83,6 +96,11 @@ const Contributor: FC<ContributorProps> = ({
                 />
               ))}
           </div>
+          {duplicateWarning && (
+            <StyledAlert data-testid={`list-item-author-${resultListIndex}-duplicate-warning`} severity="warning">
+              {duplicateWarning}
+            </StyledAlert>
+          )}
           <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
             <Button data-testid={`contributor-edit-button-${resultListIndex}`} color="primary" onClick={updateEditing}>
               Rediger
@@ -99,9 +117,13 @@ const Contributor: FC<ContributorProps> = ({
         <ContributorForm
           resultListIndex={resultListIndex}
           contributorData={contributorData}
-          updateContributor={updateContributor}
+          updateContributor={(tempContributorData, resultListIndex) => {
+            updateContributor(tempContributorData, resultListIndex);
+            checkContributorsForDuplicates(tempContributorData, setDuplicateWarning, true);
+          }}
           deleteContributor={deleteContributor}
           handleChosenAuthorAffiliations={handleChosenAuthorAffiliations}
+          duplicateWarning={duplicateWarning}
         />
       )}
     </div>

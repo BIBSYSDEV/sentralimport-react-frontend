@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { StyledVerifiedBadge } from '../../assets/styles/StyledBadges';
 import AddAffiliation from './AddAffiliation';
 import EditAffiliation from './EditAffiliation';
+import { Alert } from '@material-ui/lab';
 
 const StyledInstitutionList = styled.div`
   margin-top: 1rem;
@@ -18,12 +19,18 @@ const StyledFlexEndButtons = styled(Button)`
   }
 `;
 
+const StyledAlert = styled(Alert)`
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+`;
+
 interface ContributorFormProps {
   resultListIndex: number;
   contributorData: ContributorWrapper;
   updateContributor: (contributorData: ContributorWrapper, rowIndex: number) => void;
   deleteContributor: (index: number) => void;
   handleChosenAuthorAffiliations: (affiliations: Affiliation[]) => Promise<Affiliation[]>;
+  duplicateWarning: string;
 }
 
 const ContributorForm: FC<ContributorFormProps> = ({
@@ -32,6 +39,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
   deleteContributor,
   updateContributor,
   handleChosenAuthorAffiliations,
+  duplicateWarning,
 }) => {
   async function handleSubmit() {
     //TODO: finn ut om det er noen grunn til objekt-copy i det hele tatt ?
@@ -64,6 +72,11 @@ const ContributorForm: FC<ContributorFormProps> = ({
           </>
         )}
       </Typography>
+      {duplicateWarning && (
+        <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
+          {duplicateWarning}
+        </StyledAlert>
+      )}
       <ContributorSearchPanel
         contributorData={contributorData}
         resultListIndex={resultListIndex}
