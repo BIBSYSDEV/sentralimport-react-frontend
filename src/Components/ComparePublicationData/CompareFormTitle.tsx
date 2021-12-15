@@ -31,7 +31,12 @@ const CompareFormTitle: FC<CompareFormTitleProps> = ({
       <StyledLineLabelTypography htmlFor="Cristin-tittel">Tittel</StyledLineLabelTypography>
       <StyledLineImportValue>
         <Typography data-testid="importdata-title">
-          <Markup content={cleanTitleForMarkup(selectedLang.title)} />
+          <Markup
+            content={cleanTitleForMarkup(
+              importPublication.languages?.filter((language: Language) => language?.lang === selectedLang?.lang)[0]
+                ?.title
+            )}
+          />
         </Typography>
       </StyledLineImportValue>
       <ActionButtons

@@ -332,8 +332,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 {({ isValid, handleSubmit }) => (
                   <Form onSubmit={handleSubmit}>
                     <ModalBody>
-                      <pre style={{ maxWidth: '90%' }}>{JSON.stringify(initialFormValues, null, 2)}</pre>
-
                       <StyledFormWrapper>
                         <StyledHeaderLineWrapper>
                           <StyledLineLabelTypography />

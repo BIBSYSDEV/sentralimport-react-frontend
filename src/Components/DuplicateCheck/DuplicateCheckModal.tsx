@@ -51,7 +51,6 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
   async function handleClickOkButton() {
     try {
       setHandleOkButtonError(undefined);
-      console.log('BJARNE', selectedRadioButton);
       if (selectedRadioButton === SelectValues.CREATE_NEW) {
         dispatch({ type: 'doSave', payload: true }); //TODO: trengs denne egentlig?
         setDuplicate(false);
