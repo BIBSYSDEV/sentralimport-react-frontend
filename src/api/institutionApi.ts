@@ -33,9 +33,7 @@ export async function getParentsUnitName(
 export async function searchForInstitutionsByName(
   institutionName: string,
   searchLanguage: SearchLanguage
-): Promise<
-  AxiosResponse<{ acronym: string; cristin_institution_id: string; institution_name: { en?: string; nb: string } }[]>
-> {
+): Promise<AxiosResponse<Institution[]>> {
   return authenticatedApiRequest({
     url: encodeURI(
       `${CRIST_REST_API}/institutions?cristin_institution=false&lang=${searchLanguage}&name=${institutionName}`

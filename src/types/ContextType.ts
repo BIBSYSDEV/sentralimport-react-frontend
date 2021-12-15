@@ -1,10 +1,9 @@
 import { Order } from './PublicationTypes';
-import { InstitutionSelector } from './InstitutionTypes';
+import { Institution, InstitutionSelector } from './InstitutionTypes';
 
 export interface ContextType {
   allChecked: boolean;
   contributorErrors: number[];
-
   contributors: null | any;
   contributorsLoaded: boolean;
   currentImportStatus: string;
@@ -20,7 +19,7 @@ export interface ContextType {
   identified: any[];
   identifiedImported: any[];
   institutions: null | InstitutionSelector[];
-  institutionsEnglish: null | InstitutionSelector[];
+  globalInstitutions: Institution[];
   isSampublikasjon: boolean;
   param: null | any;
   selectedField: string;
