@@ -86,7 +86,7 @@ context('duplication-check-modal', () => {
     );
     cy.get(`[data-testid="duplicates-result-list"]`).should(
       'contain',
-      mockCristinPublications[0].title[mockCristinPublications[1].original_language]
+      mockCristinPublications[1].title[mockCristinPublications[1].original_language]
     );
   });
 
