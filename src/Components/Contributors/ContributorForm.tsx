@@ -5,9 +5,9 @@ import { Affiliation } from '../../types/InstitutionTypes';
 import { BadgeType, ContributorWrapper } from '../../types/ContributorTypes';
 import styled from 'styled-components';
 import {
-  StyledVerifiedBadge,
   StyledNotVerifiedBadge,
   StyledUnknownVerifiedBadge,
+  StyledVerifiedBadge,
 } from '../../assets/styles/StyledBadges';
 import AddAffiliation from './AddAffiliation';
 import EditAffiliation from './EditAffiliation';
@@ -76,7 +76,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
         </StyledVerifiedNameTypography>
       ) : (
         <StyledGreyTypography data-testid={`contributor-form-${resultListIndex}-name`} variant="h6">
-          {contributorData.toBeCreated.require_higher_authorization ? (
+          {contributorData.toBeCreated.badge_type === BadgeType.Unknown ? (
             <StyledUnknownVerifiedBadge
               data-testid={`verified-contributor-badge-${contributorData.toBeCreated.cristin_person_id}`}
             />
