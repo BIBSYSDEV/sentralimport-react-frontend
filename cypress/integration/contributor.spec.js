@@ -227,7 +227,5 @@ context('contributor', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(`[data-testid=contributor-form-1-duplicate-warning]`).contains('Det finnes bidragsytere med samme navn');
-    cy.get(`[data-testid="contributor-save-and-close-button-1"]`).click();
-    cy.get(`[data-testid=list-item-author-1-duplicate-warning]`).contains('Det finnes bidragsytere med samme navn');
   });
 });
