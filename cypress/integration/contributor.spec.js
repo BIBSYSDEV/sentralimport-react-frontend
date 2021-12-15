@@ -1,13 +1,9 @@
 import {
-  cristinIDWithoutActiveAffiliation,
-  mockCristinIdForbiddenPerson,
-  mockCristinIDWithoutAffiliationAttribute,
   mockImportPublication1,
-  mockPersonDetailed,
-  mockUnits,
-  mockPersonDetailedWithoutActiveAffiliations,
-  mockSimpleUnitResponse,
   mockInstitutions,
+  mockPersonDetailed,
+  mockSimpleUnitResponse,
+  mockUnits,
 } from '../../src/utils/mockdata';
 import mockImportData from '../../src/utils/mockImportData.json';
 
