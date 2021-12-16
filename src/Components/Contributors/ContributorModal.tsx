@@ -24,6 +24,7 @@ import { ImportPublication } from '../../types/PublicationTypes';
 import { Affiliation, ImportPublicationPersonInstutution } from '../../types/InstitutionTypes';
 import CommonErrorMessage from '../CommonErrorMessage';
 import ContributorForm from './ContributorForm';
+import clone from 'just-clone';
 
 const Foreign_educational_institution_generic_code = '9127';
 const Other_institutions_generic_code = '9126';
@@ -38,6 +39,15 @@ const isCristinInstitution = (cristinInstitutionNr: string | undefined) => {
     cristinInstitutionNr !== '0'
   );
 };
+
+export function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
+  const cristinIdSet = new Set();
+  return affiliations.filter((affiliation: Affiliation) => {
+    if (cristinIdSet.has(affiliation.cristinInstitutionNr)) return false;
+    cristinIdSet.add(affiliation.cristinInstitutionNr);
+    return true;
+  });
+}
 
 async function replaceNonCristinInstitutions(
   affiliations: Affiliation[] | ImportPublicationPersonInstutution[] | undefined
@@ -287,15 +297,17 @@ const ContributorModal: FC<ContributorProps> = ({
     importPerson: ImportPublicationPerson
   ) => {
     const hasFoundCristinPerson = contributor.cristin.cristin_person_id !== 0;
+    const tempCristinPerson = clone(cristinAuthor);
+    tempCristinPerson.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(tempCristinPerson.affiliations ?? []);
     const personToBeCreated: ContributorType = hasFoundCristinPerson
       ? { ...contributor.cristin }
       : { ...contributor.imported };
     return cristinAuthor.cristin_person_id !== 0
-      ? cristinAuthor
+      ? tempCristinPerson
       : {
           ...personToBeCreated,
-          affiliations: await replaceNonCristinInstitutions(
-            isDuplicate ? cristinAuthor.affiliations : importPerson.institutions
+          affiliations: removeInstitutionsDuplicatesBasedOnCristinId(
+            await replaceNonCristinInstitutions(isDuplicate ? cristinAuthor.affiliations : importPerson.institutions)
           ),
         };
   };

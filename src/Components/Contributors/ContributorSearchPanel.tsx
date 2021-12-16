@@ -12,6 +12,7 @@ import clone from 'just-clone';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import { removeInstitutionsDuplicatesBasedOnCristinId } from './ContributorModal';
 
 const StyledResultTypography = styled(Typography)`
   &.MuiTypography-root {
@@ -78,15 +79,6 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   const [firstNameError, setFirstnameError] = useState(false);
   const [surnameError, setSurnameError] = useState(false);
   const [isNotPossibleToSwitchPerson, setIsNotPossibleToSwitchPerson] = useState(false);
-
-  function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
-    const cristinIdSet = new Set();
-    return affiliations.filter((affiliation: Affiliation) => {
-      if (cristinIdSet.has(affiliation.cristinInstitutionNr)) return false;
-      cristinIdSet.add(affiliation.cristinInstitutionNr);
-      return true;
-    });
-  }
 
   const handleFirstNameChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFirstName(event.target.value);

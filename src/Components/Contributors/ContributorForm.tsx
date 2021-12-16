@@ -60,14 +60,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
   }
    
 
-  function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
-    const cristinIdSet = new Set();
-    return affiliations.filter((affiliation: Affiliation) => {
-      if (cristinIdSet.has(affiliation.cristinInstitutionNr)) return false;
-      cristinIdSet.add(affiliation.cristinInstitutionNr);
-      return true;
-    });
-  }
+
   */
 
   const [duplicateWarning, setDuplicateWarning] = useState('');
