@@ -1,14 +1,14 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { Button, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import AffiliationDisplay from './AffiliationDisplay';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { ContributorWrapper } from '../../types/ContributorTypes';
 import { SimpleUnitResponse } from '../../types/InstitutionTypes';
 
-const StyledActionWrapper = styled.div`
-  margin-top: 1rem;
-`;
+// const StyledActionWrapper = styled.div`
+//   margin-top: 1rem;
+// `;
 
 const StyledNameTypography = styled(Typography)`
   &.MuiTypography-root {
@@ -74,17 +74,18 @@ const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, ha
           dataTestid={`creator-institutions-${row.toBeCreated.order}`}
         />
       ))}
-      {row.imported.surname && row.imported.first_name && (
-        <StyledActionWrapper>
-          <Button
-            variant="outlined"
-            color="primary"
-            data-testid={`creator-choose-this-button-${row.toBeCreated.order}`}
-            onClick={() => handleChooseAuthor(row)}>
-            Velg denne
-          </Button>
-        </StyledActionWrapper>
-      )}
+      {/*TODO: Knappen skal bare gjemmes før den skrives om*/}
+      {/*{row.imported.surname && row.imported.first_name && (*/}
+      {/*  <StyledActionWrapper>*/}
+      {/*    <Button*/}
+      {/*      variant="outlined"*/}
+      {/*      color="primary"*/}
+      {/*      data-testid={`creator-choose-this-button-${row.toBeCreated.order}`}*/}
+      {/*      onClick={() => handleChooseAuthor(row)}>*/}
+      {/*      Velg denne*/}
+      {/*    </Button>*/}
+      {/*  </StyledActionWrapper>*/}
+      {/*)}*/}
     </>
   );
 };
