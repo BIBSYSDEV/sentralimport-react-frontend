@@ -4,6 +4,8 @@ import { AxiosResponse } from 'axios';
 import { Institution, InstitutionCountryInformation, SimpleUnitResponse } from '../types/InstitutionTypes';
 import { SearchLanguage } from './contributorApi';
 
+const UIOInstitutionNumber = '185';
+
 export async function getInstitutions(): Promise<AxiosResponse<Institution[]>> {
   return authenticatedApiRequest({
     url: `${CRIST_REST_API}/institutions?cristin_institution=true&per_page=500&lang=nb,en`,
@@ -24,8 +26,12 @@ export async function getInstitutionsByCountryCodes(
 export async function getParentsUnitName(
   cristinInstitutionNr: string | number
 ): Promise<AxiosResponse<SimpleUnitResponse[]>> {
+  const parentUnitId =
+    cristinInstitutionNr.toString() !== UIOInstitutionNumber
+      ? `${cristinInstitutionNr}.0.0.0`
+      : `${UIOInstitutionNumber}.90.0.0`;
   return authenticatedApiRequest({
-    url: encodeURI(`${CRIST_REST_API}/units?parent_unit_id=${cristinInstitutionNr}.0.0.0&per_page=900&lang=en,nb`),
+    url: encodeURI(`${CRIST_REST_API}/units?parent_unit_id=${parentUnitId}&per_page=900&lang=en,nb`),
     method: 'GET',
   });
 }
