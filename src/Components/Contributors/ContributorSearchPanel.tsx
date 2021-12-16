@@ -1,10 +1,10 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Button, Card, CircularProgress, Collapse, Grid, TextField, Typography } from '@material-ui/core';
-import { ContributorType, ContributorWrapper } from '../../types/ContributorTypes';
+import { ContributorStatus, ContributorType, ContributorWrapper } from '../../types/ContributorTypes';
 import ContributorSearchResultItem from './ContributorSearchResultItem';
 import { getPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
 import { Affiliation } from '../../types/InstitutionTypes';
-import { getAffiliationDetails } from '../../utils/contributorUtils';
+import { getAffiliationDetails, getContributorStatus } from '../../utils/contributorUtils';
 import { handlePotentialExpiredSession } from '../../api/api';
 import styled from 'styled-components';
 import { Colors } from '../../assets/styles/StyleConstants';
@@ -123,7 +123,9 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       temp.toBeCreated.surname_preferred = undefined;
       temp.toBeCreated.first_name = firstName;
       temp.toBeCreated.surname = surname;
+      temp.toBeCreated.badge_type = ContributorStatus.None;
       temp.toBeCreated.cristin_person_id = 0;
+      temp.toBeCreated.require_higher_authorization = false;
       temp.toBeCreated.identified_cristin_person = false;
       updateContributor(temp, resultListIndex);
       setOpenContributorSearchPanel(false);
@@ -164,6 +166,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
               fetchedAuthor.affiliations = [];
             }
             if (fetchedAuthor) {
+              fetchedAuthor.badge_type = getContributorStatus(fetchedAuthor, fetchedAuthor.affiliations);
               fetchedAuthors.push(fetchedAuthor);
             }
           }
@@ -240,6 +243,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     if (temp.toBeCreated.surname_preferred) {
       temp.toBeCreated.surname = temp.toBeCreated.surname_preferred;
     }
+    temp.toBeCreated.require_higher_authorization = author.require_higher_authorization;
     temp.toBeCreated.order = resultListIndex + 1;
     setOpenContributorSearchPanel(false);
     updateContributor(temp, resultListIndex);

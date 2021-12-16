@@ -4,6 +4,7 @@ import {
   SearchLanguage,
 } from '../api/contributorApi';
 import { Affiliation } from '../types/InstitutionTypes';
+import { ContributorStatus, ContributorType } from '../types/ContributorTypes';
 
 export async function getAffiliationDetails(
   affiliation: Affiliation | undefined,
@@ -42,3 +43,21 @@ export async function getAffiliationDetails(
     return { unitNameCache: unitNameCache, institutionNameCache: institutionNameCache, affiliation: undefined };
   }
 }
+
+//This is hacky and should have been done at backend instead of being calculated on frontend
+export const getContributorStatus = (contributor: ContributorType, activeAffiliations: Affiliation[] | undefined) => {
+  if (
+    contributor.affiliations &&
+    activeAffiliations &&
+    activeAffiliations.length > 0 &&
+    contributor.identified_cristin_person
+  ) {
+    return ContributorStatus.Verified;
+  } else if (contributor.require_higher_authorization) {
+    return ContributorStatus.Unknown;
+  } else if (contributor.cristin_person_id && contributor.cristin_person_id !== 0) {
+    return ContributorStatus.NotVerified;
+  } else {
+    return ContributorStatus.None;
+  }
+};
