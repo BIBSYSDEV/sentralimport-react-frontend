@@ -5,7 +5,7 @@ import { Button, CircularProgress, Divider, Typography } from '@material-ui/core
 import GenericConfirmDialog from '../Dialogs/GenericConfirmDialog';
 import { CRIST_REST_API } from '../../utils/constants';
 import { getInstitutionName, getPersonDetailById, SearchLanguage } from '../../api/contributorApi';
-import { getAffiliationDetails, getBadgeForContributor } from '../../utils/contributorUtils';
+import { getAffiliationDetails, getContributorStatus } from '../../utils/contributorUtils';
 import styled from 'styled-components';
 import AddIcon from '@material-ui/icons/Add';
 import ContributorOrderComponent from './ContributorOrderComponent';
@@ -110,7 +110,7 @@ async function searchCristinPersons(authors: ImportPublicationPerson[]) {
         order: i + 1,
         identified_cristin_person: cristinPerson.identified_cristin_person,
         require_higher_authorization: cristinPerson.require_higher_authorization,
-        badge_type: getBadgeForContributor(cristinPerson),
+        badge_type: getContributorStatus(cristinPerson, affiliations),
       };
     }
     suggestedAuthors[i] = cristinPerson;

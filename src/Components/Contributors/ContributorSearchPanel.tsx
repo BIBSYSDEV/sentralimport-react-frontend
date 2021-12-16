@@ -4,7 +4,7 @@ import { ContributorStatus, ContributorType, ContributorWrapper } from '../../ty
 import ContributorSearchResultItem from './ContributorSearchResultItem';
 import { getPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
 import { Affiliation } from '../../types/InstitutionTypes';
-import { getAffiliationDetails, getBadgeForContributor } from '../../utils/contributorUtils';
+import { getAffiliationDetails, getContributorStatus } from '../../utils/contributorUtils';
 import { handlePotentialExpiredSession } from '../../api/api';
 import styled from 'styled-components';
 import { Colors } from '../../assets/styles/StyleConstants';
@@ -166,7 +166,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
               fetchedAuthor.affiliations = [];
             }
             if (fetchedAuthor) {
-              fetchedAuthor.badge_type = getBadgeForContributor(fetchedAuthor);
+              fetchedAuthor.badge_type = getContributorStatus(fetchedAuthor, fetchedAuthor.affiliations);
               fetchedAuthors.push(fetchedAuthor);
             }
           }

@@ -45,10 +45,11 @@ export async function getAffiliationDetails(
 }
 
 //This is hacky and should have been done at backend instead of being calculated on frontend
-export const getBadgeForContributor = (contributor: ContributorType) => {
+export const getContributorStatus = (contributor: ContributorType, activeAffiliations: Affiliation[] | undefined) => {
   if (
     contributor.affiliations &&
-    contributor.affiliations.some((affiliation) => affiliation.active) &&
+    activeAffiliations &&
+    activeAffiliations.length > 0 &&
     contributor.identified_cristin_person
   ) {
     return ContributorStatus.Verified;
