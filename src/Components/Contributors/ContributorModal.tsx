@@ -24,6 +24,7 @@ import { ImportPublication } from '../../types/PublicationTypes';
 import { Affiliation, ImportPublicationPersonInstutution } from '../../types/InstitutionTypes';
 import CommonErrorMessage from '../CommonErrorMessage';
 import ContributorForm from './ContributorForm';
+import clone from 'just-clone';
 
 const Foreign_educational_institution_generic_code = '9127';
 const Other_institutions_generic_code = '9126';
@@ -566,7 +567,7 @@ const ContributorModal: FC<ContributorProps> = ({
   };
 
   function addContributor() {
-    const newContributor = { ...emptyContributorWrapper };
+    const newContributor = clone(emptyContributorWrapper);
     newContributor.imported.order = contributors.length + 1;
     newContributor.cristin.order = contributors.length + 1;
     newContributor.toBeCreated.order = contributors.length + 1;
