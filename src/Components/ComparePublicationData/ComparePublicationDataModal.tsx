@@ -10,7 +10,14 @@ import ContributorErrorMessage from './ContributorErrorMessage';
 import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
 import clone from 'just-clone';
-import { CristinPublication, ImportPublication, Language } from '../../types/PublicationTypes';
+import {
+  CristinPublication,
+  ImportPublication,
+  InternationalStandardNumber,
+  InternationalStandardNumberTypes,
+  Journal,
+  Language,
+} from '../../types/PublicationTypes';
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
@@ -156,6 +163,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     const initFormik = async () => {
       //Formik is initiated from either importPublication or state.selectedPublication (set in duplicate-modal)
 
+      //TODO: det trengs en sjekk på om state.selectedPublication.links inneholder en doi - nå settes den uansett
       setInitialFormValues(
         isDuplicate && state.selectedPublication
           ? {
@@ -169,8 +177,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 ),
               language: selectedLang,
               journal: {
-                cristinTidsskriftNr:
-                  (await getJournalId(state.selectedPublication.journal?.international_standard_numbers)) || '',
+                cristinTidsskriftNr: (await getJournalId(state.selectedPublication.journal)) || '',
                 title: state.selectedPublication.journal?.name || 'Ingen tidsskrift funnet',
               },
               category: {
@@ -266,15 +273,20 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'setFormErrors', payload: [] });
   }
 
-  async function getJournalId(issn: string | undefined) {
-    try {
-      setLoadJournalIdError(undefined);
-      const journalResponse = await getJournalsByQuery(issn ?? '0', QueryMethod.issn);
-      return journalResponse.data.length > 0 ? journalResponse.data[0].id : '0';
-    } catch (error) {
-      handlePotentialExpiredSession(error);
-      setLoadJournalIdError(error as Error);
-      return '';
+  async function getJournalId(journal: Journal) {
+    const issnObj = journal.international_standard_numbers?.find(
+      (standard_number: InternationalStandardNumber) =>
+        standard_number.type === InternationalStandardNumberTypes.PRINTED
+    );
+    if (issnObj?.value && issnObj.value !== '0') {
+      try {
+        setLoadJournalIdError(undefined);
+        const journalResponse = await getJournalsByQuery(issnObj.value, QueryMethod.issn);
+        return journalResponse.data.length > 0 && journalResponse.data[0].id;
+      } catch (error) {
+        handlePotentialExpiredSession(error);
+        setLoadJournalIdError(error as Error);
+      }
     }
   }
 
