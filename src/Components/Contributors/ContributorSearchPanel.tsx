@@ -133,6 +133,14 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (contributorData.toBeCreated.surname.length === 0 || contributorData.toBeCreated.first_name.length === 0) {
+      handleOpenSearchPanelClick();
+      setFirstnameError(contributorData.toBeCreated.first_name.length === 0);
+      setSurnameError(contributorData.toBeCreated.surname.length === 0);
+    }
+  }, [contributorData.toBeCreated.surname, contributorData.toBeCreated.first_name.length]);
+
   const searchForContributors = useCallback((firstName: string, surname: string) => {
     async function retrySearch() {
       setSearching(true);
@@ -182,7 +190,9 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
         setSearching(false);
       }
     }
-    retrySearch().then();
+    if (firstName.length > 0 || surname.length > 0) {
+      retrySearch().then();
+    }
   }, []);
 
   function handleChooseOnlyAffiliation(newaffiliation: Affiliation) {
@@ -321,7 +331,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
                     </Button>
                   </Grid>
                   {isNotPossibleToSwitchPerson && (
-                    <Grid item>
+                    <Grid item xs={12}>
                       <Typography variant="body2" color="error">
                         Feil i navn
                       </Typography>
@@ -341,7 +351,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
               onClick={() => {
                 searchForContributors(firstName, surname);
               }}
-              disabled={contributorData.toBeCreated.first_name === '' || contributorData.toBeCreated.surname === ''}>
+              disabled={firstName === '' && surname === ''}>
               Søk etter person
             </Button>
           </Grid>

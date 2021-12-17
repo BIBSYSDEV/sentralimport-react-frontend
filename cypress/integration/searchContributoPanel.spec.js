@@ -134,4 +134,12 @@ context('Search contributor panel', () => {
     ).should('exist');
     cy.get('[data-testid="contributor-form-2-name"]').should('include.text', mockImportData[1].authors[2].surname);
   });
+
+  it('shows the searchPanel expanded after adding new contributor', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('[data-testid="add-contributor-button"]').click();
+    cy.get('#firstName5').should('have.value', '');
+  });
 });
