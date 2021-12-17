@@ -122,7 +122,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
           />
         </Grid>
         <Grid item xs={12}>
-          <StyledInstitutionList>
+          <StyledInstitutionList data-testid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations`}>
             {contributorData.toBeCreated.affiliations
               ?.filter(
                 (item: Affiliation, number: number) =>

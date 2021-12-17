@@ -71,7 +71,7 @@ const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, ha
           key={`${affiliationIndex}`}
           backgroundcolor={Colors.LIGHT_GREY}
           affiliation={affiliation}
-          dataTestid={`creator-institutions-${row.toBeCreated.order}`}
+          dataTestid={`creator-${row.toBeCreated.order}-institution-${affiliationIndex}`}
         />
       ))}
       {/*TODO: Knappen skal bare gjemmes før den skrives om*/}

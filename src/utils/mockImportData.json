@@ -122,10 +122,17 @@
         "authorName": "Chen S.",
         "institutions": [
           {
-            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
-            "countryCode": "CN",
-            "institutionName": "Tianjin University of Technology",
-            "cristinInstitutionNr": 9127,
+            "unitName": "Department of Ecology;University of Granada",
+            "countryCode": "ES",
+            "institutionName": "University of Granada",
+            "cristinInstitutionNr": 13700046,
+            "isCristinInstitution": false
+          },
+          {
+            "unitName": "Research Unit Modeling Nature (MNat);University of Granada",
+            "countryCode": "ES",
+            "institutionName": "University of Granada",
+            "cristinInstitutionNr": 13700046,
             "isCristinInstitution": false
           }
         ]
