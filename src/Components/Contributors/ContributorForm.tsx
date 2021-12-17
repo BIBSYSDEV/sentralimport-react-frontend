@@ -60,14 +60,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
   }
    
 
-  function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
-    const cristinIdSet = new Set();
-    return affiliations.filter((affiliation: Affiliation) => {
-      if (cristinIdSet.has(affiliation.cristinInstitutionNr)) return false;
-      cristinIdSet.add(affiliation.cristinInstitutionNr);
-      return true;
-    });
-  }
+
   */
 
   const [duplicateWarning, setDuplicateWarning] = useState('');
@@ -129,7 +122,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
           />
         </Grid>
         <Grid item xs={12}>
-          <StyledInstitutionList>
+          <StyledInstitutionList data-testid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations`}>
             {contributorData.toBeCreated.affiliations
               ?.filter(
                 (item: Affiliation, number: number) =>

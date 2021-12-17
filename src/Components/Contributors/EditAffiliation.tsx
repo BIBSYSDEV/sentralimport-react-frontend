@@ -119,7 +119,7 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
       removeInstitutionByCristinNrOrName={removeInstitutionByCristinNrOrName}
       showCardActions={true}
       affiliation={generateAffiliationDisplayData(affiliation)}
-      dataTestid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}`}
+      dataTestid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}`} //TODO: burde vært index/order - flere kan ha samme navn
       backgroundcolor={Colors.LIGHT_GREY}
       handleDeleteUnitClick={(unit) => {
         deleteUnitToInstitutionAndHandleError(unit, affiliation.cristinInstitutionNr ?? '');

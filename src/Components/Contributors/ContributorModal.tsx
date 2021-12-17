@@ -40,6 +40,15 @@ const isCristinInstitution = (cristinInstitutionNr: string | undefined) => {
   );
 };
 
+export function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
+  const cristinIdSet = new Set();
+  return affiliations.filter((affiliation: Affiliation) => {
+    if (cristinIdSet.has(affiliation.cristinInstitutionNr)) return false;
+    cristinIdSet.add(affiliation.cristinInstitutionNr);
+    return true;
+  });
+}
+
 async function replaceNonCristinInstitutions(
   affiliations: Affiliation[] | ImportPublicationPersonInstutution[] | undefined
 ): Promise<Affiliation[]> {
@@ -288,15 +297,17 @@ const ContributorModal: FC<ContributorProps> = ({
     importPerson: ImportPublicationPerson
   ) => {
     const hasFoundCristinPerson = contributor.cristin.cristin_person_id !== 0;
+    const tempCristinPerson = clone(cristinAuthor);
+    tempCristinPerson.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(tempCristinPerson.affiliations ?? []);
     const personToBeCreated: ContributorType = hasFoundCristinPerson
       ? { ...contributor.cristin }
       : { ...contributor.imported };
     return cristinAuthor.cristin_person_id !== 0
-      ? cristinAuthor
+      ? tempCristinPerson
       : {
           ...personToBeCreated,
-          affiliations: await replaceNonCristinInstitutions(
-            isDuplicate ? cristinAuthor.affiliations : importPerson.institutions
+          affiliations: removeInstitutionsDuplicatesBasedOnCristinId(
+            await replaceNonCristinInstitutions(isDuplicate ? cristinAuthor.affiliations : importPerson.institutions)
           ),
         };
   };
