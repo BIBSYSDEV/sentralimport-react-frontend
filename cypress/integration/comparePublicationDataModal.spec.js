@@ -181,7 +181,7 @@ context('importModal', () => {
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`#search-journal-header`).click();
     cy.get(`[data-testid="cristindata-journal-select-textfield"]`).type('per');
-    cy.get(`#cristindata-journal-option-0`).click();
+    cy.get(`#cristindata-journal-option-5`).click(); //mock-data is not already filtered
     cy.get(`[data-testid="submit-search-journal-button"]`).click();
     cy.get(`[data-testid="cristindata-journal-title"]`).contains(mockAllJournals[5].title);
     cy.get(`[data-testid="submit-search-journal-button"]`).should('not.be.visible');
@@ -192,9 +192,19 @@ context('importModal', () => {
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`#search-journal-header`).click();
     cy.get(`[data-testid="cristindata-journal-select-textfield"]`).type('basic');
-    cy.get(`#cristindata-journal-option-0`).click();
+    cy.get(`#cristindata-journal-option-8`).click(); //mock-data is not already filtered
     cy.get(`[data-testid="submit-search-journal-button"]`).click();
     cy.get(`[data-testid="cristindata-journal-title"]`).contains('Basic & Clinical Pharmacology & Toxicology');
+  });
+
+  it('can search for another journal with space and words in random order', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.get(`#search-journal-header`).click();
+    cy.get(`[data-testid="cristindata-journal-select-textfield"]`).type('report Final');
+    cy.get(`#cristindata-journal-option-3`).click();
+    cy.get(`[data-testid="submit-search-journal-button"]`).click();
+    cy.get(`[data-testid="cristindata-journal-title"]`).contains(mockAllJournals[3].title); //"Final Case report"
   });
 
   it('can open an publication without doi', () => {
