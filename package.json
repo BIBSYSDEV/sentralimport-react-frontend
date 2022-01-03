@@ -30,7 +30,7 @@
     "@material-ui/styles": "^4.11.4",
     "axios": "^0.24.0",
     "bootstrap": "^4.6.0",
-    "date-fns": "^2.27.0",
+    "date-fns": "^2.28.0",
     "env-cmd": "^10.1.0",
     "formik": "^2.2.9",
     "interweave": "^12.9.0",
