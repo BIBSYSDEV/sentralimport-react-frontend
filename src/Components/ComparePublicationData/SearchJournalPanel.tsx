@@ -33,7 +33,7 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
     try {
       setIsLoadingJournals(true);
       setFetchJournalsError(undefined);
-      query = query.replaceAll('&', ''); // some journals returns '&' as '&amp'; //TODO: mangler test
+      query = query.replaceAll('&', ''); // backend returns some journals with '&' as '&amp';
       const resultJournals: ChannelLight[] = (await getJournalsByQuery(query, QueryMethod.title)).data;
       const convertedJournals: CompareFormJournalType[] = resultJournals.map((journal) => {
         return {

@@ -187,6 +187,16 @@ context('importModal', () => {
     cy.get(`[data-testid="submit-search-journal-button"]`).should('not.be.visible');
   });
 
+  it('can search for another journal with &amp-character in response', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.get(`#search-journal-header`).click();
+    cy.get(`[data-testid="cristindata-journal-select-textfield"]`).type('basic');
+    cy.get(`#cristindata-journal-option-0`).click();
+    cy.get(`[data-testid="submit-search-journal-button"]`).click();
+    cy.get(`[data-testid="cristindata-journal-title"]`).contains('Basic & Clinical Pharmacology & Toxicology');
+  });
+
   it('can open an publication without doi', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
