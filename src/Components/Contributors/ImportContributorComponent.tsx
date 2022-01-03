@@ -61,6 +61,7 @@ const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, ha
 
   return (
     <>
+      <pre style={{ maxWidth: '90%' }}>{JSON.stringify(row.imported.affiliations, null, 2)}</pre>
       <StyledNameTypography variant="h6" gutterBottom data-testid={`creator-name-${row.toBeCreated.order}`}>
         {row.imported.surname && row.imported.first_name
           ? row.imported.first_name + ' ' + row.imported.surname

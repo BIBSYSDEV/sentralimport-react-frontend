@@ -29,14 +29,15 @@ import clone from 'just-clone';
 const Foreign_educational_institution_generic_code = '9127';
 const Other_institutions_generic_code = '9126';
 
-const countries: any = {};
+const countriesApiResultCache: any = {};
 
 const isCristinInstitution = (cristinInstitutionNr: string | undefined) => {
   cristinInstitutionNr = '' + cristinInstitutionNr; //cristinInstitutionNr from pia is a number
   return (
     cristinInstitutionNr !== Foreign_educational_institution_generic_code &&
     cristinInstitutionNr !== Other_institutions_generic_code &&
-    cristinInstitutionNr !== '0'
+    cristinInstitutionNr !== '0' &&
+    cristinInstitutionNr !== ''
   );
 };
 
@@ -52,37 +53,40 @@ export function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affil
 async function replaceNonCristinInstitutions(
   affiliations: Affiliation[] | ImportPublicationPersonInstutution[] | undefined
 ): Promise<Affiliation[]> {
-  //TODO rydd opp i typer - her trengs bare en institusjonstype
-  const resultAffiliations = [];
-  if (affiliations) {
-    for (let i = 0; i < affiliations.length; i++) {
-      let affiliation = affiliations[i];
-      if (!isCristinInstitution(affiliation.cristinInstitutionNr) && affiliation.countryCode) {
-        if (countries[affiliation.countryCode] === undefined) {
-          const institutionCountryInformation = (
-            await getInstitutionsByCountryCodes(affiliation.countryCode, SearchLanguage.En)
-          ).data;
-          if (institutionCountryInformation.length > 0) {
-            affiliation = {
-              cristinInstitutionNr: institutionCountryInformation[0].cristin_institution_id,
-              institutionName:
-                (institutionCountryInformation[0].institution_name.en ||
-                  institutionCountryInformation[0].institution_name.nb) + ' (Ukjent institusjon)',
-              countryCode: institutionCountryInformation[0].country,
-              isCristinInstitution: institutionCountryInformation[0].cristin_user_institution,
-            };
-          }
-          if (affiliation.countryCode) countries[affiliation.countryCode] = affiliation; //sjekken burde vørt unødvendig
-        } else {
-          affiliation = countries[affiliation.countryCode];
-        }
-      }
-      if (affiliation !== null) {
-        resultAffiliations.push(affiliation);
+  const affiliationPromises: Promise<Affiliation | null>[] = [];
+  affiliations?.forEach((affiliation) => {
+    affiliationPromises.push(replaceNonCristinInstitution(affiliation));
+  });
+  const affiliationResult = await Promise.all(affiliationPromises);
+  return affiliationResult.filter((affiliation): affiliation is Affiliation => affiliation !== null);
+}
+
+async function replaceNonCristinInstitution(affiliation: Affiliation): Promise<Affiliation | null> {
+  console.log('!isCristinInstitution', !isCristinInstitution(affiliation.cristinInstitutionNr), affiliation);
+  if (!isCristinInstitution(affiliation.cristinInstitutionNr) && affiliation.countryCode) {
+    if (countriesApiResultCache[affiliation.countryCode]) {
+      return countriesApiResultCache[affiliation.countryCode];
+    } else {
+      const institutionCountryInformation = (
+        await getInstitutionsByCountryCodes(affiliation.countryCode, SearchLanguage.En)
+      ).data;
+      if (institutionCountryInformation.length > 0) {
+        const newAffiliation = {
+          cristinInstitutionNr: institutionCountryInformation[0].cristin_institution_id,
+          institutionName:
+            (institutionCountryInformation[0].institution_name.en ||
+              institutionCountryInformation[0].institution_name.nb) + ' (Ukjent institusjon)',
+          countryCode: institutionCountryInformation[0].country,
+          isCristinInstitution: institutionCountryInformation[0].cristin_user_institution,
+        };
+        countriesApiResultCache[affiliation.countryCode] = newAffiliation;
+        return newAffiliation;
       }
     }
+  } else if (affiliation.cristinInstitutionNr && affiliation.cristinInstitutionNr.toString() !== '0') {
+    return affiliation;
   }
-  return resultAffiliations;
+  return null;
 }
 
 async function searchCristinPersons(authors: ImportPublicationPerson[]) {
