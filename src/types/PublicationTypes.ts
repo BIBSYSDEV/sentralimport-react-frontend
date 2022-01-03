@@ -160,3 +160,8 @@ export interface PostPublication {
   cristinResultId?: string | number;
   annotation?: string;
 }
+
+export enum InternationalStandardNumberTypes {
+  PRINTED = 'printed',
+  ELECTRONIC = 'electronic',
+}

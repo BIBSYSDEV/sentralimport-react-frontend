@@ -481,6 +481,13 @@ export const mockAllJournals: ChannelLight[] = [
     type: 'journal',
     title: 'Nordtrib : Nordic symposium on tribology',
   },
+  {
+    id: '102791',
+    type: 'journal',
+    issn: '1742-7835',
+    issn_electronic: '1742-7843',
+    title: 'Basic &amp; Clinical Pharmacology &amp; Toxicology',
+  },
 ];
 
 export const mockPerson = {
