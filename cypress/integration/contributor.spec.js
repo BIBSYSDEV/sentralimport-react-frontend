@@ -4,6 +4,8 @@ import {
   mockPersonDetailed,
   mockSimpleUnitResponse,
   mockUnits,
+  responseCountryInstitutionCN,
+  responseCountryInstitutionIT,
 } from '../../src/utils/mockdata';
 import mockImportData from '../../src/utils/mockImportData.json';
 
@@ -246,5 +248,24 @@ context('contributor', () => {
     cy.get('[data-testid="list-item-author-Chen-affiliations"]')
       .find('[data-testid="list-item-author-Chen-affiliations-13700046"]')
       .should('have.length', 1);
+  });
+
+  it('it handles invalid institution ids from importdata', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+
+    //it converts importdata institution with 0 to landcode based institution:
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[0].authors[5].surname}-affiliations-${responseCountryInstitutionIT.cristin_institution_id}-institution-name"]`
+    ).should('include.text', '(Ukjent institusjon)');
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[0].authors[5].surname}-affiliations-0-institution-name"]`
+    ).should('not.exist');
+
+    //it does not show landcode based institution IF there is another institution from the same country with a cristin id:
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[0].authors[5].surname}-affiliations-${responseCountryInstitutionCN.cristin_institution_id}-institution-name"]`
+    ).should('not.exist');
   });
 });
