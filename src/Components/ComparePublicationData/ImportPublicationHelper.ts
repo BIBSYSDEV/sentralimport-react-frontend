@@ -80,7 +80,6 @@ export const createCristinPublicationForSaving = (
       list: createContributorObject(),
     },
   };
-  console.log(createContributorObject());
   if (cristinResultId) {
     cristinPublication.cristinResultId = cristinResultId;
   }
