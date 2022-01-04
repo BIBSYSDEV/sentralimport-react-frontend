@@ -71,7 +71,6 @@ const ContributorForm: FC<ContributorFormProps> = ({
 
   return (
     <div data-testid={`contributor-form-${resultListIndex}`}>
-      <pre style={{ maxWidth: '90%' }}>{JSON.stringify(contributorData.toBeCreated.affiliations, null, 2)}</pre>
       <Grid container spacing={2} justifyContent="space-between">
         <Grid item>
           {contributorData.toBeCreated.badge_type &&

@@ -50,6 +50,25 @@ export function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affil
   });
 }
 
+function removeUnknownInstitutionIfAnInstitutionFromSameCountryExists(affiliations: Affiliation[]): Affiliation[] {
+  const countryCodeSet = new Set();
+  const unknownInstitutionsIndexes = new Set();
+  affiliations.forEach((affiliation, affiliationIndex) => {
+    if (
+      affiliation.institutionName &&
+      !affiliation.institutionName.includes('(Ukjent institusjon)') &&
+      affiliation.countryCode
+    ) {
+      countryCodeSet.add(affiliation.countryCode);
+    } else {
+      unknownInstitutionsIndexes.add(affiliationIndex);
+    }
+  });
+  return affiliations.filter((affiliation, affiliationIndex) => {
+    return !(unknownInstitutionsIndexes.has(affiliationIndex) && countryCodeSet.has(affiliation.countryCode));
+  });
+}
+
 async function replaceNonCristinInstitutions(
   affiliations: Affiliation[] | ImportPublicationPersonInstutution[] | undefined
 ): Promise<Affiliation[]> {
@@ -58,11 +77,12 @@ async function replaceNonCristinInstitutions(
     affiliationPromises.push(replaceNonCristinInstitution(affiliation));
   });
   const affiliationResult = await Promise.all(affiliationPromises);
-  return affiliationResult.filter((affiliation): affiliation is Affiliation => affiliation !== null);
+  return removeUnknownInstitutionIfAnInstitutionFromSameCountryExists(
+    affiliationResult.filter((affiliation): affiliation is Affiliation => affiliation !== null)
+  );
 }
 
 async function replaceNonCristinInstitution(affiliation: Affiliation): Promise<Affiliation | null> {
-  console.log('!isCristinInstitution', !isCristinInstitution(affiliation.cristinInstitutionNr), affiliation);
   if (!isCristinInstitution(affiliation.cristinInstitutionNr) && affiliation.countryCode) {
     if (countriesApiResultCache[affiliation.countryCode]) {
       return countriesApiResultCache[affiliation.countryCode];
