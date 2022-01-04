@@ -2,6 +2,7 @@ import { ImportPublication, Language } from '../../types/PublicationTypes';
 import { CompareFormValuesType } from './CompareFormTypes';
 import { patchPiaPublication, patchPublication, postPublication } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
+import { ContributorWrapper } from '../../types/ContributorTypes';
 
 //TODO: fix types
 
@@ -79,6 +80,7 @@ export const createCristinPublicationForSaving = (
       list: createContributorObject(),
     },
   };
+  console.log(createContributorObject());
   if (cristinResultId) {
     cristinPublication.cristinResultId = cristinResultId;
   }
@@ -132,77 +134,51 @@ export async function handleUpdatePublication(publication: any, dispatch: any) {
   };
 }
 
+interface SubmitAffiliation {
+  role_code: string;
+  institution?: any;
+  unit?: any;
+}
+
 export const createContributorObject = () => {
   const temp = JSON.parse(localStorage.getItem('tempContributors') || '{}');
-  let contributors = [];
+  let submitContributors: any = [];
   if (temp.contributors) {
-    for (let i = 0; i < temp.contributors.length; i++) {
-      const affiliations = [];
-      for (let j = 0; j < temp.contributors[i].toBeCreated.affiliations.length; j++) {
-        let count = 0;
-        if (!temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty('units')) {
-          affiliations[j + count] = {
-            role_code:
-              temp.contributors[i].imported.role_code === 'FORFATTER'
-                ? 'AUTHOR'
-                : temp.contributors[i].imported.role_code,
-            institution: temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty('institution')
+    temp.contributors.forEach((contributor: ContributorWrapper) => {
+      const affiliations: SubmitAffiliation[] = [];
+      contributor.toBeCreated.affiliations?.forEach((affiliation) => {
+        if (!affiliation.units) {
+          affiliations.push({
+            role_code: contributor.imported.role_code === 'FORFATTER' ? 'AUTHOR' : contributor.imported.role_code + '',
+            institution: affiliation.institution
               ? {
-                  ...temp.contributors[i].toBeCreated.affiliations[j].institution,
-                  role_code: temp.contributors[i].imported.role_code,
+                  cristin_institution_id: affiliation.institution.cristin_institution_id,
+                  role_code: contributor.imported.role_code,
                 }
               : {
-                  cristin_institution_id:
-                    temp.contributors[i].toBeCreated.affiliations[j].hasOwnProperty('cristinInstitutionNr') &&
-                    (temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr !== undefined ||
-                      temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr !== null)
-                      ? temp.contributors[i].toBeCreated.affiliations[j].cristinInstitutionNr.toString()
-                      : '0',
-                },
-          };
-        } else {
-          for (let h = 0; h < temp.contributors[i].toBeCreated.affiliations[j].units.length; h++) {
-            affiliations[j + count] = {
-              role_code:
-                temp.contributors[i].imported.role_code === 'FORFATTER'
-                  ? 'AUTHOR'
-                  : temp.contributors[i].imported.role_code,
-              unit: {
-                cristin_unit_id:
-                  temp.contributors[i].toBeCreated.affiliations[j].units[h].hasOwnProperty('unitNr') &&
-                  (temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr !== undefined ||
-                    temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr !== null)
-                    ? temp.contributors[i].toBeCreated.affiliations[j].units[h].unitNr.toString()
+                  cristin_institution_id: affiliation.cristinInstitutionNr
+                    ? affiliation.cristinInstitutionNr.toString()
                     : '0',
-              },
-            };
-            count++;
-          }
+                },
+          });
         }
-      }
-      contributors[i] = {
-        ...temp.contributors[i].toBeCreated,
+        affiliation.units?.forEach((unit: any) => {
+          affiliations.push({
+            role_code: contributor.imported.role_code === 'FORFATTER' ? 'AUTHOR' : contributor.imported.role_code + '',
+            unit: {
+              cristin_unit_id: unit.unitNr ? unit.unitNr.toString() : '0',
+            },
+          });
+        });
+      });
+      submitContributors.push({
+        ...contributor.toBeCreated,
         affiliations: affiliations,
-        cristin_person_id: temp.contributors[i].toBeCreated.cristin_person_id.toString(),
-      };
-    }
-    // filtrerer vekk institusjoner om samme institusjon kommer flere ganger på samme person. f.eks ANDREINST
-    contributors = contributors.map((item) => ({
-      ...item,
-      affiliations: item.affiliations.filter(
-        (v: any, i: any, a: any) =>
-          a.findIndex((t: any) => {
-            if (t.hasOwnProperty('institution') && v.hasOwnProperty('institution')) {
-              return t.institution.cristin_institution_id === v.institution.cristin_institution_id;
-            } else if (t.hasOwnProperty('unit') && v.hasOwnProperty('unit')) {
-              return t.unit.cristin_unit_id === v.unit.cristin_unit_id;
-            }
-            return false;
-          }) === i
-      ),
-    }));
+        cristin_person_id: contributor.toBeCreated.cristin_person_id?.toString(),
+      });
+    });
   }
-  return contributors;
+  return submitContributors;
 };
 
 const generateErrorMessage = (error: any) => {
