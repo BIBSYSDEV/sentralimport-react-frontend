@@ -107,8 +107,22 @@
           {
             "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
             "countryCode": "CN",
-            "institutionName": "Tianjin University of Technology",
+            "institutionName": "Chinese institution with Foreign educational institution generic_code",
             "cristinInstitutionNr": 9127,
+            "isCristinInstitution": false
+          },
+          {
+            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
+            "countryCode": "CN",
+            "institutionName": "Chinese institution with cristin Id",
+            "cristinInstitutionNr": 12333455,
+            "isCristinInstitution": false
+          },
+          {
+            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
+            "countryCode": "IT",
+            "institutionName": "Italian institution with cristin ID 0",
+            "cristinInstitutionNr": 0,
             "isCristinInstitution": false
           }
         ]
