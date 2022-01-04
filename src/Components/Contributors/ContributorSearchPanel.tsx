@@ -234,6 +234,15 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     setAddAffiliationError(undefined);
   }, [contributorData.toBeCreated.affiliations]);
 
+  useEffect(() => {
+    if (
+      !contributorData.toBeCreated.cristin_person_id ||
+      contributorData.toBeCreated.cristin_person_id.toString() === '0'
+    ) {
+      handleOpenSearchPanelClick();
+    }
+  }, [contributorData.toBeCreated.cristin_person_id]);
+
   function handleChooseThis(author: ContributorType) {
     const temp = contributorData;
     temp.cristin = author;
