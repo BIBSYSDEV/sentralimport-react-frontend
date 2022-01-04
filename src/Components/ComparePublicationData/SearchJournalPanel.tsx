@@ -67,6 +67,7 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
         data-testid="cristindata-journal-select"
         options={journals ?? []}
         value={selectedJournal}
+        filterOptions={() => journals ?? []}
         onChange={(event, newValue: CompareFormJournalType | null) => {
           newValue && newValue.cristinTidsskriftNr !== '0' && setSelectedJournal(newValue);
           //TODO: this triggers search on select as well (not necessary)
