@@ -142,7 +142,7 @@ interface SubmitAffiliation {
 
 export const createContributorObject = () => {
   const temp = JSON.parse(localStorage.getItem('tempContributors') || '{}');
-  let submitContributors: any = [];
+  const submitContributors: any = [];
   if (temp.contributors) {
     temp.contributors.forEach((contributor: ContributorWrapper) => {
       const affiliations: SubmitAffiliation[] = [];
