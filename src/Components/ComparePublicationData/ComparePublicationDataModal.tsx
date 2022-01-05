@@ -267,7 +267,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     setIsConfirmImportDialogOpen(false);
 
     if (result.status === 200) {
-      enqueueSnackbar('Importerte publikasjon', {
+      enqueueSnackbar('Importerte publikasjon ', {
         variant: 'success',
         autoHideDuration: 10000,
         action: (key: any) => successSnackBarActions(key, result.result.id),
