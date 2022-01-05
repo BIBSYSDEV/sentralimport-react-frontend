@@ -267,14 +267,11 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     setIsConfirmImportDialogOpen(false);
 
     if (result.status === 200) {
-      enqueueSnackbar(
-        'Importerte publikasjon (Cristin-id: ' + result.result.id + ' og tittel: ' + result.result.title + ')',
-        {
-          variant: 'success',
-          autoHideDuration: 10000,
-          action: (key: any) => successSnackBarActions(key, result.result.id),
-        }
-      );
+      enqueueSnackbar('Importerte publikasjon', {
+        variant: 'success',
+        autoHideDuration: 10000,
+        action: (key: any) => successSnackBarActions(key, result.result.id),
+      });
       handleComparePublicationDataModalClose();
       handleDuplicateCheckModalClose();
       //TODO! NB! this should be removed as soon as contributors does not use localstorage anymore
