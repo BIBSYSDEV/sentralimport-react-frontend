@@ -1,7 +1,6 @@
 import React, { FC, useContext, useState } from 'react';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Context } from '../../Context';
-import '../../assets/styles/Results.scss';
 import ComparePublicationDataModal from '../ComparePublicationData/ComparePublicationDataModal';
 import { ImportPublication } from '../../types/PublicationTypes';
 import { Button, Divider, Grid, Typography } from '@material-ui/core';

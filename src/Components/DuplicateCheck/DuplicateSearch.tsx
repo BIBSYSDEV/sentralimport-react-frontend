@@ -1,7 +1,6 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { Context } from '../../Context';
 import { CircularProgress, Divider, FormControlLabel, Radio, RadioGroup, Typography } from '@material-ui/core';
-import '../../assets/styles/Results.scss';
 import ResultItem from './ResultItem';
 import { CristinPublication, ImportPublication } from '../../types/PublicationTypes';
 import { searchChristinPublications } from './SearchChristinPublications';
