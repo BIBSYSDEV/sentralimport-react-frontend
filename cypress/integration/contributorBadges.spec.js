@@ -21,7 +21,6 @@ context('contributor badges', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
-    cy.wait(500);
 
     //choose unknown cristin author:
     cy.get(`[data-testid="add-only-person-${mockForbiddenPerson.cristin_person_id}"]`).first().click();
