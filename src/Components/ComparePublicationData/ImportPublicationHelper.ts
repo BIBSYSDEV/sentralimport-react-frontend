@@ -91,6 +91,7 @@ export async function handleCreatePublication(publication: any, dispatch: any) {
   try {
     const postPublicationResponse = (await postPublication(publication)).data;
     const cristinResultId = postPublicationResponse.cristin_result_id;
+    await patchPiaPublication(cristinResultId, publication.pub_id);
     addToLog(publication, cristinResultId);
     dispatch({ type: 'setFormErrors', payload: [] });
     dispatch({ type: 'setContributorsLoaded', payload: false });
