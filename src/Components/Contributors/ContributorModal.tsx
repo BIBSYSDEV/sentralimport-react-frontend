@@ -2,10 +2,10 @@ import React, { FC, useContext, useEffect, useLayoutEffect, useRef, useState } f
 import { Modal, ModalBody, ModalHeader } from 'reactstrap';
 import { Context } from '../../Context';
 import { Button, CircularProgress, Divider, Typography } from '@material-ui/core';
-import ConfirmDialog from '../Dialogs/ConfirmDialog';
+import GenericConfirmDialog from '../Dialogs/GenericConfirmDialog';
 import { CRIST_REST_API } from '../../utils/constants';
 import { getInstitutionName, getPersonDetailById, SearchLanguage } from '../../api/contributorApi';
-import { getAffiliationDetails } from '../../utils/contributorUtils';
+import { getAffiliationDetails, getContributorStatus } from '../../utils/contributorUtils';
 import styled from 'styled-components';
 import AddIcon from '@material-ui/icons/Add';
 import ContributorOrderComponent from './ContributorOrderComponent';
@@ -20,58 +20,93 @@ import {
 } from '../../types/ContributorTypes';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { getInstitutionsByCountryCodes } from '../../api/institutionApi';
-import Contributor from './Contributor';
 import { ImportPublication } from '../../types/PublicationTypes';
 import { Affiliation, ImportPublicationPersonInstutution } from '../../types/InstitutionTypes';
+import CommonErrorMessage from '../CommonErrorMessage';
+import ContributorForm from './ContributorForm';
+import clone from 'just-clone';
 
 const Foreign_educational_institution_generic_code = '9127';
 const Other_institutions_generic_code = '9126';
 
-const countries: any = {};
+const countriesApiResultCache: any = {};
 
 const isCristinInstitution = (cristinInstitutionNr: string | undefined) => {
   cristinInstitutionNr = '' + cristinInstitutionNr; //cristinInstitutionNr from pia is a number
   return (
     cristinInstitutionNr !== Foreign_educational_institution_generic_code &&
     cristinInstitutionNr !== Other_institutions_generic_code &&
-    cristinInstitutionNr !== '0'
+    cristinInstitutionNr !== '0' &&
+    cristinInstitutionNr !== ''
   );
 };
+
+export function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
+  const cristinIdSet = new Set();
+  return affiliations.filter((affiliation: Affiliation) => {
+    if (cristinIdSet.has(affiliation.cristinInstitutionNr)) return false;
+    cristinIdSet.add(affiliation.cristinInstitutionNr);
+    return true;
+  });
+}
+
+function removeUnknownInstitutionIfAnInstitutionFromSameCountryExists(affiliations: Affiliation[]): Affiliation[] {
+  const countryCodeSet = new Set();
+  const unknownInstitutionsIndexes = new Set();
+  affiliations.forEach((affiliation, affiliationIndex) => {
+    if (
+      affiliation.institutionName &&
+      !affiliation.institutionName.includes('(Ukjent institusjon)') &&
+      affiliation.countryCode
+    ) {
+      countryCodeSet.add(affiliation.countryCode);
+    } else {
+      unknownInstitutionsIndexes.add(affiliationIndex);
+    }
+  });
+  return affiliations.filter((affiliation, affiliationIndex) => {
+    return !(unknownInstitutionsIndexes.has(affiliationIndex) && countryCodeSet.has(affiliation.countryCode));
+  });
+}
 
 async function replaceNonCristinInstitutions(
   affiliations: Affiliation[] | ImportPublicationPersonInstutution[] | undefined
 ): Promise<Affiliation[]> {
-  //TODO rydd opp i typer - her trengs bare en institusjonstype
-  const resultAffiliations = [];
-  if (affiliations) {
-    for (let i = 0; i < affiliations.length; i++) {
-      let affiliation = affiliations[i];
-      if (!isCristinInstitution(affiliation.cristinInstitutionNr) && affiliation.countryCode) {
-        if (countries[affiliation.countryCode] === undefined) {
-          const institutionCountryInformation = (
-            await getInstitutionsByCountryCodes(affiliation.countryCode, SearchLanguage.En)
-          ).data;
-          if (institutionCountryInformation.length > 0) {
-            affiliation = {
-              cristinInstitutionNr: institutionCountryInformation[0].cristin_institution_id,
-              institutionName:
-                (institutionCountryInformation[0].institution_name.en ||
-                  institutionCountryInformation[0].institution_name.nb) + ' (Ukjent institusjon)',
-              countryCode: institutionCountryInformation[0].country,
-              isCristinInstitution: institutionCountryInformation[0].cristin_user_institution,
-            };
-          }
-          if (affiliation.countryCode) countries[affiliation.countryCode] = affiliation; //sjekken burde vørt unødvendig
-        } else {
-          affiliation = countries[affiliation.countryCode];
-        }
-      }
-      if (affiliation !== null) {
-        resultAffiliations.push(affiliation);
+  const affiliationPromises: Promise<Affiliation | null>[] = [];
+  affiliations?.forEach((affiliation) => {
+    affiliationPromises.push(replaceNonCristinInstitution(affiliation));
+  });
+  const affiliationResult = await Promise.all(affiliationPromises);
+  return removeUnknownInstitutionIfAnInstitutionFromSameCountryExists(
+    affiliationResult.filter((affiliation): affiliation is Affiliation => affiliation !== null)
+  );
+}
+
+async function replaceNonCristinInstitution(affiliation: Affiliation): Promise<Affiliation | null> {
+  if (!isCristinInstitution(affiliation.cristinInstitutionNr) && affiliation.countryCode) {
+    if (countriesApiResultCache[affiliation.countryCode]) {
+      return countriesApiResultCache[affiliation.countryCode];
+    } else {
+      const institutionCountryInformation = (
+        await getInstitutionsByCountryCodes(affiliation.countryCode, SearchLanguage.En)
+      ).data;
+      if (institutionCountryInformation.length > 0) {
+        const newAffiliation = {
+          cristinInstitutionNr: institutionCountryInformation[0].cristin_institution_id,
+          institutionName:
+            (institutionCountryInformation[0].institution_name.en ||
+              institutionCountryInformation[0].institution_name.nb) + ' (Ukjent institusjon)',
+          countryCode: institutionCountryInformation[0].country,
+          isCristinInstitution: institutionCountryInformation[0].cristin_user_institution,
+        };
+        countriesApiResultCache[affiliation.countryCode] = newAffiliation;
+        return newAffiliation;
       }
     }
+  } else if (affiliation.cristinInstitutionNr && affiliation.cristinInstitutionNr.toString() !== '0') {
+    return affiliation;
   }
-  return resultAffiliations;
+  return null;
 }
 
 async function searchCristinPersons(authors: ImportPublicationPerson[]) {
@@ -83,7 +118,7 @@ async function searchCristinPersons(authors: ImportPublicationPerson[]) {
     let affiliations: Affiliation[] = [];
     if (authors[i].cristinId !== 0) {
       cristinPerson.cristin_person_id = authors[i].cristinId;
-      cristinPerson = await getPersonDetailById(cristinPerson); //TODO: error-handling
+      cristinPerson = await getPersonDetailById(cristinPerson);
       if (cristinPerson.affiliations) {
         const activeAffiliations = cristinPerson.affiliations.filter((affiliation) => affiliation.active);
         for (const activeAffiliation of activeAffiliations) {
@@ -99,15 +134,17 @@ async function searchCristinPersons(authors: ImportPublicationPerson[]) {
       } else {
         affiliations = await replaceNonCristinInstitutions(authors[i].institutions);
       }
+
       cristinPerson = {
         cristin_person_id: cristinPerson.cristin_person_id,
         first_name: cristinPerson.first_name_preferred ?? cristinPerson.first_name,
         surname: cristinPerson.surname_preferred ?? cristinPerson.surname,
         affiliations: affiliations.filter((item: Affiliation, index: number) => affiliations.indexOf(item) === index),
         url: CRIST_REST_API + '/persons/' + cristinPerson.cristin_person_id + '?lang=' + SearchLanguage.En,
-        isEditing: false,
         order: i + 1,
         identified_cristin_person: cristinPerson.identified_cristin_person,
+        require_higher_authorization: cristinPerson.require_higher_authorization,
+        badge_type: getContributorStatus(cristinPerson, affiliations),
       };
     }
     suggestedAuthors[i] = cristinPerson;
@@ -200,6 +237,7 @@ const ContributorModal: FC<ContributorProps> = ({
 }) => {
   const [contributors, setContributors] = useState<ContributorWrapper[]>([]);
   const [isLoadingContributors, setIsLoadingContributors] = useState(false);
+  const [loadingContributorsError, setLoadingContributorsError] = useState<Error | undefined>();
   const [isClosingDialogOpen, setIsClosingDialogOpen] = useState(false);
   const { state, dispatch } = useContext(Context);
 
@@ -215,6 +253,24 @@ const ContributorModal: FC<ContributorProps> = ({
     handleSaveToLocalStorage();
   }, [contributors]);
 
+  const generateFirstName = (author: ImportPublicationPerson): string => {
+    if (author.firstname) {
+      return author.firstname;
+    } else {
+      const authorNameParts = author.authorName?.replace(',', '').split(' ');
+      return authorNameParts?.length > 1 ? authorNameParts[1] : '';
+    }
+  };
+
+  const generateLastName = (author: ImportPublicationPerson): string => {
+    if (author.surname) {
+      return author.surname;
+    } else {
+      const authorNameParts = author.authorName?.replace(',', '').split(' ');
+      return authorNameParts?.length > 0 ? authorNameParts[0] : '';
+    }
+  };
+
   const createContributorWrapper = (
     authorsFromImportPublication: ImportPublicationPerson[],
     index: number,
@@ -225,8 +281,8 @@ const ContributorModal: FC<ContributorProps> = ({
       authorsFromImportPublication.length > index && author
         ? {
             cristin_person_id: author.cristinId,
-            first_name: author.firstname ? author.firstname : author.authorName?.split(' ')[1].replace(',', ''),
-            surname: author.surname ? author.surname : author.authorName?.split(' ')[0].replace(',', ''),
+            first_name: generateFirstName(author),
+            surname: generateLastName(author),
             authorName: author.authorName,
             order: author.sequenceNr,
             affiliations: author.institutions,
@@ -265,15 +321,17 @@ const ContributorModal: FC<ContributorProps> = ({
     importPerson: ImportPublicationPerson
   ) => {
     const hasFoundCristinPerson = contributor.cristin.cristin_person_id !== 0;
+    const tempCristinPerson = clone(cristinAuthor);
+    tempCristinPerson.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(tempCristinPerson.affiliations ?? []);
     const personToBeCreated: ContributorType = hasFoundCristinPerson
       ? { ...contributor.cristin }
       : { ...contributor.imported };
     return cristinAuthor.cristin_person_id !== 0
-      ? cristinAuthor
+      ? tempCristinPerson
       : {
           ...personToBeCreated,
-          affiliations: await replaceNonCristinInstitutions(
-            isDuplicate ? cristinAuthor.affiliations : importPerson.institutions
+          affiliations: removeInstitutionsDuplicatesBasedOnCristinId(
+            await replaceNonCristinInstitutions(isDuplicate ? cristinAuthor.affiliations : importPerson.institutions)
           ),
         };
   };
@@ -301,51 +359,57 @@ const ContributorModal: FC<ContributorProps> = ({
   //TODO: denne må brytes ned - trigges på importPublication, isContributorModalOpen, state.selectedPublication
   useLayoutEffect(() => {
     async function fetch() {
-      setIsLoadingContributors(true);
-      let tempContributors: ContributorWrapper[] = [];
-      const identified: boolean[] = [];
-      const authorsFromImportPublication = importPublication.authors;
+      try {
+        setIsLoadingContributors(true);
+        let tempContributors: ContributorWrapper[] = [];
+        const identified: boolean[] = [];
+        const authorsFromImportPublication = importPublication.authors;
 
-      //TODO: Vi bør la være å bruke tempContributors som arbeidsminne.
-      const contributorsFromLocalStorage = JSON.parse(localStorage.getItem('tempContributors') || '{}');
-      if (
-        contributorsFromLocalStorage !== null &&
-        contributorsFromLocalStorage.pubId === importPublication.pubId &&
-        contributorsFromLocalStorage.duplicate === isDuplicate
-      ) {
-        tempContributors = contributorsFromLocalStorage.contributors;
-      } else {
-        let cristinAuthors: ContributorType[] = [];
-        if (isDuplicate) {
-          cristinAuthors = state.selectedPublication.authors;
-        } else if (!isDuplicate) {
-          cristinAuthors = await searchCristinPersons(authorsFromImportPublication);
-        }
-        for (let i = 0; i < Math.max(cristinAuthors.length, authorsFromImportPublication.length); i++) {
-          if (isDuplicate && state.doSave) {
-            if (i < cristinAuthors.length) {
-              cristinAuthors[i].affiliations = await getDuplicateAffiliations(state.selectedPublication.authors[i]);
-            } else {
-              cristinAuthors[i] = { ...emptyContributor };
+        //TODO: Vi bør la være å bruke tempContributors som arbeidsminne.
+        const contributorsFromLocalStorage = JSON.parse(localStorage.getItem('tempContributors') || '{}');
+        if (
+          contributorsFromLocalStorage !== null &&
+          contributorsFromLocalStorage.pubId === importPublication.pubId &&
+          contributorsFromLocalStorage.duplicate === isDuplicate
+        ) {
+          tempContributors = contributorsFromLocalStorage.contributors;
+        } else {
+          let cristinAuthors: ContributorType[] = [];
+          if (isDuplicate) {
+            cristinAuthors = state.selectedPublication.authors;
+          } else if (!isDuplicate) {
+            cristinAuthors = await searchCristinPersons(authorsFromImportPublication);
+          }
+          for (let i = 0; i < Math.max(cristinAuthors.length, authorsFromImportPublication.length); i++) {
+            if (cristinAuthors[i]) {
+              if (isDuplicate && state.doSave) {
+                if (i < cristinAuthors.length) {
+                  cristinAuthors[i].affiliations = await getDuplicateAffiliations(state.selectedPublication.authors[i]);
+                } else {
+                  cristinAuthors[i] = { ...emptyContributor };
+                }
+              }
+              identified[i] = cristinAuthors[i].identified_cristin_person || false;
+              tempContributors[i] = createContributorWrapper(authorsFromImportPublication, i, cristinAuthors);
+              tempContributors[i].toBeCreated = await generateToBeCreatedContributor(
+                tempContributors[i],
+                cristinAuthors[i],
+                authorsFromImportPublication[i]
+              );
             }
           }
-          identified[i] = cristinAuthors[i].identified_cristin_person || false;
-          tempContributors[i] = createContributorWrapper(authorsFromImportPublication, i, cristinAuthors);
-          tempContributors[i].isEditing = tempContributors[i].cristin.cristin_person_id === 0;
-          tempContributors[i].toBeCreated = await generateToBeCreatedContributor(
-            tempContributors[i],
-            cristinAuthors[i],
-            authorsFromImportPublication[i]
-          );
         }
+        setContributors(tempContributors);
+        dispatch({ type: 'setContributorsLoaded', payload: true });
+        replaceLocalStorage(tempContributors);
+        dispatch({ type: 'identified', payload: identified }); //skjer dette to steder ?
+        dispatch({ type: 'identifiedImported', payload: identified });
+        validateContributor(tempContributors);
+      } catch (error) {
+        setLoadingContributorsError(error as Error);
+      } finally {
+        setIsLoadingContributors(false);
       }
-      setContributors(tempContributors);
-      dispatch({ type: 'setContributorsLoaded', payload: true });
-      replaceLocalStorage(tempContributors);
-      dispatch({ type: 'identified', payload: identified }); //skjer dette to steder ?
-      dispatch({ type: 'identifiedImported', payload: identified });
-      setIsLoadingContributors(false);
-      validateContributor(tempContributors);
     }
 
     fetch().then();
@@ -354,29 +418,35 @@ const ContributorModal: FC<ContributorProps> = ({
 
   useEffect(() => {
     async function identifyCristinPersonsInContributors_And_CreateListOfIdentified() {
-      if (!isLoadingContributors) {
-        return;
-      }
-      const identified: boolean[] = [];
-      const identifiedImported: boolean[] = [];
-      for (let i = 0; i < contributors.length; i++) {
-        if (
-          !contributors[i].imported.identified_cristin_person &&
-          contributors[i].imported.cristin_person_id !== null &&
-          contributors[i].imported.cristin_person_id !== 0 &&
-          i < contributors.length
-        ) {
-          const person = await getPersonDetailById(contributors[i].imported);
-          identifiedImported[i] = person.identified_cristin_person ?? false;
+      try {
+        if (!isLoadingContributors) {
+          return;
         }
-        if (!contributors[i].toBeCreated.identified_cristin_person && isDuplicate) {
-          //const person = await getPersonDetailById(contributors[i].toBeCreated); //TODO! Denne gir ingen mening - søker på cristinid=0 som gir 404-feil
-          // identified[i] = person.identified_cristin_person ?? false;
+        const identified: boolean[] = [];
+        const identifiedImported: boolean[] = [];
+        for (let i = 0; i < contributors.length; i++) {
+          if (
+            !contributors[i].imported.identified_cristin_person &&
+            contributors[i].imported.cristin_person_id !== null &&
+            contributors[i].imported.cristin_person_id !== 0 &&
+            i < contributors.length
+          ) {
+            const person = await getPersonDetailById(contributors[i].imported);
+            identifiedImported[i] = person.identified_cristin_person ?? false;
+          }
+          if (!contributors[i].toBeCreated.identified_cristin_person && isDuplicate) {
+            //const person = await getPersonDetailById(contributors[i].toBeCreated); //TODO! Denne gir ingen mening - søker på cristinid=0 som gir 404-feil
+            // identified[i] = person.identified_cristin_person ?? false;
+          }
         }
+        dispatch({ type: 'identifiedImported', payload: identifiedImported });
+        dispatch({ type: 'identified', payload: identified });
+        //TODO: kan ikke dette ligge direkte på contributor-objektet isteden ?
+      } catch (error) {
+        setLoadingContributorsError(error as Error);
+      } finally {
+        setIsLoadingContributors(false);
       }
-      dispatch({ type: 'identifiedImported', payload: identifiedImported });
-      dispatch({ type: 'identified', payload: identified });
-      //TODO: kan ikke dette ligge direkte på contributor-objektet isteden ?
     }
     if (!isDuplicate) return;
     identifyCristinPersonsInContributors_And_CreateListOfIdentified().then();
@@ -440,12 +510,12 @@ const ContributorModal: FC<ContributorProps> = ({
       temp[toBeCreatedOrder - 1].toBeCreated.cristin_person_id = author.cristin.cristin_person_id
         ? author.cristin.cristin_person_id
         : author.imported.cristin_person_id;
-      temp[toBeCreatedOrder - 1].isEditing = false;
     }
     setContributors(temp);
   }
 
   async function handleChosenAuthorAffiliations(affiliations: Affiliation[]): Promise<Affiliation[]> {
+    //todo: error-handling
     const tempAffiliations = [];
     for (let i = 0; i < affiliations.length; i++) {
       const affiliation = affiliations[i];
@@ -532,7 +602,7 @@ const ContributorModal: FC<ContributorProps> = ({
   };
 
   function addContributor() {
-    const newContributor = { ...emptyContributorWrapper };
+    const newContributor = clone(emptyContributorWrapper);
     newContributor.imported.order = contributors.length + 1;
     newContributor.cristin.order = contributors.length + 1;
     newContributor.toBeCreated.order = contributors.length + 1;
@@ -588,9 +658,9 @@ const ContributorModal: FC<ContributorProps> = ({
                       </StyledContributorColumn>
                       <StyledContributorColumn>
                         <div>
-                          <Contributor
-                            contributorData={row}
+                          <ContributorForm
                             resultListIndex={index}
+                            contributorData={row}
                             updateContributor={updateContributor}
                             deleteContributor={handleCloseDeleteConfirmDialog}
                             handleChosenAuthorAffiliations={handleChosenAuthorAffiliations}
@@ -602,6 +672,12 @@ const ContributorModal: FC<ContributorProps> = ({
                   </li>
                 ))}
               </StyledOrderedList>
+            )}
+            {loadingContributorsError && (
+              <CommonErrorMessage
+                datatestid="contributor-loading-error"
+                errorMessage={`Feil ved lasting av bidragsytere: (${loadingContributorsError.message})`}
+              />
             )}
             <StyledContributorFooter>
               <Button
@@ -624,13 +700,13 @@ const ContributorModal: FC<ContributorProps> = ({
           </StyledContentWrapper>
         </ModalBody>
       </StyledModal>
-      <ConfirmDialog
+      <GenericConfirmDialog
         doFunction={removeContributor}
         title={'Slett bidragsyter'}
         text={'Er du sikker på at du vil slette denne bidragsyteren?'}
         open={isClosingDialogOpen}
         handleClose={handleCloseDeleteConfirmDialog}
-        handleCloseDialog={handleCloseDeleteConfirmDialog}
+        handleAbort={handleCloseDeleteConfirmDialog}
       />
     </>
   );

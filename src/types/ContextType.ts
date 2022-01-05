@@ -1,10 +1,9 @@
 import { Order } from './PublicationTypes';
-import { InstitutionSelector } from './InstitutionTypes';
+import { Institution, InstitutionSelector } from './InstitutionTypes';
 
 export interface ContextType {
   allChecked: boolean;
   contributorErrors: number[];
-
   contributors: null | any;
   contributorsLoaded: boolean;
   currentImportStatus: string;
@@ -19,15 +18,15 @@ export interface ContextType {
   formErrors: string[];
   identified: any[];
   identifiedImported: any[];
-  importDone: boolean;
   institutions: null | InstitutionSelector[];
-  institutionsEnglish: null | InstitutionSelector[];
+  globalInstitutions: Institution[];
   isSampublikasjon: boolean;
   param: null | any;
   selectedField: string;
   selectedPublication: SelectedPublication | any; //TODO: code-cleanup, selectedPublication changes interface throughout the application (possibly only the initial state is incorrect)
   totalCount: number;
   validation: string;
+  triggerImportDataSearch: boolean;
 }
 
 export interface CurrentImportYear {

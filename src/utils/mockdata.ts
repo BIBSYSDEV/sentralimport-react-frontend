@@ -481,6 +481,13 @@ export const mockAllJournals: ChannelLight[] = [
     type: 'journal',
     title: 'Nordtrib : Nordic symposium on tribology',
   },
+  {
+    id: '102791',
+    type: 'journal',
+    issn: '1742-7835',
+    issn_electronic: '1742-7843',
+    title: 'Basic &amp; Clinical Pharmacology &amp; Toxicology',
+  },
 ];
 
 export const mockPerson = {
@@ -491,8 +498,11 @@ export const mockPerson = {
 };
 
 export const cristinIDWithoutActiveAffiliation = '9456892';
-export const cristinIDWithoutAffiliationAttribute = '89754123';
-export const cristinIdForbiddenPerson = '1235412375';
+export const mockCristinIDWithoutAffiliationAttribute = '89754123';
+export const mockCristinIdForbiddenPerson = '1235412375';
+export const mockDoiForEmptyCristinSearch = '123456789';
+export const mockCristinPersonNotFound = '18799';
+export const mockTitleForEmptyCristinSearch = 'this_is_a_mocked_title';
 
 export const mockPersonWithoutActiveAffiliation = {
   first_name: 'Arne',
@@ -505,14 +515,14 @@ export const mockPersonWithoutAffiliationAttribute = {
   first_name: 'Arne',
   surname: 'Benoni',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
-  cristin_person_id: cristinIDWithoutAffiliationAttribute,
+  cristin_person_id: mockCristinIDWithoutAffiliationAttribute,
 };
 
 export const mockForbiddenPerson = {
   first_name: 'Arne',
   surname: 'Benoni',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
-  cristin_person_id: cristinIdForbiddenPerson,
+  cristin_person_id: mockCristinIdForbiddenPerson,
 };
 
 export const mockPersonDetailed = {
@@ -554,7 +564,7 @@ export const mockPersonDetailed = {
 };
 
 export const mockPersonDetailedWithoutAffiliationAttribute = {
-  cristin_person_id: cristinIDWithoutAffiliationAttribute,
+  cristin_person_id: mockCristinIDWithoutAffiliationAttribute,
   first_name: 'Arne',
   surname: 'Benoni',
   identified_cristin_person: true,
@@ -701,6 +711,12 @@ export const mockNotAuthorizedForThisPersonDetailResponse = {
   errors: ['Client lacks authorization.'],
 };
 
+export const mockCristinPersonNotFoundResponse = {
+  status: 404,
+  response_id: 'q81ba1ps',
+  errors: ['Person not found or not a Cristin person.'],
+};
+
 export const mockSaveErrorResponse = {
   status: 400,
   response_id: 'l20utud2',
@@ -708,3 +724,135 @@ export const mockSaveErrorResponse = {
     'JSON schema validation failed on content: [#/contributors/list/0/affiliations: expected minimum item count: 1, found: 0].',
   ],
 };
+
+export const mockSimpleUnitResponse = [
+  {
+    cristin_unit_id: '194.12.0.0',
+    unit_name: {
+      en: 'Rector',
+      nb: 'Rektor',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.12.0.0',
+    acronym: 'RE',
+  },
+  {
+    cristin_unit_id: '194.12.1.0',
+    unit_name: {
+      en: 'Rector and Board',
+      nb: 'Rektor og styre',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.12.1.0',
+    acronym: 'RE-REK',
+  },
+  {
+    cristin_unit_id: '194.13.0.0',
+    unit_name: {
+      en: 'Pro-Rector for Research',
+      nb: 'Prorektor for forskning',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.13.0.0',
+    acronym: 'FO',
+  },
+  {
+    cristin_unit_id: '194.14.0.0',
+    unit_name: {
+      en: 'Pro-Rector for Education',
+      nb: 'Prorektor for utdanning',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.14.0.0',
+    acronym: 'UTD',
+  },
+  {
+    cristin_unit_id: '194.14.30.0',
+    unit_name: {
+      en: 'NTNU University Library',
+      nb: 'NTNU Universitetsbiblioteket',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.14.30.0',
+    acronym: 'UTD-UB',
+  },
+  {
+    cristin_unit_id: '194.15.0.0',
+    unit_name: {
+      en: 'Director of Finance and Property',
+      nb: 'Økonomi- og eiendomsdirektør',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.15.0.0',
+    acronym: 'OE',
+  },
+  {
+    cristin_unit_id: '194.16.0.0',
+    unit_name: {
+      en: 'Director, Organization',
+      nb: 'Organisasjonsdirektør',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.16.0.0',
+    acronym: 'OD',
+  },
+  {
+    cristin_unit_id: '194.16.90.0',
+    unit_name: {
+      en: 'Communication Division',
+      nb: 'Kommunikasjonsavdelingen',
+    },
+    institution: {
+      acronym: 'NTNU',
+    },
+    url: 'https://api.cristin-test.uio.no/v2/units/194.16.90.0',
+    acronym: 'OD-KOMM',
+  },
+];
+
+export const mockInstitutionSearchByName = [
+  {
+    cristin_institution_id: '65200000',
+    institution_name: {
+      en: 'Mexico',
+    },
+    acronym: 'MEXICO',
+    country: 'MX',
+    cristin_user_institution: false,
+    url: 'https://api.cristin-test.uio.no/v2/institutions/65200000',
+  },
+  {
+    cristin_institution_id: '65220000',
+    institution_name: {
+      en: 'Hospital General de Mexico',
+    },
+    acronym: 'HGM',
+    country: 'MX',
+    cristin_user_institution: false,
+    url: 'https://api.cristin-test.uio.no/v2/institutions/65220000',
+  },
+  {
+    cristin_institution_id: '82007415',
+    institution_name: {
+      en: 'Northern New Mexico College',
+    },
+    acronym: 'NNMC',
+    country: 'US',
+    cristin_user_institution: false,
+    url: 'https://api.cristin-test.uio.no/v2/institutions/82007415',
+  },
+];

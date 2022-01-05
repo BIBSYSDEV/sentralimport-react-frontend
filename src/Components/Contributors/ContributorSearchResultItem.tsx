@@ -1,54 +1,31 @@
 import React, { FC, useState } from 'react';
 import { ContributorType } from '../../types/ContributorTypes';
 import styled from 'styled-components';
-import { Button, Typography } from '@material-ui/core';
+import { Button, Grid, Typography } from '@material-ui/core';
 import { Colors } from '../../assets/styles/StyleConstants';
-import { ReactComponent as VerifiedBadge } from '../../assets/icons/verified-badge.svg';
-import { ReactComponent as NotVerifiedBadge } from '../../assets/icons/not-verified-badge.svg';
-import { ReactComponent as UnknownVerifiedBadge } from '../../assets/icons/uknown-verification-badge.svg';
+import { Affiliation } from '../../types/InstitutionTypes';
+import {
+  StyledNotVerifiedBadge,
+  StyledUnknownVerifiedBadge,
+  StyledVerifiedBadge,
+} from '../../assets/styles/StyledBadges';
+import AffiliationDisplay from './AffiliationDisplay';
+import { AddAffiliationError } from './ContributorSearchPanel';
 
-const StyledVerifiedBadge = styled(VerifiedBadge)`
-  margin-right: 0.5rem;
-  width: 1.7rem;
-  height: 1.7rem;
-  & path {
-    fill: ${Colors.Text.GREEN};
+const StyledNameGridContainer = styled(Grid)`
+  &.MuiGrid-container {
+    margin-bottom: 1rem;
   }
 `;
 
-const StyledNotVerifiedBadge = styled(NotVerifiedBadge)`
-  margin-right: 0.5rem;
-  width: 1.7rem;
-  height: 1.7rem;
-  & path {
-    fill: ${Colors.Text.OPAQUE_41_BLACK};
-  }
-  & circle {
-    fill: ${Colors.Text.OPAQUE_41_BLACK};
-  }
-`;
-
-const StyledUnknownVerifiedBadge = styled(UnknownVerifiedBadge)`
-  margin-right: 0.5rem;
-  width: 1.7rem;
-  height: 1.7rem;
-  & path {
-    fill: ${Colors.Text.OPAQUE_41_BLACK};
-  }
-  & ellipse {
-    fill: ${Colors.Text.OPAQUE_41_BLACK};
-  }
-`;
-
-const StyledChooseButton = styled(Button)`
-  &.MuiButtonBase-root {
-    margin-top: 1rem;
-  }
+const ContributorSearchResultWrapper = styled.div`
+  margin-bottom: 1rem;
 `;
 
 const StyledAffiliationsWrapper = styled.div`
   font-style: italic;
   margin-left: 10px;
+  margin-bottom: 1rem;
 `;
 
 const StyledTypography = styled(Typography)`
@@ -64,12 +41,48 @@ const StyledInactivePersonNameTypography = styled(Typography)`
   color: ${Colors.Text.OPAQUE_41_BLACK};
 `;
 
+const sortContributorAffiliations = (affiliations: Affiliation[] | undefined) => {
+  return affiliations?.sort((affiliationA, affiliationB) => {
+    if (affiliationA.institutionName && affiliationB.institutionName) {
+      return affiliationA.institutionName.localeCompare(affiliationB.institutionName);
+    }
+    return 0;
+  });
+};
+
+export const generateAffiliationDisplayData = (affiliation: Affiliation) => {
+  return {
+    institutionName: affiliation.institutionName ?? '',
+    cristinInstitutionNr: affiliation.cristinInstitutionNr,
+    units: affiliation.units
+      ? affiliation.units
+          .filter((unit) => unit.unitName !== affiliation.institutionName)
+          .map((unit) => ({
+            cristin_unit_id: unit.unitNr,
+            unit_name: { nb: unit.unitName },
+          }))
+      : [],
+    countryCode: affiliation.countryCode ?? '',
+  };
+};
+
 interface ContributorSearchResultItemProps {
   contributor: ContributorType;
   handleChoose: (author: ContributorType) => void;
+  handleChooseOnlyAuthor: (author: ContributorType) => void;
+  handleChooseOnlyAffiliation: (affiliation: Affiliation) => void;
+  addAffiliationSuccessful: string | undefined;
+  addAffiliationError: AddAffiliationError | undefined;
 }
 
-const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({ contributor, handleChoose }) => {
+const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({
+  contributor,
+  handleChoose,
+  handleChooseOnlyAuthor,
+  handleChooseOnlyAffiliation,
+  addAffiliationSuccessful,
+  addAffiliationError,
+}) => {
   const [isActive] = useState(
     contributor.affiliations &&
       contributor.affiliations.some((affiliation) => affiliation.isCristinInstitution) &&
@@ -77,40 +90,58 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({ con
   );
 
   return (
-    <div>
-      {isActive ? (
-        <StyledActivePersonNameTypography data-testid={`author-name-${contributor.cristin_person_id}`} variant="h6">
-          <StyledVerifiedBadge data-testid={`author-name-${contributor.cristin_person_id}-verified-badge`} />
+    <ContributorSearchResultWrapper>
+      <StyledNameGridContainer container spacing={1}>
+        <Grid item sm={8}>
+          {isActive ? (
+            <StyledActivePersonNameTypography data-testid={`author-name-${contributor.cristin_person_id}`} variant="h6">
+              <StyledVerifiedBadge data-testid={`author-name-${contributor.cristin_person_id}-verified-badge`} />
 
-          {`${contributor.first_name_preferred ?? contributor.first_name} ${
-            contributor.surname_preferred ?? contributor.surname
-          }`}
-        </StyledActivePersonNameTypography>
-      ) : (
-        <StyledInactivePersonNameTypography data-testid={`author-name-${contributor.cristin_person_id}`} variant="h6">
-          {contributor.require_higher_authorization ? (
-            <StyledUnknownVerifiedBadge
-              data-testid={`author-name-${contributor.cristin_person_id}-uknown-verified-badge`}
-              title="Ukjent verifikasjonsstatus"
-            />
+              {`${contributor.first_name_preferred ?? contributor.first_name} ${
+                contributor.surname_preferred ?? contributor.surname
+              }`}
+            </StyledActivePersonNameTypography>
           ) : (
-            <StyledNotVerifiedBadge data-testid={`author-name-${contributor.cristin_person_id}-not-verified-badge`} />
+            <StyledInactivePersonNameTypography
+              data-testid={`author-name-${contributor.cristin_person_id}`}
+              variant="h6">
+              {contributor.require_higher_authorization ? (
+                <StyledUnknownVerifiedBadge
+                  data-testid={`author-name-${contributor.cristin_person_id}-uknown-verified-badge`}
+                  title="Ukjent verifikasjonsstatus"
+                />
+              ) : (
+                <StyledNotVerifiedBadge
+                  data-testid={`author-name-${contributor.cristin_person_id}-not-verified-badge`}
+                />
+              )}
+              {`${contributor.first_name_preferred ?? contributor.first_name} ${
+                contributor.surname_preferred ?? contributor.surname
+              }`}
+            </StyledInactivePersonNameTypography>
           )}
-          {`${contributor.first_name_preferred ?? contributor.first_name} ${
-            contributor.surname_preferred ?? contributor.surname
-          }`}
-        </StyledInactivePersonNameTypography>
-      )}
-      {contributor.affiliations?.map((affiliation, affiliationIndex) => (
-        <StyledAffiliationsWrapper
-          data-testid={`list-item-author-${contributor.cristin_person_id}-affiliations-${affiliation.cristinInstitutionNr}`}
-          key={affiliationIndex}>
-          {affiliation.institutionName}
-          {affiliation.units &&
-            affiliation.units.map((unit, unitIndex) => <div key={unitIndex}>&bull; {unit.unitName}</div>)}
-        </StyledAffiliationsWrapper>
+        </Grid>
+        <Grid item sm={4}>
+          <Button
+            data-testid={`add-only-person-${contributor.cristin_person_id}`}
+            onClick={() => handleChooseOnlyAuthor(contributor)}
+            size="small"
+            color="primary">
+            Velg kun person
+          </Button>
+        </Grid>
+      </StyledNameGridContainer>
+      {sortContributorAffiliations(contributor.affiliations)?.map((affiliation, affiliationIndex) => (
+        <AffiliationDisplay
+          addAffiliationSuccessful={addAffiliationSuccessful}
+          handleAddAffiliationButtonClick={() => handleChooseOnlyAffiliation(affiliation)}
+          key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
+          affiliation={generateAffiliationDisplayData(affiliation)}
+          dataTestid={`institution-${affiliation.cristinInstitutionNr}`}
+          backgroundcolor={Colors.LIGHT_GREY}
+          addAffiliationError={addAffiliationError}
+        />
       ))}
-
       {contributor.affiliations?.length === 0 && contributor.require_higher_authorization && (
         <StyledAffiliationsWrapper>
           <StyledTypography data-testid={`person-limited-access-${contributor.cristin_person_id}`} color="error">
@@ -118,11 +149,18 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({ con
           </StyledTypography>
         </StyledAffiliationsWrapper>
       )}
-      <StyledChooseButton size="small" variant="outlined" color="primary" onClick={() => handleChoose(contributor)}>
-        Velg denne
-      </StyledChooseButton>
+      <Button
+        data-testid={`add-person-and-affiliations-${contributor.cristin_person_id}`}
+        size="small"
+        variant="outlined"
+        color="primary"
+        onClick={() => handleChoose(contributor)}>
+        {contributor.affiliations && contributor.affiliations.length > 0
+          ? 'Velg person og tilknyttning'
+          : 'Velg person og fjern tilknytninger'}
+      </Button>
       <hr />
-    </div>
+    </ContributorSearchResultWrapper>
   );
 };
 

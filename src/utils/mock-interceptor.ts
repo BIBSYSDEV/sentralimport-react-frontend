@@ -2,11 +2,12 @@ import Axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import { CRIST_REST_API, PIA_REST_API } from './constants';
 import {
-  cristinIdForbiddenPerson,
+  mockCristinIdForbiddenPerson,
   cristinIDWithoutActiveAffiliation,
-  cristinIDWithoutAffiliationAttribute,
+  mockCristinIDWithoutAffiliationAttribute,
   mockAllCategories,
   mockAllJournals,
+  mockCristinPersonNotFoundResponse,
   mockForbiddenPerson,
   mockImportPublication1,
   mockInstitutions,
@@ -21,19 +22,21 @@ import {
   mockPublicationCount,
   mockSavedPublication,
   mockSaveErrorResponse,
+  mockSimpleUnitResponse,
   mockUnits,
   responseCountryInstitutionCN,
   responseCountryInstitutionIT,
   resultInstitutionNTNU,
+  mockDoiForEmptyCristinSearch,
+  mockTitleForEmptyCristinSearch,
+  mockCristinPersonNotFound,
+  mockInstitutionSearchByName,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
 import mockCristinPublications from './mockCristinPublications.json';
 import mockCristinContributors from './mockCristinContributors.json';
 import { PostPublication } from '../types/PublicationTypes';
-
-export const mockDoiForEmptyCristinSearch = '123456789';
-export const mockTitleForEmptyCristinSearch = 'this_is_a_mocked_title';
 
 // AXIOS INTERCEPTOR
 export const interceptRequestsOnMock = () => {
@@ -62,6 +65,11 @@ export const interceptRequestsOnMock = () => {
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/([1-9][0-9]*).*`)).reply(200, resultInstitutionNTNU);
   //crisrest-utv.dataporten-api.no/institutions/7492?lang=en
 
+  //get institution by name
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/institutions\\?cristin_institution=false&lang=en&name.*`))
+    .reply(200, mockInstitutionSearchByName);
+
   //get country institutions
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/country/CN.*`)).reply(200, [responseCountryInstitutionCN]);
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/country/IT.*`)).reply(200, [responseCountryInstitutionIT]);
@@ -71,6 +79,7 @@ export const interceptRequestsOnMock = () => {
 
   //get institution units
   mock.onGet(new RegExp(`${CRIST_REST_API}/units/.*`)).reply(200, mockUnits);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/units\\?parent_unit_id=.*`)).reply(200, mockSimpleUnitResponse);
 
   //save publication
   mock
@@ -79,6 +88,9 @@ export const interceptRequestsOnMock = () => {
     })
     .reply(400, mockSaveErrorResponse);
   mock.onPost(new RegExp(`${CRIST_REST_API}/results`)).reply(200, mockSavedPublication);
+
+  //update publication
+  mock.onPatch(new RegExp(`${CRIST_REST_API}/results`)).reply(200, mockSavedPublication);
 
   //get all categories
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/categories.*`)).reply(200, mockAllCategories);
@@ -136,13 +148,16 @@ export const interceptRequestsOnMock = () => {
 
   //get person-details by id
   mock
-    .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIdForbiddenPerson}`))
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockCristinIdForbiddenPerson}`))
     .reply(403, mockNotAuthorizedForThisPersonDetailResponse);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockCristinPersonNotFound}`))
+    .reply(404, mockCristinPersonNotFoundResponse);
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIDWithoutActiveAffiliation}`))
     .reply(200, mockPersonDetailedWithoutActiveAffiliations);
   mock
-    .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIDWithoutAffiliationAttribute}`))
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockCristinIDWithoutAffiliationAttribute}`))
     .reply(200, mockPersonDetailedWithoutAffiliationAttribute);
   mock.onGet(new RegExp(`${CRIST_REST_API}/persons/\\d+`)).reply(200, mockPersonDetailed);
 

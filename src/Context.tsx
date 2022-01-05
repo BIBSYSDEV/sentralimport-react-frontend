@@ -30,7 +30,6 @@ const initialState: ContextType = {
   totalCount: 0,
   contributors: null,
   institutions: null,
-  institutionsEnglish: null,
   doSave: false,
   allChecked: false,
   param: null,
@@ -39,7 +38,8 @@ const initialState: ContextType = {
   contributorErrors: [],
   identified: [],
   identifiedImported: [],
-  importDone: false,
+  triggerImportDataSearch: false,
+  globalInstitutions: [],
 };
 
 const Context = React.createContext<{ state: ContextType; dispatch: Dispatch<any> }>({
@@ -99,12 +99,14 @@ const reducer = (state: ContextType, action: { type: string; payload: any }) => 
       return { ...state, contributorErrors: action.payload };
     case 'setContributorsLoaded':
       return { ...state, contributorsLoaded: action.payload };
-    case 'importDone':
-      return { ...state, importDone: action.payload };
     case 'identified':
       return { ...state, identified: action.payload };
     case 'identifiedImported':
       return { ...state, identifiedImported: action.payload };
+    case 'triggerImportDataSearch':
+      return { ...state, triggerImportDataSearch: action.payload };
+    case 'globalInstitutions':
+      return { ...state, globalInstitutions: action.payload };
     default:
       return state;
   }

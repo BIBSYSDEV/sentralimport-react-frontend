@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { Context } from '../../Context';
 
-export default function ConfirmDialog(props) {
+export default function GenericConfirmDialog(props) {
   let { state } = React.useContext(Context);
 
   return (
@@ -19,7 +19,7 @@ export default function ConfirmDialog(props) {
         <DialogContentText>{props.text}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button data-testid="dialog-deny-button" color="secondary" onClick={props.handleCloseDialog} variant="outlined">
+        <Button data-testid="dialog-deny-button" color="secondary" onClick={props.handleAbort} variant="outlined">
           Nei
         </Button>
         <Button

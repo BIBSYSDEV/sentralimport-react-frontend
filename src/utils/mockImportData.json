@@ -31,8 +31,8 @@
         "cristinId": 0,
         "roleCode": "FORFATTER",
         "sequenceNr": 2,
-        "surname": "Petter",
-        "firstname": "Olsen",
+        "surname": "Mocklastname",
+        "firstname": "Mockfirstname",
         "authorName": "Olsen P.",
         "institutions": [
           {
@@ -65,8 +65,8 @@
         "cristinId": 0,
         "roleCode": "FORFATTER",
         "sequenceNr": 4,
-        "surname": "Zhang",
-        "firstname": "Yao",
+        "surname": "Mocklastname",
+        "firstname": "Mockfirstname",
         "authorName": "Zhang Y.",
         "institutions": [
           {
@@ -107,8 +107,22 @@
           {
             "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
             "countryCode": "CN",
-            "institutionName": "Tianjin University of Technology",
+            "institutionName": "Chinese institution with Foreign educational institution generic_code",
             "cristinInstitutionNr": 9127,
+            "isCristinInstitution": false
+          },
+          {
+            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
+            "countryCode": "CN",
+            "institutionName": "Chinese institution with cristin Id",
+            "cristinInstitutionNr": 12333455,
+            "isCristinInstitution": false
+          },
+          {
+            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
+            "countryCode": "IT",
+            "institutionName": "Italian institution with cristin ID 0",
+            "cristinInstitutionNr": 0,
             "isCristinInstitution": false
           }
         ]
@@ -122,10 +136,17 @@
         "authorName": "Chen S.",
         "institutions": [
           {
-            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
-            "countryCode": "CN",
-            "institutionName": "Tianjin University of Technology",
-            "cristinInstitutionNr": 9127,
+            "unitName": "Department of Ecology;University of Granada",
+            "countryCode": "ES",
+            "institutionName": "University of Granada",
+            "cristinInstitutionNr": 13700046,
+            "isCristinInstitution": false
+          },
+          {
+            "unitName": "Research Unit Modeling Nature (MNat);University of Granada",
+            "countryCode": "ES",
+            "institutionName": "University of Granada",
+            "cristinInstitutionNr": 13700046,
             "isCristinInstitution": false
           }
         ]
@@ -138,6 +159,12 @@
         "title": "Semantic Segmentation with Light Field Imaging and Convolutional Neural Networks",
         "summary": "Semantic segmentation is of great importance and a challenge in computer vision. One of its main problems is how to efficiently obtain rich information (geometric structure) and identify useful features from higher dimensions. A light field camera, due to its special microlens array structure, can completely record the angular-spatial information of scenes, which is attractive and has great potential to improve the performance of semantic segmentation tasks. Inspired by this, we propose an end-to-end semantic segmentation network that can process light field macropixel images robustly and extract their features. In addition, this network can flexibly and efficiently load the different popular deep learning backbones. Furthermore, we propose an efficient angular model, which, to learn the angular features between the different viewpoints of the macropixel image, improves the nonlinearity of angular-spatial features and enhances multichannel semantic correlations. To evaluate the network, we construct a new real scene light field dataset comprising 800 high-quality samples. The quantitative and qualitative results show that the highest mean intersection over union (mIoU) based on our algorithm is greater than 57%. Our algorithm achieves a 10.30% increase compared with state-of-the-art semantic segmentation algorithms. In combination with different backbones or multiscale light field macropixel images, the network can also achieve comparable results. This preliminary work demonstrates that the combination of light field imaging and deep learning technology has potential applications in the future study of semantic segmentation.",
         "original": true
+      },
+      {
+        "lang": "NO",
+        "langName": "Norsk",
+        "title": "Tittel på norsk",
+        "summary": "Summary på norsk"
       }
     ],
     "channel": {
@@ -346,12 +373,8 @@
       }
     ],
     "channel": {
-      "cristinTidsskriftNr": 107322,
-      "title": "ISOPE - International Offshore and Polar Engineering Conference. Proceedings",
-      "issn": "1098-6189",
       "isbns": [],
-      "pageFrom": "901",
-      "pageTo": "908"
+      "pageFrom": "901"
     }
   },
   {
@@ -437,7 +460,7 @@
         ]
       },
       {
-        "cristinId": 0,
+        "cristinId": 18799,
         "roleCode": "FORFATTER",
         "sequenceNr": 5,
         "surname": "Skogvang",
@@ -479,9 +502,8 @@
         "cristinId": 0,
         "roleCode": "FORFATTER",
         "sequenceNr": 1,
-        "surname": "Gautam",
-        "firstname": "Shekhar",
-        "authorName": "Gautam S.",
+        "surname": "Kinshuk",
+        "authorName": "Kinshuk",
         "institutions": [
           {
             "unitName": "Indian Institute of Technology Kharagpur",

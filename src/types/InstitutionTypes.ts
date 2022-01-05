@@ -18,7 +18,9 @@ export interface Unit {
 }
 
 export interface SimpleUnitResponse {
-  cristin_unit_id: string;
+  acronym?: string;
+  url?: string;
+  cristin_unit_id: string | undefined;
   unit_name: {
     en?: string;
     nb: string;

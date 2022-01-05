@@ -9,11 +9,18 @@ export interface ContributorType {
   cristin_person_id?: number;
   role_code?: string;
   authorName?: string;
-  isEditing?: boolean;
   identified_cristin_person?: boolean;
   url?: string;
   affiliations?: Affiliation[];
   require_higher_authorization?: boolean;
+  badge_type?: ContributorStatus;
+}
+
+export enum ContributorStatus {
+  Verified = 'verified',
+  NotVerified = 'not_verified',
+  Unknown = 'unknown',
+  None = 'none',
 }
 
 export interface ImportPublicationPerson {
@@ -47,7 +54,6 @@ export const emptyContributor: ContributorType = {
   surname: '',
   affiliations: [],
   url: '',
-  isEditing: true,
 };
 
 export const emptyContributorWrapper: ContributorWrapper = {

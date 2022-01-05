@@ -52,13 +52,13 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
     try {
       setHandleOkButtonError(undefined);
       if (selectedRadioButton === SelectValues.CREATE_NEW) {
-        dispatch({ type: 'doSave', payload: true });
+        dispatch({ type: 'doSave', payload: true }); //TODO: trengs denne egentlig?
         setDuplicate(false);
         setIsComparePublicationDataModalOpen(true);
       } else if (selectedRadioButton === SelectValues.TOGGLE_RELEVANT) {
         await toggleRelevantStatus();
         handleDuplicateCheckModalClose();
-        dispatch({ type: 'importDone', payload: !state.importDone });
+        dispatch({ type: 'triggerImportDataSearch', payload: !state.triggerImportDataSearch });
       } else {
         dispatch({ type: 'doSave', payload: true });
         setDuplicate(true);
@@ -118,15 +118,17 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
           </Grid>
         </Grid>
       </ModalFooter>
-
-      <ComparePublicationDataModal
-        isComparePublicationDataModalOpen={isComparePublicationDataModalOpen}
-        handleComparePublicationDataModalClose={handleComparePublicationDataModalClose.bind(this)}
-        handleDuplicateCheckModalClose={handleDuplicateCheckModalClose}
-        importPublication={importPublication}
-        cristinPublication={state.selectedPublication}
-        isDuplicate={isDuplicate}
-      />
+      {/*TODO: only render ComparePublicationDataModal on handleClickOkButton (dropp å sette i state: "setSelectedPublication")*/}
+      {isComparePublicationDataModalOpen && (
+        <ComparePublicationDataModal
+          isComparePublicationDataModalOpen={isComparePublicationDataModalOpen}
+          handleComparePublicationDataModalClose={handleComparePublicationDataModalClose.bind(this)}
+          handleDuplicateCheckModalClose={handleDuplicateCheckModalClose}
+          importPublication={importPublication}
+          cristinPublication={state.selectedPublication}
+          isDuplicate={isDuplicate}
+        />
+      )}
     </StyledModal>
   );
 };

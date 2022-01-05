@@ -1,6 +1,6 @@
 import mockImportData from '../../src/utils/mockImportData.json';
 import mockCristinPublications from '../../src/utils/mockCristinPublications.json';
-import { mockDoiForEmptyCristinSearch } from '../../src/utils/mock-interceptor';
+import { mockDoiForEmptyCristinSearch } from '../../src/utils/mockdata';
 
 context('duplication-check-modal', () => {
   beforeEach(() => {
@@ -66,8 +66,7 @@ context('duplication-check-modal', () => {
 
   it('can search for duplicates using doi - should return empty', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
-    cy.get(`[data-testid="search-panel-doi-textfield"]`).type('{selectall}{backspace}');
-    cy.get(`[data-testid="search-panel-doi-textfield"]`).type(mockDoiForEmptyCristinSearch);
+    cy.get(`[data-testid="search-panel-doi-textfield"]`).clear().type(mockDoiForEmptyCristinSearch);
     cy.get(`[data-testid="search-panel-retry-search-button"]`).click();
     cy.get(`[data-testid="duplicates-result-list"]`).should(
       'not.contain',
@@ -87,7 +86,7 @@ context('duplication-check-modal', () => {
     );
     cy.get(`[data-testid="duplicates-result-list"]`).should(
       'contain',
-      mockCristinPublications[0].title[mockCristinPublications[1].original_language]
+      mockCristinPublications[1].title[mockCristinPublications[1].original_language]
     );
   });
 

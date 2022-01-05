@@ -4,6 +4,7 @@ import { IconButton, TextField } from '@material-ui/core';
 import ClearIcon from '@material-ui/icons/Clear';
 import styled from 'styled-components';
 import { Colors } from '../../assets/styles/StyleConstants';
+import { DoiFormat } from '../../utils/stringUtils';
 
 const StyledTextField = styled(TextField)`
   .MuiInputBase-root {
@@ -22,7 +23,7 @@ export default function DoiTextField() {
       dispatch({ type: 'doiFilter', payload: null });
       setError(undefined);
       return;
-    } else if (event.target.value.trim().match(/^([0-9]{2})[.]([0-9]{4,5})[/]([a-z0-9-.]{1,})/i)) {
+    } else if (event.target.value.trim().match(DoiFormat)) {
       dispatch({ type: 'doiFilter', payload: event.target.value.trim() });
       setError(undefined);
     } else {
