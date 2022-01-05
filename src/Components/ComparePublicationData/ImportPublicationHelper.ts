@@ -4,8 +4,6 @@ import { patchPiaPublication, patchPublication, postPublication } from '../../ap
 import { handlePotentialExpiredSession } from '../../api/api';
 import { ContributorWrapper } from '../../types/ContributorTypes';
 
-//TODO: fix types
-
 const getNumberOfPages = (pageFrom?: string, pageTo?: string) => {
   //Dette har blitt lagt inn pga. edge-casen med sidetall med bokstaven "e" i seg.
   //pageTo 2086.e8, pageFrom: 2083
@@ -142,41 +140,39 @@ interface SubmitAffiliation {
 export const createContributorObject = () => {
   const temp = JSON.parse(localStorage.getItem('tempContributors') || '{}');
   const submitContributors: any = [];
-  if (temp.contributors) {
-    temp.contributors.forEach((contributor: ContributorWrapper) => {
-      const affiliations: SubmitAffiliation[] = [];
-      contributor.toBeCreated.affiliations?.forEach((affiliation) => {
-        if (!affiliation.units) {
-          affiliations.push({
-            role_code: contributor.imported.role_code === 'FORFATTER' ? 'AUTHOR' : contributor.imported.role_code + '',
-            institution: affiliation.institution
-              ? {
-                  cristin_institution_id: affiliation.institution.cristin_institution_id,
-                  role_code: contributor.imported.role_code,
-                }
-              : {
-                  cristin_institution_id: affiliation.cristinInstitutionNr
-                    ? affiliation.cristinInstitutionNr.toString()
-                    : '0',
-                },
-          });
-        }
-        affiliation.units?.forEach((unit: any) => {
-          affiliations.push({
-            role_code: contributor.imported.role_code === 'FORFATTER' ? 'AUTHOR' : contributor.imported.role_code + '',
-            unit: {
-              cristin_unit_id: unit.unitNr ? unit.unitNr.toString() : '0',
-            },
-          });
+  temp.contributors?.forEach((contributor: ContributorWrapper) => {
+    const affiliations: SubmitAffiliation[] = [];
+    contributor.toBeCreated.affiliations?.forEach((affiliation) => {
+      if (!affiliation.units) {
+        affiliations.push({
+          role_code: contributor.imported.role_code === 'FORFATTER' ? 'AUTHOR' : contributor.imported.role_code + '',
+          institution: affiliation.institution
+            ? {
+                cristin_institution_id: affiliation.institution.cristin_institution_id,
+                role_code: contributor.imported.role_code,
+              }
+            : {
+                cristin_institution_id: affiliation.cristinInstitutionNr
+                  ? affiliation.cristinInstitutionNr.toString()
+                  : '0',
+              },
+        });
+      }
+      affiliation.units?.forEach((unit: any) => {
+        affiliations.push({
+          role_code: contributor.imported.role_code === 'FORFATTER' ? 'AUTHOR' : contributor.imported.role_code + '',
+          unit: {
+            cristin_unit_id: unit.unitNr ? unit.unitNr.toString() : '0',
+          },
         });
       });
-      submitContributors.push({
-        ...contributor.toBeCreated,
-        affiliations: affiliations,
-        cristin_person_id: contributor.toBeCreated.cristin_person_id?.toString(),
-      });
     });
-  }
+    submitContributors.push({
+      ...contributor.toBeCreated,
+      affiliations: affiliations,
+      cristin_person_id: contributor.toBeCreated.cristin_person_id?.toString(),
+    });
+  });
   return submitContributors;
 };
 
