@@ -69,7 +69,7 @@ const StyledDisabledTypography = styled(Typography)`
   color: #555555;
 `;
 
-const StyledSnackBarButton = styled(Button)`
+const StyledSnackBarButton: any = styled(Button)`
   && .MuiButton-label {
     color: white;
   }
@@ -248,9 +248,9 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     <>
       <StyledSnackBarButton
         startIcon={<LaunchIcon />}
-        onClick={() => {
-          window.location.replace(`${CRISTIN_REACT_APP_URL}/results/show.jsf?id=${resultId}`);
-        }}>
+        rel="noopener noreferrer"
+        target="_blank"
+        href={`${CRISTIN_REACT_APP_URL}/results/show.jsf?id=${resultId}`}>
         Vis publikasjon
       </StyledSnackBarButton>
       <StyledSnackBarButton
