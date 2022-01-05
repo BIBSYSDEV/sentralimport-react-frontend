@@ -1,7 +1,7 @@
 import React from 'react';
 import queryString from 'query-string';
 import jwt from 'jsonwebtoken';
-import '../../assets/styles/common.scss';
+import './style.css';
 import loginIcon from '../../assets/icons/login.png';
 import logo from '../../assets/icons/Hovedlogo-Liten-Farge.svg';
 import { Button } from 'reactstrap';
