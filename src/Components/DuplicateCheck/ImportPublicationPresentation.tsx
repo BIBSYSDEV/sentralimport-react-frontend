@@ -14,6 +14,7 @@ const StyledImportPublicationPresentation = styled.div`
 
 const StyledTitleTypography = styled(Typography)`
   color: ${Colors.PURPLE};
+
   && {
     margin: 0 0 0.5rem;
     font-weight: bold;
@@ -36,13 +37,7 @@ const StyledMonsterPostWarningTypography = styled(StyledMetaDataTypography)`
 `;
 
 const countFoundPersons = (persons: ImportPublicationPerson[]) => {
-  let personCount = 0;
-  for (let i = 0; i < persons.length; i++) {
-    if (persons[i].cristinId && persons[i].cristinId !== 0) {
-      personCount++;
-    }
-  }
-  return personCount;
+  return persons.filter((person: ImportPublicationPerson) => person.cristinId && person.cristinId !== 0).length;
 };
 
 const generateAuthorPresentation = (importPublication: ImportPublication) => {
