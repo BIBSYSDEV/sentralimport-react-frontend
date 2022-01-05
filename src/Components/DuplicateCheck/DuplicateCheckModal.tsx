@@ -9,6 +9,7 @@ import DuplicateSearch from './DuplicateSearch';
 import styled from 'styled-components';
 import { changePublicationImportStatus, NOT_RELEVANT } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
+import { Colors } from '../../assets/styles/StyleConstants';
 
 const StyledModal = styled(Modal)`
   width: 80%;
@@ -22,6 +23,11 @@ const StyledBodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   padding: 1rem;
+`;
+
+const StyledImportPublicationPresentationWrapper = styled.div`
+  border-left: 0.4rem solid ${Colors.PURPLE};
+  margin: 1rem 0;
 `;
 
 export enum SelectValues {
@@ -85,7 +91,10 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
       <ModalHeader toggle={handleDuplicateCheckModalClose}>Importvalg for resultat</ModalHeader>
       <ModalBody>
         <StyledBodyWrapper>
-          <ImportPublicationPresentation importPublication={importPublication} />
+          <Typography variant="h6">Importpublikasjon:</Typography>
+          <StyledImportPublicationPresentationWrapper>
+            <ImportPublicationPresentation importPublication={importPublication} />
+          </StyledImportPublicationPresentationWrapper>
           <Divider />
           <DuplicateSearch
             importPublication={importPublication}

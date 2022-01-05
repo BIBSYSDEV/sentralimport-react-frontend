@@ -5,16 +5,15 @@ import styled from 'styled-components';
 import { Typography } from '@material-ui/core';
 import { ImportPublication } from '../../types/PublicationTypes';
 import { Colors } from '../../assets/styles/StyleConstants';
+import { ImportPublicationPerson } from '../../types/ContributorTypes';
 
 const StyledImportPublicationPresentation = styled.div`
   padding-left: 1rem;
-  margin: 1rem 0 1rem 0.4rem;
-  border-left: 0.4rem solid ${Colors.PURPLE};
-  color: ${Colors.PURPLE};
   word-wrap: break-word;
 `;
 
 const StyledTitleTypography = styled(Typography)`
+  color: ${Colors.PURPLE};
   && {
     margin: 0 0 0.5rem;
     font-weight: bold;
@@ -22,33 +21,78 @@ const StyledTitleTypography = styled(Typography)`
   }
 `;
 
+const StyledMetaDataTypography = styled(Typography)`
+  color: ${Colors.BLACK};
+  && {
+    font-size: 0.8rem;
+  }
+`;
+
+const StyledMonsterPostWarningTypography = styled(StyledMetaDataTypography)`
+  color: ${Colors.WARNING};
+  && {
+    font-weight: 700;
+  }
+`;
+
+const countFoundPersons = (persons: ImportPublicationPerson[]) => {
+  let personCount = 0;
+  for (let i = 0; i < persons.length; i++) {
+    if (persons[i].cristinId && persons[i].cristinId !== 0) {
+      personCount++;
+    }
+  }
+  return personCount;
+};
+
 const generateAuthorPresentation = (importPublication: ImportPublication) => {
   return importPublication.authors
-    .slice(0, 3)
+    .slice(0, 5)
     .map((author: any) => author.authorName)
     .join('; ')
     .concat(importPublication.authors.length > 3 ? ' et al.' : '');
 };
 
+const filterTitle = (importPublication: ImportPublication) => {
+  if (importPublication.languages) {
+    return importPublication.languages.filter((l) => l.original)[0].title;
+  }
+};
+
 interface ImportPublicationPresentationProps {
   importPublication: ImportPublication;
+  showAuthorCount?: boolean;
 }
 
-const ImportPublicationPresentation: FC<ImportPublicationPresentationProps> = ({ importPublication }) => {
+const ImportPublicationPresentation: FC<ImportPublicationPresentationProps> = ({
+  importPublication,
+  showAuthorCount = false,
+}) => {
   return (
-    <>
-      <Typography variant="h6">Importpublikasjon:</Typography>
-      <StyledImportPublicationPresentation data-testid="duplicate-check-importdata">
-        <StyledTitleTypography>
-          {importPublication?.languages && (
-            <Markup content={cleanTitleForMarkup(importPublication.languages[0].title)} />
-          )}
-        </StyledTitleTypography>
-        <Typography>{generateAuthorPresentation(importPublication)}</Typography>
-        <Typography>{importPublication.channel?.title}</Typography>
-        <Typography>{importPublication.yearPublished}</Typography>
-      </StyledImportPublicationPresentation>
-    </>
+    <StyledImportPublicationPresentation data-testid="duplicate-check-importdata">
+      <StyledTitleTypography>
+        {importPublication?.languages && <Markup content={cleanTitleForMarkup(filterTitle(importPublication))} />}
+      </StyledTitleTypography>
+      <StyledMetaDataTypography>{generateAuthorPresentation(importPublication)}</StyledMetaDataTypography>
+      {showAuthorCount &&
+        (importPublication.authors.length > 100 ? (
+          <StyledMonsterPostWarningTypography>
+            ({importPublication.authors.length}) Stort antall bidragsytere{' '}
+          </StyledMonsterPostWarningTypography>
+        ) : (
+          <StyledMetaDataTypography paragraph variant="caption">
+            {`(${countFoundPersons(importPublication.authors)} av ${importPublication.authors.length} er verifisert)`}
+          </StyledMetaDataTypography>
+        ))}
+      <StyledMetaDataTypography>{importPublication.channel?.title}</StyledMetaDataTypography>
+      <StyledMetaDataTypography>
+        {importPublication.yearPublished + ';'}
+        {importPublication.channel?.volume && importPublication.channel.volume + ';'}
+        {importPublication.channel?.pageFrom && importPublication.channel.pageFrom + '-'}
+        {importPublication.channel?.pageTo && importPublication.channel.pageTo}
+        {importPublication.doi && ' doi:' + importPublication.doi}
+      </StyledMetaDataTypography>
+    </StyledImportPublicationPresentation>
   );
 };
 

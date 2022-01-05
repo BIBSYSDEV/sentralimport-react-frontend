@@ -16,6 +16,7 @@ const StyledResultItem = styled.li`
 `;
 
 const StyledTitleTypography = styled(Typography)`
+  color: ${Colors.PURPLE};
   && {
     margin: 0 0 0.5rem;
     font-weight: bold;
@@ -23,14 +24,20 @@ const StyledTitleTypography = styled(Typography)`
   }
 `;
 
-const StyledStandardNumberTypography = styled(Typography)`
+const StyledMetaDataTypography = styled(Typography)`
+  color: ${Colors.BLACK};
+  && {
+    font-size: 0.8rem;
+  }
+`;
+
+const StyledStandardNumberTypography = styled(StyledMetaDataTypography)`
   && {
     font-style: italic;
   }
 `;
 
 const StyledResultLink = styled.a`
-  color: ${Colors.PURPLE};
   margin-left: 0.5rem;
   &:hover {
     color: ${Colors.PURPLE};
@@ -43,7 +50,7 @@ interface ResultItemProps {
 
 const generateAuthorPresentation = (cristinPublication: CristinPublication) => {
   return cristinPublication.authors
-    .slice(0, 3)
+    .slice(0, 5)
     .map((author: any) => [author.surname, author.first_name].join(', '))
     .join('; ')
     .concat(cristinPublication.authors.length > 3 ? ' et al.' : '');
@@ -67,18 +74,18 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
           <StyledTitleTypography>
             {cristinPublication.title[cristinPublication.original_language]}
           </StyledTitleTypography>
-          <Typography>{generateAuthorPresentation(cristinPublication)}</Typography>
-          <Typography>{cristinPublication.category.name.en}</Typography>
+          <StyledMetaDataTypography>{generateAuthorPresentation(cristinPublication)}</StyledMetaDataTypography>
+          <StyledMetaDataTypography>{cristinPublication.category.name.en}</StyledMetaDataTypography>
           <StyledStandardNumberTypography>
             {cristinPublication.international_standard_numbers &&
               cristinPublication.international_standard_numbers?.map(
                 (issn: InternationalStandardNumber) => 'ISSN ' + issn.type + ': ' + issn.value + '; '
               )}
           </StyledStandardNumberTypography>
-          <Typography>
+          <StyledMetaDataTypography>
             {cristinPublication.year_published}
             {cristinPublication.publisher && ', ' + cristinPublication.publisher.name}
-          </Typography>
+          </StyledMetaDataTypography>
         </StyledResultLink>
       </StyledResultItem>
     </div>
