@@ -19,15 +19,13 @@ context('Search contributor panel', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
-    cy.get('[data-testid=contributor-search-button-2]').click();
-    cy.get(`[data-testid=author-name-${mockCristinIDWithoutAffiliationAttribute}]`).should('exist');
+    cy.get(`[data-testid=author-name-${mockCristinIDWithoutAffiliationAttribute}]`).first().should('exist');
   });
 
   it('hides inactive affiliations for authors when user is searching for contributors', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
-    cy.get('[data-testid=contributor-search-button-2]').click();
     cy.get(
       `[data-testid=list-item-author-${mockPerson.surname}-affiliations-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}]`
     ).should('exist');
@@ -46,9 +44,10 @@ context('Search contributor panel', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="open-contributors-modal-button"]`).click();
-    cy.get('[data-testid=contributor-search-button-2]').click();
     cy.get(`[data-testid="author-name-${mockPerson.cristin_person_id}-verified-badge"]`)
+      .first()
       .children('title')
+      .first()
       .should('have.text', VerifiedText);
     cy.get(`[data-testid="author-name-${mockPerson.cristin_person_id}"]`).should(
       'have.css',
@@ -56,32 +55,30 @@ context('Search contributor panel', () => {
       Colors.Text.GREEN
     );
     cy.get(`[data-testid="author-name-${cristinIDWithoutActiveAffiliation}-not-verified-badge"]`)
+      .first()
       .children('title')
+      .first()
       .should('have.text', notVerifiedText);
-    cy.get(`[data-testid="author-name-${cristinIDWithoutActiveAffiliation}"]`).should(
-      'have.css',
-      'color',
-      Colors.Text.OPAQUE_41_BLACK
-    );
+    cy.get(`[data-testid="author-name-${cristinIDWithoutActiveAffiliation}"]`)
+      .first()
+      .should('have.css', 'color', Colors.Text.OPAQUE_41_BLACK);
     cy.get(`[data-testid="author-name-${mockCristinIdForbiddenPerson}-uknown-verified-badge"]`)
+      .first()
       .children('title')
+      .first()
       .should('have.text', unknownVerificationText);
-    cy.get(`[data-testid="author-name-${mockCristinIdForbiddenPerson}"]`).should(
-      'have.css',
-      'color',
-      Colors.Text.OPAQUE_41_BLACK
-    );
+    cy.get(`[data-testid="author-name-${mockCristinIdForbiddenPerson}"]`)
+      .first()
+      .should('have.css', 'color', Colors.Text.OPAQUE_41_BLACK);
   });
 
   it('handles contributors with limited access', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
-    cy.get('[data-testid=contributor-search-button-2]').click();
-    cy.get(`[data-testid=person-limited-access-${mockCristinIdForbiddenPerson}]`).should(
-      'have.text',
-      'Kan ikke hente inn institusjoner for denne bidragsyteren.'
-    );
+    cy.get(`[data-testid=person-limited-access-${mockCristinIdForbiddenPerson}]`)
+      .first()
+      .should('have.text', 'Kan ikke hente inn institusjoner for denne bidragsyteren.');
   });
 
   it('is possible to choose search and select a cristin person without also getting their affiliation', () => {
@@ -91,8 +88,7 @@ context('Search contributor panel', () => {
     cy.get(
       `[data-testid="list-item-author-${mockImportData[1].authors[4].surname}-affiliations-${mockImportData[1].authors[4].institutions[0].cristinInstitutionNr}-institution-name"]`
     ).should('exist');
-    cy.get('[data-testid="contributor-search-button-2"]').click();
-    cy.get(`[data-testid="add-only-person-${mockPersonDetailed.cristin_person_id}"]`).click();
+    cy.get(`[data-testid="add-only-person-${mockPersonDetailed.cristin_person_id}"]`).first().click();
     cy.get(
       `[data-testid="list-item-author-${mockImportData[1].authors[4].surname}-affiliations-${mockImportData[1].authors[4].institutions[0].cristinInstitutionNr}-institution-name"]`
     );
@@ -105,8 +101,7 @@ context('Search contributor panel', () => {
     cy.get(
       `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}-institution-name"]`
     ).should('exist');
-    cy.get('[data-testid="contributor-search-button-2"]').click();
-    cy.get(`[data-testid="add-person-and-affiliations-${mockPersonDetailed.cristin_person_id}"]`).click();
+    cy.get(`[data-testid="add-person-and-affiliations-${mockPersonDetailed.cristin_person_id}"]`).first().click();
     cy.get(
       `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}-institution-name"]`
     ).should('not.exist');
@@ -119,16 +114,19 @@ context('Search contributor panel', () => {
     cy.get(
       `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockImportData[1].authors[2].institutions[0].cristinInstitutionNr}-institution-name"]`
     ).should('exist');
-    cy.get('[data-testid="contributor-search-button-2"]').click();
     cy.get(
       `[data-testid="add-only-affiliation-button-institution-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}"]`
-    ).click();
+    )
+      .first()
+      .click();
     cy.get(
       `[data-testid="add-affiliation-success-institution-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}"]`
     ).should('exist');
     cy.get(
       `[data-testid="add-only-affiliation-button-institution-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}"]`
-    ).click();
+    )
+      .first()
+      .click();
     cy.get(
       `[data-testid="add-only-affiliation-error-institution-${mockPersonDetailed.affiliations[1].institution.cristin_institution_id}"]`
     ).should('exist');
