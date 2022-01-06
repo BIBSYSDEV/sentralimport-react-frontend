@@ -13,7 +13,7 @@ context('import publication', () => {
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="import-publication-button"]`).click();
     cy.get(`[data-testid="confirm-import-dialog-ok"]`).click();
-    cy.get('#notistack-snackbar').contains('Importerte publikasjon');
+    cy.get('#notistack-snackbar').contains('Publikasjonen ble importert.');
     cy.get(`[data-testid="duplicate-check-modal"]`).should('not.exist');
     cy.get(`[data-testid="import-modal"]`).should('not.exist');
   });
@@ -24,7 +24,7 @@ context('import publication', () => {
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="import-publication-button"]`).click();
     cy.get(`[data-testid="confirm-import-dialog-ok"]`).click();
-    cy.get('#notistack-snackbar').contains('Importerte publikasjon');
+    cy.get('#notistack-snackbar').contains('Publikasjonen ble importert.');
     cy.get(`[data-testid="duplicate-check-modal"]`).should('not.exist');
     cy.get(`[data-testid="import-modal"]`).should('not.exist');
   });
