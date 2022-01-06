@@ -53,6 +53,9 @@ import {
   handleCreatePublication,
   handleUpdatePublication,
 } from './ImportPublicationHelper';
+import { CRISTIN_REACT_APP_URL } from '../../utils/constants';
+import CancelIcon from '@material-ui/icons/Cancel';
+import LaunchIcon from '@material-ui/icons/Launch';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -64,6 +67,12 @@ const StyledModal = styled(Modal)`
 
 const StyledDisabledTypography = styled(Typography)`
   color: #555555;
+`;
+
+const StyledSnackBarButton: any = styled(Button)`
+  && .MuiButton-label {
+    color: white;
+  }
 `;
 
 const generateLanguageObjectFromCristinPublication = (publ: CristinPublication) => {
@@ -91,7 +100,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   handleDuplicateCheckModalClose,
   isDuplicate,
 }) => {
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Context);
   const [isConfirmImportDialogOpen, setIsConfirmImportDialogOpen] = useState(false);
   const [isConfirmAbortDialogOpen, setIsConfirmAbortDialogOpen] = useState(false);
@@ -235,16 +244,34 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     }
   }
 
+  const successSnackBarActions = (key: any, resultId: string) => (
+    <>
+      <StyledSnackBarButton
+        startIcon={<LaunchIcon />}
+        rel="noopener noreferrer"
+        target="_blank"
+        href={`${CRISTIN_REACT_APP_URL}/results/show.jsf?id=${resultId}`}>
+        Vis publikasjon
+      </StyledSnackBarButton>
+      <StyledSnackBarButton
+        startIcon={<CancelIcon />}
+        onClick={() => {
+          closeSnackbar(key);
+        }}>
+        Lukk
+      </StyledSnackBarButton>
+    </>
+  );
+
   function handlePublicationImported(result: any) {
     setIsConfirmImportDialogOpen(false);
 
     if (result.status === 200) {
-      enqueueSnackbar(
-        'Importerte publikasjon (Cristin-id: ' + result.result.id + ' og tittel: ' + result.result.title + ')',
-        {
-          variant: 'success',
-        }
-      );
+      enqueueSnackbar('Publikasjonen ble importert.', {
+        variant: 'success',
+        persist: true,
+        action: (key: any) => successSnackBarActions(key, result.result.id),
+      });
       handleComparePublicationDataModalClose();
       handleDuplicateCheckModalClose();
       //TODO! NB! this should be removed as soon as contributors does not use localstorage anymore
