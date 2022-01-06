@@ -1,6 +1,5 @@
 import React from 'react';
 import logo from './logo.svg';
-import './logo.css';
 import { Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
@@ -26,7 +25,6 @@ export default function LogoHeader() {
 
   const pageHeaderStyle = {
     backgroundColor: '#f5f5f5',
-    // borderBottom: '1px solid #666666',
     marginRight: '0',
     marginLeft: '0',
     maxWidth: '100%',

@@ -5,13 +5,14 @@ import FilterFormPanel from './Components/FilterForm/FilterFormPanel';
 import Header from './Components/Header/Header';
 import { useHistory } from 'react-router-dom';
 import LogPanel from './Components/Log/LogPanel';
-import Footer from './Components/Footer/Footer';
 import { Context } from './Context';
 import { USE_MOCK_DATA } from './utils/constants';
 import styled from 'styled-components';
 import { getInstitutions } from './api/institutionApi';
 import { handlePotentialExpiredSession } from './api/api';
 import { InstitutionSelector } from './types/InstitutionTypes';
+import createLastUpdated from './Components/Footer/CreateLastUpdated';
+import { Typography } from '@material-ui/core';
 
 const StyledApp = styled.div`
   text-align: center;
@@ -29,6 +30,12 @@ const StyledBody = styled.div`
 
 const StyledGrid = styled(Grid)`
   max-width: 100%;
+`;
+
+const StyledFooter = styled.div`
+  max-width: 100%;
+  text-align: right;
+  margin-right: 1rem;
 `;
 
 export default function App() {
@@ -78,7 +85,9 @@ export default function App() {
           </Grid>
         </StyledGrid>
       </StyledBody>
-      <Footer />
+      <StyledFooter>
+        <Typography variant="caption">{createLastUpdated()}</Typography>
+      </StyledFooter>
     </StyledApp>
   ) : (
     <></>

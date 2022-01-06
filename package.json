@@ -7,7 +7,7 @@
     "build": "react-scripts build",
     "build:sandbox": "env-cmd -f .env.sandbox react-scripts build",
     "build:test": "env-cmd -f .env.test react-scripts build",
-    "start": "react-scripts start",
+    "start": "react-scripts -r @cypress/instrument-cra start",
     "test": "cypress run",
     "test:cypress": "REACT_APP_USE_MOCK=true start-server-and-test http://localhost:3000"
   },

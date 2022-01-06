@@ -220,7 +220,7 @@ context('contributor', () => {
     cy.get('[data-testid="filter-institution-select-2"]').click();
     cy.get(`[data-testid="${mockInstitutions[0].cristin_institution_id}-option"]`).click();
     cy.get('[data-testid="add-institution-button-2"]').click();
-    cy.get('[data-testid="add-institution-error-2"]').should('have.text', 'institusjonen finnes alerede fra før av');
+    cy.get('[data-testid="add-institution-error-2"]').should('have.text', 'institusjonen finnes allerede fra før av');
   });
 
   it('Shows a warning about duplicate authors', () => {

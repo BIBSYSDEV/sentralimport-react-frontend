@@ -4,7 +4,6 @@ import { Button, Grid, Typography } from '@material-ui/core';
 import ConfirmImportDialog from '../Dialogs/ConfirmImportDialog';
 import GenericConfirmDialog from '../Dialogs/GenericConfirmDialog';
 import { Context } from '../../Context';
-import '../../assets/styles/buttons.scss';
 import ContributorModal from '../Contributors/ContributorModal';
 import ContributorErrorMessage from './ContributorErrorMessage';
 import styled from 'styled-components';

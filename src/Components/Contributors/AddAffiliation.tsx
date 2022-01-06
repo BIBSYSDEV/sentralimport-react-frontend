@@ -103,7 +103,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
         )
       : false;
     if (institutionAlreadyExists) {
-      throw new Error('institusjonen finnes alerede fra før av');
+      throw new Error('institusjonen finnes allerede fra før av');
     }
     if (selectedInstitution === null) {
       throw new Error('ingen institusjon valgt');
