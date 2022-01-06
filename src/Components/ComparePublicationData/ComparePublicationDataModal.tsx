@@ -58,9 +58,10 @@ import LaunchIcon from '@material-ui/icons/Launch';
 
 const StyledModal = styled(Modal)`
   width: 96%;
+  min-width: 50rem;
   max-width: 80rem;
-  margin: 1rem auto;
   min-height: 100%;
+  margin: 1rem auto;
   padding: 0;
 `;
 

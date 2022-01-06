@@ -23,6 +23,7 @@ export const StyledLineLabelTypography: any = styled(Typography)`
 export const StyledLineImportValue = styled.div`
   min-width: 10rem;
   width: 40%;
+  word-wrap: break-word;
 `;
 
 export const StyledLineCristinValue = styled.div`
@@ -31,7 +32,7 @@ export const StyledLineCristinValue = styled.div`
 `;
 
 export const StyledActionButtonsPlaceHolder = styled.div`
-  min-width: 10rem;
+  min-width: 5rem;
   width: 5%;
 `;
 
