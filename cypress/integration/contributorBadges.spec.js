@@ -21,10 +21,9 @@ context('contributor badges', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
-    cy.get('[data-testid="contributor-search-button-2"]').click();
 
     //choose unknown cristin author:
-    cy.get(`[data-testid="add-only-person-${mockForbiddenPerson.cristin_person_id}"]`).click();
+    cy.get(`[data-testid="add-only-person-${mockForbiddenPerson.cristin_person_id}"]`).first().click();
     cy.get('[data-testid="contributor-form-2-name"]').should('have.css', 'color', Colors.Text.OPAQUE_54_BLACK);
     cy.get(`[data-testid="unknown-verified-contributor-badge-${mockForbiddenPerson.cristin_person_id}"]`).should(
       'exist'
@@ -32,9 +31,9 @@ context('contributor badges', () => {
 
     //Choose not-verified cristin author:
     cy.get('[data-testid="contributor-search-button-2"]').click();
-    cy.get(
-      `[data-testid="add-person-and-affiliations-${mockPersonWithoutAffiliationAttribute.cristin_person_id}"]`
-    ).click();
+    cy.get(`[data-testid="add-person-and-affiliations-${mockPersonWithoutAffiliationAttribute.cristin_person_id}"]`)
+      .first()
+      .click();
     cy.get(
       `[data-testid="not-verified-contributor-badge-${mockPersonWithoutAffiliationAttribute.cristin_person_id}"]`
     ).should('exist');
