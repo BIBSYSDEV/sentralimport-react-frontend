@@ -49,6 +49,11 @@ const StyledCollapse = styled(Collapse)`
   }
 `;
 
+//styled so it will match exact height of icon button "søk etter person"
+const StyledChoosePersonButton = styled(Button)`
+  min-height: 2.28rem;
+`;
+
 const customTimeout = 800;
 
 export interface AddAffiliationError extends Error {
@@ -292,7 +297,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       )}
 
       <StyledCollapse timeout={customTimeout} in={openContributorSearchPanel}>
-        <Grid container spacing={2} alignItems="center">
+        <Grid container spacing={2} alignItems="flex-end">
           <Grid item xs={12} lg={5} xl={5}>
             <TextField
               id={'firstName' + resultListIndex}
@@ -302,7 +307,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
               value={firstName}
               helperText={firstNameIsDirtyAndHasError() && 'Fornavn er påkrevd'}
               onBlur={() => setFirstNameDirty(true)}
-              margin="normal"
+              margin="none"
               onChange={handleFirstNameChange}
             />
           </Grid>
@@ -315,7 +320,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
               error={surnameIsDirtyAndHasError()}
               helperText={surnameIsDirtyAndHasError() && 'Etternavn er påkrevd'}
               value={surname}
-              margin="normal"
+              margin="none"
               onChange={handleSurnameChange}
             />
           </Grid>
@@ -323,13 +328,14 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
           <Grid item>
             <Grid container>
               <Grid item>
-                <Button
+                <StyledChoosePersonButton
                   data-testid={`choose-text-field-person-${resultListIndex}`}
                   size="small"
+                  variant="outlined"
                   onClick={handleSwitchPersonClick}
                   color="primary">
                   Velg person
-                </Button>
+                </StyledChoosePersonButton>
               </Grid>
               {isNotPossibleToSwitchPerson && (
                 <Grid item xs={12}>
