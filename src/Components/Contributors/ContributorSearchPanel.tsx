@@ -16,8 +16,7 @@ import { removeInstitutionsDuplicatesBasedOnCristinId } from './ContributorModal
 
 const StyledResultTypography = styled(Typography)`
   &.MuiTypography-root {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
   color: ${Colors.Text.OPAQUE_87_BLACK};
 `;
@@ -55,6 +54,12 @@ const StyledChoosePersonButton = styled(Button)`
 `;
 
 const customTimeout = 800;
+
+const generateSearchResultHeader = (numbersOfContributors: number) => {
+  return `Fant ${numbersOfContributors} ${numbersOfContributors === 1 ? 'bidragsyter' : 'bidragsytere'}${
+    numbersOfContributors > 0 ? ':' : ''
+  }`;
+};
 
 export interface AddAffiliationError extends Error {
   institutionId: string;
@@ -374,7 +379,9 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
 
           {openContributorSearchPanel && !searching && (
             <Grid item xs={12}>
-              <StyledResultTypography variant="h6">Fant {searchResults.length} bidragsytere:</StyledResultTypography>
+              <StyledResultTypography variant="h6">
+                {generateSearchResultHeader(searchResults.length)}
+              </StyledResultTypography>
             </Grid>
           )}
         </Grid>
