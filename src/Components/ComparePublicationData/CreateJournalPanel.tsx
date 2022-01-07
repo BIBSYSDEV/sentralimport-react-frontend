@@ -91,7 +91,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
         Felter merket med * er obligatoriske
       </Typography>
       <Formik initialValues={emptyFormValues} validationSchema={formValidationSchema} onSubmit={handleFormSubmit}>
-        {({ isValid, handleSubmit, handleBlur, setStatus, setFieldError, status }) => (
+        {({ isValid, handleSubmit }) => (
           <>
             <Field name="title">
               {({ field, meta: { error, touched } }: FieldProps) => (
