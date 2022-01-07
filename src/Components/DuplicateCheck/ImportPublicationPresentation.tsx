@@ -75,11 +75,13 @@ const ImportPublicationPresentation: FC<ImportPublicationPresentationProps> = ({
             ({importPublication.authors.length}) Stort antall bidragsytere{' '}
           </StyledMonsterPostWarningTypography>
         ) : (
-          <StyledMetaDataTypography paragraph variant="caption">
+          <StyledMetaDataTypography variant="caption">
             {`(${countFoundPersons(importPublication.authors)} av ${importPublication.authors.length} er verifisert)`}
           </StyledMetaDataTypography>
         ))}
-      <StyledMetaDataTypography>{importPublication.channel?.title}</StyledMetaDataTypography>
+      {importPublication.channel?.title && (
+        <StyledMetaDataTypography>{importPublication.channel?.title}</StyledMetaDataTypography>
+      )}
       <StyledMetaDataTypography>
         {importPublication.yearPublished + ';'}
         {importPublication.channel?.volume && importPublication.channel.volume + ';'}
