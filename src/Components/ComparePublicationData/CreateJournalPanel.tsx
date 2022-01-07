@@ -1,10 +1,11 @@
-import React, { FC } from 'react';
-import { Button, TextField, Typography } from '@material-ui/core';
+import React, { FC, useState } from 'react';
+import { Button, CircularProgress, TextField, Typography } from '@material-ui/core';
 import styled from 'styled-components';
 import { ErrorMessage, Field, FieldProps, Formik } from 'formik';
 import * as Yup from 'yup';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { IssnFormat } from '../../utils/stringUtils';
+import { ChannelQueryMethod, getJournalsByQuery } from '../../api/publicationApi';
 
 const StyledFormWrapper = styled.div`
   padding: 1rem;
@@ -34,6 +35,9 @@ interface CreateJournalPanelProps {
 }
 
 const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }) => {
+  const [isSearchingIssn, setIsSearchingIssn] = useState(false);
+  const [isSearchingEIssn, setIsSearchingEIssn] = useState(false);
+
   const handleFormSubmit = (values: CreateJournalFormValues) => {
     handleCreateJournal({
       title: values.title.trim(),
@@ -45,9 +49,41 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
 
   const formValidationSchema = Yup.object().shape({
     title: Yup.string().required('Tittel er et obligatorisk felt'),
-    issn: Yup.string().trim().matches(IssnFormat, 'ISSN er ikke på korrekt format (NNNN-NNNC)'),
-    eissn: Yup.string().trim().matches(IssnFormat, 'e-ISSN er ikke på korrekt format (NNNN-NNNC)'),
+    issn: Yup.string()
+      .trim()
+      .matches(IssnFormat, 'ISSN er ikke på korrekt format (NNNN-NNNC)')
+      .test('checkStandardNumberExists', 'ISSN eksisterer allerede', async (value) => {
+        if (value && value.length > 8) {
+          const issnExists = await checkStandardNumberExists(value, ChannelQueryMethod.issn);
+          return !issnExists;
+        }
+        return true;
+      }),
+    eissn: Yup.string()
+      .trim()
+      .matches(IssnFormat, 'e-ISSN er ikke på korrekt format (NNNN-NNNC)')
+      .test('checkStandardNumberExists', 'e-ISSN eksisterer allerede', async (value) => {
+        if (value && value.length > 8) {
+          const eIssnExists = await checkStandardNumberExists(value, ChannelQueryMethod.eissn);
+          return !eIssnExists;
+        }
+        return true;
+      }),
   });
+
+  function checkStandardNumberExists(issnValue: string, type: ChannelQueryMethod) {
+    return new Promise((resolve) => {
+      type === ChannelQueryMethod.eissn ? setIsSearchingEIssn(true) : setIsSearchingIssn(true);
+      getJournalsByQuery(issnValue, type)
+        .then((response) => {
+          resolve(response.data.length > 0);
+        })
+        .catch(() => {
+          resolve(false);
+        })
+        .finally(() => (type === ChannelQueryMethod.eissn ? setIsSearchingEIssn(false) : setIsSearchingIssn(false)));
+    });
+  }
 
   return (
     <StyledFormWrapper>
@@ -55,7 +91,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
         Felter merket med * er obligatoriske
       </Typography>
       <Formik initialValues={emptyFormValues} validationSchema={formValidationSchema} onSubmit={handleFormSubmit}>
-        {({ isValid, handleSubmit }) => (
+        {({ isValid, handleSubmit, handleBlur, setStatus, setFieldError, status }) => (
           <>
             <Field name="title">
               {({ field, meta: { error, touched } }: FieldProps) => (
@@ -82,6 +118,9 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                   {...field}
                   error={!!error && touched}
                   helperText={<ErrorMessage name={field.name} />}
+                  InputProps={{
+                    endAdornment: <>{isSearchingIssn && <CircularProgress color="inherit" size={'1rem'} />}</>,
+                  }}
                 />
               )}
             </Field>
@@ -96,6 +135,9 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                   {...field}
                   error={!!error && touched}
                   helperText={<ErrorMessage name={field.name} />}
+                  InputProps={{
+                    endAdornment: <>{isSearchingEIssn && <CircularProgress color="inherit" size={'1rem'} />}</>,
+                  }}
                 />
               )}
             </Field>
