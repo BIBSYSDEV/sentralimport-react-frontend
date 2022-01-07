@@ -80,8 +80,8 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
   return (
     <StyledAffiliationsWrapper backgroundcolor={backgroundcolor} variant="outlined" data-testid={dataTestid}>
       <StyledCardContent>
-        <Grid container justifyContent="space-between" spacing={0}>
-          <Grid item xs={6}>
+        <Grid container justifyContent="space-between" spacing={1}>
+          <Grid item xs={true}>
             <Typography data-testid={`${dataTestid}-institution-name`} display="inline" variant="subtitle1">
               {affiliation.institutionName}
             </Typography>
@@ -142,7 +142,7 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
             {affiliation.units.map((unit, unitIndex) => (
               <StyledListItem key={`{$unitIndex}-${unitIndex}`} dense={true}>
                 <Grid justifyContent="space-between" container spacing={0}>
-                  <Grid item>
+                  <Grid item xs={true}>
                     <StyledListItemText
                       data-testid={`${dataTestid}-list-item-text-unit-${unit.cristin_unit_id ?? unitIndex}`}
                       primary={unit.unit_name.en ?? unit.unit_name.nb}
