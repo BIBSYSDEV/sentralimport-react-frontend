@@ -36,6 +36,19 @@ const StyledRemoveUnitButton = styled(Button)`
   }
 `;
 
+const StyledListItem: any = styled(ListItem)`
+  &&.MuiListItem-dense {
+    padding-top: 0.15rem;
+    padding-bottom: 0.15rem;
+  }
+`;
+
+const StyledList = styled(List)`
+  &.MuiList-root {
+    padding-top: 0.15rem;
+  }
+`;
+
 interface AffiliationDisplayProps {
   affiliation: {
     units: SimpleUnitResponse[];
@@ -67,7 +80,7 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
   return (
     <StyledAffiliationsWrapper backgroundcolor={backgroundcolor} variant="outlined" data-testid={dataTestid}>
       <StyledCardContent>
-        <Grid container justifyContent="space-between" spacing={2}>
+        <Grid container justifyContent="space-between" spacing={0}>
           <Grid item xs={6}>
             <Typography data-testid={`${dataTestid}-institution-name`} display="inline" variant="subtitle1">
               {affiliation.institutionName}
@@ -125,10 +138,10 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
           )}
         </Grid>
         <Grid item xs={12}>
-          <List>
+          <StyledList disablePadding={true}>
             {affiliation.units.map((unit, unitIndex) => (
-              <ListItem key={`{$unitIndex}-${unitIndex}`} dense={true}>
-                <Grid justifyContent="space-between" container spacing={2}>
+              <StyledListItem key={`{$unitIndex}-${unitIndex}`} dense={true}>
+                <Grid justifyContent="space-between" container spacing={0}>
                   <Grid item>
                     <StyledListItemText
                       data-testid={`${dataTestid}-list-item-text-unit-${unit.cristin_unit_id ?? unitIndex}`}
@@ -148,9 +161,9 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
                     </Grid>
                   )}
                 </Grid>
-              </ListItem>
+              </StyledListItem>
             ))}
-          </List>
+          </StyledList>
         </Grid>
         {children}
       </StyledCardContent>
