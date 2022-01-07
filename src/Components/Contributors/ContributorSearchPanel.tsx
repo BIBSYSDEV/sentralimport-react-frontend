@@ -292,54 +292,52 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       )}
 
       <StyledCollapse timeout={customTimeout} in={openContributorSearchPanel}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item sm={4}>
-                <TextField
-                  id={'firstName' + resultListIndex}
-                  label="Fornavn"
-                  error={firstNameIsDirtyAndHasError()}
-                  value={firstName}
-                  helperText={firstNameIsDirtyAndHasError() && 'Fornavn er påkrevd'}
-                  onBlur={() => setFirstNameDirty(true)}
-                  margin="normal"
-                  onChange={handleFirstNameChange}
-                />
-              </Grid>
-              <Grid item sm={4}>
-                <TextField
-                  id={'surname' + resultListIndex}
-                  onBlur={() => setSurnameDirty(true)}
-                  label="Etternavn"
-                  error={surnameIsDirtyAndHasError()}
-                  helperText={surnameIsDirtyAndHasError() && 'Etternavn er påkrevd'}
-                  value={surname}
-                  margin="normal"
-                  onChange={handleSurnameChange}
-                />
-              </Grid>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} lg={5} xl={5}>
+            <TextField
+              id={'firstName' + resultListIndex}
+              label="Fornavn"
+              error={firstNameIsDirtyAndHasError()}
+              fullWidth
+              value={firstName}
+              helperText={firstNameIsDirtyAndHasError() && 'Fornavn er påkrevd'}
+              onBlur={() => setFirstNameDirty(true)}
+              margin="normal"
+              onChange={handleFirstNameChange}
+            />
+          </Grid>
+          <Grid xs={12} item lg={4} xl={5}>
+            <TextField
+              id={'surname' + resultListIndex}
+              onBlur={() => setSurnameDirty(true)}
+              label="Etternavn"
+              fullWidth
+              error={surnameIsDirtyAndHasError()}
+              helperText={surnameIsDirtyAndHasError() && 'Etternavn er påkrevd'}
+              value={surname}
+              margin="normal"
+              onChange={handleSurnameChange}
+            />
+          </Grid>
 
-              <Grid item xs={4}>
-                <Grid container>
-                  <Grid item>
-                    <Button
-                      data-testid={`choose-text-field-person-${resultListIndex}`}
-                      size="small"
-                      onClick={handleSwitchPersonClick}
-                      color="primary">
-                      Velg person
-                    </Button>
-                  </Grid>
-                  {isNotPossibleToSwitchPerson && (
-                    <Grid item xs={12}>
-                      <Typography variant="body2" color="error">
-                        Feil i navn
-                      </Typography>
-                    </Grid>
-                  )}
-                </Grid>
+          <Grid item>
+            <Grid container>
+              <Grid item>
+                <Button
+                  data-testid={`choose-text-field-person-${resultListIndex}`}
+                  size="small"
+                  onClick={handleSwitchPersonClick}
+                  color="primary">
+                  Velg person
+                </Button>
               </Grid>
+              {isNotPossibleToSwitchPerson && (
+                <Grid item xs={12}>
+                  <Typography variant="body2" color="error">
+                    Feil i navn
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
           </Grid>
 
