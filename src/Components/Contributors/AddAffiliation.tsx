@@ -8,11 +8,6 @@ import useDebounce from '../../utils/useDebounce';
 import { searchForInstitutionsByName } from '../../api/institutionApi';
 import { SearchLanguage } from '../../api/contributorApi';
 import { ContributorWrapper } from '../../types/ContributorTypes';
-import styled from 'styled-components';
-
-const AddAffiliationWrapper = styled.div`
-  margin-bottom: 2rem;
-`;
 
 function filterByInstitutionNameAndAcronym(
   options: Institution[],
@@ -139,7 +134,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
   };
 
   return (
-    <AddAffiliationWrapper>
+    <>
       {!showAddAffiliationSelector && (
         <Button
           data-testid={`show-institution-selector-${resultListIndex}`}
@@ -228,7 +223,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
           )}
         </Grid>
       </Collapse>
-    </AddAffiliationWrapper>
+    </>
   );
 };
 
