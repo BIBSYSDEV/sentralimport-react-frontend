@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { IssnFormat } from '../../utils/stringUtils';
 import { ChannelQueryMethod, getJournalsByQuery } from '../../api/publicationApi';
+import { handlePotentialExpiredSession } from '../../api/api';
 
 const StyledFormWrapper = styled.div`
   padding: 1rem;
@@ -36,15 +37,18 @@ interface CreateJournalPanelProps {
 
 const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }) => {
   const [isSearchingIssn, setIsSearchingIssn] = useState(false);
+  const [errorFetchingJournal, setErrorFetchingJournal] = useState<Error | undefined>();
+
   const [isSearchingEIssn, setIsSearchingEIssn] = useState(false);
 
   const handleFormSubmit = (values: CreateJournalFormValues) => {
-    handleCreateJournal({
-      title: values.title.trim(),
-      issn: values.issn.trim(),
-      eissn: values.eissn.trim(),
-      cristinTidsskriftNr: '0',
-    });
+    !errorFetchingJournal &&
+      handleCreateJournal({
+        title: values.title.trim(),
+        issn: values.issn.trim(),
+        eissn: values.eissn.trim(),
+        cristinTidsskriftNr: '0',
+      });
   };
 
   const formValidationSchema = Yup.object().shape({
@@ -71,19 +75,19 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
       }),
   });
 
-  function checkStandardNumberExists(issnValue: string, type: ChannelQueryMethod) {
-    return new Promise((resolve) => {
+  const checkStandardNumberExists = async (issnValue: string, type: ChannelQueryMethod) => {
+    try {
+      setErrorFetchingJournal(undefined);
       type === ChannelQueryMethod.eissn ? setIsSearchingEIssn(true) : setIsSearchingIssn(true);
-      getJournalsByQuery(issnValue, type)
-        .then((response) => {
-          resolve(response.data.length > 0);
-        })
-        .catch(() => {
-          resolve(false);
-        })
-        .finally(() => (type === ChannelQueryMethod.eissn ? setIsSearchingEIssn(false) : setIsSearchingIssn(false)));
-    });
-  }
+      const response = await getJournalsByQuery(issnValue, type);
+      return response.data.length > 0;
+    } catch (error: any) {
+      handlePotentialExpiredSession(error);
+      setErrorFetchingJournal(error);
+    } finally {
+      type === ChannelQueryMethod.eissn ? setIsSearchingEIssn(false) : setIsSearchingIssn(false);
+    }
+  };
 
   return (
     <StyledFormWrapper>
@@ -108,7 +112,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
               )}
             </Field>
             <Field name="issn">
-              {({ field, meta: { error, touched } }: FieldProps) => (
+              {({ field, meta: { error } }: FieldProps) => (
                 <StyledTextField
                   fullWidth
                   label="ISSN "
@@ -116,7 +120,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                   data-testid="new-journal-form-issn-field"
                   inputProps={{ 'data-testid': 'new-journal-form-issn-input' }}
                   {...field}
-                  error={!!error && touched}
+                  error={!!error}
                   helperText={<ErrorMessage name={field.name} />}
                   InputProps={{
                     endAdornment: <>{isSearchingIssn && <CircularProgress color="inherit" size={'1rem'} />}</>,
@@ -125,7 +129,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
               )}
             </Field>
             <Field name="eissn">
-              {({ field, meta: { error, touched } }: FieldProps) => (
+              {({ field, meta: { error } }: FieldProps) => (
                 <StyledTextField
                   fullWidth
                   label="e-ISSN "
@@ -133,7 +137,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                   data-testid="new-journal-form-eissn-field"
                   inputProps={{ 'data-testid': 'new-journal-form-eissn-input' }}
                   {...field}
-                  error={!!error && touched}
+                  error={!!error}
                   helperText={<ErrorMessage name={field.name} />}
                   InputProps={{
                     endAdornment: <>{isSearchingEIssn && <CircularProgress color="inherit" size={'1rem'} />}</>,
@@ -141,6 +145,7 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
                 />
               )}
             </Field>
+            {errorFetchingJournal && <Typography color="error">Noe gikk galt under sjekk av issn/eissn.</Typography>}
             <StyledButtonWrapper>
               <Button
                 variant="contained"
