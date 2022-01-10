@@ -61,10 +61,12 @@ const StyledChoosePersonButton = styled(Button)`
 
 const customTimeout = 800;
 
-const generateSearchResultHeader = (numbersOfContributors: number, isInitialSearch: boolean) => {
-  return `Fant ${numbersOfContributors} ${numbersOfContributors === 1 ? 'bidragsyter' : 'bidragsytere'}${
+const generateSearchResultHeader = (totalCount: number, numbersOfContributors: number, isInitialSearch: boolean) => {
+  return `Fant ${totalCount} ${totalCount === 1 ? 'bidragsyter' : 'bidragsytere'}${
     isInitialSearch && numbersOfContributors > 5 ? ' (viser 5 første)' : ''
-  }${numbersOfContributors > 0 ? ':' : ''}`;
+  }${totalCount !== numbersOfContributors && !isInitialSearch ? ` (viser ${numbersOfContributors} første)` : ''}${
+    totalCount > 0 ? ':' : ''
+  }`;
 };
 
 export interface AddAffiliationError extends Error {
@@ -98,6 +100,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   const [isInitialSearch, setIsInitialSearch] = useState(false);
   const [unitNameCache, setUnitNameCache] = useState(new Map());
   const [institutionNameCache, setInstitutionNameCache] = useState(new Map());
+  const [searchResultLength, setSearchResultLength] = useState(0);
 
   const handleFirstNameChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFirstName(event.target.value);
@@ -185,6 +188,8 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       setSearchError(undefined);
       try {
         const authorResults = await searchPersonDetailByName(`${firstName} ${surname}`);
+        const count = authorResults.headers['x-total-count'];
+        setSearchResultLength(count ? +count : authorResults.data.length);
         if (authorResults.data.length > 0) {
           const promiseContributorArray = [];
           for (let i = 0; i < authorResults.data.length; i++) {
@@ -393,7 +398,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
           {openContributorSearchPanel && !searching && (
             <Grid item xs={12}>
               <StyledResultTypography variant="h6">
-                {generateSearchResultHeader(searchResults.length, isInitialSearch)}
+                {generateSearchResultHeader(searchResultLength, searchResults.length, isInitialSearch)}
               </StyledResultTypography>
             </Grid>
           )}
