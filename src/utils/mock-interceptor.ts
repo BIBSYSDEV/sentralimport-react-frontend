@@ -31,6 +31,10 @@ import {
   mockTitleForEmptyCristinSearch,
   mockCristinPersonNotFound,
   mockInstitutionSearchByName,
+  mockPerson5,
+  mockPerson6,
+  mockPersonDetailed5,
+  mockPersonDetailed6,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
@@ -138,6 +142,16 @@ export const interceptRequestsOnMock = () => {
 
   //search persons by name
   mock
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/\\?name=Mockfirstname.*`))
+    .reply(200, [
+      mockPerson,
+      mockPersonWithoutActiveAffiliation,
+      mockPersonWithoutAffiliationAttribute,
+      mockForbiddenPerson,
+      mockPerson5,
+      mockPerson6,
+    ]);
+  mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/\\?name.*`))
     .reply(200, [
       mockPerson,
@@ -159,6 +173,12 @@ export const interceptRequestsOnMock = () => {
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockCristinIDWithoutAffiliationAttribute}`))
     .reply(200, mockPersonDetailedWithoutAffiliationAttribute);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed5.cristin_person_id}`))
+    .reply(200, mockPersonDetailed5);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed6.cristin_person_id}`))
+    .reply(200, mockPersonDetailed6);
   mock.onGet(new RegExp(`${CRIST_REST_API}/persons/\\d+`)).reply(200, mockPersonDetailed);
 
   //search persons by id

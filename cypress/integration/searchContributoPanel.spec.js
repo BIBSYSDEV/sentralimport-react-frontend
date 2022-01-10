@@ -4,6 +4,7 @@ import {
   mockCristinIdForbiddenPerson,
   mockCristinIDWithoutAffiliationAttribute,
   mockPerson,
+  mockPerson6,
   mockPersonDetailed,
   mockPersonDetailedWithoutActiveAffiliations,
 } from '../../src/utils/mockdata';
@@ -139,5 +140,14 @@ context('Search contributor panel', () => {
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid="add-contributor-button"]').click();
     cy.get('#firstName5').should('have.value', '');
+  });
+
+  it('makes initial search not take up entire page by hiding excess searchResult', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get(`[data-testid="author-name-${mockPerson6.cristin_person_id}"]`).should('not.exist');
+    cy.get('[data-testid="search-panel-show-more-button-1"]').click();
+    cy.get(`[data-testid="author-name-${mockPerson6.cristin_person_id}"]`).should('exist');
   });
 });

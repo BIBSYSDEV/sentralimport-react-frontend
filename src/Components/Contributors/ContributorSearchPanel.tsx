@@ -405,7 +405,11 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
           />
         ))}
         {isInitialSearch && searchResults.length > 5 && (
-          <StyledShowMoreButton color="primary" variant="outlined" onClick={() => setIsInitialSearch(false)}>
+          <StyledShowMoreButton
+            data-testid={`search-panel-show-more-button-${resultListIndex}`}
+            color="primary"
+            variant="outlined"
+            onClick={() => setIsInitialSearch(false)}>
             Vis mer
           </StyledShowMoreButton>
         )}
