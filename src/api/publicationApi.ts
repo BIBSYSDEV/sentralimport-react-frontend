@@ -29,14 +29,15 @@ export async function getImportStatisticsByYear(year: number): Promise<AxiosResp
   });
 }
 
-export enum QueryMethod {
+export enum ChannelQueryMethod {
   title = 'title_general',
   issn = 'issn',
+  eissn = 'eissn',
 }
 
 export async function getJournalsByQuery(
   query: string,
-  queryMethod: QueryMethod
+  queryMethod: ChannelQueryMethod
 ): Promise<AxiosResponse<ChannelLight[]>> {
   return authenticatedApiRequest({
     url: encodeURI(`${CRIST_REST_API}/results/channels?type=journal&query=${queryMethod}:${query}`),

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { Autocomplete } from '@material-ui/lab';
 import { ChannelLight } from '../../types/PublicationTypes';
-import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
+import { getJournalsByQuery, ChannelQueryMethod } from '../../api/publicationApi';
 import { CompareFormJournalType, emptyJournal } from './CompareFormTypes';
 
 const StyledPanelWrapper = styled.div`
@@ -34,7 +34,7 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
       setIsLoadingJournals(true);
       setFetchJournalsError(undefined);
       query = query.replaceAll('&', ''); // backend returns some journals with '&' as '&amp';
-      const resultJournals: ChannelLight[] = (await getJournalsByQuery(query, QueryMethod.title)).data;
+      const resultJournals: ChannelLight[] = (await getJournalsByQuery(query, ChannelQueryMethod.title)).data;
       const convertedJournals: CompareFormJournalType[] = resultJournals.map((journal) => {
         return {
           cristinTidsskriftNr: journal.id,
