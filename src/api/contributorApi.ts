@@ -103,7 +103,7 @@ export async function getPersonDetailById(person: ContributorType): Promise<Cont
 
 export async function searchPersonDetailByName(name: string): Promise<AxiosResponse<ContributorType[]>> {
   return authenticatedApiRequest({
-    url: encodeURI(`${CRIST_REST_API}/persons/?name=${name}&per_page=20&page=1`),
+    url: encodeURI(`${CRIST_REST_API}/persons/?name=${name}&per_page=20`),
   }) as AxiosPromise<ContributorType[]>;
 }
 
