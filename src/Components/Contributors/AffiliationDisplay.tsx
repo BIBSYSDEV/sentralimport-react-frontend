@@ -140,9 +140,9 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
         <Grid item xs={12}>
           <StyledList disablePadding>
             {affiliation.units.map((unit, unitIndex) => (
-              <StyledListItem key={`{$unitIndex}-${unitIndex}`} dense={true}>
+              <StyledListItem key={`{$unitIndex}-${unitIndex}`} dense>
                 <Grid justifyContent="space-between" container spacing={0}>
-                  <Grid item xs={true}>
+                  <Grid item xs>
                     <StyledListItemText
                       data-testid={`${dataTestid}-list-item-text-unit-${unit.cristin_unit_id ?? unitIndex}`}
                       primary={unit.unit_name.en ?? unit.unit_name.nb}
