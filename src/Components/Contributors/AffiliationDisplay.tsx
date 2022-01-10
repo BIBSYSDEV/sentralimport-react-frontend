@@ -81,7 +81,7 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
     <StyledAffiliationsWrapper backgroundcolor={backgroundcolor} variant="outlined" data-testid={dataTestid}>
       <StyledCardContent>
         <Grid container justifyContent="space-between" spacing={1}>
-          <Grid item xs={true}>
+          <Grid item xs>
             <Typography data-testid={`${dataTestid}-institution-name`} display="inline" variant="subtitle1">
               {affiliation.institutionName}
             </Typography>
@@ -138,7 +138,7 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
           )}
         </Grid>
         <Grid item xs={12}>
-          <StyledList disablePadding={true}>
+          <StyledList disablePadding>
             {affiliation.units.map((unit, unitIndex) => (
               <StyledListItem key={`{$unitIndex}-${unitIndex}`} dense={true}>
                 <Grid justifyContent="space-between" container spacing={0}>
