@@ -149,7 +149,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
         </Button>
       )}
       <Collapse in={showAddAffiliationSelector}>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} justifyContent="flex-start" alignItems="baseline">
           <Grid item xs={12} xl={8}>
             <Autocomplete
               loading={loading}
@@ -192,35 +192,39 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
               options={sortInstitutions(institutionsWithGlobalInstitutions)}
             />
           </Grid>
-          <Grid item xl={2}>
-            <Button
-              variant="contained"
-              data-testid={`add-institution-button-${resultListIndex}`}
-              disabled={selectedInstitution === null}
-              onClick={handleSelectInstitutionClick}
-              color="primary">
-              bruk valgt institusjon
-            </Button>
-          </Grid>
-          <Grid item xl={2}>
-            <Button variant="outlined" onClick={() => setShowAddAffiliationSelector(false)} color="secondary">
-              Avbryt institusjonsvalg
-            </Button>
-          </Grid>
-          {errorFetchingAdditionalInstitutions && (
-            <Grid item xs={12}>
-              <Typography variant="body2" color="error">
-                Noe gikk galt under henting av institusjoner: {errorFetchingAdditionalInstitutions.message}
-              </Typography>
+          <Grid item xs={12} xl={4}>
+            <Grid container spacing={2}>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  data-testid={`add-institution-button-${resultListIndex}`}
+                  disabled={selectedInstitution === null}
+                  onClick={handleSelectInstitutionClick}
+                  color="primary">
+                  bruk valgt institusjon
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button variant="outlined" onClick={() => setShowAddAffiliationSelector(false)} color="secondary">
+                  Avbryt institusjonsvalg
+                </Button>
+              </Grid>
+              {errorFetchingAdditionalInstitutions && (
+                <Grid item xs={12}>
+                  <Typography variant="body2" color="error">
+                    Noe gikk galt under henting av institusjoner: {errorFetchingAdditionalInstitutions.message}
+                  </Typography>
+                </Grid>
+              )}
+              {addInstitutionError && (
+                <Grid item xs={12}>
+                  <Typography data-testid={`add-institution-error-${resultListIndex}`} variant="body2" color="error">
+                    {addInstitutionError.message}
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
-          )}
-          {addInstitutionError && (
-            <Grid item xs={12}>
-              <Typography data-testid={`add-institution-error-${resultListIndex}`} variant="body2" color="error">
-                {addInstitutionError.message}
-              </Typography>
-            </Grid>
-          )}
+          </Grid>
         </Grid>
       </Collapse>
     </>
