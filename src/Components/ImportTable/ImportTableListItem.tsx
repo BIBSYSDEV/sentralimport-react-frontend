@@ -102,7 +102,7 @@ export default function ImportTableListItem({
       </TableCell>
 
       <TableCell>
-        <ImportPublicationPresentation importPublication={importData} showAuthorCount={true} />
+        <ImportPublicationPresentation importPublication={importData} isInImportTable={true} />
       </TableCell>
       <TableCell align="right">
         <div>{importData.categoryName}</div>
