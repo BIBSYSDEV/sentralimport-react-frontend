@@ -16,8 +16,7 @@ import { removeInstitutionsDuplicatesBasedOnCristinId } from './ContributorModal
 
 const StyledResultTypography = styled(Typography)`
   &.MuiTypography-root {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
   color: ${Colors.Text.OPAQUE_87_BLACK};
 `;
@@ -49,7 +48,18 @@ const StyledCollapse = styled(Collapse)`
   }
 `;
 
+//styled so it will match exact height of icon button "søk etter person"
+const StyledChoosePersonButton = styled(Button)`
+  min-height: 2.28rem;
+`;
+
 const customTimeout = 800;
+
+const generateSearchResultHeader = (numbersOfContributors: number) => {
+  return `Fant ${numbersOfContributors} ${numbersOfContributors === 1 ? 'bidragsyter' : 'bidragsytere'}${
+    numbersOfContributors > 0 ? ':' : ''
+  }`;
+};
 
 export interface AddAffiliationError extends Error {
   institutionId: string;
@@ -292,54 +302,53 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       )}
 
       <StyledCollapse timeout={customTimeout} in={openContributorSearchPanel}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item sm={4}>
-                <TextField
-                  id={'firstName' + resultListIndex}
-                  label="Fornavn"
-                  error={firstNameIsDirtyAndHasError()}
-                  value={firstName}
-                  helperText={firstNameIsDirtyAndHasError() && 'Fornavn er påkrevd'}
-                  onBlur={() => setFirstNameDirty(true)}
-                  margin="normal"
-                  onChange={handleFirstNameChange}
-                />
-              </Grid>
-              <Grid item sm={4}>
-                <TextField
-                  id={'surname' + resultListIndex}
-                  onBlur={() => setSurnameDirty(true)}
-                  label="Etternavn"
-                  error={surnameIsDirtyAndHasError()}
-                  helperText={surnameIsDirtyAndHasError() && 'Etternavn er påkrevd'}
-                  value={surname}
-                  margin="normal"
-                  onChange={handleSurnameChange}
-                />
-              </Grid>
+        <Grid container spacing={2} alignItems="flex-end">
+          <Grid item xs={12} lg={5} xl={5}>
+            <TextField
+              id={'firstName' + resultListIndex}
+              label="Fornavn"
+              error={firstNameIsDirtyAndHasError()}
+              fullWidth
+              value={firstName}
+              helperText={firstNameIsDirtyAndHasError() && 'Fornavn er påkrevd'}
+              onBlur={() => setFirstNameDirty(true)}
+              margin="none"
+              onChange={handleFirstNameChange}
+            />
+          </Grid>
+          <Grid xs={12} item lg={4} xl={5}>
+            <TextField
+              id={'surname' + resultListIndex}
+              onBlur={() => setSurnameDirty(true)}
+              label="Etternavn"
+              fullWidth
+              error={surnameIsDirtyAndHasError()}
+              helperText={surnameIsDirtyAndHasError() && 'Etternavn er påkrevd'}
+              value={surname}
+              margin="none"
+              onChange={handleSurnameChange}
+            />
+          </Grid>
 
-              <Grid item xs={4}>
-                <Grid container>
-                  <Grid item>
-                    <Button
-                      data-testid={`choose-text-field-person-${resultListIndex}`}
-                      size="small"
-                      onClick={handleSwitchPersonClick}
-                      color="primary">
-                      Velg person
-                    </Button>
-                  </Grid>
-                  {isNotPossibleToSwitchPerson && (
-                    <Grid item xs={12}>
-                      <Typography variant="body2" color="error">
-                        Feil i navn
-                      </Typography>
-                    </Grid>
-                  )}
-                </Grid>
+          <Grid item>
+            <Grid container>
+              <Grid item>
+                <StyledChoosePersonButton
+                  data-testid={`choose-text-field-person-${resultListIndex}`}
+                  size="small"
+                  variant="outlined"
+                  onClick={handleSwitchPersonClick}
+                  color="primary">
+                  Velg person
+                </StyledChoosePersonButton>
               </Grid>
+              {isNotPossibleToSwitchPerson && (
+                <Grid item xs={12}>
+                  <Typography variant="body2" color="error">
+                    Feil i navn
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
           </Grid>
 
@@ -370,7 +379,9 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
 
           {openContributorSearchPanel && !searching && (
             <Grid item xs={12}>
-              <StyledResultTypography variant="h6">Fant {searchResults.length} bidragsytere:</StyledResultTypography>
+              <StyledResultTypography variant="h6">
+                {generateSearchResultHeader(searchResults.length)}
+              </StyledResultTypography>
             </Grid>
           )}
         </Grid>
