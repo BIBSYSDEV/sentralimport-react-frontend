@@ -56,30 +56,35 @@ const filterTitle = (importPublication: ImportPublication) => {
 
 interface ImportPublicationPresentationProps {
   importPublication: ImportPublication;
-  showAuthorCount?: boolean;
+  isInImportTable?: boolean;
 }
 
 const ImportPublicationPresentation: FC<ImportPublicationPresentationProps> = ({
   importPublication,
-  showAuthorCount = false,
+  isInImportTable = false,
 }) => {
   return (
     <StyledImportPublicationPresentation data-testid="duplicate-check-importdata">
       <StyledTitleTypography>
         {importPublication?.languages && <Markup content={cleanTitleForMarkup(filterTitle(importPublication))} />}
       </StyledTitleTypography>
+      {!isInImportTable && importPublication.category && (
+        <StyledMetaDataTypography>{importPublication.categoryName}</StyledMetaDataTypography>
+      )}
       <StyledMetaDataTypography>{generateAuthorPresentation(importPublication)}</StyledMetaDataTypography>
-      {showAuthorCount &&
+      {isInImportTable &&
         (importPublication.authors.length > 100 ? (
           <StyledMonsterPostWarningTypography>
-            ({importPublication.authors.length}) Stort antall bidragsytere{' '}
+            ({importPublication.authors.length}) Stort antall bidragsytere
           </StyledMonsterPostWarningTypography>
         ) : (
-          <StyledMetaDataTypography paragraph variant="caption">
+          <StyledMetaDataTypography variant="caption">
             {`(${countFoundPersons(importPublication.authors)} av ${importPublication.authors.length} er verifisert)`}
           </StyledMetaDataTypography>
         ))}
-      <StyledMetaDataTypography>{importPublication.channel?.title}</StyledMetaDataTypography>
+      {importPublication.channel?.title && (
+        <StyledMetaDataTypography>{importPublication.channel?.title}</StyledMetaDataTypography>
+      )}
       <StyledMetaDataTypography>
         {importPublication.yearPublished + ';'}
         {importPublication.channel?.volume && importPublication.channel.volume + ';'}

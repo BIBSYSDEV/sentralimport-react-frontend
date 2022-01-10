@@ -20,7 +20,7 @@ import {
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
-import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
+import { getJournalsByQuery, ChannelQueryMethod } from '../../api/publicationApi';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -58,9 +58,10 @@ import LaunchIcon from '@material-ui/icons/Launch';
 
 const StyledModal = styled(Modal)`
   width: 96%;
+  min-width: 50rem;
   max-width: 80rem;
-  margin: 1rem auto;
   min-height: 100%;
+  margin: 1rem auto;
   padding: 0;
 `;
 
@@ -307,7 +308,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     if (issnObj?.value && issnObj.value !== '0') {
       try {
         setLoadJournalIdError(undefined);
-        const journalResponse = await getJournalsByQuery(issnObj.value, QueryMethod.issn);
+        const journalResponse = await getJournalsByQuery(issnObj.value, ChannelQueryMethod.issn);
         return journalResponse.data.length > 0 && journalResponse.data[0].id;
       } catch (error) {
         handlePotentialExpiredSession(error);

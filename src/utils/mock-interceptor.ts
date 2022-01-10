@@ -103,6 +103,7 @@ export const interceptRequestsOnMock = () => {
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=title.*`)).reply(200, mockAllJournals);
 
   //Get journal for issn
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=issn:1234-1234`)).reply(200, {});
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=issn.*`)).reply(200, mockIssnChannel);
 
   //doi-search

@@ -74,8 +74,10 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
           <StyledTitleTypography>
             {cristinPublication.title[cristinPublication.original_language]}
           </StyledTitleTypography>
+          {cristinPublication.category.name.nb && (
+            <StyledMetaDataTypography>{cristinPublication.category.name.nb}</StyledMetaDataTypography>
+          )}
           <StyledMetaDataTypography>{generateAuthorPresentation(cristinPublication)}</StyledMetaDataTypography>
-          <StyledMetaDataTypography>{cristinPublication.category.name.en}</StyledMetaDataTypography>
           <StyledStandardNumberTypography>
             {cristinPublication.international_standard_numbers &&
               cristinPublication.international_standard_numbers?.map(
