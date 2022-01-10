@@ -144,22 +144,29 @@ export const interceptRequestsOnMock = () => {
   //search persons by name
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/\\?name=Mockfirstname.*`))
-    .reply(200, [
-      mockPerson,
-      mockPersonWithoutActiveAffiliation,
-      mockPersonWithoutAffiliationAttribute,
-      mockForbiddenPerson,
-      mockPerson5,
-      mockPerson6,
-    ]);
+    .reply(
+      200,
+      [
+        mockPerson,
+        mockPersonWithoutActiveAffiliation,
+        mockPersonWithoutAffiliationAttribute,
+        mockForbiddenPerson,
+        mockPerson5,
+        mockPerson6,
+      ],
+      {
+        'x-total-count': 6,
+      }
+    );
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/\\?name.*`))
-    .reply(200, [
-      mockPerson,
-      mockPersonWithoutActiveAffiliation,
-      mockPersonWithoutAffiliationAttribute,
-      mockForbiddenPerson,
-    ]);
+    .reply(
+      200,
+      [mockPerson, mockPersonWithoutActiveAffiliation, mockPersonWithoutAffiliationAttribute, mockForbiddenPerson],
+      {
+        'x-total-count': 4,
+      }
+    );
 
   //get person-details by id
   mock
