@@ -33,6 +33,10 @@ const StyledTableWrapper = styled.div`
   overflow-y: visible;
 `;
 
+const StyledNoResultsWrapper = styled.div`
+  margin-top: 4rem;
+`;
+
 const StyledToolBarTitle = styled.div`
   flex: 0 0 auto;
 `;
@@ -341,21 +345,21 @@ export default function ImportTable(this: any) {
         />
       </div>
     ) : (
-      <div>
-        <p>Fant ingen publikasjoner med følgende filter:</p>
-        <p>År -{state.currentImportYear.value}</p>
-        <p>
+      <StyledNoResultsWrapper>
+        <Typography variant="h6">Fant ingen publikasjoner med følgende filter:</Typography>
+        <Typography>År -{state.currentImportYear.value}</Typography>
+        <Typography>
           Importstatus -
           {state.currentImportStatus === 'true'
             ? ' Importert'
             : state.currentImportStatus === 'false'
             ? ' Ikke importert'
             : ' Ikke aktuelle'}
-        </p>
-        {state.isSampublikasjon ? <p>Sampublikasjon - Ja</p> : ''}
-        {state.currentInstitution.value !== null ? <p>Institusjon - {state.currentInstitution.label}</p> : ''}
-        {state.doiFilter !== null ? <p>Doi - {state.doiFilter}</p> : ''}
-      </div>
+        </Typography>
+        {state.isSampublikasjon && <Typography>Sampublikasjon - Ja</Typography>}
+        {state.currentInstitution.value && <Typography>Institusjon - {state.currentInstitution.label}</Typography>}
+        {state.doiFilter && <Typography>Doi - {state.doiFilter}</Typography>}
+      </StyledNoResultsWrapper>
     );
   }
 }

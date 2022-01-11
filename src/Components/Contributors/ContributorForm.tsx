@@ -11,7 +11,6 @@ import {
 } from '../../assets/styles/StyledBadges';
 import AddAffiliation from './AddAffiliation';
 import EditAffiliation from './EditAffiliation';
-import DeleteIcon from '@material-ui/icons/Delete';
 import { Alert } from '@material-ui/lab';
 import { checkContributorsForDuplicates } from './duplicateCheckHelper';
 import { Colors } from '../../assets/styles/StyleConstants';
@@ -100,7 +99,6 @@ const ContributorForm: FC<ContributorFormProps> = ({
 
         <Grid item>
           <Button
-            startIcon={<DeleteIcon />}
             data-testid={`contributor-delete-button-form-${resultListIndex}`}
             color="secondary"
             onClick={() => deleteContributor(resultListIndex)}>
