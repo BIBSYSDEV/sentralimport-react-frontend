@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { Button, Card, CardContent, Grid, List, ListItem, ListItemText, Typography } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
 import styled from 'styled-components';
 import { SimpleUnitResponse } from '../../types/InstitutionTypes';
 import { AddAffiliationError } from './ContributorSearchPanel';
@@ -104,7 +103,6 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
                   )
                 }
                 data-testid={`${dataTestid}-delete-institution`}
-                startIcon={<DeleteIcon />}
                 color="secondary">
                 Fjern tilknyttning
               </Button>
@@ -154,7 +152,6 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
                         onClick={() => handleDeleteUnitClick(unit)}
                         size="small"
                         data-testid={`${dataTestid}-delete-unit-${unitIndex}`}
-                        startIcon={<DeleteIcon />}
                         color="secondary">
                         Fjern enhet
                       </StyledRemoveUnitButton>
