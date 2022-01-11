@@ -48,6 +48,12 @@ const StyledCollapse = styled(Collapse)`
   }
 `;
 
+const StyledShowMoreButton = styled(Button)`
+  &&.MuiButton-root {
+    margin-bottom: 1rem;
+  }
+`;
+
 //styled so it will match exact height of icon button "søk etter person"
 const StyledChoosePersonButton = styled(Button)`
   min-height: 2.28rem;
@@ -55,9 +61,11 @@ const StyledChoosePersonButton = styled(Button)`
 
 const customTimeout = 800;
 
-const generateSearchResultHeader = (numbersOfContributors: number) => {
-  return `Fant ${numbersOfContributors} ${numbersOfContributors === 1 ? 'bidragsyter' : 'bidragsytere'}${
-    numbersOfContributors > 0 ? ':' : ''
+const generateSearchResultHeader = (totalCount: number, numbersOfContributors: number, isInitialSearch: boolean) => {
+  return `Fant ${totalCount} ${totalCount === 1 ? 'bidragsyter' : 'bidragsytere'}${
+    isInitialSearch && numbersOfContributors > 5 ? ' (viser 5 første)' : ''
+  }${totalCount !== numbersOfContributors && !isInitialSearch ? ` (viser ${numbersOfContributors} første)` : ''}${
+    totalCount > 0 ? ':' : ''
   }`;
 };
 
@@ -89,6 +97,10 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   const [firstNameError, setFirstnameError] = useState(false);
   const [surnameError, setSurnameError] = useState(false);
   const [isNotPossibleToSwitchPerson, setIsNotPossibleToSwitchPerson] = useState(false);
+  const [isInitialSearch, setIsInitialSearch] = useState(false);
+  const [unitNameCache, setUnitNameCache] = useState(new Map());
+  const [institutionNameCache, setInstitutionNameCache] = useState(new Map());
+  const [searchResultLength, setSearchResultLength] = useState(0);
 
   const handleFirstNameChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFirstName(event.target.value);
@@ -140,47 +152,51 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       handleOpenSearchPanelClick();
       setFirstnameError(contributorData.toBeCreated.first_name.length === 0);
       setSurnameError(contributorData.toBeCreated.surname.length === 0);
+      setIsInitialSearch(false);
     }
   }, [contributorData.toBeCreated.surname, contributorData.toBeCreated.first_name.length]);
+
+  const getContributorDetailsAndAffiliation = async (contributor: ContributorType) => {
+    const resultAffiliations: Affiliation[] = [];
+    const fetchedAuthor = await getPersonDetailById(contributor);
+    if (fetchedAuthor && fetchedAuthor.affiliations) {
+      const activeAffiliations = fetchedAuthor.affiliations.filter((affiliation: Affiliation) => affiliation.active);
+      for (const activeAffiliation of activeAffiliations) {
+        const detailedAffiliationAndCache = await getAffiliationDetails(
+          activeAffiliation,
+          unitNameCache,
+          institutionNameCache
+        );
+        //klar over at vi får race-conditions på cachinga, men den er fortsatt raskere enn hvis man tar å venter på ett og ett resultat.
+        setUnitNameCache(detailedAffiliationAndCache.unitNameCache);
+        setInstitutionNameCache(detailedAffiliationAndCache.institutionNameCache);
+        detailedAffiliationAndCache.affiliation && resultAffiliations.push(detailedAffiliationAndCache.affiliation);
+      }
+      fetchedAuthor.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(resultAffiliations);
+    } else if (fetchedAuthor && !fetchedAuthor.affiliations) {
+      fetchedAuthor.affiliations = [];
+    }
+    if (fetchedAuthor) {
+      fetchedAuthor.badge_type = getContributorStatus(fetchedAuthor, fetchedAuthor.affiliations);
+    }
+    return fetchedAuthor;
+  };
 
   const searchForContributors = useCallback((firstName: string, surname: string) => {
     async function retrySearch() {
       setSearching(true);
       setSearchError(undefined);
-      let unitNameCache = new Map();
-      let institutionNameCache = new Map();
       try {
         const authorResults = await searchPersonDetailByName(`${firstName} ${surname}`);
+        const count = authorResults.headers['x-total-count'];
+        setSearchResultLength(count ? +count : authorResults.data.length);
         if (authorResults.data.length > 0) {
-          const fetchedAuthors: ContributorType[] = [];
+          const promiseContributorArray = [];
           for (let i = 0; i < authorResults.data.length; i++) {
-            const resultAffiliations: Affiliation[] = [];
-            const fetchedAuthor = await getPersonDetailById(authorResults.data[i]);
-            if (fetchedAuthor && fetchedAuthor.affiliations) {
-              const activeAffiliations = fetchedAuthor.affiliations.filter(
-                (affiliation: Affiliation) => affiliation.active
-              );
-              for (const activeAffiliation of activeAffiliations) {
-                const detailedAffiliationAndCache = await getAffiliationDetails(
-                  activeAffiliation,
-                  unitNameCache,
-                  institutionNameCache
-                );
-                unitNameCache = detailedAffiliationAndCache.unitNameCache;
-                institutionNameCache = detailedAffiliationAndCache.institutionNameCache;
-                detailedAffiliationAndCache.affiliation &&
-                  resultAffiliations.push(detailedAffiliationAndCache.affiliation);
-              }
-              fetchedAuthor.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(resultAffiliations);
-            } else if (fetchedAuthor && !fetchedAuthor.affiliations) {
-              fetchedAuthor.affiliations = [];
-            }
-            if (fetchedAuthor) {
-              fetchedAuthor.badge_type = getContributorStatus(fetchedAuthor, fetchedAuthor.affiliations);
-              fetchedAuthors.push(fetchedAuthor);
-            }
+            promiseContributorArray.push(getContributorDetailsAndAffiliation(authorResults.data[i]));
           }
-          setSearchResults(fetchedAuthors);
+          const newSearchResult = await Promise.all(promiseContributorArray);
+          setSearchResults(newSearchResult);
         } else {
           setSearchResults([]);
         }
@@ -250,6 +266,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       contributorData.toBeCreated.cristin_person_id.toString() === '0'
     ) {
       handleOpenSearchPanelClick();
+      setIsInitialSearch(true);
     }
   }, [contributorData.toBeCreated.cristin_person_id]);
 
@@ -360,6 +377,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
               data-testid={`contributor-retry-search-button-${resultListIndex}`}
               onClick={() => {
                 searchForContributors(firstName, surname);
+                setIsInitialSearch(false);
               }}
               disabled={firstName === '' && surname === ''}>
               Søk etter person
@@ -380,7 +398,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
           {openContributorSearchPanel && !searching && (
             <Grid item xs={12}>
               <StyledResultTypography variant="h6">
-                {generateSearchResultHeader(searchResults.length)}
+                {generateSearchResultHeader(searchResultLength, searchResults.length, isInitialSearch)}
               </StyledResultTypography>
             </Grid>
           )}
@@ -388,7 +406,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       </StyledCollapse>
 
       <StyledCollapse timeout={customTimeout} in={openContributorSearchPanel && !searching && searchResults.length > 0}>
-        {searchResults.map((author: ContributorType) => (
+        {searchResults.slice(0, isInitialSearch ? 5 : searchResults.length).map((author: ContributorType) => (
           <ContributorSearchResultItem
             addAffiliationError={addAffiliationError}
             addAffiliationSuccessful={addAffiliationSuccessful}
@@ -399,6 +417,15 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
             handleChoose={handleChooseThis}
           />
         ))}
+        {isInitialSearch && searchResults.length > 5 && (
+          <StyledShowMoreButton
+            data-testid={`search-panel-show-more-button-${resultListIndex}`}
+            color="primary"
+            variant="outlined"
+            onClick={() => setIsInitialSearch(false)}>
+            Vis mer
+          </StyledShowMoreButton>
+        )}
       </StyledCollapse>
     </StyledCard>
   );
