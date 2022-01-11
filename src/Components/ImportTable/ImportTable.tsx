@@ -223,27 +223,27 @@ export default function ImportTable(this: any) {
 
   function handleAuthorPress(event: React.KeyboardEvent<HTMLButtonElement>, row: ImportPublication) {
     if (!authorList) {
-      if (event.keyCode === 13 || event.keyCode === 32) {
+      if (event.key === 'Enter' || event.key === 'Space') {
         setAuthorList(true);
         setAuthorData(row);
       }
     }
   }
 
-  function handleClick(event: any, row: { row: any }) {
+  const openImportModal = (event: any, row: { row: any }) => {
     setOpen(true);
     if (openSeveral.length > 0) {
       const index = importPublications.findIndex((r) => r.pubId === openSeveral[0]);
       setModalData(importPublications[index]);
     } else setModalData(row.row);
-  }
+  };
 
-  function handleKeyPress(event: React.KeyboardEvent<HTMLButtonElement>, row: { row: any }) {
-    if (event.keyCode === 13 || event.keyCode === 32) {
+  const openImportModalByKeyPress = (event: React.KeyboardEvent<HTMLButtonElement>, row: { row: any }) => {
+    if (event.key === 'Enter' || event.key === 'Space') {
       setOpen(true);
       setModalData(row.row);
     }
-  }
+  };
 
   function handleCheckBoxChange(
     event: React.ChangeEvent<HTMLInputElement>,
@@ -302,7 +302,7 @@ export default function ImportTable(this: any) {
               )}
               <TableBody>{body}</TableBody>
             </Table>
-            <Pagination data={importPublications} openMore={openSeveral} handlePress={handleClick} />
+            <Pagination data={importPublications} openMore={openSeveral} handlePress={openImportModal} />
           </StyledTableWrapper>
         </StyledPaper>
       </StyledRoot>
@@ -324,8 +324,8 @@ export default function ImportTable(this: any) {
             key={row.pubId}
             importData={row}
             setOpen={setOpen}
-            handleClick={handleClick}
-            handleKeyPress={handleKeyPress}
+            handleClick={openImportModal}
+            handleKeyPress={openImportModalByKeyPress}
             handleOnBlur={handleOnBlur}
             handleOnFocus={handleOnFocus}
             checked={checked[i]}
