@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios';
+import { AxiosResponse, CancelToken } from 'axios';
 import { authenticatedApiRequest } from './api';
 import { CRIST_REST_API, PIA_REST_API } from '../utils/constants';
 import {
@@ -138,7 +138,8 @@ export async function getImportData(
   sortOrder: Order,
   resultPerPage: number,
   pageNumber: number,
-  doiFilter: string | null
+  doiFilter: string | null,
+  cancelToken: CancelToken
 ): Promise<AxiosResponse<ImportPublication[]>> {
   const searchParams = generateSearchParams(
     sortValue,
@@ -154,5 +155,6 @@ export async function getImportData(
   return authenticatedApiRequest({
     url: `${PIA_REST_API}/sentralimport/publications?${searchParams.toString()}`,
     method: 'GET',
+    cancelToken,
   });
 }

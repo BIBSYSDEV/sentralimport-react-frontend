@@ -8,13 +8,13 @@ import ListModal from '../ListModal/ListModal';
 import EnhancedTableHead from './EnhancedTableHead';
 import { emptyImportPublication, ImportPublication, Order } from '../../types/PublicationTypes';
 import ImportTableListItem from './ImportTableListItem';
-import PlaceHolderListItem from './PlaceHolderListItem';
 import AuthorList from './AuthorList';
 import styled from 'styled-components';
 import { SortValue } from '../../types/ContextType';
 import { getImportData } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
-import { Typography } from '@material-ui/core';
+import { CircularProgress, Typography } from '@material-ui/core';
+import axios, { CancelTokenSource } from 'axios';
 
 const StyledRoot = styled.div`
   display: block;
@@ -43,6 +43,15 @@ const StyledToolBarSpacer = styled.div`
 
 const StyledToolBarActions = styled.div`
   color: rgba(0, 0, 0, 0.54);
+`;
+
+const CircularProgressWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  height: 4rem;
+  margin-top: 6rem;
 `;
 
 function desc(a: any, b: any, orderBy: any) {
@@ -85,11 +94,11 @@ export default function ImportTable(this: any) {
   const [orderBy, setOrderBy] = useState(state.currentSortValue);
   const [page] = useState(state.currentPageNr);
   const [open, setOpen] = useState(false);
-  const [rowsPerPage, setRowsPerPage] = useState(state.currentPerPage.value);
-  const [rows, setRows] = useState<ImportPublication[]>([]);
+  const [resultsPerPage, setResultsPerPage] = useState(state.currentPerPage.value);
+  const [importPublications, setImportPublications] = useState<ImportPublication[]>([]);
   const [authorList, setAuthorList] = useState(false);
   const [authorData, setAuthorData] = useState<ImportPublication>();
-  const [fetched, setFetched] = useState(false);
+  const [isSearchingForImportData, setIsSearchingForImportData] = useState(false);
   const [checked, setChecked] = useState<boolean[]>([]);
   const [openSeveral, setOpenSeveral] = useState<string[]>([]);
   const [getImportDataError, setGetImportDataError] = useState<Error | undefined>();
@@ -107,8 +116,54 @@ export default function ImportTable(this: any) {
   ]);
 
   useEffect(() => {
-    getRows().then();
+    async function doSearch(cancelToken: CancelTokenSource) {
+      const checkedValues = [];
+      for (let i = 0; i < state.currentPerPage.value; i++) {
+        checkedValues.push(false);
+      }
+      setChecked(checkedValues);
+      setIsSearchingForImportData(true);
+      setGetImportDataError(undefined);
+      try {
+        const importDataResponse = await getImportData(
+          state.currentImportYear.value,
+          state.currentInstitution.cristinInstitutionNr,
+          state.isSampublikasjon,
+          state.currentImportStatus,
+          state.currentSortValue,
+          state.currentSortOrder,
+          state.currentPerPage.value,
+          state.currentPageNr + 1,
+          state.doiFilter,
+          cancelToken.token
+        );
+        setImportPublications(importDataResponse.data as ImportPublication[]);
+        dispatch({
+          type: 'setTotalCount',
+          payload: importDataResponse.headers['x-total-count'],
+        });
+        setIsSearchingForImportData(false);
+      } catch (error: any) {
+        if (axios.isCancel(error)) {
+          setIsSearchingForImportData(true);
+        } else {
+          handlePotentialExpiredSession(error);
+          setImportPublications([]);
+          dispatch({
+            type: 'setTotalCount',
+            payload: 0,
+          });
+          setGetImportDataError(error as Error);
+          setIsSearchingForImportData(false);
+        }
+      }
+    }
+    const cancelToken = axios.CancelToken.source();
+    doSearch(cancelToken).then();
     window.scroll({ top: 0, left: 0, behavior: 'smooth' });
+    return () => {
+      cancelToken.cancel();
+    };
   }, [
     state.currentImportYear,
     state.isSampublikasjon,
@@ -119,61 +174,15 @@ export default function ImportTable(this: any) {
     state.currentSortOrder,
     state.currentSortValue,
     state.doiFilter,
+    state.triggerImportDataSearch,
   ]);
-
-  useEffect(() => {
-    getRows().then();
-  }, [state.triggerImportDataSearch]);
 
   useEffect(() => {
     handleChangeRowsPerPage(state.currentPerPage);
   }, [state.currentPerPage]);
 
-  async function getRows() {
-    const checkedValues = [];
-    for (let i = 0; i < state.currentPerPage.value; i++) {
-      checkedValues.push(false);
-    }
-    setChecked(checkedValues);
-
-    setFetched(false);
-    setGetImportDataError(undefined);
-    try {
-      const importDataResponse = await getImportData(
-        state.currentImportYear.value,
-        state.currentInstitution.cristinInstitutionNr,
-        state.isSampublikasjon,
-        state.currentImportStatus,
-        state.currentSortValue,
-        state.currentSortOrder,
-        state.currentPerPage.value,
-        state.currentPageNr + 1,
-        state.doiFilter
-      );
-      handleRows(importDataResponse.data as ImportPublication[]);
-      dispatch({
-        type: 'setTotalCount',
-        payload: importDataResponse.headers['x-total-count'],
-      });
-    } catch (error: any) {
-      handlePotentialExpiredSession(error);
-      handleRows([]);
-      dispatch({
-        type: 'setTotalCount',
-        payload: 0,
-      });
-      setGetImportDataError(error as Error);
-    } finally {
-      setFetched(true);
-    }
-  }
-
   function resetPageNr() {
     dispatch({ type: 'setPageNr', payload: 0 });
-  }
-
-  function handleRows(temp: ImportPublication[]) {
-    setRows(temp);
   }
 
   function handleRequestSort(property: SortValue) {
@@ -188,11 +197,11 @@ export default function ImportTable(this: any) {
     setOpen(false);
     if (openSeveral.length > 1) {
       dispatch({ type: 'setContributorsLoaded', payload: false });
-      const index = rows.findIndex((id) => id.pubId === openSeveral[1]);
+      const index = importPublications.findIndex((id) => id.pubId === openSeveral[1]);
       const temp = [...openSeveral];
       temp.splice(0, 1);
       setOpenSeveral(temp);
-      setModalData(rows[index]);
+      setModalData(importPublications[index]);
       setOpen(true);
     } else {
       dispatch({ type: 'setContributorsLoaded', payload: false });
@@ -224,8 +233,8 @@ export default function ImportTable(this: any) {
   function handleClick(event: any, row: { row: any }) {
     setOpen(true);
     if (openSeveral.length > 0) {
-      const index = rows.findIndex((r) => r.pubId === openSeveral[0]);
-      setModalData(rows[index]);
+      const index = importPublications.findIndex((r) => r.pubId === openSeveral[0]);
+      setModalData(importPublications[index]);
     } else setModalData(row.row);
   }
 
@@ -260,15 +269,15 @@ export default function ImportTable(this: any) {
   }
 
   function handleChangeRowsPerPage(option: any) {
-    setRowsPerPage(option.value);
+    setResultsPerPage(option.value);
   }
 
   function checkAll(status: boolean) {
     const temp = [...checked];
     const ids = [];
-    for (let i = 0; i < rows.length; i++) {
+    for (let i = 0; i < importPublications.length; i++) {
       temp[i] = status;
-      if (status) ids.push(rows[i].pubId);
+      if (status) ids.push(importPublications[i].pubId);
     }
 
     setOpenSeveral(ids);
@@ -293,19 +302,22 @@ export default function ImportTable(this: any) {
               )}
               <TableBody>{body}</TableBody>
             </Table>
-            <Pagination data={rows} openMore={openSeveral} handlePress={handleClick} />
+            <Pagination data={importPublications} openMore={openSeveral} handlePress={handleClick} />
           </StyledTableWrapper>
         </StyledPaper>
       </StyledRoot>
     );
   }
 
-  if (!fetched) {
-    const body = Array.from({ length: 5 }, (value, index) => <PlaceHolderListItem index={index} key={index} />);
-    return createTable(body);
+  if (isSearchingForImportData) {
+    return (
+      <CircularProgressWrapper>
+        <CircularProgress />
+      </CircularProgressWrapper>
+    );
   } else {
-    const body = stableSort(rows, getSorting(order, orderBy))
-      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+    const body = stableSort(importPublications, getSorting(order, orderBy))
+      .slice(page * resultsPerPage, page * resultsPerPage + resultsPerPage)
       .map((row: ImportPublication, i) => {
         return (
           <ImportTableListItem
@@ -325,7 +337,7 @@ export default function ImportTable(this: any) {
         );
       });
 
-    return rows.length > 0 ? (
+    return importPublications.length > 0 ? (
       <div>
         {createTable(body)}
         <DuplicateCheckModal
