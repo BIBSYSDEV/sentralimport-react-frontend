@@ -93,7 +93,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   const [openContributorSearchPanel, setOpenContributorSearchPanel] = useState(false);
   const [addAffiliationSuccessful, setAddAffiliationSuccessful] = useState<string | undefined>(undefined);
   const [addAffiliationError, setAddAffiliationError] = useState<AddAffiliationError | undefined>();
-  const [hasDoneInitialSearch, setHasDoneInitialSearch] = useState(false);
+  const [isInitialSearch, setIsInitialSearch] = useState(false);
   const [unitNameCache, setUnitNameCache] = useState(new Map());
   const [institutionNameCache, setInstitutionNameCache] = useState(new Map());
   const [searchResultLength, setSearchResultLength] = useState(0);
@@ -104,12 +104,13 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
 
   useEffect(() => {
     if (
-      !contributorData.toBeCreated.cristin_person_id ||
-      (contributorData.toBeCreated.cristin_person_id.toString() === '0' && hasDoneInitialSearch)
+      (!contributorData.toBeCreated.cristin_person_id ||
+        contributorData.toBeCreated.cristin_person_id.toString() === '0') &&
+      isInitialSearch
     ) {
       openSearchPanelAndSearchContributors();
     }
-    setHasDoneInitialSearch(false);
+    setIsInitialSearch(false);
   }, [
     contributorData.toBeCreated.surname,
     contributorData.toBeCreated.first_name,
@@ -361,7 +362,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
                   data-testid={`contributor-retry-search-button-${resultListIndex}`}
                   onClick={() => {
                     searchForContributors(values.firstName, values.surName);
-                    setHasDoneInitialSearch(false);
+                    setIsInitialSearch(false);
                   }}>
                   Søk etter person
                 </Button>
@@ -380,7 +381,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
               {openContributorSearchPanel && !isSearching && (
                 <Grid item xs={12}>
                   <StyledResultTypography variant="h6">
-                    {generateSearchResultHeader(searchResultLength, searchResults.length, hasDoneInitialSearch)}
+                    {generateSearchResultHeader(searchResultLength, searchResults.length, isInitialSearch)}
                   </StyledResultTypography>
                 </Grid>
               )}
@@ -392,7 +393,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       <StyledCollapse
         timeout={customTimeout}
         in={openContributorSearchPanel && !isSearching && searchResults.length > 0}>
-        {searchResults.slice(0, hasDoneInitialSearch ? 5 : searchResults.length).map((author: ContributorType) => (
+        {searchResults.slice(0, isInitialSearch ? 5 : searchResults.length).map((author: ContributorType) => (
           <ContributorSearchResultItem
             addAffiliationError={addAffiliationError}
             addAffiliationSuccessful={addAffiliationSuccessful}
@@ -403,12 +404,12 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
             handleChoose={handleChooseThis}
           />
         ))}
-        {hasDoneInitialSearch && searchResults.length > 5 && (
+        {isInitialSearch && searchResults.length > 5 && (
           <StyledShowMoreButton
             data-testid={`search-panel-show-more-button-${resultListIndex}`}
             color="primary"
             variant="outlined"
-            onClick={() => setHasDoneInitialSearch(false)}>
+            onClick={() => setIsInitialSearch(false)}>
             Vis mer
           </StyledShowMoreButton>
         )}
