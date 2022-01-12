@@ -254,8 +254,8 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   };
 
   const formValidationSchema = Yup.object().shape({
-    firstName: Yup.string().required('Fornavn er et obligatorisk felt').max(30, 'Fornavn kan maks være 30 tegn'),
-    surName: Yup.string().required('Etternavn er et obligatorisk felt'),
+    firstName: Yup.string().trim().required('Fornavn er et obligatorisk felt').max(30, 'Fornavn kan maks være 30 tegn'),
+    surName: Yup.string().trim().required('Etternavn er et obligatorisk felt'),
   });
 
   return (
@@ -294,7 +294,6 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
             firstName: true,
             surName: true,
           }}
-          validateOnChange
           onSubmit={() => {
             // onsubmit is not optional. because we have formik inside formik button type=submit can not be used
           }}>
@@ -340,7 +339,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
                     size="small"
                     variant="outlined"
                     onClick={() => {
-                      isValid && handleSwitchPersonClick(values.firstName, values.surName);
+                      isValid && handleSwitchPersonClick(values.firstName.trim(), values.surName.trim());
                     }}
                     color="primary">
                     Velg person
