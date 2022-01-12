@@ -115,7 +115,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     contributorData.toBeCreated.cristin_person_id,
   ]);
 
-  const handleSwitchPersonClick = (firstName: string, surname: string) => {
+  const handleChoosePerson = (firstName: string, surname: string) => {
     const temp = contributorData;
     temp.toBeCreated.first_name_preferred = undefined;
     temp.toBeCreated.surname_preferred = undefined;
@@ -340,7 +340,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
                     size="small"
                     variant="outlined"
                     onClick={() => {
-                      isValid && handleSwitchPersonClick(values.firstName.trim(), values.surName.trim());
+                      isValid && handleChoosePerson(values.firstName.trim(), values.surName.trim());
                     }}
                     color="primary">
                     Velg person
@@ -363,7 +363,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
                   data-testid={`contributor-retry-search-button-${resultListIndex}`}
                   onClick={() => {
                     if (isValid) {
-                      searchForContributors(values.firstName, values.surName);
+                      searchForContributors(values.firstName.trim(), values.surName.trim());
                       setShowFullResultList(false);
                     }
                   }}>
