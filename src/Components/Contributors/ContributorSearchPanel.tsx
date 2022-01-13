@@ -57,6 +57,11 @@ const StyledShowMoreButton = styled(Button)`
   }
 `;
 
+const StyledChoosePersonButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 //styled so it will match exact height of icon button "søk etter person"
 const StyledChoosePersonButton = styled(Button)`
   min-height: 2.28rem;
@@ -337,7 +342,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
               </Grid>
 
               <Grid item>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <StyledChoosePersonButtonWrapper>
                   <StyledChoosePersonButton
                     data-testid={`choose-text-field-person-${resultListIndex}`}
                     size="small"
@@ -355,7 +360,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
                       errorMessage="Det er feil i skjema"
                     />
                   )}
-                </div>
+                </StyledChoosePersonButtonWrapper>
               </Grid>
 
               <Grid item>
