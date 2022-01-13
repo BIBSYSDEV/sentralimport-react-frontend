@@ -1,4 +1,14 @@
 import mockImportData from '../../src/utils/mockImportData.json';
+import {
+  cristinIDWithoutActiveAffiliation,
+  mockCristinIdForbiddenPerson,
+  mockCristinIDWithoutAffiliationAttribute,
+  mockPerson,
+  mockPerson6,
+  mockPersonDetailed,
+  mockPersonDetailedWithoutActiveAffiliations,
+} from '../../src/utils/mockdata';
+import { Colors } from '../../src/assets/styles/StyleConstants';
 
 context('Search contributor panel', () => {
   beforeEach(() => {
