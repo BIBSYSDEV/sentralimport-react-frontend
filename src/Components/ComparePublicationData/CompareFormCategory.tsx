@@ -1,18 +1,32 @@
-import { CircularProgress, TextField, Typography } from '@material-ui/core';
+import { TextField, Typography } from '@material-ui/core';
 import ActionButtons from './ActionButtons';
 import { Field, FieldProps, useFormikContext } from 'formik';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import {
   StyledLineCristinValue,
   StyledLineImportValue,
   StyledLineLabelTypography,
   StyledLineWrapper,
 } from './CompareFormWrappers';
-import { CategoryItem, ImportPublication } from '../../types/PublicationTypes';
+import { ImportPublication } from '../../types/PublicationTypes';
 import { Autocomplete } from '@material-ui/lab';
-import { getCategories } from '../../api/publicationApi';
-import { SearchLanguage } from '../../api/contributorApi';
 import { CompareFormCategoryOption, CompareFormValuesType } from './CompareFormTypes';
+
+const categories = [
+  { code: 'ARTICLE', label: 'Vitenskapelig artikkel' },
+  { code: 'ACADEMICREVIEW', label: 'Vitenskapelig oversiktsartikkel/review' },
+  { code: 'POPULARARTICLE', label: 'Populærvitenskapelig artikkel' },
+  { code: 'ABSTRACT', label: 'Sammendrag/abstract' },
+  { code: 'ARTICLEFEATURE', label: 'Kronikk' },
+  { code: 'EDITORIAL', label: 'Leder' },
+  { code: 'BOOKREVIEW', label: 'Anmeldelse' },
+  { code: 'SHORTCOMM', label: 'Short communication' },
+  { code: 'READEROPINION', label: 'Leserinnlegg' },
+  { code: 'LETTEREDITOR', label: 'Brev til redaktøren' },
+  { code: 'ERRATA', label: 'Errata' },
+  { code: 'INTERVIEW', label: 'Intervju tidsskrift' },
+  { code: 'ARTICLEJOURNAL', label: 'Fagartikkel' },
+];
 
 interface CompareFormCategoryProps {
   importPublication: ImportPublication;
@@ -20,30 +34,6 @@ interface CompareFormCategoryProps {
 
 const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }) => {
   const { values, setFieldValue } = useFormikContext<CompareFormValuesType>();
-  const [categories, setCategories] = useState<CompareFormCategoryOption[]>();
-  const [fetchCategoriesError, setFetchCategoriesError] = useState<Error | undefined>();
-  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
-
-  useEffect(() => {
-    async function getCategoriesAndReformatToReactSelect() {
-      try {
-        setIsLoadingCategories(true);
-        setFetchCategoriesError(undefined);
-        const categoriesResponse = await getCategories(SearchLanguage.Nb);
-        setCategories(
-          categoriesResponse.data.map((category: CategoryItem) => ({
-            value: category.code,
-            label: category.name?.nb ?? '',
-          }))
-        );
-      } catch (error) {
-        setFetchCategoriesError(error as Error);
-      } finally {
-        setIsLoadingCategories(false);
-      }
-    }
-    getCategoriesAndReformatToReactSelect().then();
-  }, []);
 
   return (
     <StyledLineWrapper>
@@ -67,35 +57,17 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }
               {...field}
               id="cristindata-category"
               autoHighlight
-              loading={isLoadingCategories}
-              noOptionsText="ingen kategorier funnet"
               data-testid="cristindata-category-select"
-              options={categories ?? []}
+              options={categories}
               getOptionLabel={(option) => option.label}
-              getOptionSelected={(option, value) => option.value === value.value}
+              getOptionSelected={(option, value) => option.code === value.code}
               onChange={(e, value: CompareFormCategoryOption) => value && setFieldValue('category', value)}
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  data-testid="cristindata-category-select-textfield"
-                  variant="outlined"
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <>
-                        {isLoadingCategories && <CircularProgress color="inherit" size={'1rem'} />}
-                        {params.InputProps.endAdornment}
-                      </>
-                    ),
-                  }}
-                />
+                <TextField {...params} data-testid="cristindata-category-select-textfield" variant="outlined" />
               )}
             />
           )}
         </Field>
-        {fetchCategoriesError && (
-          <Typography color="error">Kunne ikke laste inn kategorier. {fetchCategoriesError.message}</Typography>
-        )}
       </StyledLineCristinValue>
     </StyledLineWrapper>
   );
