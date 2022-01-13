@@ -14,7 +14,7 @@ import { SortValue } from '../../types/ContextType';
 import { getImportData } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
 import { CircularProgress, Typography } from '@material-ui/core';
-import axios, { CancelTokenSource } from 'axios';
+import axios from 'axios';
 
 const StyledRoot = styled.div`
   display: block;
@@ -93,7 +93,7 @@ export default function ImportTable(this: any) {
   const [order, setOrder] = useState(state.currentSortOrder);
   const [orderBy, setOrderBy] = useState(state.currentSortValue);
   const [page] = useState(state.currentPageNr);
-  const [open, setOpen] = useState(false);
+  const [isDuplicateCheckModalOpen, setIsDuplicateCheckModalOpen] = useState(false);
   const [resultsPerPage, setResultsPerPage] = useState(state.currentPerPage.value);
   const [importPublications, setImportPublications] = useState<ImportPublication[]>([]);
   const [authorList, setAuthorList] = useState(false);
@@ -115,13 +115,14 @@ export default function ImportTable(this: any) {
     state.currentSortValue,
   ]);
 
+  const resetSelectedPublications = () => {
+    setChecked(new Array(state.currentPerPage.value).fill(false));
+    setOpenSeveral([]);
+  };
+
   useEffect(() => {
-    async function doSearch(cancelToken: CancelTokenSource) {
-      const checkedValues = [];
-      for (let i = 0; i < state.currentPerPage.value; i++) {
-        checkedValues.push(false);
-      }
-      setChecked(checkedValues);
+    async function doSearch(abortController: AbortController) {
+      resetSelectedPublications();
       setIsSearchingForImportData(true);
       setGetImportDataError(undefined);
       try {
@@ -135,7 +136,7 @@ export default function ImportTable(this: any) {
           state.currentPerPage.value,
           state.currentPageNr + 1,
           state.doiFilter,
-          cancelToken.token
+          abortController
         );
         setImportPublications(importDataResponse.data as ImportPublication[]);
         dispatch({
@@ -158,11 +159,11 @@ export default function ImportTable(this: any) {
         }
       }
     }
-    const cancelToken = axios.CancelToken.source();
-    doSearch(cancelToken).then();
+    const controller = new AbortController();
+    doSearch(controller).then();
     window.scroll({ top: 0, left: 0, behavior: 'smooth' });
     return () => {
-      cancelToken.cancel();
+      controller.abort();
     };
   }, [
     state.currentImportYear,
@@ -194,7 +195,7 @@ export default function ImportTable(this: any) {
   }
 
   function handleClose() {
-    setOpen(false);
+    setIsDuplicateCheckModalOpen(false);
     if (openSeveral.length > 1) {
       dispatch({ type: 'setContributorsLoaded', payload: false });
       const index = importPublications.findIndex((id) => id.pubId === openSeveral[1]);
@@ -202,7 +203,7 @@ export default function ImportTable(this: any) {
       temp.splice(0, 1);
       setOpenSeveral(temp);
       setModalData(importPublications[index]);
-      setOpen(true);
+      setIsDuplicateCheckModalOpen(true);
     } else {
       dispatch({ type: 'setContributorsLoaded', payload: false });
       checkAll(false);
@@ -231,7 +232,7 @@ export default function ImportTable(this: any) {
   }
 
   const openImportModal = (event: any, row: { row: any }) => {
-    setOpen(true);
+    setIsDuplicateCheckModalOpen(true);
     if (openSeveral.length > 0) {
       const index = importPublications.findIndex((r) => r.pubId === openSeveral[0]);
       setModalData(importPublications[index]);
@@ -240,7 +241,7 @@ export default function ImportTable(this: any) {
 
   const openImportModalByKeyPress = (event: React.KeyboardEvent<HTMLButtonElement>, row: { row: any }) => {
     if (event.key === 'Enter' || event.key === 'Space') {
-      setOpen(true);
+      setIsDuplicateCheckModalOpen(true);
       setModalData(row.row);
     }
   };
@@ -279,7 +280,6 @@ export default function ImportTable(this: any) {
       temp[i] = status;
       if (status) ids.push(importPublications[i].pubId);
     }
-
     setOpenSeveral(ids);
     setChecked(temp);
   }
@@ -323,7 +323,7 @@ export default function ImportTable(this: any) {
           <ImportTableListItem
             key={row.pubId}
             importData={row}
-            setOpen={setOpen}
+            setOpen={setIsDuplicateCheckModalOpen}
             handleClick={openImportModal}
             handleKeyPress={openImportModalByKeyPress}
             handleOnBlur={handleOnBlur}
@@ -341,7 +341,7 @@ export default function ImportTable(this: any) {
       <div>
         {createTable(body)}
         <DuplicateCheckModal
-          isDuplicateCheckModalOpen={open}
+          isDuplicateCheckModalOpen={isDuplicateCheckModalOpen}
           importPublication={modalData}
           handleDuplicateCheckModalClose={handleClose.bind(this)}
         />
