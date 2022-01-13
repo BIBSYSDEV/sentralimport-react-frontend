@@ -11,22 +11,7 @@ import {
 import { ImportPublication } from '../../types/PublicationTypes';
 import { Autocomplete } from '@material-ui/lab';
 import { CompareFormCategoryOption, CompareFormValuesType } from './CompareFormTypes';
-
-const categories = [
-  { code: 'ARTICLE', label: 'Vitenskapelig artikkel' },
-  { code: 'ACADEMICREVIEW', label: 'Vitenskapelig oversiktsartikkel/review' },
-  { code: 'POPULARARTICLE', label: 'Populærvitenskapelig artikkel' },
-  { code: 'ABSTRACT', label: 'Sammendrag/abstract' },
-  { code: 'ARTICLEFEATURE', label: 'Kronikk' },
-  { code: 'EDITORIAL', label: 'Leder' },
-  { code: 'BOOKREVIEW', label: 'Anmeldelse' },
-  { code: 'SHORTCOMM', label: 'Short communication' },
-  { code: 'READEROPINION', label: 'Leserinnlegg' },
-  { code: 'LETTEREDITOR', label: 'Brev til redaktøren' },
-  { code: 'ERRATA', label: 'Errata' },
-  { code: 'INTERVIEW', label: 'Intervju tidsskrift' },
-  { code: 'ARTICLEJOURNAL', label: 'Fagartikkel' },
-];
+import categories from '../../utils/categories.json';
 
 interface CompareFormCategoryProps {
   importPublication: ImportPublication;
@@ -60,7 +45,7 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }
               data-testid="cristindata-category-select"
               options={categories}
               getOptionLabel={(option) => option.label}
-              getOptionSelected={(option, value) => option.code === value.code}
+              getOptionSelected={(option, value) => option.value === value.value}
               onChange={(e, value: CompareFormCategoryOption) => value && setFieldValue('category', value)}
               renderInput={(params) => (
                 <TextField {...params} data-testid="cristindata-category-select-textfield" variant="outlined" />
