@@ -253,7 +253,10 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
 
   const formValidationSchema = Yup.object().shape({
     firstName: Yup.string().trim().required('Fornavn er et obligatorisk felt').max(30, 'Fornavn kan maks være 30 tegn'),
-    surName: Yup.string().trim().required('Etternavn er et obligatorisk felt'),
+    surName: Yup.string()
+      .trim()
+      .required('Etternavn er et obligatorisk felt')
+      .max(30, 'Etternavn kan maks være 30 tegn'),
   });
 
   return (
@@ -324,7 +327,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
                       label="Etternavn"
                       fullWidth
                       margin="none"
-                      inputProps={{ 'data-testid': `contributor-${resultListIndex}-firstname-text-field-input` }}
+                      inputProps={{ 'data-testid': `contributor-${resultListIndex}-surname-text-field-input` }}
                       {...field}
                       error={!!error && touched}
                       helperText={<ErrorMessage name={field.name} />}

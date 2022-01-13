@@ -1,19 +1,52 @@
 import mockImportData from '../../src/utils/mockImportData.json';
-import {
-  cristinIDWithoutActiveAffiliation,
-  mockCristinIdForbiddenPerson,
-  mockCristinIDWithoutAffiliationAttribute,
-  mockPerson,
-  mockPerson6,
-  mockPersonDetailed,
-  mockPersonDetailedWithoutActiveAffiliations,
-} from '../../src/utils/mockdata';
-import { Colors } from '../../src/assets/styles/StyleConstants';
 
 context('Search contributor panel', () => {
   beforeEach(() => {
     cy.login();
     cy.visit('/');
+  });
+
+  it('handles searching manually', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+
+    cy.get('[data-testid="expand-contributor-accordion-button-0"]').click();
+    cy.get(`[data-testid="contributor-retry-search-button-0"]`).click();
+    cy.get(` [data-testid="author-name-9456892"]`).should('exist');
+    cy.get(` [data-testid="author-name-1234567"]`).should('exist');
+  });
+
+  it('van validate search parameters', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.wait(500);
+    cy.get('[data-testid="expand-contributor-accordion-button-0"]').click();
+    cy.get('[data-testid="contributor-0-firstname-text-field-input"]').clear();
+    cy.get(`[data-testid="contributor-retry-search-button-0"]`).click();
+    cy.get(`[data-testid="contributor-0-form-error"]`).should('exist');
+
+    cy.get('[data-testid="contributor-0-firstname-text-field-input"]').type('test');
+    cy.get(`[data-testid="contributor-retry-search-button-0"]`).click();
+    cy.get(`[data-testid="contributor-0-form-error"]`).should('not.exist');
+
+    cy.get('[data-testid="contributor-0-firstname-text-field-input"]')
+      .clear()
+      .type('very veryveryveryveryveryveryvery long first name');
+    cy.get(`[data-testid="contributor-retry-search-button-0"]`).click();
+    cy.get(`[data-testid="contributor-0-form-error"]`).should('exist');
+
+    cy.get('[data-testid="contributor-0-firstname-text-field-input"]').clear().type('test');
+    cy.get('[data-testid="contributor-0-surname-text-field-input"]').clear();
+    cy.get(`[data-testid="contributor-retry-search-button-0"]`).click();
+    cy.get(`[data-testid="contributor-0-form-error"]`).should('exist');
+
+    cy.get('[data-testid="contributor-0-surname-text-field-input"]')
+      .clear()
+      .type('very veryveryveryveryveryveryvery long last name');
+    cy.get(`[data-testid="contributor-retry-search-button-0"]`).click();
+    cy.get(`[data-testid="contributor-0-form-error"]`).should('exist');
   });
 
   it('handles contributors without affilations', () => {
