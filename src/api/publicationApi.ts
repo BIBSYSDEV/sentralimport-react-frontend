@@ -138,7 +138,8 @@ export async function getImportData(
   sortOrder: Order,
   resultPerPage: number,
   pageNumber: number,
-  doiFilter: string | null
+  doiFilter: string | null,
+  abortController: AbortController
 ): Promise<AxiosResponse<ImportPublication[]>> {
   const searchParams = generateSearchParams(
     sortValue,
@@ -154,5 +155,6 @@ export async function getImportData(
   return authenticatedApiRequest({
     url: `${PIA_REST_API}/sentralimport/publications?${searchParams.toString()}`,
     method: 'GET',
+    signal: abortController.signal,
   });
 }
