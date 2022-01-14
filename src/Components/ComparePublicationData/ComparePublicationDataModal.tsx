@@ -38,13 +38,13 @@ import {
 import CompareFormTitle from './CompareFormTitle';
 import CompareFormYear from './CompareFormYear';
 import CompareFormDoi from './CompareFormDoi';
-import CompareFormCategory from './CompareFormCategory';
+import CompareFormCategory, { noCategorySelectElement } from './CompareFormCategory';
 import CompareFormVolume from './CompareFormVolume';
 import CompareFormIssue from './CompareFormIssue';
 import CompareFormPages from './CompareFormPages';
 import CompareFormJournal from './CompareFormJournal';
 import CompareFormLanguage from './CompareFormLanguage';
-import { CompareFormValuesType } from './CompareFormTypes';
+import { CompareFormCategoryOption, CompareFormValuesType } from './CompareFormTypes';
 import { ContributorType } from '../../types/ContributorTypes';
 import { DoiFormat, formatCristinCreatedDate, NoDatePlaceHolder } from '../../utils/stringUtils';
 import {
@@ -55,6 +55,7 @@ import {
 import { CRISTIN_REACT_APP_URL } from '../../utils/constants';
 import CancelIcon from '@material-ui/icons/Cancel';
 import LaunchIcon from '@material-ui/icons/Launch';
+import Categories from '../../utils/categories.json';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -168,6 +169,13 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       }
     }
 
+    const setCategory = (importPublication: ImportPublication): CompareFormCategoryOption => {
+      return (
+        Categories.find((category: CompareFormCategoryOption) => category.value === importPublication.category) ??
+        noCategorySelectElement
+      );
+    };
+
     //init ligger i en useeffect pga asynkront kall til getJournalId
     const initFormik = async () => {
       //Formik is initiated from either importPublication or state.selectedPublication (set in duplicate-modal)
@@ -207,10 +215,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 cristinTidsskriftNr: importPublication?.channel?.cristinTidsskriftNr?.toString() ?? '',
                 title: importPublication?.channel?.title ?? 'Ingen tidsskrift funnet',
               },
-              category: {
-                value: importPublication.category,
-                label: importPublication.categoryName,
-              },
+              category: setCategory(importPublication),
               volume: importPublication.channel?.volume ?? '',
               issue: importPublication.channel?.issue ?? '',
               pageFrom: importPublication.channel?.pageFrom ?? '',
@@ -342,6 +347,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   const formValidationSchema = Yup.object().shape({
     title: Yup.string().required('Tittel er et obligatorisk felt'),
+    category: Yup.object().shape({
+      value: Yup.string().required('Kategori må velges'),
+      label: Yup.string(),
+    }),
     year: Yup.number()
       .typeError('Årstall må være et nummer')
       .required('Årstall er et obligatorisk felt')
