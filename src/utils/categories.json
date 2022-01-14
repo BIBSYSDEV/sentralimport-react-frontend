@@ -1,5 +1,4 @@
 [
-  { "value": "", "label": "Ingen kategori valgt" },
   { "value": "ARTICLE", "label": "Vitenskapelig artikkel" },
   { "value": "ACADEMICREVIEW", "label": "Vitenskapelig oversiktsartikkel/review" },
   { "value": "POPULARARTICLE", "label": "Populærvitenskapelig artikkel" },

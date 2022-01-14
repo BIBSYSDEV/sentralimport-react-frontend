@@ -20,7 +20,7 @@ import {
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
-import { getJournalsByQuery, ChannelQueryMethod } from '../../api/publicationApi';
+import { ChannelQueryMethod, getJournalsByQuery } from '../../api/publicationApi';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -44,7 +44,7 @@ import CompareFormIssue from './CompareFormIssue';
 import CompareFormPages from './CompareFormPages';
 import CompareFormJournal from './CompareFormJournal';
 import CompareFormLanguage from './CompareFormLanguage';
-import { CompareFormCategoryOption, CompareFormValuesType } from './CompareFormTypes';
+import { CompareFormValuesType } from './CompareFormTypes';
 import { ContributorType } from '../../types/ContributorTypes';
 import { DoiFormat, formatCristinCreatedDate, NoDatePlaceHolder } from '../../utils/stringUtils';
 import {
@@ -55,7 +55,7 @@ import {
 import { CRISTIN_REACT_APP_URL } from '../../utils/constants';
 import CancelIcon from '@material-ui/icons/Cancel';
 import LaunchIcon from '@material-ui/icons/Launch';
-import Categories from '../../utils/categories.json';
+import { findLegalCategory } from '../../utils/categoryUtils';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -169,13 +169,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       }
     }
 
-    const setCategory = (importPublication: ImportPublication): CompareFormCategoryOption => {
-      return (
-        Categories.find((category: CompareFormCategoryOption) => category.value === importPublication.category) ??
-        Categories[0]
-      );
-    };
-
     //init ligger i en useeffect pga asynkront kall til getJournalId
     const initFormik = async () => {
       //Formik is initiated from either importPublication or state.selectedPublication (set in duplicate-modal)
@@ -215,7 +208,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 cristinTidsskriftNr: importPublication?.channel?.cristinTidsskriftNr?.toString() ?? '',
                 title: importPublication?.channel?.title ?? 'Ingen tidsskrift funnet',
               },
-              category: setCategory(importPublication),
+              category: findLegalCategory(importPublication),
               volume: importPublication.channel?.volume ?? '',
               issue: importPublication.channel?.issue ?? '',
               pageFrom: importPublication.channel?.pageFrom ?? '',

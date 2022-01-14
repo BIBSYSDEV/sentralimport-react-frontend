@@ -11,7 +11,7 @@ import {
 import { ImportPublication } from '../../types/PublicationTypes';
 import { Autocomplete } from '@material-ui/lab';
 import { CompareFormCategoryOption, CompareFormValuesType } from './CompareFormTypes';
-import Categories from '../../utils/categories.json';
+import { isLegalCategory, LegalCategoryOptions } from '../../utils/categoryUtils';
 
 interface CompareFormCategoryProps {
   importPublication: ImportPublication;
@@ -19,9 +19,6 @@ interface CompareFormCategoryProps {
 
 const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }) => {
   const { values, setFieldValue } = useFormikContext<CompareFormValuesType>();
-
-  const isLegalCategory = (categoryCode: string) =>
-    !!Categories.find((category: CompareFormCategoryOption) => category.value === categoryCode);
 
   return (
     <StyledLineWrapper>
@@ -52,7 +49,7 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }
                 id="cristindata-category"
                 autoHighlight
                 data-testid="cristindata-category-select"
-                options={Categories}
+                options={LegalCategoryOptions}
                 getOptionLabel={(option) => option.label}
                 getOptionSelected={(option, value) => option.value === value.value}
                 onChange={(e, value: CompareFormCategoryOption) => {
