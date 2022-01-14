@@ -38,7 +38,7 @@ import {
 import CompareFormTitle from './CompareFormTitle';
 import CompareFormYear from './CompareFormYear';
 import CompareFormDoi from './CompareFormDoi';
-import CompareFormCategory, { noCategorySelectElement } from './CompareFormCategory';
+import CompareFormCategory from './CompareFormCategory';
 import CompareFormVolume from './CompareFormVolume';
 import CompareFormIssue from './CompareFormIssue';
 import CompareFormPages from './CompareFormPages';
@@ -172,7 +172,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     const setCategory = (importPublication: ImportPublication): CompareFormCategoryOption => {
       return (
         Categories.find((category: CompareFormCategoryOption) => category.value === importPublication.category) ??
-        noCategorySelectElement
+        Categories[0]
       );
     };
 
@@ -348,8 +348,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const formValidationSchema = Yup.object().shape({
     title: Yup.string().required('Tittel er et obligatorisk felt'),
     category: Yup.object().shape({
-      value: Yup.string().required('Kategori må velges'),
-      label: Yup.string(),
+      value: Yup.string().required(),
     }),
     year: Yup.number()
       .typeError('Årstall må være et nummer')

@@ -1,4 +1,4 @@
-import { FormHelperText, MenuItem, TextField, Typography } from '@material-ui/core';
+import { FormHelperText, TextField, Typography } from '@material-ui/core';
 import ActionButtons from './ActionButtons';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import React, { FC } from 'react';
@@ -17,10 +17,6 @@ interface CompareFormCategoryProps {
   importPublication: ImportPublication;
 }
 
-export const noCategorySelectElement = { value: '', label: 'Ingen kategori valgt' };
-
-Categories.unshift(noCategorySelectElement);
-
 const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }) => {
   const { values, setFieldValue } = useFormikContext<CompareFormValuesType>();
 
@@ -32,6 +28,11 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }
       <StyledLineLabelTypography htmlFor="cristindata-category">Kategori</StyledLineLabelTypography>
       <StyledLineImportValue>
         <Typography data-testid="importdata-category">{importPublication.categoryName}</Typography>
+        {!isLegalCategory(importPublication.category) && (
+          <Typography color="error" variant="caption">
+            Kategorien er ikke en gyldig cristin-kategori
+          </Typography>
+        )}
       </StyledLineImportValue>
       <ActionButtons
         isImportAndCristinEqual={values.category.label === importPublication.categoryName}
@@ -42,7 +43,6 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }
         dataTestid={'compare-form-category-action'}
       />
       <StyledLineCristinValue data-testid="cristindata-category-select">
-        PCB:{values.category.label} ({values.category.value})
         <Field name="category">
           {({ field, meta: { error } }: FieldProps) => (
             <>
@@ -54,9 +54,7 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }
                 data-testid="cristindata-category-select"
                 options={Categories}
                 getOptionLabel={(option) => option.label}
-                getOptionSelected={(option, value) => {
-                  return option.value === value.value;
-                }}
+                getOptionSelected={(option, value) => option.value === value.value}
                 onChange={(e, value: CompareFormCategoryOption) => {
                   value && setFieldValue('category', value);
                 }}
@@ -64,7 +62,7 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }
                   <TextField {...params} data-testid="cristindata-category-select-textfield" variant="outlined" />
                 )}
               />
-              {error && <FormHelperText error>hepp</FormHelperText>}
+              {error && <FormHelperText error>Kategori er et obligatorisk felt</FormHelperText>}
             </>
           )}
         </Field>
