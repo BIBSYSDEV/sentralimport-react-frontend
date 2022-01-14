@@ -40,7 +40,7 @@ const ActionButtons: FC<ComparePublicationDataModalProps> = ({
       ) : (
         <div>
           <IconButton
-            data-testid={`${dataTestid}-action-button`}
+            data-testid={`${dataTestid}-button`}
             color="secondary"
             onClick={copyCommand}
             disabled={isCopyBottonDisabled}>

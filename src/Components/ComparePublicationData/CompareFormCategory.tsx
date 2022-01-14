@@ -26,7 +26,7 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }
       <StyledLineImportValue>
         <Typography data-testid="importdata-category">{importPublication.categoryName}</Typography>
         {!isLegalCategory(importPublication.category) && (
-          <Typography color="error" variant="caption">
+          <Typography color="error" variant="caption" data-testid="import-category-error">
             Kategorien er ikke en gyldig cristin-kategori
           </Typography>
         )}
@@ -39,7 +39,7 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }
         }
         dataTestid={'compare-form-category-action'}
       />
-      <StyledLineCristinValue data-testid="cristindata-category-select">
+      <StyledLineCristinValue>
         <Field name="category">
           {({ field, meta: { error } }: FieldProps) => (
             <>
@@ -59,7 +59,11 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication }
                   <TextField {...params} data-testid="cristindata-category-select-textfield" variant="outlined" />
                 )}
               />
-              {error && <FormHelperText error>Kategori er et obligatorisk felt</FormHelperText>}
+              {error && (
+                <FormHelperText data-testid="cristindata-category-field-error" error>
+                  Kategori er et obligatorisk felt
+                </FormHelperText>
+              )}
             </>
           )}
         </Field>
