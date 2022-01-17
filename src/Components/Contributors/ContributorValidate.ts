@@ -1,10 +1,5 @@
 import { ContributorWrapper } from '../../types/ContributorTypes';
-
-const getAllIndexes = (array: any[], value: any) => {
-  const indexes = [];
-  for (let i = 0; i < array.length; i++) if (array[i] === value) indexes.push(i);
-  return indexes;
-};
+import { getAllIndexes } from '../../utils/stringUtils';
 
 export const validateContributors = (
   tempContributors: ContributorWrapper[],
@@ -27,12 +22,12 @@ export const validateContributors = (
   let duplicateCristinIdIndexList: number[] = [];
   const allCristinIds = tempContributors.map((contributor) => contributor.toBeCreated.cristin_person_id);
   const isDuplicate = allCristinIds.some((cristinId, index) => {
-    if (cristinId && cristinId !== 0 && allCristinIds.indexOf(cristinId) != index) {
+    if (cristinId && cristinId !== 0 && allCristinIds.indexOf(cristinId) !== index) {
       duplicateCristinIdIndexList = duplicateCristinIdIndexList.concat(getAllIndexes(allCristinIds, cristinId));
       return true;
     } else return false;
   });
-  if (isDuplicate) contributorErrors.push(`${duplicateCristinIdIndexList.join(', ')}  har duplisert cristinID`);
+  if (isDuplicate) contributorErrors.push(`${duplicateCristinIdIndexList.join(', ')} (Duplisert CristinId)`);
 
   setContributorErrors(contributorErrors);
 };
