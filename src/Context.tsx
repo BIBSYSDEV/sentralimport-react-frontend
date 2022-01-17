@@ -35,7 +35,6 @@ const initialState: ContextType = {
   param: null,
   doiFilter: null,
   contributorsLoaded: false,
-  contributorErrors: [],
   identified: [],
   identifiedImported: [],
   triggerImportDataSearch: false,
@@ -95,8 +94,6 @@ const reducer = (state: ContextType, action: { type: string; payload: any }) => 
       return { ...state, param: action.payload };
     case 'doiFilter':
       return { ...state, doiFilter: action.payload };
-    case 'setContributorErrors':
-      return { ...state, contributorErrors: action.payload };
     case 'setContributorsLoaded':
       return { ...state, contributorsLoaded: action.payload };
     case 'identified':

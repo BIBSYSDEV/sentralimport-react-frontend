@@ -506,35 +506,35 @@ export const mockTitleForEmptyCristinSearch = 'this_is_a_mocked_title';
 
 export const mockPersonWithoutActiveAffiliation = {
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Berg',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: cristinIDWithoutActiveAffiliation,
 };
 
 export const mockPersonWithoutAffiliationAttribute = {
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Børresen',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: mockCristinIDWithoutAffiliationAttribute,
 };
 
 export const mockForbiddenPerson = {
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'ForbiddenMan',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: mockCristinIdForbiddenPerson,
 };
 
 export const mockPerson5 = {
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Gunnarsen',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: 435835729,
 };
 
 export const mockPerson6 = {
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Ottervik',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: 34792875860,
 };
@@ -580,7 +580,7 @@ export const mockPersonDetailed = {
 export const mockPersonDetailedWithoutAffiliationAttribute = {
   cristin_person_id: mockCristinIDWithoutAffiliationAttribute,
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Pedersen',
   identified_cristin_person: true,
   cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
 };
@@ -588,7 +588,7 @@ export const mockPersonDetailedWithoutAffiliationAttribute = {
 export const mockPersonDetailed5 = {
   cristin_person_id: mockPerson5.cristin_person_id,
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Gunnarsen',
   identified_cristin_person: true,
   cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
 };
@@ -596,15 +596,33 @@ export const mockPersonDetailed5 = {
 export const mockPersonDetailed6 = {
   cristin_person_id: mockPerson6.cristin_person_id,
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Ottervik',
   identified_cristin_person: true,
   cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
+};
+
+export const mockPersonDetailedDuplicate = {
+  cristin_person_id: 666666,
+  first_name: 'Duplicate',
+  surname: 'CristinContributor',
+  identified_cristin_person: true,
+  cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=666666',
+  affiliations: [
+    {
+      institution: {
+        cristin_institution_id: '194',
+        url: 'https://api.cristin-test.uio.no/v2/institutions/194',
+      },
+
+      active: true,
+    },
+  ],
 };
 
 export const mockPersonDetailedWithoutActiveAffiliations = {
   cristin_person_id: cristinIDWithoutActiveAffiliation,
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Osen',
   identified_cristin_person: true,
   cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
   affiliations: [

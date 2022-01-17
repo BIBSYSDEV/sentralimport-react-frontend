@@ -565,6 +565,33 @@
             "isCristinInstitution": false
           }
         ]
+      },
+      {
+        "cristinId": 666666,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 5,
+        "surname": " CristinContributor",
+        "firstname": "Duplicate",
+        "authorName": "rairai",
+        "institutions": []
+      },
+      {
+        "cristinId": 666666,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 6,
+        "surname": " CristinContributor",
+        "firstname": "Duplicate",
+        "authorName": "rairai",
+        "institutions": []
+      },
+      {
+        "cristinId": 666666,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 7,
+        "surname": " CristinContributor",
+        "firstname": "Duplicate",
+        "authorName": "rairai",
+        "institutions": []
       }
     ],
     "languages": [
