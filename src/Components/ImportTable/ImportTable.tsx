@@ -3,7 +3,7 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import { Context } from '../../Context';
 import DuplicateCheckModal from '../DuplicateCheck/DuplicateCheckModal';
-import Pagination from '../Pagination/Pagination';
+import Pagination from './Pagination';
 import ListModal from '../ListModal/ListModal';
 import EnhancedTableHead from './EnhancedTableHead';
 import { emptyImportPublication, ImportPublication, Order } from '../../types/PublicationTypes';

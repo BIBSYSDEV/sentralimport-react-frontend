@@ -86,6 +86,7 @@ export default function Pagination(props) {
               </Grid>
               <Grid item>
                 <Select
+                  id="rowsPerPageSelector"
                   name="rowsPerPageSelect"
                   options={rowsPerPage}
                   className="basic-multi-select"

@@ -100,7 +100,7 @@ export const interceptRequestsOnMock = () => {
   //save publication
   mock
     .onPost(new RegExp(`${CRIST_REST_API}/results`), {
-      asymmetricMatch: (actual: PostPublication) => actual.pub_id === mockImportData[1].pubId,
+      asymmetricMatch: (actual: PostPublication) => actual.pub_id === mockImportData[6].pubId,
     })
     .reply(400, mockSaveErrorResponse);
   mock.onPost(new RegExp(`${CRIST_REST_API}/results`)).reply(200, mockSavedPublication);
