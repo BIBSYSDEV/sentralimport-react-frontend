@@ -10,8 +10,10 @@ import {
   mockCristinPersonNotFound,
   mockCristinPersonNotFoundResponse,
   mockDoiForEmptyCristinSearch,
+  mockDoiForPublicationWithoutDoi,
   mockForbiddenPerson,
   mockImportPublication1,
+  mockImportPublicationWithoutDoi,
   mockInstitutions,
   mockInstitutionSearchByName,
   mockIssnChannel,
@@ -45,12 +47,21 @@ import { PostPublication } from '../types/PublicationTypes';
 
 // AXIOS INTERCEPTOR
 export const interceptRequestsOnMock = () => {
-  const urlSearchParams = new URLSearchParams();
-  urlSearchParams.set('doi', mockImportPublication1.doi);
   const mock = new MockAdapter(Axios);
 
+  //get imported by doi
+  const urlSearchParams1 = new URLSearchParams(); //use URLSearchParams because doi needs encoding
+  urlSearchParams1.set('doi', mockDoiForPublicationWithoutDoi);
   mock
-    .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*${urlSearchParams.toString()}.*`))
+    .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*${urlSearchParams1.toString()}.*`))
+    .reply(200, [mockImportPublicationWithoutDoi], {
+      'x-total-count': 1,
+    });
+
+  const urlSearchParams2 = new URLSearchParams();
+  urlSearchParams2.set('doi', mockImportPublication1.doi);
+  mock
+    .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*${urlSearchParams2.toString()}.*`))
     .reply(200, [mockImportPublication1], {
       'x-total-count': 1,
     });

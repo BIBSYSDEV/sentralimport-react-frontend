@@ -1,5 +1,9 @@
 import mockImportData from '../../src/utils/mockImportData.json';
-import { mockAllJournals } from '../../src/utils/mockdata';
+import {
+  mockAllJournals,
+  mockDoiForPublicationWithoutDoi,
+  mockImportPublicationWithoutDoi,
+} from '../../src/utils/mockdata';
 
 context('importModal', () => {
   beforeEach(() => {
@@ -217,8 +221,9 @@ context('importModal', () => {
     cy.get(`[data-testid="cristindata-journal-title"]`).contains(mockAllJournals[3].title); //"Final Case report"
   });
 
-  it('can open an publication without doi', () => {
-    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+  it('can open a publication without doi', () => {
+    cy.get('[data-testid="doi-filter"]').type(mockDoiForPublicationWithoutDoi);
+    cy.get(`[data-testid="import-table-row-${mockImportPublicationWithoutDoi.pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="cristindata-doi-textfield"] input`).should('have.value', '');
     cy.get(`[data-testid="import-publication-button"]`).should('exist').should('not.be.disabled');
