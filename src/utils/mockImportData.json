@@ -489,8 +489,8 @@
   },
   {
     "pubId": 610211,
-    "category": "ARTICLE",
-    "categoryName": "Vitenskapelig artikkel",
+    "category": "ILLEGAL_CODE",
+    "categoryName": "UGYLDIG KATEGORI",
     "registered": "Oct 30, 2021",
     "doi": "10.1016/j.coastaleng.2021.104002",
     "sourceName": "Scopus",

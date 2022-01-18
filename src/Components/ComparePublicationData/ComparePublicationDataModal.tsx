@@ -20,7 +20,7 @@ import {
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
-import { getJournalsByQuery, ChannelQueryMethod } from '../../api/publicationApi';
+import { ChannelQueryMethod, getJournalsByQuery } from '../../api/publicationApi';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -55,6 +55,7 @@ import {
 import { CRISTIN_REACT_APP_URL } from '../../utils/constants';
 import CancelIcon from '@material-ui/icons/Cancel';
 import LaunchIcon from '@material-ui/icons/Launch';
+import { findLegalCategory } from '../../utils/categoryUtils';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -207,10 +208,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 cristinTidsskriftNr: importPublication?.channel?.cristinTidsskriftNr?.toString() ?? '',
                 title: importPublication?.channel?.title ?? 'Ingen tidsskrift funnet',
               },
-              category: {
-                value: importPublication.category,
-                label: importPublication.categoryName,
-              },
+              category: findLegalCategory(importPublication),
               volume: importPublication.channel?.volume ?? '',
               issue: importPublication.channel?.issue ?? '',
               pageFrom: importPublication.channel?.pageFrom ?? '',
@@ -342,6 +340,9 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   const formValidationSchema = Yup.object().shape({
     title: Yup.string().required('Tittel er et obligatorisk felt'),
+    category: Yup.object().shape({
+      value: Yup.string().required(),
+    }),
     year: Yup.number()
       .typeError('Årstall må være et nummer')
       .required('Årstall er et obligatorisk felt')
