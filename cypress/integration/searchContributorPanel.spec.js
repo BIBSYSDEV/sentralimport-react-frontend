@@ -27,11 +27,11 @@ context('Search contributor panel', () => {
     cy.get(` [data-testid="author-name-1234567"]`).should('exist');
   });
 
-  it('van validate search parameters', () => {
+  it('can validate search parameters', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
-    cy.wait(500);
+
     cy.get('[data-testid="expand-contributor-accordion-button-0"]').click();
     cy.get('[data-testid="contributor-0-firstname-text-field-input"]').clear();
     cy.get(`[data-testid="contributor-retry-search-button-0"]`).click();
@@ -192,5 +192,12 @@ context('Search contributor panel', () => {
     cy.get(`[data-testid="author-name-${mockPerson6.cristin_person_id}"]`).should('not.exist');
     cy.get('[data-testid="search-panel-show-more-button-1"]').click();
     cy.get(`[data-testid="author-name-${mockPerson6.cristin_person_id}"]`).should('exist');
+  });
+
+  it('can validate long author names from import', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get(`[data-testid="contributor-1-form-error"]`).should('exist');
   });
 });
