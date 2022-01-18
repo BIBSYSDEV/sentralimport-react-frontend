@@ -78,7 +78,7 @@ const StyledSnackBarButton: any = styled(Button)`
 
 const generateLanguageObjectFromCristinPublication = (publ: CristinPublication) => {
   return {
-    title: publ.title[publ.original_language],
+    title: publ.title ? publ.title[publ.original_language] : '',
     lang: publ.original_language?.toUpperCase(),
     original: true,
   };
@@ -129,7 +129,9 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [selectedLang, setSelectedLang] = useState<Language>(
     isDuplicate
       ? {
-          title: state.selectedPublication.title[state.selectedPublication.original_language],
+          title: state.selectedPublication.title
+            ? state.selectedPublication.title[state.selectedPublication.original_language]
+            : '',
           lang: state.selectedPublication.original_language?.toUpperCase(),
           original: true,
         }
