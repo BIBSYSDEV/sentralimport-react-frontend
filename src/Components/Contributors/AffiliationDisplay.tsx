@@ -1,26 +1,26 @@
 import React, { FC } from 'react';
-import { Button, Card, CardContent, Grid, List, ListItem, ListItemText, Typography } from '@material-ui/core';
+import { Button, Grid, List, ListItem, ListItemText, Typography } from '@material-ui/core';
 import styled from 'styled-components';
 import { SimpleUnitResponse } from '../../types/InstitutionTypes';
 import { AddAffiliationError } from './ContributorSearchPanel';
 import { Colors } from '../../assets/styles/StyleConstants';
 
-const StyledAffiliationsWrapper = styled(Card)<{ backgroundcolor: string }>`
+const StyledAffiliationsWrapper = styled.div<{ backgroundcolor: string }>`
   margin-bottom: 1rem;
-  &&.MuiPaper-outlined {
-    border: none;
-    background-color: ${(props) => props.backgroundcolor};
-  }
+  background-color: ${(props) => props.backgroundcolor};
 `;
 
 const StyledSuccessTypography = styled(Typography)`
   color: ${Colors.Text.GREEN};
 `;
 
-const StyledCardContent = styled(CardContent)`
-  &&.MuiCardContent-root:last-child {
-    padding-bottom: 0.3rem;
-  }
+export const StyledGridWithRightAlignContent = styled(Grid)`
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const StyledContent = styled.div`
+  padding: 1rem 0 0.3rem 1rem;
 `;
 
 const StyledListItemText = styled(ListItemText)`
@@ -29,16 +29,16 @@ const StyledListItemText = styled(ListItemText)`
   }
 `;
 
-const StyledRemoveUnitButton = styled(Button)`
-  &.MuiButton-root {
-    margin-right: 2.3rem;
-  }
-`;
-
 const StyledListItem: any = styled(ListItem)`
+  &&.MuiButton-root {
+    margin-right: 0;
+  }
   &&.MuiListItem-dense {
     padding-top: 0.15rem;
     padding-bottom: 0.15rem;
+  }
+  &&.MuiListItem-gutters {
+    padding-right: 0;
   }
 `;
 
@@ -77,9 +77,9 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
   removeInstitutionByCristinNrOrName,
 }) => {
   return (
-    <StyledAffiliationsWrapper backgroundcolor={backgroundcolor} variant="outlined" data-testid={dataTestid}>
-      <StyledCardContent>
-        <Grid container justifyContent="space-between" spacing={1}>
+    <StyledAffiliationsWrapper backgroundcolor={backgroundcolor} data-testid={dataTestid}>
+      <StyledContent>
+        <Grid container spacing={1} alignItems="baseline">
           <Grid item xs>
             <Typography data-testid={`${dataTestid}-institution-name`} display="inline" variant="subtitle1">
               {affiliation.institutionName}
@@ -93,7 +93,7 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
             </Grid>
           )}
           {removeInstitutionByCristinNrOrName && (
-            <Grid item>
+            <StyledGridWithRightAlignContent item xs={6}>
               <Button
                 size="small"
                 onClick={() =>
@@ -106,10 +106,10 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
                 color="secondary">
                 Fjern tilknyttning
               </Button>
-            </Grid>
+            </StyledGridWithRightAlignContent>
           )}
           {handleAddAffiliationButtonClick && (
-            <Grid item>
+            <StyledGridWithRightAlignContent item xs={4}>
               <Button
                 data-testid={`add-only-affiliation-button-${dataTestid}`}
                 onClick={() => handleAddAffiliationButtonClick()}
@@ -132,7 +132,7 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
                     La til institusjon
                   </StyledSuccessTypography>
                 )}
-            </Grid>
+            </StyledGridWithRightAlignContent>
           )}
         </Grid>
         <Grid item xs={12}>
@@ -147,15 +147,15 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
                     />
                   </Grid>
                   {handleDeleteUnitClick && (
-                    <Grid item>
-                      <StyledRemoveUnitButton
+                    <StyledGridWithRightAlignContent item>
+                      <Button
                         onClick={() => handleDeleteUnitClick(unit)}
                         size="small"
                         data-testid={`${dataTestid}-delete-unit-${unitIndex}`}
                         color="secondary">
                         Fjern enhet
-                      </StyledRemoveUnitButton>
-                    </Grid>
+                      </Button>
+                    </StyledGridWithRightAlignContent>
                   )}
                 </Grid>
               </StyledListItem>
@@ -163,7 +163,7 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
           </StyledList>
         </Grid>
         {children}
-      </StyledCardContent>
+      </StyledContent>
     </StyledAffiliationsWrapper>
   );
 };

@@ -352,7 +352,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
                       isValid && handleChoosePerson(values.firstName.trim(), values.surName.trim());
                     }}
                     color="primary">
-                    Velg person
+                    Endre navn
                   </StyledChoosePersonButton>
 
                   {!isValid && (
