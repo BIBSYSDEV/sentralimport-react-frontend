@@ -299,6 +299,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
           }}
           validationSchema={formValidationSchema}
           validateOnMount
+          enableReinitialize
           initialTouched={{
             firstName: true,
             surName: true,
