@@ -88,7 +88,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
     <>
       <SearchPanel
         importPublication={importPublication}
-        setDuplicateList={setResultList}
+        setDuplicateResultList={setResultList}
         setIsSearching={setIsSearching}
         setFoundDuplicates={setFoundDuplicates}
         isInitialSearchWithDoi={isInitialSearchWithDoi}

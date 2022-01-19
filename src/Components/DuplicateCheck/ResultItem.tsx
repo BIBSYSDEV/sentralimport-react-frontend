@@ -72,7 +72,7 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
           target="_blank"
           rel="noopener noreferrer">
           <StyledTitleTypography>
-            {cristinPublication.title[cristinPublication.original_language]}
+            {cristinPublication.title && cristinPublication.title[cristinPublication.original_language]}
           </StyledTitleTypography>
           {cristinPublication.category.name.nb && (
             <StyledMetaDataTypography>{cristinPublication.category.name.nb}</StyledMetaDataTypography>

@@ -39,7 +39,7 @@ const maxResults = '5';
 
 interface SearchPanelProps {
   importPublication: ImportPublication;
-  setDuplicateList: (results: CristinPublication[]) => void;
+  setDuplicateResultList: (results: CristinPublication[]) => void;
   setIsSearching: (value: boolean) => void;
   setFoundDuplicates: (value: boolean) => void;
   isInitialSearchWithDoi: boolean;
@@ -48,7 +48,7 @@ interface SearchPanelProps {
 
 const SearchPanel: FC<SearchPanelProps> = ({
   importPublication,
-  setDuplicateList,
+  setDuplicateResultList,
   setIsSearching,
   setFoundDuplicates,
   isInitialSearchWithDoi,
@@ -110,7 +110,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
     setIsAuthorChecked(false);
     setIsIssnChecked(false);
     setIsYearPublishedChecked(false);
-    setDuplicateList([]);
+    setDuplicateResultList([]);
   }
 
   async function retrySearch() {
@@ -130,7 +130,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
     }
     setTotalResults(results.totalPublicationsResults);
     setIsSearching(false);
-    setDuplicateList(results.cristinPublications);
+    setDuplicateResultList(results.cristinPublications);
   }
 
   const noCheckBoxesChecked = !(
