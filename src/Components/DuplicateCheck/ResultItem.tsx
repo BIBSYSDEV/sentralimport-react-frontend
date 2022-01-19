@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Radio, Typography } from '@material-ui/core';
-import { CristinPublication, InternationalStandardNumber } from '../../types/PublicationTypes';
+import { CristinPublication, InternationalStandardNumber, UrlTypes } from '../../types/PublicationTypes';
 import styled from 'styled-components';
 import { Colors } from '../../assets/styles/StyleConstants';
 
@@ -56,18 +56,13 @@ const generateAuthorPresentation = (cristinPublication: CristinPublication) => {
     .concat(cristinPublication.authors.length > 3 ? ' et al.' : '');
 };
 
-function extractDOIfromCristinPublication(cristinPublication: CristinPublication) {
-  const link =
-    cristinPublication.links &&
-    cristinPublication.links[cristinPublication.links.length - 1]?.url?.substring(
-      16,
-      cristinPublication.links[0]?.url?.length + 1
-    );
-  //if matches
-  return link;
+function extractDoiFromCristinPublication(cristinPublication: CristinPublication) {
+  return cristinPublication.links?.find((link) => link.url_type === UrlTypes.Doi)?.url;
 }
 
 const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
+  const doi = extractDoiFromCristinPublication(cristinPublication);
+
   return (
     <div>
       <StyledResultItem
@@ -97,9 +92,8 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
           </StyledStandardNumberTypography>
           <StyledMetaDataTypography>{cristinPublication.journal?.name}</StyledMetaDataTypography>
           <StyledMetaDataTypography>
-            {cristinPublication.year_published}
-            {cristinPublication.publisher && ', ' + cristinPublication.publisher.name}
-            {extractDOIfromCristinPublication(cristinPublication)}
+            {cristinPublication.year_published + ';'}
+            {doi && ' doi:' + doi}
           </StyledMetaDataTypography>
         </StyledResultLink>
       </StyledResultItem>

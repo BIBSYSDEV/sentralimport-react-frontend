@@ -555,6 +555,7 @@ export const mockCristinIdForbiddenPerson = '1235412375';
 export const mockDoiForEmptyCristinSearch = '123456789';
 export const mockCristinPersonNotFound = '18799';
 export const mockTitleForEmptyCristinSearch = 'this_is_a_mocked_title';
+export const mockSearchTitleForCristinPubWithDoi = 'search_for_cristin_with_doi';
 
 export const mockPersonWithoutActiveAffiliation = {
   first_name: 'Arne',
@@ -956,3 +957,92 @@ export const mockInstitutionSearchByName = [
     url: 'https://api.cristin-test.uio.no/v2/institutions/82007415',
   },
 ];
+
+export const mockCristinPublicationWithDoi = {
+  category: {
+    code: 'ARTICLE',
+    name: {
+      nb: 'Vitenskapelig artikkel',
+    },
+  },
+  channel: {
+    title: 'Maritime Policy & Management',
+  },
+  contributors: {
+    url: 'https://api.cristin.no/v2/results/1920336/contributors',
+    count: 4,
+    preview: [
+      {
+        first_name: 'Tore',
+        surname: 'Relling',
+      },
+      {
+        first_name: 'Margareta',
+        surname: 'Lützhöft',
+      },
+      {
+        first_name: 'Runar',
+        surname: 'Ostnes',
+      },
+      {
+        first_name: 'Hans Petter',
+        surname: 'Hildre',
+      },
+    ],
+  },
+  cristin_result_id: '1920336',
+  created: {
+    date: '2021-07-05T14:47:15.000Z',
+  },
+  import_sources: [
+    {
+      source_name: 'SCOPUS',
+      source_reference_id: '2-s2.0-85107715929',
+    },
+  ],
+  last_modified: {
+    date: '2021-08-03T13:57:17.000Z',
+  },
+  links: [
+    {
+      url_type: 'ARKIV',
+      url: 'https://hdl.handle.net/11250/2786489',
+    },
+    {
+      url_type: 'DOI',
+      url: 'https://doi.org/10.1080/03088839.2021.1937739',
+    },
+  ],
+  open_access: 'green',
+  original_language: 'en',
+  title: {
+    en: 'The contribution of Vessel Traffic Services to safe coexistence between automated and conventional vessels',
+  },
+  year_published: '2021',
+  year_reported: '2021',
+  url: 'https://api.cristin.no/v2/results/1920336',
+  journal: {
+    cristin_journal_id: '32339',
+    name: 'Maritime Policy & Management',
+    publisher: {
+      cristin_publisher_id: '313',
+      name: 'Taylor & Francis',
+      url: 'http://www.tandf.co.uk/books/',
+      nvi_level: '1',
+    },
+    international_standard_numbers: [
+      {
+        type: 'printed',
+        value: '0308-8839',
+      },
+      {
+        type: 'electronic',
+        value: '1464-5254',
+      },
+    ],
+    nvi_level: '1',
+  },
+  pages: {
+    count: '20',
+  },
+};

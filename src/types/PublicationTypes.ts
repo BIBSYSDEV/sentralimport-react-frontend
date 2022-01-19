@@ -112,6 +112,11 @@ export interface CategoryItem {
 export interface Link {
   url_type: string;
   url_value: string;
+  url: string;
+}
+
+export enum UrlTypes {
+  Doi = 'DOI',
 }
 
 export interface Journal {
