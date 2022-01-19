@@ -56,6 +56,17 @@ const generateAuthorPresentation = (cristinPublication: CristinPublication) => {
     .concat(cristinPublication.authors.length > 3 ? ' et al.' : '');
 };
 
+function extractDOIfromCristinPublication(cristinPublication: CristinPublication) {
+  const link =
+    cristinPublication.links &&
+    cristinPublication.links[cristinPublication.links.length - 1]?.url?.substring(
+      16,
+      cristinPublication.links[0]?.url?.length + 1
+    );
+  //if matches
+  return link;
+}
+
 const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
   return (
     <div>
@@ -84,9 +95,11 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
                 (issn: InternationalStandardNumber) => 'ISSN ' + issn.type + ': ' + issn.value + '; '
               )}
           </StyledStandardNumberTypography>
+          <StyledMetaDataTypography>{cristinPublication.journal?.name}</StyledMetaDataTypography>
           <StyledMetaDataTypography>
             {cristinPublication.year_published}
             {cristinPublication.publisher && ', ' + cristinPublication.publisher.name}
+            {extractDOIfromCristinPublication(cristinPublication)}
           </StyledMetaDataTypography>
         </StyledResultLink>
       </StyledResultItem>

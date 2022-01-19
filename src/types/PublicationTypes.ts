@@ -34,6 +34,8 @@ export interface CristinPublication {
   created: {
     date: string;
   };
+  links?: any[];
+  journal?: any;
   cristin_result_id: string;
 }
 
