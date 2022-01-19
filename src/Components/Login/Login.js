@@ -66,7 +66,7 @@ export default function Login(props) {
     }
   }
 
-  if (search.access_token != null) validate();
+  if (search.access_token !== null) validate();
 
   return (
     <div className={`login`}>

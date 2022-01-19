@@ -61,12 +61,16 @@ const ContributorForm: FC<ContributorFormProps> = ({
 
 
   */
-
   const [duplicateWarning, setDuplicateWarning] = useState('');
+  const [duplicateError, setDuplicateError] = useState('');
 
   useEffect(() => {
-    checkContributorsForDuplicates(contributorData, setDuplicateWarning, false);
-  }, [contributorData.toBeCreated.first_name, contributorData.toBeCreated.surname]);
+    checkContributorsForDuplicates(contributorData, setDuplicateWarning, setDuplicateError, false);
+  }, [
+    contributorData.toBeCreated.first_name,
+    contributorData.toBeCreated.surname,
+    contributorData.toBeCreated.cristin_person_id,
+  ]);
 
   return (
     <div data-testid={`contributor-form-${resultListIndex}`}>
@@ -96,7 +100,6 @@ const ContributorForm: FC<ContributorFormProps> = ({
             </StyledGreyTypography>
           )}
         </Grid>
-
         <Grid item>
           <Button
             data-testid={`contributor-delete-button-form-${resultListIndex}`}
@@ -105,12 +108,20 @@ const ContributorForm: FC<ContributorFormProps> = ({
             Fjern bidragsyter
           </Button>
         </Grid>
-        {duplicateWarning && (
+        {duplicateError ? (
           <Grid item xs={12}>
-            <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
-              {duplicateWarning}
+            <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-error`} severity="error">
+              {duplicateError}
             </StyledAlert>
           </Grid>
+        ) : (
+          duplicateWarning && (
+            <Grid item xs={12}>
+              <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
+                {duplicateWarning}
+              </StyledAlert>
+            </Grid>
+          )
         )}
         <Grid item xs={12}>
           <ContributorSearchPanel

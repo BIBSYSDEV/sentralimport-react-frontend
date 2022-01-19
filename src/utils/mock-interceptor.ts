@@ -2,19 +2,29 @@ import Axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import { CRIST_REST_API, PIA_REST_API } from './constants';
 import {
-  mockCristinIdForbiddenPerson,
   cristinIDWithoutActiveAffiliation,
-  mockCristinIDWithoutAffiliationAttribute,
   mockAllCategories,
   mockAllJournals,
+  mockCristinIdForbiddenPerson,
+  mockCristinIDWithoutAffiliationAttribute,
+  mockCristinPersonNotFound,
   mockCristinPersonNotFoundResponse,
+  mockDoiForEmptyCristinSearch,
+  mockDoiForPublicationWithoutDoi,
   mockForbiddenPerson,
   mockImportPublication1,
+  mockImportPublicationWithoutDoi,
   mockInstitutions,
+  mockInstitutionSearchByName,
   mockIssnChannel,
   mockNotAuthorizedForThisPersonDetailResponse,
   mockPerson,
+  mockPerson5,
+  mockPerson6,
   mockPersonDetailed,
+  mockPersonDetailed5,
+  mockPersonDetailed6,
+  mockPersonDetailedDuplicate,
   mockPersonDetailedWithoutActiveAffiliations,
   mockPersonDetailedWithoutAffiliationAttribute,
   mockPersonWithoutActiveAffiliation,
@@ -23,18 +33,11 @@ import {
   mockSavedPublication,
   mockSaveErrorResponse,
   mockSimpleUnitResponse,
+  mockTitleForEmptyCristinSearch,
   mockUnits,
   responseCountryInstitutionCN,
   responseCountryInstitutionIT,
   resultInstitutionNTNU,
-  mockDoiForEmptyCristinSearch,
-  mockTitleForEmptyCristinSearch,
-  mockCristinPersonNotFound,
-  mockInstitutionSearchByName,
-  mockPerson5,
-  mockPerson6,
-  mockPersonDetailed5,
-  mockPersonDetailed6,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
@@ -44,12 +47,21 @@ import { PostPublication } from '../types/PublicationTypes';
 
 // AXIOS INTERCEPTOR
 export const interceptRequestsOnMock = () => {
-  const urlSearchParams = new URLSearchParams();
-  urlSearchParams.set('doi', mockImportPublication1.doi);
   const mock = new MockAdapter(Axios);
 
+  //get imported by doi
+  const urlSearchParams1 = new URLSearchParams(); //use URLSearchParams because doi needs encoding
+  urlSearchParams1.set('doi', mockDoiForPublicationWithoutDoi);
   mock
-    .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*${urlSearchParams.toString()}.*`))
+    .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*${urlSearchParams1.toString()}.*`))
+    .reply(200, [mockImportPublicationWithoutDoi], {
+      'x-total-count': 1,
+    });
+
+  const urlSearchParams2 = new URLSearchParams();
+  urlSearchParams2.set('doi', mockImportPublication1.doi);
+  mock
+    .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*${urlSearchParams2.toString()}.*`))
     .reply(200, [mockImportPublication1], {
       'x-total-count': 1,
     });
@@ -88,7 +100,7 @@ export const interceptRequestsOnMock = () => {
   //save publication
   mock
     .onPost(new RegExp(`${CRIST_REST_API}/results`), {
-      asymmetricMatch: (actual: PostPublication) => actual.pub_id === mockImportData[1].pubId,
+      asymmetricMatch: (actual: PostPublication) => actual.pub_id === mockImportData[6].pubId,
     })
     .reply(400, mockSaveErrorResponse);
   mock.onPost(new RegExp(`${CRIST_REST_API}/results`)).reply(200, mockSavedPublication);
@@ -187,6 +199,7 @@ export const interceptRequestsOnMock = () => {
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed6.cristin_person_id}`))
     .reply(200, mockPersonDetailed6);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/persons/666666`)).reply(200, mockPersonDetailedDuplicate);
   mock.onGet(new RegExp(`${CRIST_REST_API}/persons/\\d+`)).reply(200, mockPersonDetailed);
 
   //search persons by id

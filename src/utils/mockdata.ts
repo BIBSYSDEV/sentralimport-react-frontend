@@ -378,6 +378,58 @@ export const mockImportPublication1 = {
   },
 };
 
+export const mockDoiForPublicationWithoutDoi = '10.1038/s41467-021-25510-wXXX'; // easiest way to get the one publication
+
+export const mockImportPublicationWithoutDoi = {
+  pubId: 591853,
+  category: 'ARTICLE',
+  categoryName: 'Vitenskapelig artikkel',
+  registered: 'Oct 29, 2021',
+  sourceName: 'Scopus',
+  sourceCode: 'SCOPUS',
+  externalId: '2-s2.0-85115431109',
+  yearPublished: 2021,
+  authors: [
+    {
+      cristinId: 0,
+      roleCode: 'FORFATTER',
+      sequenceNr: 1,
+      surname: 'Capriolo',
+      firstname: 'Manfredo',
+      authorName: 'Capriolo M.',
+      institutions: [
+        {
+          unitName: 'Department of Geosciences;University of Padova',
+          countryCode: 'IT',
+          institutionName: 'University of Padova',
+          cristinInstitutionNr: 12300052,
+          isCristinInstitution: false,
+        },
+      ],
+    },
+  ],
+  languages: [
+    {
+      lang: 'EN',
+      langName: 'Engelsk',
+      title:
+        'NODOI-Massive methane fluxing from magma–sediment interaction in the end-Triassic Central Atlantic Magmatic Province',
+      summary:
+        'Exceptional magmatic events coincided with the largest mass extinctions throughout Earth’s history. Extensive degassing from organic-rich sediments intruded by magmas is a possible driver of the catastrophic environmental changes, which triggered the biotic crises. One of Earth’s largest magmatic events is represented by the Central Atlantic Magmatic Province, which was synchronous with the end-Triassic mass extinction. Here, we show direct evidence for the presence in basaltic magmas of methane, generated or remobilized from the host sedimentary sequence during the emplacement of this Large Igneous Province. Abundant methane-rich fluid inclusions were entrapped within quartz at the end of magmatic crystallization in voluminous (about 1.0 × 10\u003csup\u003e6\u003c/sup\u003e km\u003csup\u003e3\u003c/sup\u003e) intrusions in Brazilian Amazonia, indicating a massive (about 7.2 × 10\u003csup\u003e3\u003c/sup\u003e Gt) fluxing of methane. These micrometre-sized imperfections in quartz crystals attest an extensive release of methane from magma–sediment interaction, which likely contributed to the global climate changes responsible for the end-Triassic mass extinction.',
+      original: true,
+    },
+  ],
+  channel: {
+    cristinTidsskriftNr: 1185296,
+    title: 'Nature Communications',
+    issn: '2041-1723',
+    eissn: '2041-1723',
+    isbns: [],
+    volume: '12',
+    issue: '1',
+  },
+};
+
 export const mockPublicationCount = { totalCount: 100, importedCount: 1, notImportedCount: 2, notRelevantCount: 3 };
 
 export const mockAllCategories = [
@@ -506,35 +558,35 @@ export const mockTitleForEmptyCristinSearch = 'this_is_a_mocked_title';
 
 export const mockPersonWithoutActiveAffiliation = {
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Berg',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: cristinIDWithoutActiveAffiliation,
 };
 
 export const mockPersonWithoutAffiliationAttribute = {
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Børresen',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: mockCristinIDWithoutAffiliationAttribute,
 };
 
 export const mockForbiddenPerson = {
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'ForbiddenMan',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: mockCristinIdForbiddenPerson,
 };
 
 export const mockPerson5 = {
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Gunnarsen',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: 435835729,
 };
 
 export const mockPerson6 = {
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Ottervik',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: 34792875860,
 };
@@ -580,7 +632,7 @@ export const mockPersonDetailed = {
 export const mockPersonDetailedWithoutAffiliationAttribute = {
   cristin_person_id: mockCristinIDWithoutAffiliationAttribute,
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Pedersen',
   identified_cristin_person: true,
   cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
 };
@@ -588,7 +640,7 @@ export const mockPersonDetailedWithoutAffiliationAttribute = {
 export const mockPersonDetailed5 = {
   cristin_person_id: mockPerson5.cristin_person_id,
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Gunnarsen',
   identified_cristin_person: true,
   cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
 };
@@ -596,15 +648,33 @@ export const mockPersonDetailed5 = {
 export const mockPersonDetailed6 = {
   cristin_person_id: mockPerson6.cristin_person_id,
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Ottervik',
   identified_cristin_person: true,
   cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
+};
+
+export const mockPersonDetailedDuplicate = {
+  cristin_person_id: 666666,
+  first_name: 'Duplicate',
+  surname: 'CristinContributor',
+  identified_cristin_person: true,
+  cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=666666',
+  affiliations: [
+    {
+      institution: {
+        cristin_institution_id: '194',
+        url: 'https://api.cristin-test.uio.no/v2/institutions/194',
+      },
+
+      active: true,
+    },
+  ],
 };
 
 export const mockPersonDetailedWithoutActiveAffiliations = {
   cristin_person_id: cristinIDWithoutActiveAffiliation,
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Osen',
   identified_cristin_person: true,
   cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
   affiliations: [

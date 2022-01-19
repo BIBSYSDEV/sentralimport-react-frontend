@@ -485,7 +485,15 @@
         "summary": "A field with two neighboring reservoirs was discovered in the Barents Sea in 2013 and 2014. After a successful extended well test of an appraisal well in 2018 and initial field planning tasks, a preliminary drilling and production schedule was proposed based on cross-domain collaboration and group work involving several disciplines. In this paper, mathematical programming is employed to model and optimize the economic value of the project in order to determine the best drilling and production schedule for the field. The optimization includes some of the technical constraints considered by the field development team while also considering uncertainties such as reservoir size, productivity of well, and cost. These have been systematically evaluated by using simulation-based optimization (sampling). The results were that the use of mathematical programming allows the field planner to evaluate several scenarios within a reasonable time frame, thereby enabling rapid changes in the decisions to respond to new information and risk considerations in a dynamic environment. This paper illustrates the benefits of utilizing mathematical programming in early field planning to optimize the drilling and production schedule.",
         "original": true
       }
-    ]
+    ],
+    "channel": {
+      "cristinTidsskriftNr": 2588,
+      "title": "Coastal Engineering",
+      "issn": "0378-3839",
+      "eissn": "1872-7379",
+      "isbns": [],
+      "volume": "170"
+    }
   },
   {
     "pubId": 610211,
@@ -565,6 +573,33 @@
             "isCristinInstitution": false
           }
         ]
+      },
+      {
+        "cristinId": 666666,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 5,
+        "surname": " CristinContributor",
+        "firstname": "Duplicate",
+        "authorName": "rairai",
+        "institutions": []
+      },
+      {
+        "cristinId": 666666,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 6,
+        "surname": " CristinContributor",
+        "firstname": "Duplicate",
+        "authorName": "rairai",
+        "institutions": []
+      },
+      {
+        "cristinId": 666666,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 7,
+        "surname": " CristinContributor",
+        "firstname": "Duplicate",
+        "authorName": "rairai",
+        "institutions": []
       }
     ],
     "languages": [
@@ -573,6 +608,206 @@
         "langName": "Engelsk",
         "title": "Three-dimensional Computational Fluid Dynamics modelling of scour around a single pile due to combined action of the waves and current using Level-Set method",
         "summary": "This paper presents three dimensional (3D) numerical modeling of local scour around a single pile under the combined action of waves and currents. A semi-coupled hydrodynamic and morphological model (REEF3D) is used in this study which solves the Reynolds-averaged Navier–Stokes (RANS) equation with k-ω turbulence model closure. The Exner equation is used to calculate the changes in bed elevation. The use of the Level-Set method is done to capture the changes in the free surface. Realistic scour and deposition calculations are aided with the use of modified critical bed shear stress reduction formulation on a sloping bed supplemented with the use of Sand Slide algorithm in the morphological model. The scouring process is modeled in this study using a reduced-length numerical wave tank with wave generation and wave absorption implemented using active wave absorption method. The model is validated for the numerical modeling of local scour around a single pile in steady current, waves alone, and combined wave–current environment. The validated model is used to analyze the effect of Keulegan–Carpenter (KC) number and combined wave–current parameter (U\u003cinf\u003ecw\u003c/inf\u003e) on normalized equilibrium scour depth. It is found that the normalized equilibrium scour depth for scour under waves alone, waves combined with weak currents, and waves combined with mild current do not significantly differ for flow developed in a low KC number environment. However for waves combined with strong currents the normalized equilibrium scour depth increases significantly. For large KC numbers, the normalized equilibrium scour depth is found to have increased with an increase in KC number as well as combined wave–current parameter (U\u003cinf\u003ecw\u003c/inf\u003e).",
+        "original": true
+      }
+    ],
+    "channel": {
+      "cristinTidsskriftNr": 2588,
+      "title": "Coastal Engineering",
+      "issn": "0378-3839",
+      "eissn": "1872-7379",
+      "isbns": [],
+      "volume": "170"
+    }
+  },
+  {
+    "pubId": 61021442,
+    "category": "ARTICLE",
+    "categoryName": "Vitenskapelig artikkel",
+    "registered": "Oct 30, 2021",
+    "doi": "10.1115/OMAE2021-62697",
+    "sourceName": "Scopus",
+    "sourceCode": "SCOPUS",
+    "externalId": "2-s2.0-85114983147",
+    "yearPublished": 2021,
+    "authors": [
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 1,
+        "surname": "Lei",
+        "firstname": "Guowen",
+        "authorName": "Lei G.",
+        "institutions": [
+          {
+            "unitName": "Department of Geoscience and Petroleum;Norwegian University of Science and Technology",
+            "countryCode": "NO",
+            "institutionName": "Norwegian University of Science and Technology",
+            "acronym": "NTNU",
+            "cristinInstitutionNr": 194,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 2,
+        "surname": "Stanko",
+        "firstname": "Milan",
+        "authorName": "Stanko M.",
+        "institutions": [
+          {
+            "unitName": "Department of Geoscience and Petroleum;Norwegian University of Science and Technology",
+            "countryCode": "NO",
+            "institutionName": "Norwegian University of Science and Technology",
+            "acronym": "NTNU",
+            "cristinInstitutionNr": 194,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 3,
+        "surname": "Silva",
+        "firstname": "Thiago Lima",
+        "authorName": "Silva T.L.",
+        "institutions": [
+          {
+            "unitName": "Department of Geoscience and Petroleum;Norwegian University of Science and Technology",
+            "countryCode": "NO",
+            "institutionName": "Norwegian University of Science and Technology",
+            "acronym": "NTNU",
+            "cristinInstitutionNr": 194,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 4,
+        "surname": "Widerøe",
+        "firstname": "Tom",
+        "authorName": "Wideroe T.",
+        "institutions": [
+          {
+            "unitName": "Lundin Energy Norway",
+            "countryCode": "NO",
+            "institutionName": "Lundin Energy Norway",
+            "cristinInstitutionNr": 6248,
+            "isCristinInstitution": false
+          }
+        ]
+      },
+      {
+        "cristinId": 18799,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 5,
+        "surname": "Skogvang",
+        "firstname": "Arnljot",
+        "authorName": "Skogvang A.",
+        "institutions": [
+          {
+            "unitName": "Lundin Energy Norway",
+            "countryCode": "NO",
+            "institutionName": "Lundin Energy Norway",
+            "cristinInstitutionNr": 6248,
+            "isCristinInstitution": false
+          }
+        ]
+      }
+    ],
+    "languages": [
+      {
+        "lang": "EN",
+        "langName": "Engelsk",
+        "title": "The use of mathematical programming to determine optimal production and drilling schedule in an offshore oil field, a case study from the Barents Sea",
+        "summary": "A field with two neighboring reservoirs was discovered in the Barents Sea in 2013 and 2014. After a successful extended well test of an appraisal well in 2018 and initial field planning tasks, a preliminary drilling and production schedule was proposed based on cross-domain collaboration and group work involving several disciplines. In this paper, mathematical programming is employed to model and optimize the economic value of the project in order to determine the best drilling and production schedule for the field. The optimization includes some of the technical constraints considered by the field development team while also considering uncertainties such as reservoir size, productivity of well, and cost. These have been systematically evaluated by using simulation-based optimization (sampling). The results were that the use of mathematical programming allows the field planner to evaluate several scenarios within a reasonable time frame, thereby enabling rapid changes in the decisions to respond to new information and risk considerations in a dynamic environment. This paper illustrates the benefits of utilizing mathematical programming in early field planning to optimize the drilling and production schedule.",
+        "original": true
+      }
+    ],
+    "channel": {
+      "cristinTidsskriftNr": 2588,
+      "title": "Coastal Engineering",
+      "issn": "0378-3839",
+      "eissn": "1872-7379",
+      "isbns": [],
+      "volume": "170"
+    }
+  },
+  {
+    "pubId": 61021122,
+    "category": "ARTICLE",
+    "categoryName": "Vitenskapelig artikkel",
+    "registered": "Oct 30, 2021",
+    "doi": "10.1016/j.coastaleng.2021.104002",
+    "sourceName": "Scopus",
+    "sourceCode": "SCOPUS",
+    "externalId": "2-s2.0-85114934135",
+    "yearPublished": 2021,
+    "authors": [
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 2,
+        "surname": "Dutta",
+        "firstname": "Debasish",
+        "authorName": "Dutta D.",
+        "institutions": [
+          {
+            "unitName": "Indian Institute of Technology Kharagpur",
+            "countryCode": "IN",
+            "institutionName": "Indian Institute of Technology Kharagpur",
+            "cristinInstitutionNr": 0,
+            "isCristinInstitution": false
+          }
+        ]
+      },
+      {
+        "cristinId": 29685,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 3,
+        "surname": "Bihs",
+        "firstname": "Hans",
+        "authorName": "Bihs H.",
+        "institutions": [
+          {
+            "unitName": "Norwegian University of Science and Technology",
+            "countryCode": "NO",
+            "institutionName": "Norwegian University of Science and Technology",
+            "acronym": "NTNU",
+            "cristinInstitutionNr": 194,
+            "isCristinInstitution": true
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 4,
+        "surname": "Afzal",
+        "firstname": "Mohammad Saud",
+        "authorName": "Afzal M.S.",
+        "institutions": [
+          {
+            "unitName": "Indian Institute of Technology Kharagpur",
+            "countryCode": "IN",
+            "institutionName": "Indian Institute of Technology Kharagpur",
+            "cristinInstitutionNr": 0,
+            "isCristinInstitution": false
+          }
+        ]
+      }
+    ],
+    "languages": [
+      {
+        "lang": "EN",
+        "langName": "Engelsk",
+        "title": "Publication that fails on import",
+        "summary": "Some description.",
         "original": true
       }
     ],

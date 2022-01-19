@@ -5,7 +5,6 @@ import ConfirmImportDialog from '../Dialogs/ConfirmImportDialog';
 import GenericConfirmDialog from '../Dialogs/GenericConfirmDialog';
 import { Context } from '../../Context';
 import ContributorModal from '../Contributors/ContributorModal';
-import ContributorErrorMessage from './ContributorErrorMessage';
 import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
 import clone from 'just-clone';
@@ -55,6 +54,7 @@ import {
 import { CRISTIN_REACT_APP_URL } from '../../utils/constants';
 import CancelIcon from '@material-ui/icons/Cancel';
 import LaunchIcon from '@material-ui/icons/Launch';
+import { Alert } from '@material-ui/lab';
 import { findLegalCategory } from '../../utils/categoryUtils';
 
 const StyledModal = styled(Modal)`
@@ -74,6 +74,11 @@ const StyledSnackBarButton: any = styled(Button)`
   && .MuiButton-label {
     color: white;
   }
+`;
+
+const StyledAlert = styled(Alert)`
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 `;
 
 const generateLanguageObjectFromCristinPublication = (publ: CristinPublication) => {
@@ -110,6 +115,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   //contributors-stuff
   const [isContributorsLoading, setIsContributorsLoading] = useState(false);
+  const [contributorErrors, setContributorErrors] = useState<string[]>([]);
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors] = useState(isDuplicate ? state.selectedPublication.authors : importPublication?.authors || []);
   const [loadContributorsError, setLoadContributorsError] = useState<Error | undefined>();
@@ -455,7 +461,14 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         </Button>
                       </StyledOpenContributorsButtonWrapper>
                       <StyledErrorMessageWrapper>
-                        {state.contributorErrors.length >= 1 && <ContributorErrorMessage />}
+                        {contributorErrors.length >= 1 && (
+                          <StyledAlert data-testid={`contributor-errors`} severity="error">
+                            Det er feil i bidragsyterlisten ved index:
+                            {contributorErrors.map((error, index) => (
+                              <li key={index}> {error} </li>
+                            ))}
+                          </StyledAlert>
+                        )}
                         {importPublicationError && (
                           <Typography color="error" data-testid="import-publication-errors">
                             {importPublicationError.message}
@@ -467,7 +480,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                     <ModalFooter>
                       <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline">
                         <Grid item>
-                          {state.contributorErrors?.length >= 1 && <div> Feil i bidragsyterlisten. </div>}
+                          {contributorErrors.length >= 1 && <div> Feil i bidragsyterlisten. </div>}
                           {isLoadingContributors && <div> Henter bidragsytere. </div>}
                         </Grid>
                         <Grid item>
@@ -485,7 +498,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                               disabled={
                                 !isValid ||
                                 !!importPublication?.cristin_id ||
-                                state.contributorErrors.length >= 1 ||
+                                contributorErrors.length >= 1 ||
                                 !state.contributorsLoaded
                               }
                               color="primary"
@@ -528,6 +541,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
               handleContributorModalClose={() => setIsContributorModalOpen(false)}
               importPublication={importPublication}
               isDuplicate={isDuplicate}
+              setContributorErrors={setContributorErrors}
             />
           )}
         </>

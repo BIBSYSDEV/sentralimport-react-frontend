@@ -3,7 +3,6 @@ import { Institution, InstitutionSelector } from './InstitutionTypes';
 
 export interface ContextType {
   allChecked: boolean;
-  contributorErrors: number[];
   contributors: null | any;
   contributorsLoaded: boolean;
   currentImportStatus: string;

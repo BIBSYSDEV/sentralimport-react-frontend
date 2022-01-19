@@ -30,7 +30,8 @@ context('import publication', () => {
   });
 
   it('handles errors when saving publication', () => {
-    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`#rowsPerPageSelector`).click().type('10{enter}{enter}');
+    cy.get(`[data-testid="import-table-row-${mockImportData[6].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="import-publication-button"]`).click();
     cy.get(`[data-testid="confirm-import-dialog-ok"]`).click();
