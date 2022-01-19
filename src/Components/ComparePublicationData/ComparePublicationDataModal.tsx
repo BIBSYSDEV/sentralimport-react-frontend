@@ -195,7 +195,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 ),
               language: selectedLang,
               journal: {
-                cristinTidsskriftNr: (await getJournalId(state.selectedPublication.journal)) || '',
+                cristinTidsskriftNr: await getJournalId(state.selectedPublication.journal),
                 title: state.selectedPublication.journal?.name || 'Ingen tidsskrift funnet',
               },
               category: {
@@ -306,21 +306,24 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'setFormErrors', payload: [] });
   }
 
-  async function getJournalId(journal: Journal) {
-    const issnObj = journal.international_standard_numbers?.find(
-      (standard_number: InternationalStandardNumber) =>
-        standard_number.type === InternationalStandardNumberTypes.PRINTED
-    );
-    if (issnObj?.value && issnObj.value !== '0') {
-      try {
-        setLoadJournalIdError(undefined);
-        const journalResponse = await getJournalsByQuery(issnObj.value, ChannelQueryMethod.issn);
-        return journalResponse.data.length > 0 && journalResponse.data[0].id;
-      } catch (error) {
-        handlePotentialExpiredSession(error);
-        setLoadJournalIdError(error as Error);
+  async function getJournalId(journal: Journal): Promise<string> {
+    if (journal) {
+      const issnObj = journal.international_standard_numbers?.find(
+        (standard_number: InternationalStandardNumber) =>
+          standard_number.type === InternationalStandardNumberTypes.PRINTED
+      );
+      if (issnObj?.value && issnObj.value !== '0') {
+        try {
+          setLoadJournalIdError(undefined);
+          const journalResponse = await getJournalsByQuery(issnObj.value, ChannelQueryMethod.issn);
+          if (journalResponse.data.length > 0) return journalResponse.data[0].id;
+        } catch (error) {
+          handlePotentialExpiredSession(error);
+          setLoadJournalIdError(error as Error);
+        }
       }
     }
+    return '';
   }
 
   const handleImportButtonClick = (values: CompareFormValuesType) => {

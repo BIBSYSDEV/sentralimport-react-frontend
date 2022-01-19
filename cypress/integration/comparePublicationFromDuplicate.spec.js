@@ -25,4 +25,16 @@ context('importFromDuplicate', () => {
     cy.get(`[data-testid="importdata-journal-title"]`).contains(mockImportData[0].channel.title);
     cy.get(`[data-testid="cristindata-journal-title"]`).contains(mockCristinPublications[0].journal.name);
   });
+
+  it('can open compare-modal from duplicate-cristin-post without journal-object', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+
+    cy.get(`[data-testid="search-panel-title-checkbox"]`).click();
+    cy.get(`[data-testid="search-panel-retry-search-button"]`).click();
+
+    cy.get(`[data-testid="duplication-result-radio-${mockCristinPublications[4].cristin_result_id}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.get(`[data-testid="compare-form-journal-error"]`).contains('Tidsskrift er et obligatorisk felt');
+    cy.get(`[data-testid="cristindata-id"]`).contains(mockCristinPublications[4].cristin_result_id);
+  });
 });

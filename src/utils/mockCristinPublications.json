@@ -414,21 +414,6 @@
     "year_published": "2010",
     "year_reported": "2010",
     "url": "https://api.cristin.no/v2/results/689770",
-    "journal": {
-      "cristin_journal_id": "502755",
-      "name": "Phenomenology & Practice",
-      "international_standard_numbers": [
-        {
-          "type": "printed",
-          "value": "1913-4711"
-        },
-        {
-          "type": "electronic",
-          "value": "1913-4711"
-        }
-      ],
-      "nvi_level": "1"
-    },
     "volume": "4",
     "issue": "1",
     "pages": {
