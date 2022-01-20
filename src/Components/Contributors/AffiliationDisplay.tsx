@@ -14,6 +14,10 @@ const StyledSuccessTypography = styled(Typography)`
   color: ${Colors.Text.GREEN};
 `;
 
+const StyledTypographyWithRightPadding = styled(Typography)`
+  padding-right: 1rem;
+`;
+
 export const StyledGridWithRightAlignContent = styled(Grid)`
   display: flex;
   justify-content: flex-end;
@@ -87,13 +91,16 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
           </Grid>
           {affiliation.countryCode && (
             <Grid item>
-              <Typography data-testid={`${dataTestid}-country-code`} display="inline" variant="caption">
+              <StyledTypographyWithRightPadding
+                data-testid={`${dataTestid}-country-code`}
+                display="inline"
+                variant="caption">
                 {affiliation.countryCode && 'Land: ' + affiliation.countryCode}
-              </Typography>
+              </StyledTypographyWithRightPadding>
             </Grid>
           )}
           {removeInstitutionByCristinNrOrName && (
-            <StyledGridWithRightAlignContent item xs={6}>
+            <StyledGridWithRightAlignContent item xs={4}>
               <Button
                 size="small"
                 onClick={() =>
