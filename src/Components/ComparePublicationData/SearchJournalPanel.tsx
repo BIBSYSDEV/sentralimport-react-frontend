@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { Autocomplete } from '@material-ui/lab';
 import { ChannelLight } from '../../types/PublicationTypes';
-import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
+import { getJournalsByQuery, ChannelQueryMethod } from '../../api/publicationApi';
 import { CompareFormJournalType, emptyJournal } from './CompareFormTypes';
 
 const StyledPanelWrapper = styled.div`
@@ -34,7 +34,7 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
       setIsLoadingJournals(true);
       setFetchJournalsError(undefined);
       query = query.replaceAll('&', ''); // backend returns some journals with '&' as '&amp';
-      const resultJournals: ChannelLight[] = (await getJournalsByQuery(query, QueryMethod.title)).data;
+      const resultJournals: ChannelLight[] = (await getJournalsByQuery(query, ChannelQueryMethod.title)).data;
       const convertedJournals: CompareFormJournalType[] = resultJournals.map((journal) => {
         return {
           cristinTidsskriftNr: journal.id,
@@ -57,6 +57,17 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
     }
   };
 
+  const generateOptionLabel = (journal: CompareFormJournalType) => {
+    let optionLabel = journal.title;
+    const details = [];
+    journal.issn && details.push(`ISSN: ${journal.issn}`);
+    journal.eissn && details.push(`e-ISSN: ${journal.eissn}`);
+    if (details.length > 0) {
+      optionLabel += ` (${details.join(', ')})`;
+    }
+    return optionLabel;
+  };
+
   return (
     <StyledPanelWrapper>
       <Autocomplete
@@ -77,11 +88,12 @@ const SearchJournalPanel: FC<SearchJournalPanelProps> = ({ handleChooseJournal }
           inputValue.length > 2 && searchJournals(inputValue); //todo: add debouce
           setInputValue(inputValue);
         }}
-        getOptionLabel={(option) => option.title}
+        getOptionLabel={(option) => generateOptionLabel(option)}
         getOptionSelected={() => true} //hack for å få bort warnings - funker læll 🙈
         renderInput={(params) => (
           <TextField
             {...params}
+            multiline
             data-testid="cristindata-journal-select-textfield"
             variant="outlined"
             InputProps={{

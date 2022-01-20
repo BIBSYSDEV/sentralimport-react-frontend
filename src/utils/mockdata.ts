@@ -378,6 +378,58 @@ export const mockImportPublication1 = {
   },
 };
 
+export const mockDoiForPublicationWithoutDoi = '10.1038/s41467-021-25510-wXXX'; // easiest way to get the one publication
+
+export const mockImportPublicationWithoutDoi = {
+  pubId: 591853,
+  category: 'ARTICLE',
+  categoryName: 'Vitenskapelig artikkel',
+  registered: 'Oct 29, 2021',
+  sourceName: 'Scopus',
+  sourceCode: 'SCOPUS',
+  externalId: '2-s2.0-85115431109',
+  yearPublished: 2021,
+  authors: [
+    {
+      cristinId: 0,
+      roleCode: 'FORFATTER',
+      sequenceNr: 1,
+      surname: 'Capriolo',
+      firstname: 'Manfredo',
+      authorName: 'Capriolo M.',
+      institutions: [
+        {
+          unitName: 'Department of Geosciences;University of Padova',
+          countryCode: 'IT',
+          institutionName: 'University of Padova',
+          cristinInstitutionNr: 12300052,
+          isCristinInstitution: false,
+        },
+      ],
+    },
+  ],
+  languages: [
+    {
+      lang: 'EN',
+      langName: 'Engelsk',
+      title:
+        'NODOI-Massive methane fluxing from magma–sediment interaction in the end-Triassic Central Atlantic Magmatic Province',
+      summary:
+        'Exceptional magmatic events coincided with the largest mass extinctions throughout Earth’s history. Extensive degassing from organic-rich sediments intruded by magmas is a possible driver of the catastrophic environmental changes, which triggered the biotic crises. One of Earth’s largest magmatic events is represented by the Central Atlantic Magmatic Province, which was synchronous with the end-Triassic mass extinction. Here, we show direct evidence for the presence in basaltic magmas of methane, generated or remobilized from the host sedimentary sequence during the emplacement of this Large Igneous Province. Abundant methane-rich fluid inclusions were entrapped within quartz at the end of magmatic crystallization in voluminous (about 1.0 × 10\u003csup\u003e6\u003c/sup\u003e km\u003csup\u003e3\u003c/sup\u003e) intrusions in Brazilian Amazonia, indicating a massive (about 7.2 × 10\u003csup\u003e3\u003c/sup\u003e Gt) fluxing of methane. These micrometre-sized imperfections in quartz crystals attest an extensive release of methane from magma–sediment interaction, which likely contributed to the global climate changes responsible for the end-Triassic mass extinction.',
+      original: true,
+    },
+  ],
+  channel: {
+    cristinTidsskriftNr: 1185296,
+    title: 'Nature Communications',
+    issn: '2041-1723',
+    eissn: '2041-1723',
+    isbns: [],
+    volume: '12',
+    issue: '1',
+  },
+};
+
 export const mockPublicationCount = { totalCount: 100, importedCount: 1, notImportedCount: 2, notRelevantCount: 3 };
 
 export const mockAllCategories = [
@@ -503,26 +555,41 @@ export const mockCristinIdForbiddenPerson = '1235412375';
 export const mockDoiForEmptyCristinSearch = '123456789';
 export const mockCristinPersonNotFound = '18799';
 export const mockTitleForEmptyCristinSearch = 'this_is_a_mocked_title';
+export const mockSearchTitleForCristinPubWithDoi = 'search_for_cristin_with_doi';
 
 export const mockPersonWithoutActiveAffiliation = {
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Berg',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: cristinIDWithoutActiveAffiliation,
 };
 
 export const mockPersonWithoutAffiliationAttribute = {
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Børresen',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: mockCristinIDWithoutAffiliationAttribute,
 };
 
 export const mockForbiddenPerson = {
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'ForbiddenMan',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
   cristin_person_id: mockCristinIdForbiddenPerson,
+};
+
+export const mockPerson5 = {
+  first_name: 'Arne',
+  surname: 'Gunnarsen',
+  url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
+  cristin_person_id: 435835729,
+};
+
+export const mockPerson6 = {
+  first_name: 'Arne',
+  surname: 'Ottervik',
+  url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
+  cristin_person_id: 34792875860,
 };
 
 export const mockPersonDetailed = {
@@ -566,15 +633,49 @@ export const mockPersonDetailed = {
 export const mockPersonDetailedWithoutAffiliationAttribute = {
   cristin_person_id: mockCristinIDWithoutAffiliationAttribute,
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Pedersen',
   identified_cristin_person: true,
   cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
+};
+
+export const mockPersonDetailed5 = {
+  cristin_person_id: mockPerson5.cristin_person_id,
+  first_name: 'Arne',
+  surname: 'Gunnarsen',
+  identified_cristin_person: true,
+  cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
+};
+
+export const mockPersonDetailed6 = {
+  cristin_person_id: mockPerson6.cristin_person_id,
+  first_name: 'Arne',
+  surname: 'Ottervik',
+  identified_cristin_person: true,
+  cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
+};
+
+export const mockPersonDetailedDuplicate = {
+  cristin_person_id: 666666,
+  first_name: 'Duplicate',
+  surname: 'CristinContributor',
+  identified_cristin_person: true,
+  cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=666666',
+  affiliations: [
+    {
+      institution: {
+        cristin_institution_id: '194',
+        url: 'https://api.cristin-test.uio.no/v2/institutions/194',
+      },
+
+      active: true,
+    },
+  ],
 };
 
 export const mockPersonDetailedWithoutActiveAffiliations = {
   cristin_person_id: cristinIDWithoutActiveAffiliation,
   first_name: 'Arne',
-  surname: 'Benoni',
+  surname: 'Osen',
   identified_cristin_person: true,
   cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
   affiliations: [
@@ -856,3 +957,92 @@ export const mockInstitutionSearchByName = [
     url: 'https://api.cristin-test.uio.no/v2/institutions/82007415',
   },
 ];
+
+export const mockCristinPublicationWithDoi = {
+  category: {
+    code: 'ARTICLE',
+    name: {
+      nb: 'Vitenskapelig artikkel',
+    },
+  },
+  channel: {
+    title: 'Maritime Policy & Management',
+  },
+  contributors: {
+    url: 'https://api.cristin.no/v2/results/1920336/contributors',
+    count: 4,
+    preview: [
+      {
+        first_name: 'Tore',
+        surname: 'Relling',
+      },
+      {
+        first_name: 'Margareta',
+        surname: 'Lützhöft',
+      },
+      {
+        first_name: 'Runar',
+        surname: 'Ostnes',
+      },
+      {
+        first_name: 'Hans Petter',
+        surname: 'Hildre',
+      },
+    ],
+  },
+  cristin_result_id: '1920336',
+  created: {
+    date: '2021-07-05T14:47:15.000Z',
+  },
+  import_sources: [
+    {
+      source_name: 'SCOPUS',
+      source_reference_id: '2-s2.0-85107715929',
+    },
+  ],
+  last_modified: {
+    date: '2021-08-03T13:57:17.000Z',
+  },
+  links: [
+    {
+      url_type: 'ARKIV',
+      url: 'https://hdl.handle.net/11250/2786489',
+    },
+    {
+      url_type: 'DOI',
+      url: 'https://doi.org/10.1080/03088839.2021.1937739',
+    },
+  ],
+  open_access: 'green',
+  original_language: 'en',
+  title: {
+    en: 'The contribution of Vessel Traffic Services to safe coexistence between automated and conventional vessels',
+  },
+  year_published: '2021',
+  year_reported: '2021',
+  url: 'https://api.cristin.no/v2/results/1920336',
+  journal: {
+    cristin_journal_id: '32339',
+    name: 'Maritime Policy & Management',
+    publisher: {
+      cristin_publisher_id: '313',
+      name: 'Taylor & Francis',
+      url: 'http://www.tandf.co.uk/books/',
+      nvi_level: '1',
+    },
+    international_standard_numbers: [
+      {
+        type: 'printed',
+        value: '0308-8839',
+      },
+      {
+        type: 'electronic',
+        value: '1464-5254',
+      },
+    ],
+    nvi_level: '1',
+  },
+  pages: {
+    count: '20',
+  },
+};

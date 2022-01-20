@@ -1,27 +1,30 @@
 import React, { FC } from 'react';
-import { Button, Card, CardContent, Grid, List, ListItem, ListItemText, Typography } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
+import { Button, Grid, List, ListItem, ListItemText, Typography } from '@material-ui/core';
 import styled from 'styled-components';
 import { SimpleUnitResponse } from '../../types/InstitutionTypes';
 import { AddAffiliationError } from './ContributorSearchPanel';
 import { Colors } from '../../assets/styles/StyleConstants';
 
-const StyledAffiliationsWrapper = styled(Card)<{ backgroundcolor: string }>`
+const StyledAffiliationsWrapper = styled.div<{ backgroundcolor: string }>`
   margin-bottom: 1rem;
-  &&.MuiPaper-outlined {
-    border: none;
-    background-color: ${(props) => props.backgroundcolor};
-  }
+  background-color: ${(props) => props.backgroundcolor};
 `;
 
 const StyledSuccessTypography = styled(Typography)`
   color: ${Colors.Text.GREEN};
 `;
 
-const StyledCardContent = styled(CardContent)`
-  &&.MuiCardContent-root:last-child {
-    padding-bottom: 0.3rem;
-  }
+const StyledTypographyWithRightPadding = styled(Typography)`
+  padding-right: 1rem;
+`;
+
+export const StyledGridWithRightAlignContent = styled(Grid)`
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const StyledContent = styled.div`
+  padding: 1rem 0 0.3rem 1rem;
 `;
 
 const StyledListItemText = styled(ListItemText)`
@@ -30,9 +33,22 @@ const StyledListItemText = styled(ListItemText)`
   }
 `;
 
-const StyledRemoveUnitButton = styled(Button)`
-  &.MuiButton-root {
-    margin-right: 2.3rem;
+const StyledListItem: any = styled(ListItem)`
+  &&.MuiButton-root {
+    margin-right: 0;
+  }
+  &&.MuiListItem-dense {
+    padding-top: 0.15rem;
+    padding-bottom: 0.15rem;
+  }
+  &&.MuiListItem-gutters {
+    padding-right: 0;
+  }
+`;
+
+const StyledList = styled(List)`
+  &.MuiList-root {
+    padding-top: 0.15rem;
   }
 `;
 
@@ -65,23 +81,26 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
   removeInstitutionByCristinNrOrName,
 }) => {
   return (
-    <StyledAffiliationsWrapper backgroundcolor={backgroundcolor} variant="outlined" data-testid={dataTestid}>
-      <StyledCardContent>
-        <Grid container justifyContent="space-between" spacing={2}>
-          <Grid item xs={6}>
+    <StyledAffiliationsWrapper backgroundcolor={backgroundcolor} data-testid={dataTestid}>
+      <StyledContent>
+        <Grid container spacing={1} alignItems="baseline">
+          <Grid item xs>
             <Typography data-testid={`${dataTestid}-institution-name`} display="inline" variant="subtitle1">
               {affiliation.institutionName}
             </Typography>
           </Grid>
           {affiliation.countryCode && (
             <Grid item>
-              <Typography data-testid={`${dataTestid}-country-code`} display="inline" variant="caption">
+              <StyledTypographyWithRightPadding
+                data-testid={`${dataTestid}-country-code`}
+                display="inline"
+                variant="caption">
                 {affiliation.countryCode && 'Land: ' + affiliation.countryCode}
-              </Typography>
+              </StyledTypographyWithRightPadding>
             </Grid>
           )}
           {removeInstitutionByCristinNrOrName && (
-            <Grid item>
+            <StyledGridWithRightAlignContent item xs={4}>
               <Button
                 size="small"
                 onClick={() =>
@@ -91,14 +110,13 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
                   )
                 }
                 data-testid={`${dataTestid}-delete-institution`}
-                startIcon={<DeleteIcon />}
                 color="secondary">
                 Fjern tilknyttning
               </Button>
-            </Grid>
+            </StyledGridWithRightAlignContent>
           )}
           {handleAddAffiliationButtonClick && (
-            <Grid item>
+            <StyledGridWithRightAlignContent item xs={4}>
               <Button
                 data-testid={`add-only-affiliation-button-${dataTestid}`}
                 onClick={() => handleAddAffiliationButtonClick()}
@@ -121,39 +139,38 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
                     La til institusjon
                   </StyledSuccessTypography>
                 )}
-            </Grid>
+            </StyledGridWithRightAlignContent>
           )}
         </Grid>
         <Grid item xs={12}>
-          <List>
+          <StyledList disablePadding>
             {affiliation.units.map((unit, unitIndex) => (
-              <ListItem key={`{$unitIndex}-${unitIndex}`} dense={true}>
-                <Grid justifyContent="space-between" container spacing={2}>
-                  <Grid item>
+              <StyledListItem key={`{$unitIndex}-${unitIndex}`} dense>
+                <Grid justifyContent="space-between" container spacing={0}>
+                  <Grid item xs>
                     <StyledListItemText
                       data-testid={`${dataTestid}-list-item-text-unit-${unit.cristin_unit_id ?? unitIndex}`}
                       primary={unit.unit_name.en ?? unit.unit_name.nb}
                     />
                   </Grid>
                   {handleDeleteUnitClick && (
-                    <Grid item>
-                      <StyledRemoveUnitButton
+                    <StyledGridWithRightAlignContent item>
+                      <Button
                         onClick={() => handleDeleteUnitClick(unit)}
                         size="small"
                         data-testid={`${dataTestid}-delete-unit-${unitIndex}`}
-                        startIcon={<DeleteIcon />}
                         color="secondary">
                         Fjern enhet
-                      </StyledRemoveUnitButton>
-                    </Grid>
+                      </Button>
+                    </StyledGridWithRightAlignContent>
                   )}
                 </Grid>
-              </ListItem>
+              </StyledListItem>
             ))}
-          </List>
+          </StyledList>
         </Grid>
         {children}
-      </StyledCardContent>
+      </StyledContent>
     </StyledAffiliationsWrapper>
   );
 };

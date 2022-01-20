@@ -70,15 +70,14 @@ export default function Pagination(props) {
           justifyContent="flex-end"
           alignItems="baseline">
           <Grid item>
-            <Typography style={{ marginRight: '0.5em' }} display="inline" varian="body1">
-              Viser publikasjon:
-            </Typography>
-            <Typography display="inline" variant="body2">
+            <Typography display="inline">Viser publikasjon: </Typography>
+            <Typography display="inline">
               {state.currentPageNr * state.currentPerPage.value + 1} -{' '}
               {(state.currentPageNr + 1) * state.currentPerPage.value < state.totalCount
                 ? (state.currentPageNr + 1) * state.currentPerPage.value
                 : state.totalCount}
             </Typography>
+            <Typography display="inline"> av {state.totalCount}</Typography>
           </Grid>
           <Grid item>
             <Grid container alignItems="baseline" spacing={1}>
@@ -87,6 +86,7 @@ export default function Pagination(props) {
               </Grid>
               <Grid item>
                 <Select
+                  id="rowsPerPageSelector"
                   name="rowsPerPageSelect"
                   options={rowsPerPage}
                   className="basic-multi-select"

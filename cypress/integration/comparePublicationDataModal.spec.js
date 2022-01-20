@@ -1,5 +1,9 @@
 import mockImportData from '../../src/utils/mockImportData.json';
-import { mockAllJournals } from '../../src/utils/mockdata';
+import {
+  mockAllJournals,
+  mockDoiForPublicationWithoutDoi,
+  mockImportPublicationWithoutDoi,
+} from '../../src/utils/mockdata';
 
 context('importModal', () => {
   beforeEach(() => {
@@ -65,6 +69,16 @@ context('importModal', () => {
     cy.get(`[data-testid="import-publication-cancel-button"]`).should('exist').should('not.be.disabled');
   });
 
+  it('shows error if contributors-errors', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+
+    cy.get(`[data-testid="import-publication-button"]`).should('be.disabled');
+    cy.get(`[data-testid="contributor-errors"]`).contains('Det er feil i bidragsyterlisten');
+    cy.get(`[data-testid="contributor-errors"]`).contains('1 (Mangler fornavn)');
+    cy.get(`[data-testid="contributor-errors"]`).contains('4, 5, 6 (Duplisert CristinId)');
+  });
+
   it('has language-buttons, that shifts publication title view', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
@@ -87,7 +101,7 @@ context('importModal', () => {
     cy.get(`[data-testid="import-publication-button"]`).should('exist').should('be.disabled');
     cy.get(`[data-testid="compare-form-journal-error"]`).contains('Tidsskrift er et obligatorisk felt');
     cy.get(`[data-testid="compare-form-error"]`).contains('Det er feil i skjema');
-    cy.get(`[data-testid="compare-form-journal-action-action-button"]`).should('be.disabled');
+    cy.get(`[data-testid="compare-form-journal-action-button"]`).should('be.disabled');
 
     //legg til tidskrift
     cy.get(`#search-journal-header`).click();
@@ -96,7 +110,7 @@ context('importModal', () => {
     cy.get(`[data-testid="submit-search-journal-button"]`).click();
     cy.get(`[data-testid="compare-form-error"]`).should('not.exist');
     cy.get(`[data-testid="import-publication-button"]`).should('exist').should('not.be.disabled');
-    cy.get(`[data-testid="compare-form-journal-action-action-button"]`).should('be.disabled');
+    cy.get(`[data-testid="compare-form-journal-action-button"]`).should('be.disabled');
     cy.get(`[data-testid="compare-form-pages-action-equals-icon"]`).should('exist');
 
     //årstall
@@ -114,14 +128,14 @@ context('importModal', () => {
     cy.get(`#Cristin-year-helper-text`).contains('Årstall må være større enn');
     cy.get(`[data-testid="cristindata-year-textfield-input"]`).clear().type('20.1');
     cy.get(`#Cristin-year-helper-text`).contains('Årstall må være heltall');
-    cy.get(`[data-testid="compare-form-year-action-action-button"]`).should('not.be.disabled');
+    cy.get(`[data-testid="compare-form-year-action-button"]`).should('not.be.disabled');
 
     //tittel
     cy.get(`[data-testid="compare-form-title-action-equals-icon"]`).should('exist');
     cy.get(`[data-testid="cristindata-title-textfield-input"]`).clear();
     cy.get(`[data-testid="import-publication-button"]`).focus().should('exist').should('be.disabled');
     cy.get(`#Cristin-title-helper-text`).contains('Tittel er et obligatorisk felt');
-    cy.get(`[data-testid="compare-form-title-action-action-button"]`).should('not.be.disabled');
+    cy.get(`[data-testid="compare-form-title-action-button"]`).should('not.be.disabled');
 
     //doi
     cy.get(`[data-testid="compare-form-doi-action-equals-icon"]`).should('exist');
@@ -129,11 +143,11 @@ context('importModal', () => {
     cy.get(`[data-testid="import-publication-button"]`).focus().should('exist').should('be.disabled');
     cy.get(`[data-testid="cristindata-doi-textfield-input"]`).clear().type('ABC');
     cy.get(`#Cristin-doi-helper-text`).contains('Doi har galt format');
-    cy.get(`[data-testid="compare-form-doi-action-action-button"]`).should('exist').should('be.disabled');
+    cy.get(`[data-testid="compare-form-doi-action-button"]`).should('exist').should('be.disabled');
 
     //pages
     cy.get(`[data-testid="cristindata-pagesto-textfield-input"]`).should('have.value', '');
-    cy.get(`[data-testid="compare-form-pages-action-action-button"]`).should('not.exist');
+    cy.get(`[data-testid="compare-form-pages-action-button"]`).should('not.exist');
     cy.get(`[data-testid="compare-form-pages-action-equals-icon"]`).should('exist');
   });
 
@@ -207,10 +221,43 @@ context('importModal', () => {
     cy.get(`[data-testid="cristindata-journal-title"]`).contains(mockAllJournals[3].title); //"Final Case report"
   });
 
-  it('can open an publication without doi', () => {
-    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+  it('can open a publication without doi', () => {
+    cy.get('[data-testid="doi-filter"]').type(mockDoiForPublicationWithoutDoi);
+    cy.get(`[data-testid="import-table-row-${mockImportPublicationWithoutDoi.pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="cristindata-doi-textfield"] input`).should('have.value', '');
     cy.get(`[data-testid="import-publication-button"]`).should('exist').should('not.be.disabled');
+  });
+
+  it('can select other categories', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+
+    cy.get(`[data-testid="import-category-error"]`).should('not.exist');
+    cy.get(`[data-testid="compare-form-doi-action-equals-icon"]`).should('exist');
+
+    cy.get(`[data-testid="cristindata-category-field-error"]`).should('not.exist');
+    cy.get(`#cristindata-category`).click();
+    cy.get(`#cristindata-category-option-4`).click();
+    cy.get(`[data-testid="compare-form-category-action-button"]`).should('exist').should('be.enabled');
+    cy.get(`[data-testid="compare-form-category-action-equals-icon"]`).should('not.exist');
+    cy.get(`[data-testid="import-category-error"]`).should('not.exist');
+  });
+
+  it('can validate category', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+
+    cy.get(`[data-testid="import-category-error"]`).should('exist');
+    cy.get(`[data-testid="cristindata-category-field-error"]`).should('exist');
+    cy.get(`[data-testid="compare-form-category-action-button"]`).should('exist').should('be.disabled');
+
+    cy.get(`#cristindata-category`).click();
+    cy.get(`#cristindata-category-option-4`).click();
+    cy.get(`[data-testid="cristindata-category-field-error"]`).should('not.exist');
+
+    cy.get(`#cristindata-category`).click();
+    cy.get(`#cristindata-category-option-0`).click();
+    cy.get(`[data-testid="cristindata-category-field-error"]`).should('exist');
   });
 });

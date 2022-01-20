@@ -4,9 +4,7 @@ import { Button, Grid, Typography } from '@material-ui/core';
 import ConfirmImportDialog from '../Dialogs/ConfirmImportDialog';
 import GenericConfirmDialog from '../Dialogs/GenericConfirmDialog';
 import { Context } from '../../Context';
-import '../../assets/styles/buttons.scss';
 import ContributorModal from '../Contributors/ContributorModal';
-import ContributorErrorMessage from './ContributorErrorMessage';
 import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
 import clone from 'just-clone';
@@ -21,7 +19,7 @@ import {
 import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
-import { getJournalsByQuery, QueryMethod } from '../../api/publicationApi';
+import { ChannelQueryMethod, getJournalsByQuery } from '../../api/publicationApi';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -53,12 +51,18 @@ import {
   handleCreatePublication,
   handleUpdatePublication,
 } from './ImportPublicationHelper';
+import { CRISTIN_REACT_APP_URL } from '../../utils/constants';
+import CancelIcon from '@material-ui/icons/Cancel';
+import LaunchIcon from '@material-ui/icons/Launch';
+import { Alert } from '@material-ui/lab';
+import { findLegalCategory } from '../../utils/categoryUtils';
 
 const StyledModal = styled(Modal)`
   width: 96%;
+  min-width: 50rem;
   max-width: 80rem;
-  margin: 1rem auto;
   min-height: 100%;
+  margin: 1rem auto;
   padding: 0;
 `;
 
@@ -66,9 +70,20 @@ const StyledDisabledTypography = styled(Typography)`
   color: #555555;
 `;
 
+const StyledSnackBarButton: any = styled(Button)`
+  && .MuiButton-label {
+    color: white;
+  }
+`;
+
+const StyledAlert = styled(Alert)`
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+`;
+
 const generateLanguageObjectFromCristinPublication = (publ: CristinPublication) => {
   return {
-    title: publ.title[publ.original_language],
+    title: publ.title ? publ.title[publ.original_language] : '',
     lang: publ.original_language?.toUpperCase(),
     original: true,
   };
@@ -91,7 +106,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   handleDuplicateCheckModalClose,
   isDuplicate,
 }) => {
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Context);
   const [isConfirmImportDialogOpen, setIsConfirmImportDialogOpen] = useState(false);
   const [isConfirmAbortDialogOpen, setIsConfirmAbortDialogOpen] = useState(false);
@@ -100,6 +115,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   //contributors-stuff
   const [isContributorsLoading, setIsContributorsLoading] = useState(false);
+  const [contributorErrors, setContributorErrors] = useState<string[]>([]);
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors] = useState(isDuplicate ? state.selectedPublication.authors : importPublication?.authors || []);
   const [loadContributorsError, setLoadContributorsError] = useState<Error | undefined>();
@@ -119,7 +135,9 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [selectedLang, setSelectedLang] = useState<Language>(
     isDuplicate
       ? {
-          title: state.selectedPublication.title[state.selectedPublication.original_language],
+          title: state.selectedPublication.title
+            ? state.selectedPublication.title[state.selectedPublication.original_language]
+            : '',
           lang: state.selectedPublication.original_language?.toUpperCase(),
           original: true,
         }
@@ -177,7 +195,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 ),
               language: selectedLang,
               journal: {
-                cristinTidsskriftNr: (await getJournalId(state.selectedPublication.journal)) || '',
+                cristinTidsskriftNr: await getJournalId(state.selectedPublication.journal),
                 title: state.selectedPublication.journal?.name || 'Ingen tidsskrift funnet',
               },
               category: {
@@ -198,10 +216,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 cristinTidsskriftNr: importPublication?.channel?.cristinTidsskriftNr?.toString() ?? '',
                 title: importPublication?.channel?.title ?? 'Ingen tidsskrift funnet',
               },
-              category: {
-                value: importPublication.category,
-                label: importPublication.categoryName,
-              },
+              category: findLegalCategory(importPublication),
               volume: importPublication.channel?.volume ?? '',
               issue: importPublication.channel?.issue ?? '',
               pageFrom: importPublication.channel?.pageFrom ?? '',
@@ -235,16 +250,34 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     }
   }
 
+  const successSnackBarActions = (key: any, resultId: string) => (
+    <>
+      <StyledSnackBarButton
+        startIcon={<LaunchIcon />}
+        rel="noopener noreferrer"
+        target="_blank"
+        href={`${CRISTIN_REACT_APP_URL}/results/show.jsf?id=${resultId}`}>
+        Vis publikasjon
+      </StyledSnackBarButton>
+      <StyledSnackBarButton
+        startIcon={<CancelIcon />}
+        onClick={() => {
+          closeSnackbar(key);
+        }}>
+        Lukk
+      </StyledSnackBarButton>
+    </>
+  );
+
   function handlePublicationImported(result: any) {
     setIsConfirmImportDialogOpen(false);
 
     if (result.status === 200) {
-      enqueueSnackbar(
-        'Importerte publikasjon (Cristin-id: ' + result.result.id + ' og tittel: ' + result.result.title + ')',
-        {
-          variant: 'success',
-        }
-      );
+      enqueueSnackbar('Publikasjonen ble importert.', {
+        variant: 'success',
+        persist: true,
+        action: (key: any) => successSnackBarActions(key, result.result.id),
+      });
       handleComparePublicationDataModalClose();
       handleDuplicateCheckModalClose();
       //TODO! NB! this should be removed as soon as contributors does not use localstorage anymore
@@ -273,21 +306,24 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     dispatch({ type: 'setFormErrors', payload: [] });
   }
 
-  async function getJournalId(journal: Journal) {
-    const issnObj = journal.international_standard_numbers?.find(
-      (standard_number: InternationalStandardNumber) =>
-        standard_number.type === InternationalStandardNumberTypes.PRINTED
-    );
-    if (issnObj?.value && issnObj.value !== '0') {
-      try {
-        setLoadJournalIdError(undefined);
-        const journalResponse = await getJournalsByQuery(issnObj.value, QueryMethod.issn);
-        return journalResponse.data.length > 0 && journalResponse.data[0].id;
-      } catch (error) {
-        handlePotentialExpiredSession(error);
-        setLoadJournalIdError(error as Error);
+  async function getJournalId(journal: Journal): Promise<string> {
+    if (journal) {
+      const issnObj = journal.international_standard_numbers?.find(
+        (standard_number: InternationalStandardNumber) =>
+          standard_number.type === InternationalStandardNumberTypes.PRINTED
+      );
+      if (issnObj?.value && issnObj.value !== '0') {
+        try {
+          setLoadJournalIdError(undefined);
+          const journalResponse = await getJournalsByQuery(issnObj.value, ChannelQueryMethod.issn);
+          if (journalResponse.data.length > 0) return journalResponse.data[0].id;
+        } catch (error) {
+          handlePotentialExpiredSession(error);
+          setLoadJournalIdError(error as Error);
+        }
       }
     }
+    return '';
   }
 
   const handleImportButtonClick = (values: CompareFormValuesType) => {
@@ -315,6 +351,9 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   const formValidationSchema = Yup.object().shape({
     title: Yup.string().required('Tittel er et obligatorisk felt'),
+    category: Yup.object().shape({
+      value: Yup.string().required(),
+    }),
     year: Yup.number()
       .typeError('Årstall må være et nummer')
       .required('Årstall er et obligatorisk felt')
@@ -427,7 +466,14 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         </Button>
                       </StyledOpenContributorsButtonWrapper>
                       <StyledErrorMessageWrapper>
-                        {state.contributorErrors.length >= 1 && <ContributorErrorMessage />}
+                        {contributorErrors.length >= 1 && (
+                          <StyledAlert data-testid={`contributor-errors`} severity="error">
+                            Det er feil i bidragsyterlisten ved index:
+                            {contributorErrors.map((error, index) => (
+                              <li key={index}> {error} </li>
+                            ))}
+                          </StyledAlert>
+                        )}
                         {importPublicationError && (
                           <Typography color="error" data-testid="import-publication-errors">
                             {importPublicationError.message}
@@ -439,7 +485,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                     <ModalFooter>
                       <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline">
                         <Grid item>
-                          {state.contributorErrors?.length >= 1 && <div> Feil i bidragsyterlisten. </div>}
+                          {contributorErrors.length >= 1 && <div> Feil i bidragsyterlisten. </div>}
                           {isLoadingContributors && <div> Henter bidragsytere. </div>}
                         </Grid>
                         <Grid item>
@@ -457,7 +503,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                               disabled={
                                 !isValid ||
                                 !!importPublication?.cristin_id ||
-                                state.contributorErrors.length >= 1 ||
+                                contributorErrors.length >= 1 ||
                                 !state.contributorsLoaded
                               }
                               color="primary"
@@ -500,6 +546,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
               handleContributorModalClose={() => setIsContributorModalOpen(false)}
               importPublication={importPublication}
               isDuplicate={isDuplicate}
+              setContributorErrors={setContributorErrors}
             />
           )}
         </>

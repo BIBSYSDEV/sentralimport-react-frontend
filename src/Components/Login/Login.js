@@ -1,7 +1,7 @@
 import React from 'react';
 import queryString from 'query-string';
 import jwt from 'jsonwebtoken';
-import '../../assets/styles/common.scss';
+import './style.css';
 import loginIcon from '../../assets/icons/login.png';
 import logo from '../../assets/icons/Hovedlogo-Liten-Farge.svg';
 import { Button } from 'reactstrap';
@@ -48,24 +48,6 @@ export default function Login(props) {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   }
 
-  /* if gatekeeper is set to https://47e.httpjs.net/ you can view headers etc there */
-  // async function testApi() {
-  //     if (localStorage.getItem("access_token") != null) {
-  //         let config = {
-  //             headers: {
-  //                 Authorization: "Bearer " + localStorage.getItem("access_token")
-  //             }
-  //         };
-  //         let test = await axios.get(
-  //             "https://crisrest-utv.dataporten-api.no",
-  //             config
-  //         );
-  //         console.log(test);
-  //     } else {
-  //         console.log("access-token no good");
-  //     }
-  // }
-
   function validate() {
     let jsonToken = jwt.decode(search.id_token);
 
@@ -84,7 +66,7 @@ export default function Login(props) {
     }
   }
 
-  if (search.access_token != null) validate();
+  if (search.access_token) validate();
 
   return (
     <div className={`login`}>
@@ -93,9 +75,6 @@ export default function Login(props) {
         <div>
           <p>Du er allerede logget inn. Ønsker du å logge ut?</p>
           <Button onClick={handleLogout}>Logg ut</Button>
-          {/*<br />*/}
-          {/*<br />*/}
-          {/*<Button onClick={testApi}>Test api</Button>*/}
         </div>
       ) : (
         <Grid container justifyContent="center" direction="row" className={'login-grid'}>

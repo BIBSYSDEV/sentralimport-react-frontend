@@ -1,0 +1,15 @@
+[
+  { "value": "ARTICLE", "label": "Vitenskapelig artikkel" },
+  { "value": "ACADEMICREVIEW", "label": "Vitenskapelig oversiktsartikkel/review" },
+  { "value": "POPULARARTICLE", "label": "Populærvitenskapelig artikkel" },
+  { "value": "ABSTRACT", "label": "Sammendrag/abstract" },
+  { "value": "ARTICLEFEATURE", "label": "Kronikk" },
+  { "value": "EDITORIAL", "label": "Leder" },
+  { "value": "BOOKREVIEW", "label": "Anmeldelse" },
+  { "value": "SHORTCOMM", "label": "Short communication" },
+  { "value": "READEROPINION", "label": "Leserinnlegg" },
+  { "value": "LETTEREDITOR", "label": "Brev til redaktøren" },
+  { "value": "ERRATA", "label": "Errata" },
+  { "value": "INTERVIEW", "label": "Intervju tidsskrift" },
+  { "value": "ARTICLEJOURNAL", "label": "Fagartikkel" }
+]

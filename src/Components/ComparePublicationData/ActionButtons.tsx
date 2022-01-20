@@ -5,7 +5,7 @@ import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
 import { IconButton } from '@material-ui/core';
 
 const StyledLineAction = styled.div`
-  min-width: 10rem;
+  min-width: 5rem;
   width: 5%;
   display: flex;
   justify-items: center;
@@ -40,7 +40,7 @@ const ActionButtons: FC<ComparePublicationDataModalProps> = ({
       ) : (
         <div>
           <IconButton
-            data-testid={`${dataTestid}-action-button`}
+            data-testid={`${dataTestid}-button`}
             color="secondary"
             onClick={copyCommand}
             disabled={isCopyBottonDisabled}>

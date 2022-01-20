@@ -3,20 +3,18 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import { Context } from '../../Context';
 import DuplicateCheckModal from '../DuplicateCheck/DuplicateCheckModal';
-import Pagination from '../Pagination/Pagination';
-import '../../assets/styles/Results.scss';
-import '../../assets/styles/Imports.css';
+import Pagination from './Pagination';
 import ListModal from '../ListModal/ListModal';
 import EnhancedTableHead from './EnhancedTableHead';
 import { emptyImportPublication, ImportPublication, Order } from '../../types/PublicationTypes';
 import ImportTableListItem from './ImportTableListItem';
-import PlaceHolderListItem from './PlaceHolderListItem';
 import AuthorList from './AuthorList';
 import styled from 'styled-components';
 import { SortValue } from '../../types/ContextType';
 import { getImportData } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
-import { Typography } from '@material-ui/core';
+import { CircularProgress, Typography } from '@material-ui/core';
+import axios from 'axios';
 
 const StyledRoot = styled.div`
   display: block;
@@ -35,6 +33,10 @@ const StyledTableWrapper = styled.div`
   overflow-y: visible;
 `;
 
+const StyledNoResultsWrapper = styled.div`
+  margin-top: 4rem;
+`;
+
 const StyledToolBarTitle = styled.div`
   flex: 0 0 auto;
 `;
@@ -45,6 +47,15 @@ const StyledToolBarSpacer = styled.div`
 
 const StyledToolBarActions = styled.div`
   color: rgba(0, 0, 0, 0.54);
+`;
+
+const CircularProgressWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  height: 4rem;
+  margin-top: 6rem;
 `;
 
 function desc(a: any, b: any, orderBy: any) {
@@ -86,12 +97,12 @@ export default function ImportTable(this: any) {
   const [order, setOrder] = useState(state.currentSortOrder);
   const [orderBy, setOrderBy] = useState(state.currentSortValue);
   const [page] = useState(state.currentPageNr);
-  const [open, setOpen] = useState(false);
-  const [rowsPerPage, setRowsPerPage] = useState(state.currentPerPage.value);
-  const [rows, setRows] = useState<ImportPublication[]>([]);
+  const [isDuplicateCheckModalOpen, setIsDuplicateCheckModalOpen] = useState(false);
+  const [resultsPerPage, setResultsPerPage] = useState(state.currentPerPage.value);
+  const [importPublications, setImportPublications] = useState<ImportPublication[]>([]);
   const [authorList, setAuthorList] = useState(false);
   const [authorData, setAuthorData] = useState<ImportPublication>();
-  const [fetched, setFetched] = useState(false);
+  const [isSearchingForImportData, setIsSearchingForImportData] = useState(false);
   const [checked, setChecked] = useState<boolean[]>([]);
   const [openSeveral, setOpenSeveral] = useState<string[]>([]);
   const [getImportDataError, setGetImportDataError] = useState<Error | undefined>();
@@ -108,9 +119,56 @@ export default function ImportTable(this: any) {
     state.currentSortValue,
   ]);
 
+  const resetSelectedPublications = () => {
+    setChecked(new Array(state.currentPerPage.value).fill(false));
+    setOpenSeveral([]);
+  };
+
   useEffect(() => {
-    getRows().then();
+    async function doSearch(abortController: AbortController) {
+      resetSelectedPublications();
+      setIsSearchingForImportData(true);
+      setGetImportDataError(undefined);
+      try {
+        const importDataResponse = await getImportData(
+          state.currentImportYear.value,
+          state.currentInstitution.cristinInstitutionNr,
+          state.isSampublikasjon,
+          state.currentImportStatus,
+          state.currentSortValue,
+          state.currentSortOrder,
+          state.currentPerPage.value,
+          state.currentPageNr + 1,
+          state.doiFilter,
+          abortController
+        );
+        setImportPublications(importDataResponse.data as ImportPublication[]);
+        dispatch({
+          type: 'setTotalCount',
+          payload: importDataResponse.headers['x-total-count'],
+        });
+        setIsSearchingForImportData(false);
+      } catch (error: any) {
+        if (axios.isCancel(error)) {
+          setIsSearchingForImportData(true);
+        } else {
+          handlePotentialExpiredSession(error);
+          setImportPublications([]);
+          dispatch({
+            type: 'setTotalCount',
+            payload: 0,
+          });
+          setGetImportDataError(error as Error);
+          setIsSearchingForImportData(false);
+        }
+      }
+    }
+    const controller = new AbortController();
+    doSearch(controller).then();
     window.scroll({ top: 0, left: 0, behavior: 'smooth' });
+    return () => {
+      controller.abort();
+    };
   }, [
     state.currentImportYear,
     state.isSampublikasjon,
@@ -121,61 +179,15 @@ export default function ImportTable(this: any) {
     state.currentSortOrder,
     state.currentSortValue,
     state.doiFilter,
+    state.triggerImportDataSearch,
   ]);
-
-  useEffect(() => {
-    getRows().then();
-  }, [state.triggerImportDataSearch]);
 
   useEffect(() => {
     handleChangeRowsPerPage(state.currentPerPage);
   }, [state.currentPerPage]);
 
-  async function getRows() {
-    const checkedValues = [];
-    for (let i = 0; i < state.currentPerPage.value; i++) {
-      checkedValues.push(false);
-    }
-    setChecked(checkedValues);
-
-    setFetched(false);
-    setGetImportDataError(undefined);
-    try {
-      const importDataResponse = await getImportData(
-        state.currentImportYear.value,
-        state.currentInstitution.cristinInstitutionNr,
-        state.isSampublikasjon,
-        state.currentImportStatus,
-        state.currentSortValue,
-        state.currentSortOrder,
-        state.currentPerPage.value,
-        state.currentPageNr + 1,
-        state.doiFilter
-      );
-      handleRows(importDataResponse.data as ImportPublication[]);
-      dispatch({
-        type: 'setTotalCount',
-        payload: importDataResponse.headers['x-total-count'],
-      });
-    } catch (error: any) {
-      handlePotentialExpiredSession(error);
-      handleRows([]);
-      dispatch({
-        type: 'setTotalCount',
-        payload: 0,
-      });
-      setGetImportDataError(error as Error);
-    } finally {
-      setFetched(true);
-    }
-  }
-
   function resetPageNr() {
     dispatch({ type: 'setPageNr', payload: 0 });
-  }
-
-  function handleRows(temp: ImportPublication[]) {
-    setRows(temp);
   }
 
   function handleRequestSort(property: SortValue) {
@@ -187,15 +199,15 @@ export default function ImportTable(this: any) {
   }
 
   function handleClose() {
-    setOpen(false);
+    setIsDuplicateCheckModalOpen(false);
     if (openSeveral.length > 1) {
       dispatch({ type: 'setContributorsLoaded', payload: false });
-      const index = rows.findIndex((id) => id.pubId === openSeveral[1]);
+      const index = importPublications.findIndex((id) => id.pubId === openSeveral[1]);
       const temp = [...openSeveral];
       temp.splice(0, 1);
       setOpenSeveral(temp);
-      setModalData(rows[index]);
-      setOpen(true);
+      setModalData(importPublications[index]);
+      setIsDuplicateCheckModalOpen(true);
     } else {
       dispatch({ type: 'setContributorsLoaded', payload: false });
       checkAll(false);
@@ -216,27 +228,27 @@ export default function ImportTable(this: any) {
 
   function handleAuthorPress(event: React.KeyboardEvent<HTMLButtonElement>, row: ImportPublication) {
     if (!authorList) {
-      if (event.keyCode === 13 || event.keyCode === 32) {
+      if (event.key === 'Enter' || event.key === 'Space') {
         setAuthorList(true);
         setAuthorData(row);
       }
     }
   }
 
-  function handleClick(event: any, row: { row: any }) {
-    setOpen(true);
+  const openImportModal = (event: any, row: { row: any }) => {
+    setIsDuplicateCheckModalOpen(true);
     if (openSeveral.length > 0) {
-      const index = rows.findIndex((r) => r.pubId === openSeveral[0]);
-      setModalData(rows[index]);
+      const index = importPublications.findIndex((r) => r.pubId === openSeveral[0]);
+      setModalData(importPublications[index]);
     } else setModalData(row.row);
-  }
+  };
 
-  function handleKeyPress(event: React.KeyboardEvent<HTMLButtonElement>, row: { row: any }) {
-    if (event.keyCode === 13 || event.keyCode === 32) {
-      setOpen(true);
+  const openImportModalByKeyPress = (event: React.KeyboardEvent<HTMLButtonElement>, row: { row: any }) => {
+    if (event.key === 'Enter' || event.key === 'Space') {
+      setIsDuplicateCheckModalOpen(true);
       setModalData(row.row);
     }
-  }
+  };
 
   function handleCheckBoxChange(
     event: React.ChangeEvent<HTMLInputElement>,
@@ -262,17 +274,16 @@ export default function ImportTable(this: any) {
   }
 
   function handleChangeRowsPerPage(option: any) {
-    setRowsPerPage(option.value);
+    setResultsPerPage(option.value);
   }
 
   function checkAll(status: boolean) {
     const temp = [...checked];
     const ids = [];
-    for (let i = 0; i < rows.length; i++) {
+    for (let i = 0; i < importPublications.length; i++) {
       temp[i] = status;
-      if (status) ids.push(rows[i].pubId);
+      if (status) ids.push(importPublications[i].pubId);
     }
-
     setOpenSeveral(ids);
     setChecked(temp);
   }
@@ -295,27 +306,30 @@ export default function ImportTable(this: any) {
               )}
               <TableBody>{body}</TableBody>
             </Table>
-            <Pagination data={rows} openMore={openSeveral} handlePress={handleClick} />
+            <Pagination data={importPublications} openMore={openSeveral} handlePress={openImportModal} />
           </StyledTableWrapper>
         </StyledPaper>
       </StyledRoot>
     );
   }
 
-  if (!fetched) {
-    const body = Array.from({ length: 5 }, (value, index) => <PlaceHolderListItem index={index} key={index} />);
-    return createTable(body);
+  if (isSearchingForImportData) {
+    return (
+      <CircularProgressWrapper>
+        <CircularProgress />
+      </CircularProgressWrapper>
+    );
   } else {
-    const body = stableSort(rows, getSorting(order, orderBy))
-      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+    const body = stableSort(importPublications, getSorting(order, orderBy))
+      .slice(page * resultsPerPage, page * resultsPerPage + resultsPerPage)
       .map((row: ImportPublication, i) => {
         return (
           <ImportTableListItem
             key={row.pubId}
             importData={row}
-            setOpen={setOpen}
-            handleClick={handleClick}
-            handleKeyPress={handleKeyPress}
+            setOpen={setIsDuplicateCheckModalOpen}
+            handleClick={openImportModal}
+            handleKeyPress={openImportModalByKeyPress}
             handleOnBlur={handleOnBlur}
             handleOnFocus={handleOnFocus}
             checked={checked[i]}
@@ -327,11 +341,11 @@ export default function ImportTable(this: any) {
         );
       });
 
-    return rows.length > 0 ? (
+    return importPublications.length > 0 ? (
       <div>
         {createTable(body)}
         <DuplicateCheckModal
-          isDuplicateCheckModalOpen={open}
+          isDuplicateCheckModalOpen={isDuplicateCheckModalOpen}
           importPublication={modalData}
           handleDuplicateCheckModalClose={handleClose.bind(this)}
         />
@@ -343,21 +357,21 @@ export default function ImportTable(this: any) {
         />
       </div>
     ) : (
-      <div>
-        <p>Fant ingen publikasjoner med følgende filter:</p>
-        <p>År -{state.currentImportYear.value}</p>
-        <p>
+      <StyledNoResultsWrapper>
+        <Typography variant="h6">Fant ingen publikasjoner med følgende filter:</Typography>
+        <Typography>År -{state.currentImportYear.value}</Typography>
+        <Typography>
           Importstatus -
           {state.currentImportStatus === 'true'
             ? ' Importert'
             : state.currentImportStatus === 'false'
             ? ' Ikke importert'
             : ' Ikke aktuelle'}
-        </p>
-        {state.isSampublikasjon ? <p>Sampublikasjon - Ja</p> : ''}
-        {state.currentInstitution.value !== null ? <p>Institusjon - {state.currentInstitution.label}</p> : ''}
-        {state.doiFilter !== null ? <p>Doi - {state.doiFilter}</p> : ''}
-      </div>
+        </Typography>
+        {state.isSampublikasjon && <Typography>Sampublikasjon - Ja</Typography>}
+        {state.currentInstitution.value && <Typography>Institusjon - {state.currentInstitution.label}</Typography>}
+        {state.doiFilter && <Typography>Doi - {state.doiFilter}</Typography>}
+      </StyledNoResultsWrapper>
     );
   }
 }

@@ -2,7 +2,7 @@ import mockImportData from '../../src/utils/mockImportData.json';
 import { mockSaveErrorResponse } from '../../src/utils/mockdata';
 import mockCristinPublications from '../../src/utils/mockCristinPublications.json';
 
-context('application', () => {
+context('import publication', () => {
   beforeEach(() => {
     cy.login();
     cy.visit('/');
@@ -13,7 +13,7 @@ context('application', () => {
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="import-publication-button"]`).click();
     cy.get(`[data-testid="confirm-import-dialog-ok"]`).click();
-    cy.get('#notistack-snackbar').contains('Importerte publikasjon (Cristin-id:');
+    cy.get('#notistack-snackbar').contains('Publikasjonen ble importert.');
     cy.get(`[data-testid="duplicate-check-modal"]`).should('not.exist');
     cy.get(`[data-testid="import-modal"]`).should('not.exist');
   });
@@ -24,13 +24,14 @@ context('application', () => {
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="import-publication-button"]`).click();
     cy.get(`[data-testid="confirm-import-dialog-ok"]`).click();
-    cy.get('#notistack-snackbar').contains('Importerte publikasjon (Cristin-id:');
+    cy.get('#notistack-snackbar').contains('Publikasjonen ble importert.');
     cy.get(`[data-testid="duplicate-check-modal"]`).should('not.exist');
     cy.get(`[data-testid="import-modal"]`).should('not.exist');
   });
 
   it('handles errors when saving publication', () => {
-    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`#rowsPerPageSelector`).click().type('10{enter}{enter}');
+    cy.get(`[data-testid="import-table-row-${mockImportData[6].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="import-publication-button"]`).click();
     cy.get(`[data-testid="confirm-import-dialog-ok"]`).click();

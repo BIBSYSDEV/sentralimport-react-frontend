@@ -29,14 +29,15 @@ export async function getImportStatisticsByYear(year: number): Promise<AxiosResp
   });
 }
 
-export enum QueryMethod {
+export enum ChannelQueryMethod {
   title = 'title_general',
   issn = 'issn',
+  eissn = 'eissn',
 }
 
 export async function getJournalsByQuery(
   query: string,
-  queryMethod: QueryMethod
+  queryMethod: ChannelQueryMethod
 ): Promise<AxiosResponse<ChannelLight[]>> {
   return authenticatedApiRequest({
     url: encodeURI(`${CRIST_REST_API}/results/channels?type=journal&query=${queryMethod}:${query}`),
@@ -137,7 +138,8 @@ export async function getImportData(
   sortOrder: Order,
   resultPerPage: number,
   pageNumber: number,
-  doiFilter: string | null
+  doiFilter: string | null,
+  abortController: AbortController
 ): Promise<AxiosResponse<ImportPublication[]>> {
   const searchParams = generateSearchParams(
     sortValue,
@@ -153,5 +155,6 @@ export async function getImportData(
   return authenticatedApiRequest({
     url: `${PIA_REST_API}/sentralimport/publications?${searchParams.toString()}`,
     method: 'GET',
+    signal: abortController.signal,
   });
 }

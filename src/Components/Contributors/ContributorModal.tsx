@@ -25,6 +25,7 @@ import { Affiliation, ImportPublicationPersonInstutution } from '../../types/Ins
 import CommonErrorMessage from '../CommonErrorMessage';
 import ContributorForm from './ContributorForm';
 import clone from 'just-clone';
+import { validateContributors } from './ContributorValidate';
 
 const Foreign_educational_institution_generic_code = '9127';
 const Other_institutions_generic_code = '9126';
@@ -153,8 +154,9 @@ async function searchCristinPersons(authors: ImportPublicationPerson[]) {
 }
 
 const StyledModal = styled(Modal)`
-  width: 95%;
-  max-width: 95%;
+  width: 96%;
+  max-width: 96%;
+  min-width: 60rem;
   overflow: hidden;
 `;
 
@@ -227,6 +229,7 @@ interface ContributorProps {
   isContributorModalOpen: boolean;
   isDuplicate: boolean;
   handleContributorModalClose: () => void;
+  setContributorErrors: (errors: string[]) => void;
 }
 
 const ContributorModal: FC<ContributorProps> = ({
@@ -234,6 +237,7 @@ const ContributorModal: FC<ContributorProps> = ({
   isContributorModalOpen,
   isDuplicate,
   handleContributorModalClose,
+  setContributorErrors,
 }) => {
   const [contributors, setContributors] = useState<ContributorWrapper[]>([]);
   const [isLoadingContributors, setIsLoadingContributors] = useState(false);
@@ -336,26 +340,6 @@ const ContributorModal: FC<ContributorProps> = ({
         };
   };
 
-  const validateContributor = (tempContributors: ContributorWrapper[]) => {
-    //TODO: replace  validation with formik and yup
-    const errors = [];
-    for (let i = 0; i < tempContributors.length; i++) {
-      const toBeCreated = tempContributors[i].toBeCreated;
-      if (
-        !toBeCreated.first_name ||
-        toBeCreated.first_name === '' ||
-        !toBeCreated.surname ||
-        toBeCreated.surname === '' ||
-        (toBeCreated.affiliations && toBeCreated.affiliations.length < 1)
-      ) {
-        console.log('Contributor has error(s) no firstname||surname||affiliations: ', toBeCreated);
-        errors.push({ value: i + 1 });
-      }
-    }
-
-    dispatch({ type: 'setContributorErrors', payload: errors });
-  };
-
   //TODO: denne må brytes ned - trigges på importPublication, isContributorModalOpen, state.selectedPublication
   useLayoutEffect(() => {
     async function fetch() {
@@ -404,7 +388,7 @@ const ContributorModal: FC<ContributorProps> = ({
         replaceLocalStorage(tempContributors);
         dispatch({ type: 'identified', payload: identified }); //skjer dette to steder ?
         dispatch({ type: 'identifiedImported', payload: identified });
-        validateContributor(tempContributors);
+        validateContributors(tempContributors, setContributorErrors);
       } catch (error) {
         setLoadingContributorsError(error as Error);
       } finally {

@@ -164,10 +164,6 @@
       "en": "In this paper, Norwegian research on the relationship between the school and the local community during the past 30 years is reviewed. The Norwegian context of schooling is briefly described, pointing out the rural-urban conflict. The review is organized into two phases: research in the expansive and contractive phases of the Norwegian welfare state. Substantial research results are summarised. The challenge is how to raise the quality of research on the relationship between the school and the community. Themes discussed are the role of research - legitimizing or critical - based on an independent database of research knowledge, research designs and the dimension of time, research questions and choice of conceptual perspectives, local agency and children's voice in research and the importance of comparative research.",
       "nn": "In this paper, Norwegian research on the relationship between the school and the local community during the past 30 years is reviewed. The Norwegian context of schooling is briefly described, pointing out the rural-urban conflict. The review is organized into two phases: research in the expansive and contractive phases of the Norwegian welfare state. Substantial research results are summarised. The challenge is how to raise the quality of research on the relationship between the school and the community. Themes discussed are the role of research - legitimizing or critical - based on an independent database of research knowledge, research designs and the dimension of time, research questions and choice of conceptual perspectives, local agency and children's voice in research and the importance of comparative research."
     },
-    "title": {
-      "en": "Centralized decentralization or decentralized centralization? : a review of newer Norwegian research on schools and their communities",
-      "nn": "Centralized decentralization or decentralized centralization? : a review of newer Norwegian research on schools and their communities"
-    },
     "year_published": "2009",
     "year_reported": "2009",
     "url": "https://api.cristin.no/v2/results/688391",
@@ -418,21 +414,6 @@
     "year_published": "2010",
     "year_reported": "2010",
     "url": "https://api.cristin.no/v2/results/689770",
-    "journal": {
-      "cristin_journal_id": "502755",
-      "name": "Phenomenology & Practice",
-      "international_standard_numbers": [
-        {
-          "type": "printed",
-          "value": "1913-4711"
-        },
-        {
-          "type": "electronic",
-          "value": "1913-4711"
-        }
-      ],
-      "nvi_level": "1"
-    },
     "volume": "4",
     "issue": "1",
     "pages": {

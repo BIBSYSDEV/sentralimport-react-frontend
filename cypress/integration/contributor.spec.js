@@ -220,7 +220,7 @@ context('contributor', () => {
     cy.get('[data-testid="filter-institution-select-2"]').click();
     cy.get(`[data-testid="${mockInstitutions[0].cristin_institution_id}-option"]`).click();
     cy.get('[data-testid="add-institution-button-2"]').click();
-    cy.get('[data-testid="add-institution-error-2"]').should('have.text', 'institusjonen finnes alerede fra før av');
+    cy.get('[data-testid="add-institution-error-2"]').should('have.text', 'institusjonen finnes allerede fra før av');
   });
 
   it('Shows a warning about duplicate authors', () => {
@@ -228,6 +228,14 @@ context('contributor', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(`[data-testid=contributor-form-1-duplicate-warning]`).contains('Det finnes bidragsytere med samme navn');
+  });
+
+  it('Shows an error for authors with same cristinid', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get(`[data-testid=contributor-form-6-duplicate-error]`).contains('Det finnes bidragsytere med samme id');
+    cy.get(`[data-testid=contributor-form-5-duplicate-error]`).contains('Det finnes bidragsytere med samme id');
   });
 
   it('removes duplicate institutions from import data', () => {

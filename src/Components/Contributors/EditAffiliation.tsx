@@ -7,6 +7,13 @@ import AddIcon from '@material-ui/icons/Add';
 import UnitSelect from '../InstitutionSelect/UnitSelect';
 import { Affiliation, SimpleUnitResponse } from '../../types/InstitutionTypes';
 import { ContributorWrapper } from '../../types/ContributorTypes';
+import styled from 'styled-components';
+
+const StyledAddUnitButton = styled(Button)`
+  &&.MuiButton-root {
+    margin-left: 0.7rem;
+  }
+`;
 
 interface EditAffiliationProps {
   affiliation: Affiliation;
@@ -124,22 +131,22 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
       handleDeleteUnitClick={(unit) => {
         deleteUnitToInstitutionAndHandleError(unit, affiliation.cristinInstitutionNr ?? '');
       }}>
-      <Grid container spacing={2}>
+      <Grid container spacing={1}>
         {affiliation.isCristinInstitution === true && (
           <Grid item>
-            <Button
+            <StyledAddUnitButton
               size="small"
               data-testid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}-add-unit`}
               onClick={() => setShowUnitSelector(true)}
               startIcon={<AddIcon />}
               color="primary">
               Legg til enhet
-            </Button>
+            </StyledAddUnitButton>
           </Grid>
         )}
         {showUnitSelector && affiliation.isCristinInstitution === true && (
           <Grid item xs={12}>
-            <Grid container spacing={3}>
+            <Grid container spacing={3} alignItems="flex-end">
               <Grid item sm={8}>
                 <UnitSelect
                   cristinInstitutionNr={affiliation.cristinInstitutionNr ?? ''}
@@ -151,7 +158,6 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
               </Grid>
               <Grid item sm={4}>
                 <Button
-                  size="small"
                   data-testid={`cancel-list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}-add-unit`}
                   onClick={() => setShowUnitSelector(false)}
                   color="secondary">
