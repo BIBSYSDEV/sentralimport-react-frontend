@@ -21,6 +21,7 @@ const getNumberOfPages = (pageFrom?: string, pageTo?: string) => {
 export const createCristinPublicationForSaving = (
   values: CompareFormValuesType,
   importPublication: ImportPublication,
+  contributors: ContributorWrapper[],
   publicationLanguages: Language[],
   annotation: string,
   cristinResultId?: string
@@ -75,7 +76,7 @@ export const createCristinPublicationForSaving = (
       count: getNumberOfPages(values.pageFrom, values.pageTo),
     },
     contributors: {
-      list: createContributorObject(),
+      list: createContributorObject(contributors),
     },
   };
   if (cristinResultId) {
@@ -137,10 +138,9 @@ interface SubmitAffiliation {
   unit?: any;
 }
 
-export const createContributorObject = () => {
-  const temp = JSON.parse(localStorage.getItem('tempContributors') || '{}');
+export const createContributorObject = (contributors: ContributorWrapper[]) => {
   const submitContributors: any = [];
-  temp.contributors?.forEach((contributor: ContributorWrapper) => {
+  contributors?.forEach((contributor: ContributorWrapper) => {
     const affiliations: SubmitAffiliation[] = [];
     contributor.toBeCreated.affiliations?.forEach((affiliation) => {
       if (!affiliation.units) {

@@ -146,12 +146,12 @@ export const interceptRequestsOnMock = () => {
     });
 
   mock.onGet(new RegExp(`${CRIST_REST_API}/results.*title=.*`)).reply(200, mockCristinPublications, {
-    'x-total-count': 32,
+    'x-total-count': 2,
   });
 
   //get contributors for publication
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/\\d+/contributors.*`)).reply(200, mockCristinContributors, {
-    'x-total-count': 32,
+    'x-total-count': 2,
   });
 
   //search with yearspan

@@ -38,6 +38,7 @@ interface ContributorFormProps {
   updateContributor: (contributorData: ContributorWrapper, rowIndex: number) => void;
   deleteContributor: (index: number) => void;
   handleChosenAuthorAffiliations: (affiliations: Affiliation[]) => Promise<Affiliation[]>;
+  contributors: ContributorWrapper[];
 }
 
 const ContributorForm: FC<ContributorFormProps> = ({
@@ -46,6 +47,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
   deleteContributor,
   updateContributor,
   handleChosenAuthorAffiliations,
+  contributors,
 }) => {
   //TODO: denne funksjonen eksisterte på "lukk" knappen. Den bør kjøres på annet vis.
   /*
@@ -65,7 +67,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
   const [duplicateError, setDuplicateError] = useState('');
 
   useEffect(() => {
-    checkContributorsForDuplicates(contributorData, setDuplicateWarning, setDuplicateError, false);
+    checkContributorsForDuplicates(contributorData, contributors, setDuplicateWarning, setDuplicateError, false);
   }, [
     contributorData.toBeCreated.first_name,
     contributorData.toBeCreated.surname,

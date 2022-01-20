@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Context } from '../../Context';
 import ComparePublicationDataModal from '../ComparePublicationData/ComparePublicationDataModal';
@@ -10,6 +10,8 @@ import styled from 'styled-components';
 import { changePublicationImportStatus, NOT_RELEVANT } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
 import { Colors } from '../../assets/styles/StyleConstants';
+import { ContributorType } from '../../types/ContributorTypes';
+import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
 
 const StyledModal = styled(Modal)`
   width: 80%;
@@ -52,6 +54,48 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
   const [isDuplicate, setDuplicate] = useState(false);
   const [selectedRadioButton, setSelectedRadioButton] = useState<string>(SelectValues.CREATE_NEW);
   const [handleOkButtonError, setHandleOkButtonError] = useState<Error | undefined>();
+
+  useEffect(() => {
+    async function getAuthorsForDuplicatePostAndUpdateSelectedPublication() {
+      try {
+        //TODO wait to open modal until fetched
+
+        // setLoadContributorsError(undefined);
+        // setIsLoadingContributors(true);
+        if (isDuplicate) {
+          //        if (isDuplicate && !isContributorsLoading) {
+          if (state.doSave) {
+            //TODO: hva gjør dosave  ?
+            let page = 1;
+            let authors: ContributorType[] = [];
+            console.log('selectedPublication to get authors', state.selectedPublication);
+            while (authors.length < state.selectedPublication.authorTotalCount) {
+              const contributorResponse = await getContributorsByPublicationCristinResultId(
+                state.selectedPublication.cristin_result_id,
+                page,
+                500,
+                SearchLanguage.Nb // Gir det mening med språk her ?
+              );
+              authors = [...authors, ...contributorResponse.data];
+              page++;
+            }
+            //TODO: add order +1
+            console.log('fetched authors', authors);
+            dispatch({ type: 'setSelectedPublication', payload: { ...state.selectedPublication, authors: authors } });
+          }
+
+          //   setIsContributorsLoading(true);
+        }
+      } catch (error) {
+        handlePotentialExpiredSession(error);
+        // setLoadContributorsError(error as Error);
+      }
+      //finally {
+      // setIsLoadingContributors(false);
+      // }
+    }
+    getAuthorsForDuplicatePostAndUpdateSelectedPublication().then();
+  }, [isDuplicate]);
 
   async function handleClickOkButton() {
     try {
