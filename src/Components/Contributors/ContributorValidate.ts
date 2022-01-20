@@ -8,7 +8,7 @@ export const validateContributors = (
   //TODO: replace  validation with formik and yup
   const contributorErrors: string[] = [];
 
-  tempContributors.map((contributor, index) => {
+  tempContributors.forEach((contributor, index) => {
     const errors = [];
     const toBeCreated = contributor.toBeCreated;
     if (!toBeCreated.first_name || toBeCreated.first_name === '') errors.push('fornavn');

@@ -9,7 +9,7 @@ import {
   StyledUnknownVerifiedBadge,
   StyledVerifiedBadge,
 } from '../../assets/styles/StyledBadges';
-import AffiliationDisplay from './AffiliationDisplay';
+import AffiliationDisplay, { StyledGridWithRightAlignContent } from './AffiliationDisplay';
 import { AddAffiliationError } from './ContributorSearchPanel';
 
 const StyledNameGridContainer = styled(Grid)`
@@ -91,7 +91,7 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({
 
   return (
     <ContributorSearchResultWrapper>
-      <StyledNameGridContainer container spacing={1}>
+      <StyledNameGridContainer container>
         <Grid item sm={8}>
           {isActive ? (
             <StyledActivePersonNameTypography data-testid={`author-name-${contributor.cristin_person_id}`} variant="h6">
@@ -121,7 +121,7 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({
             </StyledInactivePersonNameTypography>
           )}
         </Grid>
-        <Grid item sm={4}>
+        <StyledGridWithRightAlignContent item sm={4}>
           <Button
             data-testid={`add-only-person-${contributor.cristin_person_id}`}
             onClick={() => handleChooseOnlyAuthor(contributor)}
@@ -129,7 +129,7 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({
             color="primary">
             Velg kun person
           </Button>
-        </Grid>
+        </StyledGridWithRightAlignContent>
       </StyledNameGridContainer>
       {sortContributorAffiliations(contributor.affiliations)?.map((affiliation, affiliationIndex) => (
         <AffiliationDisplay
