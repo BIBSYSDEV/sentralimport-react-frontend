@@ -19,7 +19,7 @@ import {
   RoleCodes,
 } from '../../types/ContributorTypes';
 import { Colors } from '../../assets/styles/StyleConstants';
-import { getInstitutionsByCountryCodes } from '../../api/institutionApi';
+import { getCountryInformationByCountryCode } from '../../api/institutionApi';
 import { ImportPublication } from '../../types/PublicationTypes';
 import { Affiliation, ImportPublicationPersonInstutution } from '../../types/InstitutionTypes';
 import CommonErrorMessage from '../CommonErrorMessage';
@@ -89,7 +89,7 @@ async function replaceNonCristinInstitution(affiliation: Affiliation): Promise<A
       return countriesApiResultCache[affiliation.countryCode];
     } else {
       const institutionCountryInformation = (
-        await getInstitutionsByCountryCodes(affiliation.countryCode, SearchLanguage.En)
+        await getCountryInformationByCountryCode(affiliation.countryCode, SearchLanguage.En)
       ).data;
       if (institutionCountryInformation.length > 0) {
         const newAffiliation = {
@@ -505,7 +505,7 @@ const ContributorModal: FC<ContributorProps> = ({
       if (!isCristinInstitution(affiliation.cristinInstitutionNr) && affiliation.countryCode) {
         //bytter ut institusjon med instkode for nasjonalitet
         const institutionCountryInformations = (
-          await getInstitutionsByCountryCodes(affiliation.countryCode, SearchLanguage.En)
+          await getCountryInformationByCountryCode(affiliation.countryCode, SearchLanguage.En)
         ).data;
         if (institutionCountryInformations.length > 0) {
           affiliation.institutionName =

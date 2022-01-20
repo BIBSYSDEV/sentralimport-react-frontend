@@ -87,7 +87,6 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
           </Grid>
           {affiliation.countryCode && (
             <Grid item>
-              <pre style={{ maxWidth: '90%' }}>{JSON.stringify(affiliation, null, 2)}</pre>
               <Typography data-testid={`${dataTestid}-country-code`} display="inline" variant="caption">
                 {affiliation.countryCode && 'Land: ' + affiliation.countryCode}
               </Typography>
