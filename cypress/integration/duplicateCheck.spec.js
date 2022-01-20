@@ -1,6 +1,10 @@
 import mockImportData from '../../src/utils/mockImportData.json';
 import mockCristinPublications from '../../src/utils/mockCristinPublications.json';
-import { mockDoiForEmptyCristinSearch } from '../../src/utils/mockdata';
+import {
+  mockCristinPublicationWithDoi,
+  mockDoiForEmptyCristinSearch,
+  mockSearchTitleForCristinPubWithDoi,
+} from '../../src/utils/mockdata';
 
 context('duplication-check-modal', () => {
   beforeEach(() => {
@@ -110,5 +114,15 @@ context('duplication-check-modal', () => {
     cy.get(`[data-testid="search-panel-year-checkbox"].Mui-checked`).should('not.exist');
     cy.get(`[data-testid="search-panel-author-checkbox"].Mui-checked`).should('not.exist');
     cy.get(`[data-testid="search-panel-issn-checkbox"].Mui-checked`).should('not.exist');
+  });
+
+  it('can search for duplicates using title', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="search-panel-title-checkbox"]`).click();
+    cy.get(`[data-testid="search-panel-title-textfield"]`).clear().type(mockSearchTitleForCristinPubWithDoi);
+    cy.get(`[data-testid="search-panel-retry-search-button"]`).click();
+
+    cy.get(`[data-testid="duplicates-result-list"]`).should('contain', mockCristinPublicationWithDoi.journal.name);
+    cy.get(`[data-testid="duplicates-result-list"]`).should('contain', mockCristinPublicationWithDoi.links[1].url);
   });
 });

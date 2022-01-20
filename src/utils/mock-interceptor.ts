@@ -9,6 +9,7 @@ import {
   mockCristinIDWithoutAffiliationAttribute,
   mockCristinPersonNotFound,
   mockCristinPersonNotFoundResponse,
+  mockCristinPublicationWithDoi,
   mockDoiForEmptyCristinSearch,
   mockDoiForPublicationWithoutDoi,
   mockForbiddenPerson,
@@ -32,6 +33,7 @@ import {
   mockPublicationCount,
   mockSavedPublication,
   mockSaveErrorResponse,
+  mockSearchTitleForCristinPubWithDoi,
   mockSimpleUnitResponse,
   mockTitleForEmptyCristinSearch,
   mockUnits,
@@ -137,6 +139,12 @@ export const interceptRequestsOnMock = () => {
   mock.onGet(new RegExp(`${CRIST_REST_API}/results.*title=${mockTitleForEmptyCristinSearch}.*`)).reply(200, [], {
     'x-total-count': 0,
   });
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/results.*title=${mockSearchTitleForCristinPubWithDoi}.*`))
+    .reply(200, [mockCristinPublicationWithDoi], {
+      'x-total-count': 1,
+    });
+
   mock.onGet(new RegExp(`${CRIST_REST_API}/results.*title=.*`)).reply(200, mockCristinPublications, {
     'x-total-count': 32,
   });

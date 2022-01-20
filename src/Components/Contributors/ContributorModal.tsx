@@ -154,8 +154,9 @@ async function searchCristinPersons(authors: ImportPublicationPerson[]) {
 }
 
 const StyledModal = styled(Modal)`
-  width: 95%;
-  max-width: 95%;
+  width: 96%;
+  max-width: 96%;
+  min-width: 60rem;
   overflow: hidden;
 `;
 
