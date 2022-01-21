@@ -88,7 +88,6 @@ const CircularProgressWrapper = styled.div`
   width: 100%;
   align-items: center;
   justify-content: center;
-  height: 4rem;
 `;
 
 const StyledAlert = styled(Alert)`
@@ -129,13 +128,11 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [loadJournalIdError, setLoadJournalIdError] = useState<Error | undefined>();
 
   //contributors-stuff
-  // const [isContributorsLoading, setIsContributorsLoading] = useState(false);
   const [contributorErrors, setContributorErrors] = useState<string[]>([]);
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors, setContributors] = useState<ContributorWrapper[]>(
     isDuplicate ? state.selectedPublication.authors : importPublication?.authors || []
   );
-  const [loadContributorsError, setLoadContributorsError] = useState<Error | undefined>();
   const [isLoadingContributors, setIsLoadingContributors] = useState(false);
   const [loadingContributorsError, setLoadingContributorsError] = useState<Error | undefined>();
 
@@ -234,14 +231,14 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       const tempContributors: ContributorWrapper[] = [];
       try {
         setIsLoadingContributors(true);
+        setLoadingContributorsError(undefined);
         const identified: boolean[] = [];
         const authorsFromImportPublication = importPublication.authors;
 
-        let cristinAuthors: ContributorType[] = [];
-        console.log('ENRICHING!');
+        let cristinAuthors: ContributorType[];
         if (isDuplicate) {
           cristinAuthors = state.selectedPublication.authors;
-        } else if (!isDuplicate) {
+        } else {
           cristinAuthors = await searchCristinPersons(authorsFromImportPublication);
         }
         for (let i = 0; i < Math.max(cristinAuthors.length, authorsFromImportPublication.length); i++) {
@@ -273,7 +270,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         setIsLoadingContributors(false);
       }
       setContributors(tempContributors);
-      console.log('Enriched contributors', tempContributors);
     }
 
     enrichImportPublicationAuthors().then();
@@ -430,204 +426,190 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   return (
     <>
-      {loadContributorsError ? (
-        <Typography color="error">Noe gikk galt. {loadContributorsError.message}</Typography>
-      ) : (
-        <>
-          <StyledModal isOpen={isComparePublicationDataModalOpen} size="lg" data-testid="compare-modal">
-            {initialFormValues && (
-              <Formik
-                onSubmit={handleImportButtonClick}
-                initialValues={initialFormValues}
-                validateOnMount
-                validationSchema={formValidationSchema}>
-                {({ isValid, handleSubmit }) => (
-                  <Form onSubmit={handleSubmit}>
-                    <ModalBody>
-                      <StyledFormWrapper>
-                        <StyledHeaderLineWrapper>
-                          <StyledLineLabelTypography />
-                          <StyledLineHeader variant="h4">Import-publikasjon</StyledLineHeader>
-                          <StyledActionButtonsPlaceHolder />
-                          <StyledLineHeader variant="h4">Cristin-publikasjon</StyledLineHeader>
-                        </StyledHeaderLineWrapper>
-                        <StyledLineWrapper>
-                          <StyledLineLabelTypography>Publication id</StyledLineLabelTypography>
-                          <StyledLineImportValue>
-                            <StyledDisabledTypography data-testid="importdata-pubid">
-                              {importPublication.pubId}
-                            </StyledDisabledTypography>
-                          </StyledLineImportValue>
-                          <StyledActionButtonsPlaceHolder />
-                          <StyledLineCristinValue>
-                            <StyledDisabledTypography data-testid="cristindata-id">
-                              {isDuplicate ? cristinPublication.cristin_result_id : 'Ingen Cristin-Id'}
-                            </StyledDisabledTypography>
-                          </StyledLineCristinValue>
-                        </StyledLineWrapper>
-                        <StyledLineWrapper>
-                          <StyledLineLabelTypography>Dato registrert</StyledLineLabelTypography>
-                          <StyledLineImportValue>
-                            <StyledDisabledTypography data-testid="importdata-date-registered">
-                              {importPublication.registered}
-                            </StyledDisabledTypography>
-                          </StyledLineImportValue>
-                          <StyledActionButtonsPlaceHolder />
-                          <StyledLineCristinValue data-testid="cristindata-created">
-                            <StyledDisabledTypography>
-                              {isDuplicate && cristinPublication
-                                ? formatCristinCreatedDate(cristinPublication.created.date)
-                                : NoDatePlaceHolder}
-                            </StyledDisabledTypography>
-                          </StyledLineCristinValue>
-                        </StyledLineWrapper>
-                        <StyledLineWrapper>
-                          <StyledLineLabelTypography>Kilde</StyledLineLabelTypography>
-                          <StyledLineImportValue>
-                            <Typography data-testid="importdata-source">
-                              {importPublication.sourceName} ({importPublication.externalId})
-                            </Typography>
-                          </StyledLineImportValue>
-                          <StyledActionButtonsPlaceHolder />
-                          <StyledLineCristinValue>
-                            <StyledDisabledTypography data-testid="cristindata-source">
-                              {kilde} ({kildeId})
-                            </StyledDisabledTypography>
-                          </StyledLineCristinValue>
-                        </StyledLineWrapper>
-                        <CompareFormLanguage
-                          languages={publicationLanguages}
-                          selectedLang={selectedLang}
-                          setSelectedLang={setSelectedLang}
-                        />
-                        <CompareFormTitle
-                          importPublication={importPublication}
-                          updatePublicationLanguages={updatePublicationLanguages}
-                          selectedLang={selectedLang}
-                        />
-                        <CompareFormJournal
-                          importPublication={importPublication}
-                          loadJournalIdError={loadJournalIdError}
-                        />
-                        <CompareFormDoi importPublication={importPublication} />
-                        <CompareFormYear importPublication={importPublication} />
-                        <CompareFormCategory importPublication={importPublication} />
-                        <CompareFormVolume importPublication={importPublication} />
-                        <CompareFormIssue importPublication={importPublication} />
-                        <CompareFormPages importPublication={importPublication} />
-                      </StyledFormWrapper>
+      <StyledModal isOpen={isComparePublicationDataModalOpen} size="lg" data-testid="compare-modal">
+        {initialFormValues && (
+          <Formik
+            onSubmit={handleImportButtonClick}
+            initialValues={initialFormValues}
+            validateOnMount
+            validationSchema={formValidationSchema}>
+            {({ isValid, handleSubmit }) => (
+              <Form onSubmit={handleSubmit}>
+                <ModalBody>
+                  <StyledFormWrapper>
+                    <StyledHeaderLineWrapper>
+                      <StyledLineLabelTypography />
+                      <StyledLineHeader variant="h4">Import-publikasjon</StyledLineHeader>
+                      <StyledActionButtonsPlaceHolder />
+                      <StyledLineHeader variant="h4">Cristin-publikasjon</StyledLineHeader>
+                    </StyledHeaderLineWrapper>
+                    <StyledLineWrapper>
+                      <StyledLineLabelTypography>Publication id</StyledLineLabelTypography>
+                      <StyledLineImportValue>
+                        <StyledDisabledTypography data-testid="importdata-pubid">
+                          {importPublication.pubId}
+                        </StyledDisabledTypography>
+                      </StyledLineImportValue>
+                      <StyledActionButtonsPlaceHolder />
+                      <StyledLineCristinValue>
+                        <StyledDisabledTypography data-testid="cristindata-id">
+                          {isDuplicate ? cristinPublication.cristin_result_id : 'Ingen Cristin-Id'}
+                        </StyledDisabledTypography>
+                      </StyledLineCristinValue>
+                    </StyledLineWrapper>
+                    <StyledLineWrapper>
+                      <StyledLineLabelTypography>Dato registrert</StyledLineLabelTypography>
+                      <StyledLineImportValue>
+                        <StyledDisabledTypography data-testid="importdata-date-registered">
+                          {importPublication.registered}
+                        </StyledDisabledTypography>
+                      </StyledLineImportValue>
+                      <StyledActionButtonsPlaceHolder />
+                      <StyledLineCristinValue data-testid="cristindata-created">
+                        <StyledDisabledTypography>
+                          {isDuplicate && cristinPublication
+                            ? formatCristinCreatedDate(cristinPublication.created.date)
+                            : NoDatePlaceHolder}
+                        </StyledDisabledTypography>
+                      </StyledLineCristinValue>
+                    </StyledLineWrapper>
+                    <StyledLineWrapper>
+                      <StyledLineLabelTypography>Kilde</StyledLineLabelTypography>
+                      <StyledLineImportValue>
+                        <Typography data-testid="importdata-source">
+                          {importPublication.sourceName} ({importPublication.externalId})
+                        </Typography>
+                      </StyledLineImportValue>
+                      <StyledActionButtonsPlaceHolder />
+                      <StyledLineCristinValue>
+                        <StyledDisabledTypography data-testid="cristindata-source">
+                          {kilde} ({kildeId})
+                        </StyledDisabledTypography>
+                      </StyledLineCristinValue>
+                    </StyledLineWrapper>
+                    <CompareFormLanguage
+                      languages={publicationLanguages}
+                      selectedLang={selectedLang}
+                      setSelectedLang={setSelectedLang}
+                    />
+                    <CompareFormTitle
+                      importPublication={importPublication}
+                      updatePublicationLanguages={updatePublicationLanguages}
+                      selectedLang={selectedLang}
+                    />
+                    <CompareFormJournal importPublication={importPublication} loadJournalIdError={loadJournalIdError} />
+                    <CompareFormDoi importPublication={importPublication} />
+                    <CompareFormYear importPublication={importPublication} />
+                    <CompareFormCategory importPublication={importPublication} />
+                    <CompareFormVolume importPublication={importPublication} />
+                    <CompareFormIssue importPublication={importPublication} />
+                    <CompareFormPages importPublication={importPublication} />
+                  </StyledFormWrapper>
+                  <StyledOpenContributorsButtonWrapper>
+                    {isLoadingContributors ? (
+                      <CircularProgressWrapper>
+                        <CircularProgress size={'1rem'} />
+                        <Typography style={{ margin: '1rem' }}>Laster inn forfattere</Typography>
+                      </CircularProgressWrapper>
+                    ) : loadingContributorsError ? (
                       <StyledOpenContributorsButtonWrapper>
-                        <Button
-                          size="large"
-                          data-testid="open-contributors-modal-button"
-                          onClick={() => setIsContributorModalOpen(true)}
-                          variant="contained"
-                          disabled={isLoadingContributors || !!loadingContributorsError}
-                          color="primary">
-                          Vis bidragsytere
-                        </Button>
+                        <CommonErrorMessage
+                          datatestid="contributor-loading-error"
+                          errorMessage={`Feil ved lasting av bidragsytere: (${loadingContributorsError.message})`}
+                        />
                       </StyledOpenContributorsButtonWrapper>
-                      {isLoadingContributors ? (
-                        <CircularProgressWrapper>
-                          <CircularProgress />
-                        </CircularProgressWrapper>
-                      ) : (
-                        loadingContributorsError && (
-                          <StyledOpenContributorsButtonWrapper>
-                            <CommonErrorMessage
-                              datatestid="contributor-loading-error"
-                              errorMessage={`Feil ved lasting av bidragsytere: (${loadingContributorsError.message})`}
-                            />
-                          </StyledOpenContributorsButtonWrapper>
-                        )
+                    ) : (
+                      <Button
+                        size="large"
+                        data-testid="open-contributors-modal-button"
+                        onClick={() => setIsContributorModalOpen(true)}
+                        variant="contained"
+                        color="primary">
+                        Vis bidragsytere
+                      </Button>
+                    )}
+                  </StyledOpenContributorsButtonWrapper>
+                  <StyledErrorMessageWrapper>
+                    {contributorErrors.length >= 1 && (
+                      <StyledAlert data-testid={`contributor-errors`} severity="error">
+                        Det er feil i bidragsyterlisten ved index:
+                        {contributorErrors.map((error, index) => (
+                          <li key={index}> {error} </li>
+                        ))}
+                      </StyledAlert>
+                    )}
+                    {importPublicationError && (
+                      <Typography color="error" data-testid="import-publication-errors">
+                        {importPublicationError.message}
+                      </Typography>
+                    )}
+                  </StyledErrorMessageWrapper>
+                </ModalBody>
+
+                <ModalFooter>
+                  <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline">
+                    <Grid item>
+                      <Button
+                        onClick={handleComparePublicationDataModalClose}
+                        variant="outlined"
+                        color="secondary"
+                        data-testid="import-publication-cancel-button">
+                        Avbryt
+                      </Button>
+                    </Grid>
+                    <Grid item>
+                      <div>
+                        <Button
+                          disabled={
+                            !isValid ||
+                            !!importPublication?.cristin_id ||
+                            contributorErrors.length >= 1 ||
+                            !state.contributorsLoaded ||
+                            !!loadingContributorsError
+                          }
+                          color="primary"
+                          type="submit"
+                          variant="contained"
+                          data-testid="import-publication-button">
+                          Importer
+                        </Button>
+                      </div>
+                      {!isValid && (
+                        <CommonErrorMessage datatestid="compare-form-error" errorMessage="Det er feil i skjema" />
                       )}
-                      <StyledErrorMessageWrapper>
-                        {contributorErrors.length >= 1 && (
-                          <StyledAlert data-testid={`contributor-errors`} severity="error">
-                            Det er feil i bidragsyterlisten ved index:
-                            {contributorErrors.map((error, index) => (
-                              <li key={index}> {error} </li>
-                            ))}
-                          </StyledAlert>
-                        )}
-                        {importPublicationError && (
-                          <Typography color="error" data-testid="import-publication-errors">
-                            {importPublicationError.message}
-                          </Typography>
-                        )}
-                      </StyledErrorMessageWrapper>
-                    </ModalBody>
-
-                    <ModalFooter>
-                      <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline">
-                        <Grid item>
-                          {contributorErrors.length >= 1 && <div> Feil i bidragsyterlisten. </div>}
-                          {isLoadingContributors && <div> Henter bidragsytere. </div>}
-                        </Grid>
-                        <Grid item>
-                          <Button
-                            onClick={handleComparePublicationDataModalClose}
-                            variant="outlined"
-                            color="secondary"
-                            data-testid="import-publication-cancel-button">
-                            Avbryt
-                          </Button>
-                        </Grid>
-                        <Grid item>
-                          <div>
-                            <Button
-                              disabled={
-                                !isValid ||
-                                !!importPublication?.cristin_id ||
-                                contributorErrors.length >= 1 ||
-                                !state.contributorsLoaded ||
-                                !!loadingContributorsError
-                              }
-                              color="primary"
-                              type="submit"
-                              variant="contained"
-                              data-testid="import-publication-button">
-                              Importer
-                            </Button>
-                          </div>
-                          {!isValid && (
-                            <CommonErrorMessage datatestid="compare-form-error" errorMessage="Det er feil i skjema" />
-                          )}
-                        </Grid>
-                      </Grid>
-                    </ModalFooter>
-                  </Form>
-                )}
-              </Formik>
+                    </Grid>
+                  </Grid>
+                </ModalFooter>
+              </Form>
             )}
-          </StyledModal>
-          <GenericConfirmDialog
-            doFunction={emptyGlobalFormErrors}
-            title={'Avbryt import'}
-            text={
-              'Er du sikker på at du vil lukke denne publikasjonen? Endringer vil bli lagret fram til man åpner en ny publikasjon'
-            }
-            open={isConfirmAbortDialogOpen}
-            handleClose={handleConfirmAbortDialogSubmit}
-            handleAbort={() => setIsConfirmAbortDialogOpen(false)}
-          />
-          <ConfirmImportDialog
-            handleImportPublicationConfirmed={handleImportPublicationConfirmed}
-            isOpen={isConfirmImportDialogOpen}
-            handleAbort={() => setIsConfirmImportDialogOpen(false)}
-          />
+          </Formik>
+        )}
+      </StyledModal>
+      <GenericConfirmDialog
+        doFunction={emptyGlobalFormErrors}
+        title={'Avbryt import'}
+        text={
+          'Er du sikker på at du vil lukke denne publikasjonen? Endringer vil bli lagret fram til man åpner en ny publikasjon'
+        }
+        open={isConfirmAbortDialogOpen}
+        handleClose={handleConfirmAbortDialogSubmit}
+        handleAbort={() => setIsConfirmAbortDialogOpen(false)}
+      />
+      <ConfirmImportDialog
+        handleImportPublicationConfirmed={handleImportPublicationConfirmed}
+        isOpen={isConfirmImportDialogOpen}
+        handleAbort={() => setIsConfirmImportDialogOpen(false)}
+      />
 
-          {importPublication && (
-            <ContributorModal
-              isContributorModalOpen={isContributorModalOpen}
-              contributors={contributors}
-              setContributors={setContributors}
-              handleContributorModalClose={() => setIsContributorModalOpen(false)}
-              importPublication={importPublication}
-              isDuplicate={isDuplicate}
-            />
-          )}
-        </>
+      {importPublication && (
+        <ContributorModal
+          isContributorModalOpen={isContributorModalOpen}
+          contributors={contributors}
+          setContributors={setContributors}
+          handleContributorModalClose={() => setIsContributorModalOpen(false)}
+          importPublication={importPublication}
+          isDuplicate={isDuplicate}
+        />
       )}
     </>
   );
