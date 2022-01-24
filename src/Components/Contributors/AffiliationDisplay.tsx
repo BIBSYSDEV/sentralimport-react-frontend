@@ -7,6 +7,7 @@ import { Colors } from '../../assets/styles/StyleConstants';
 
 const StyledAffiliationsWrapper = styled.div<{ backgroundcolor: string }>`
   margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
   background-color: ${(props) => props.backgroundcolor};
 `;
 
