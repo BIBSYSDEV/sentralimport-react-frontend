@@ -13,7 +13,7 @@ export async function getInstitutions(): Promise<AxiosResponse<Institution[]>> {
   });
 }
 
-export async function getInstitutionsByCountryCodes(
+export async function getCountryInformationByCountryCode(
   countryCode: string,
   searchLanguage: SearchLanguage
 ): Promise<AxiosResponse<InstitutionCountryInformation[]>> {

@@ -12,10 +12,10 @@ import clone from 'just-clone';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import { removeInstitutionsDuplicatesBasedOnCristinId } from './ContributorModal';
 import { ErrorMessage, Field, FieldProps, Formik } from 'formik';
 import * as Yup from 'yup';
 import CommonErrorMessage from '../CommonErrorMessage';
+import { removeInstitutionsDuplicatesBasedOnCristinId } from './InstututionHelper';
 
 const StyledResultTypography = styled(Typography)`
   &.MuiTypography-root {

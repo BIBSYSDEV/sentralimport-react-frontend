@@ -2,15 +2,15 @@ import { ContributorWrapper } from '../../types/ContributorTypes';
 
 export const checkContributorsForDuplicates = (
   contributorData: ContributorWrapper,
+  allContributors: ContributorWrapper[],
   setDuplicateWarning: any,
   setDuplicateError: any,
   isUpdate: boolean
 ) => {
   setDuplicateWarning('');
-  const contributorsFromLocalStorage = JSON.parse(localStorage.getItem('tempContributors') || '{}');
-  if (contributorsFromLocalStorage.contributors?.length > 0) {
+  if (allContributors.length > 0) {
     if (contributorData.toBeCreated.cristin_person_id && contributorData.toBeCreated.cristin_person_id !== 0) {
-      const duplicateIdList = contributorsFromLocalStorage.contributors.filter(
+      const duplicateIdList = allContributors.filter(
         (contributor: ContributorWrapper) =>
           contributor.toBeCreated.cristin_person_id === contributorData.toBeCreated.cristin_person_id
       );
@@ -24,7 +24,7 @@ export const checkContributorsForDuplicates = (
       }
     }
 
-    const duplicateNameList = contributorsFromLocalStorage.contributors.filter((contributor: ContributorWrapper) => {
+    const duplicateNameList = allContributors.filter((contributor: ContributorWrapper) => {
       return (
         contributorData.toBeCreated.first_name === contributor.toBeCreated.first_name &&
         contributorData.toBeCreated.surname === contributor.toBeCreated.surname

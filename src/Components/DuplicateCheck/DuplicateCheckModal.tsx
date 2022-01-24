@@ -1,15 +1,19 @@
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Context } from '../../Context';
 import ComparePublicationDataModal from '../ComparePublicationData/ComparePublicationDataModal';
 import { ImportPublication } from '../../types/PublicationTypes';
-import { Button, Divider, Grid, Typography } from '@material-ui/core';
+import { Button, CircularProgress, Divider, Grid, Typography } from '@material-ui/core';
 import ImportPublicationPresentation from './ImportPublicationPresentation';
 import DuplicateSearch from './DuplicateSearch';
 import styled from 'styled-components';
 import { changePublicationImportStatus, NOT_RELEVANT } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
 import { Colors } from '../../assets/styles/StyleConstants';
+import { ContributorType } from '../../types/ContributorTypes';
+import { getContributorsByPublicationCristinResultId, SearchLanguage } from '../../api/contributorApi';
+import { StyledOpenContributorsButtonWrapper } from '../ComparePublicationData/CompareFormWrappers';
+import CommonErrorMessage from '../CommonErrorMessage';
 
 const StyledModal = styled(Modal)`
   width: 80%;
@@ -42,6 +46,14 @@ interface DuplicateCheckModalProps {
   importPublication: ImportPublication;
 }
 
+const CircularProgressWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+`;
+
 const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
   isDuplicateCheckModalOpen,
   handleDuplicateCheckModalClose,
@@ -49,16 +61,53 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
 }) => {
   const { state, dispatch } = useContext(Context);
   const [isComparePublicationDataModalOpen, setIsComparePublicationDataModalOpen] = useState(false);
-  const [isDuplicate, setDuplicate] = useState(false);
+  const [isDuplicate, setIsDuplicate] = useState(false); // TODO: Trenger ikke duplicate om vi bruker en useState for selectedCristinPublication
   const [selectedRadioButton, setSelectedRadioButton] = useState<string>(SelectValues.CREATE_NEW);
   const [handleOkButtonError, setHandleOkButtonError] = useState<Error | undefined>();
+  const [loadingSelectedCristinPublicationAuthorsError, setLoadingSelectedCristinPublicationAuthorsError] = useState<
+    Error | undefined
+  >();
+  const [isLoadingSelectedCristinPublicationAuthors, setIsLoadingSelectedCristinPublicationAuthors] = useState(false);
+
+  useEffect(() => {
+    async function getAuthorsForDuplicatePostAndUpdateSelectedPublication() {
+      try {
+        setLoadingSelectedCristinPublicationAuthorsError(undefined);
+        setIsLoadingSelectedCristinPublicationAuthors(true);
+        if (isDuplicate) {
+          if (state.doSave) {
+            //TODO: hva gjør dosave  ?
+            let page = 1;
+            let authors: ContributorType[] = [];
+            while (authors.length < state.selectedPublication.authorTotalCount) {
+              const contributorResponse = await getContributorsByPublicationCristinResultId(
+                state.selectedPublication.cristin_result_id,
+                page,
+                500,
+                SearchLanguage.Nb // Gir det mening med språk her ?
+              );
+              authors = [...authors, ...contributorResponse.data];
+              page++;
+            }
+            dispatch({ type: 'setSelectedPublication', payload: { ...state.selectedPublication, authors: authors } });
+          }
+        }
+      } catch (error) {
+        handlePotentialExpiredSession(error);
+        setLoadingSelectedCristinPublicationAuthorsError(error as Error);
+      } finally {
+        setIsLoadingSelectedCristinPublicationAuthors(false);
+      }
+    }
+    getAuthorsForDuplicatePostAndUpdateSelectedPublication().then();
+  }, [isDuplicate]);
 
   async function handleClickOkButton() {
     try {
       setHandleOkButtonError(undefined);
       if (selectedRadioButton === SelectValues.CREATE_NEW) {
         dispatch({ type: 'doSave', payload: true }); //TODO: trengs denne egentlig?
-        setDuplicate(false);
+        setIsDuplicate(false);
         setIsComparePublicationDataModalOpen(true);
       } else if (selectedRadioButton === SelectValues.TOGGLE_RELEVANT) {
         await toggleRelevantStatus();
@@ -66,7 +115,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
         dispatch({ type: 'triggerImportDataSearch', payload: !state.triggerImportDataSearch });
       } else {
         dispatch({ type: 'doSave', payload: true });
-        setDuplicate(true);
+        setIsDuplicate(true);
         setIsComparePublicationDataModalOpen(true);
       }
     } catch (error) {
@@ -76,7 +125,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
   }
 
   function handleComparePublicationDataModalClose() {
-    setDuplicate(false);
+    setIsDuplicate(false);
     setIsComparePublicationDataModalOpen(false);
   }
 
@@ -95,12 +144,28 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
           <StyledImportPublicationPresentationWrapper>
             <ImportPublicationPresentation importPublication={importPublication} />
           </StyledImportPublicationPresentationWrapper>
+
           <Divider />
           <DuplicateSearch
             importPublication={importPublication}
             setSelectedRadioButton={setSelectedRadioButton}
             selectedRadioButton={selectedRadioButton}
           />
+          {isLoadingSelectedCristinPublicationAuthors ? (
+            <CircularProgressWrapper>
+              <CircularProgress size={'1rem'} />
+              <Typography style={{ margin: '1rem' }}> Laster inn forfattere</Typography>
+            </CircularProgressWrapper>
+          ) : (
+            loadingSelectedCristinPublicationAuthorsError && (
+              <StyledOpenContributorsButtonWrapper>
+                <CommonErrorMessage
+                  datatestid="contributor-loading-error"
+                  errorMessage={`Feil ved lasting av bidragsytere for valgt publikasjon: (${loadingSelectedCristinPublicationAuthorsError.message})`}
+                />
+              </StyledOpenContributorsButtonWrapper>
+            )
+          )}
         </StyledBodyWrapper>
       </ModalBody>
       <ModalFooter>
@@ -119,6 +184,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
               variant="contained"
               color="primary"
               data-testid="duplication-modal-ok-button"
+              disabled={!!loadingSelectedCristinPublicationAuthorsError}
               onClick={handleClickOkButton}>
               OK
             </Button>
@@ -126,17 +192,18 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
           </Grid>
         </Grid>
       </ModalFooter>
-      {/*TODO: only render ComparePublicationDataModal on handleClickOkButton (dropp å sette i state: "setSelectedPublication")*/}
-      {isComparePublicationDataModalOpen && (
-        <ComparePublicationDataModal
-          isComparePublicationDataModalOpen={isComparePublicationDataModalOpen}
-          handleComparePublicationDataModalClose={handleComparePublicationDataModalClose.bind(this)}
-          handleDuplicateCheckModalClose={handleDuplicateCheckModalClose}
-          importPublication={importPublication}
-          cristinPublication={state.selectedPublication}
-          isDuplicate={isDuplicate}
-        />
-      )}
+      {isComparePublicationDataModalOpen &&
+        !isLoadingSelectedCristinPublicationAuthors &&
+        !loadingSelectedCristinPublicationAuthorsError && (
+          <ComparePublicationDataModal
+            isComparePublicationDataModalOpen={isComparePublicationDataModalOpen}
+            handleComparePublicationDataModalClose={handleComparePublicationDataModalClose.bind(this)}
+            handleDuplicateCheckModalClose={handleDuplicateCheckModalClose}
+            importPublication={importPublication}
+            cristinPublication={state.selectedPublication}
+            isDuplicate={isDuplicate}
+          />
+        )}
     </StyledModal>
   );
 };

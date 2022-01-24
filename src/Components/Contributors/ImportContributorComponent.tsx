@@ -28,7 +28,6 @@ interface ContributorOrderComponentProps {
 }
 
 const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, handleChooseAuthor }) => {
-  //UnitName is a string of departments split by ";", most important unit last in the list.
   const affiliations: AffiliationDisplayType[] = row.imported.affiliations
     ? row.imported.affiliations
         .slice()
@@ -46,6 +45,7 @@ const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, ha
           }
         })
         .map((affiliation) => ({
+          //UnitName is a string of departments split by ";", most important unit last in the list.
           units: affiliation.unitName
             ? affiliation.unitName
                 .replace(affiliation.institutionName ?? '', '')

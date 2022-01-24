@@ -18,7 +18,6 @@ context('contributor', () => {
   it('handles publication with contributor-errors', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[3].pubId}"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
-    cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid="contributor-loading-error"]').contains(
       'Feil ved lasting av bidragsytere: (Request failed with status code 404)'
     );
