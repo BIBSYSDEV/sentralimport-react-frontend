@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Button, Divider, Typography } from '@material-ui/core';
+import { Button, Link, Typography } from '@material-ui/core';
 import styled from 'styled-components';
 import { SavedPublicationLogLine } from '../../types/PublicationTypes';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { CRISTIN_REACT_APP_URL } from '../../utils/constants';
-import LaunchIcon from '@material-ui/icons/Launch';
 import { Modal, ModalBody, ModalHeader } from 'reactstrap';
 
 const LogPanelWrapper = styled.div`
@@ -20,10 +19,14 @@ const StyledModal = styled(Modal)`
   padding: 0;
 `;
 
-const StyledPublicationItemWrapper = styled.div`
-  margin: 1.5rem 0;
-  display: flex;
-  justify-content: space-between;
+const StyledDivider = styled.hr`
+  margin: 1.5rem 0 1rem 0;
+`;
+
+const StyledLink = styled(Link)`
+  &:hover {
+    color: ${Colors.PURPLE};
+  }
 `;
 
 const StyledMetaDataTypography = styled(Typography)`
@@ -35,13 +38,6 @@ const StyledMetaDataTypography = styled(Typography)`
 
 const StyledShowLogModalButton = styled(Button)`
   margin: 10px;
-`;
-
-const StyledButtonLinkWrapper = styled.div`
-  min-width: 13rem;
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
 `;
 
 const StyledTitleTypography = styled(Typography)`
@@ -69,27 +65,17 @@ export default function ImportLogPanel() {
     return publications && publications.length > 0 ? (
       <>
         {publications.reverse().map((pub: SavedPublicationLogLine, index: number) => (
-          <>
-            <StyledPublicationItemWrapper key={index} data-testid={`log-publication-${index}`}>
-              <div>
-                <StyledTitleTypography>{pub.title}</StyledTitleTypography>
-                <StyledMetaDataTypography>{pub.authorsPresentation}</StyledMetaDataTypography>
-              </div>
-              <StyledButtonLinkWrapper>
-                <Button
-                  data-testid={`log-publication-button-${index}`}
-                  color="default"
-                  variant="outlined"
-                  startIcon={<LaunchIcon />}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  href={`${CRISTIN_REACT_APP_URL}/results/show.jsf?id=${pub.id}`}>
-                  Vis publikasjon
-                </Button>
-              </StyledButtonLinkWrapper>
-            </StyledPublicationItemWrapper>
-            <Divider />
-          </>
+          <div key={index} data-testid={`log-publication-${index}`}>
+            <StyledLink
+              data-testid={`log-publication-link-${index}`}
+              href={`${CRISTIN_REACT_APP_URL}/results/show.jsf?id=${pub.id}`}
+              target="_blank"
+              rel="noopener noreferrer">
+              <StyledTitleTypography>{pub.title}</StyledTitleTypography>
+            </StyledLink>
+            <StyledMetaDataTypography>{pub.authorsPresentation}</StyledMetaDataTypography>
+            <StyledDivider />
+          </div>
         ))}
         <Typography variant="caption">
           (Viser en liste over sist importerte publikasjoner lagret i minnet til nettleseren)
