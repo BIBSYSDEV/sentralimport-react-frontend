@@ -32,8 +32,16 @@ const StyledMetaDataTypography = styled(Typography)`
     font-size: 0.8rem;
   }
 `;
+
 const StyledShowLogModalButton = styled(Button)`
   margin: 10px;
+`;
+
+const StyledButtonLinkWrapper = styled.div`
+  min-width: 13rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
 `;
 
 const StyledTitleTypography = styled(Typography)`
@@ -45,7 +53,7 @@ const StyledTitleTypography = styled(Typography)`
   }
 `;
 
-export default function LogPanel() {
+export default function ImportLogPanel() {
   const [openLogModal, setOpenLogModal] = useState(false);
 
   function showLogModal() {
@@ -67,16 +75,18 @@ export default function LogPanel() {
                 <StyledTitleTypography>{pub.title}</StyledTitleTypography>
                 <StyledMetaDataTypography>{pub.authorsPresentation}</StyledMetaDataTypography>
               </div>
-              <Button
-                data-testid={`log-publication-button-${index}`}
-                color="default"
-                variant="outlined"
-                startIcon={<LaunchIcon />}
-                rel="noopener noreferrer"
-                target="_blank"
-                href={`${CRISTIN_REACT_APP_URL}/results/show.jsf?id=${pub.id}`}>
-                Vis publikasjon
-              </Button>
+              <StyledButtonLinkWrapper>
+                <Button
+                  data-testid={`log-publication-button-${index}`}
+                  color="default"
+                  variant="outlined"
+                  startIcon={<LaunchIcon />}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href={`${CRISTIN_REACT_APP_URL}/results/show.jsf?id=${pub.id}`}>
+                  Vis publikasjon
+                </Button>
+              </StyledButtonLinkWrapper>
             </StyledPublicationItemWrapper>
             <Divider />
           </>
