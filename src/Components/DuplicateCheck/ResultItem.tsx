@@ -53,7 +53,7 @@ const generateAuthorPresentation = (cristinPublication: CristinPublication) => {
     .slice(0, 5)
     .map((author: any) => [author.surname, author.first_name].join(', '))
     .join('; ')
-    .concat(cristinPublication.authors.length > 3 ? ' et al.' : '');
+    .concat(cristinPublication.authors.length > 5 ? ' et al.' : '');
 };
 
 function extractDoiFromCristinPublication(cristinPublication: CristinPublication) {

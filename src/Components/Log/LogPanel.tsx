@@ -1,8 +1,11 @@
-import React from 'react';
-import ListModal from '../ListModal/ListModal';
-import { Button, Typography } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Button, Divider, Typography } from '@material-ui/core';
 import styled from 'styled-components';
 import { SavedPublicationLogLine } from '../../types/PublicationTypes';
+import { Colors } from '../../assets/styles/StyleConstants';
+import { CRISTIN_REACT_APP_URL } from '../../utils/constants';
+import LaunchIcon from '@material-ui/icons/Launch';
+import { Modal, ModalBody, ModalHeader } from 'reactstrap';
 
 const LogPanelWrapper = styled.div`
   display: flex;
@@ -10,58 +13,94 @@ const LogPanelWrapper = styled.div`
   padding-left: 1rem;
 `;
 
+const StyledModal = styled(Modal)`
+  width: 80%;
+  max-width: 60rem;
+  margin: 1rem auto;
+  padding: 0;
+`;
+
 const StyledPublicationItemWrapper = styled.div`
-  padding-bottom: 1.5rem;
-`;
-
-const StyledMetadataWrapper = styled.div`
+  margin: 1.5rem 0;
   display: flex;
-  align-items: baseline;
+  justify-content: space-between;
 `;
 
-const StyledTypography = styled(Typography)`
-  padding-right: 0.4rem;
+const StyledMetaDataTypography = styled(Typography)`
+  color: ${Colors.BLACK};
+  && {
+    font-size: 0.8rem;
+  }
+`;
+const StyledShowLogModalButton = styled(Button)`
+  margin: 10px;
+`;
+
+const StyledTitleTypography = styled(Typography)`
+  color: ${Colors.PURPLE};
+  && {
+    margin: 0 0 0.5rem;
+    font-weight: bold;
+    line-height: 1.2;
+  }
 `;
 
 export default function LogPanel() {
-  const [visible, setVisible] = React.useState(false);
+  const [openLogModal, setOpenLogModal] = useState(false);
 
-  function toggleLog() {
-    setVisible(!visible);
+  function showLogModal() {
+    setOpenLogModal(!openLogModal);
   }
 
-  function close() {
-    setVisible(false);
+  function handleCloseModal() {
+    setOpenLogModal(false);
   }
 
-  function createRows() {
+  function createLogModalContent() {
     const publications = JSON.parse(localStorage.getItem('log') ?? '[]') as any[];
-    return publications.length !== 0 ? (
-      <div>
-        {publications.reverse().map((pub: SavedPublicationLogLine) => (
-          <StyledPublicationItemWrapper key={pub.id}>
-            <StyledMetadataWrapper>
-              <StyledTypography variant="caption">CristinId:</StyledTypography>
-              <StyledTypography>{pub.id}</StyledTypography>
-            </StyledMetadataWrapper>
-            <StyledMetadataWrapper>
-              <StyledTypography variant="caption">Tittel:</StyledTypography>
-              <StyledTypography>{pub.title}</StyledTypography>
-            </StyledMetadataWrapper>
-          </StyledPublicationItemWrapper>
+    return publications && publications.length > 0 ? (
+      <>
+        {publications.reverse().map((pub: SavedPublicationLogLine, index: number) => (
+          <>
+            <StyledPublicationItemWrapper key={index} data-testid={`log-publication-${index}`}>
+              <div>
+                <StyledTitleTypography>{pub.title}</StyledTitleTypography>
+                <StyledMetaDataTypography>{pub.authorsPresentation}</StyledMetaDataTypography>
+              </div>
+              <Button
+                data-testid={`log-publication-button-${index}`}
+                color="default"
+                variant="outlined"
+                startIcon={<LaunchIcon />}
+                rel="noopener noreferrer"
+                target="_blank"
+                href={`${CRISTIN_REACT_APP_URL}/results/show.jsf?id=${pub.id}`}>
+                Vis publikasjon
+              </Button>
+            </StyledPublicationItemWrapper>
+            <Divider />
+          </>
         ))}
-      </div>
+        <Typography variant="caption">
+          (Viser en liste over sist importerte publikasjoner lagret i minnet til nettleseren)
+        </Typography>
+      </>
     ) : (
-      <Typography>Ingen publikasjoner</Typography>
+      <Typography data-testid="no-log-content">
+        Ingen nylig importerte publikasjoner funnet i minnet til nettleseren
+      </Typography>
     );
   }
 
   return (
     <LogPanelWrapper data-testid="log-panel">
-      <Button color="default" onClick={toggleLog} variant="contained" style={{ margin: '10px' }}>
+      <StyledShowLogModalButton color="default" onClick={showLogModal} variant="contained" data-testid="show-log-modal">
         Vis mine siste importerte publikasjoner
-      </Button>
-      <ListModal title={'Mine siste importerte publikasjoner'} open={visible} handleClose={close} body={createRows()} />
+      </StyledShowLogModalButton>
+      <StyledModal isOpen={openLogModal}>
+        <ModalHeader toggle={handleCloseModal}>Mine siste importerte publikasjoner</ModalHeader>
+        <ModalBody>{createLogModalContent()}</ModalBody>
+      </StyledModal>
     </LogPanelWrapper>
   );
 }

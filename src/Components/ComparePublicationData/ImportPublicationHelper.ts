@@ -103,12 +103,22 @@ export async function handleCreatePublication(publication: any, dispatch: any) {
   }
 }
 
+const generateAuthorPresentation = (publication: any) => {
+  return publication.contributors.list
+    .slice(0, 5)
+    .map((author: any) => [author.surname, author.first_name].join(', '))
+    .join('; ')
+    .concat(publication.contributors.list.length > 5 ? ' et al.' : '');
+};
+
 const addToLog = (publication: any, cristinResultId: any) => {
   const log: SavedPublicationLogLine[] = JSON.parse(localStorage.getItem('log') || '[]') ?? [];
   if (log.length > 15) log.shift();
-  let title = publication.title[publication.original_language];
-  title = title.length > 50 ? title.substring(0, 49) : title;
-  log.push({ id: cristinResultId, title: title });
+  log.push({
+    id: cristinResultId,
+    title: publication.title[publication.original_language],
+    authorsPresentation: generateAuthorPresentation(publication),
+  });
   localStorage.setItem('log', JSON.stringify(log));
 };
 

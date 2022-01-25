@@ -174,6 +174,7 @@ export enum InternationalStandardNumberTypes {
 }
 
 export interface SavedPublicationLogLine {
+  authorsPresentation: string;
   id: string;
   title: string;
 }
