@@ -134,6 +134,19 @@ context('contributor', () => {
     ).should('not.exist');
   });
 
+  it('is not possible to add units for institution without units', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('[data-testid="show-institution-selector-2"]').click(); //adding
+    cy.get('[data-testid="filter-institution-select-2"]').click();
+    cy.get(`[data-testid="${mockInstitutions[1].cristin_institution_id}-option"]`).click(); //velger sintef narvik
+    cy.get('[data-testid="add-institution-button-2"]').click();
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockInstitutions[1].cristin_institution_id}-add-unit"] > .MuiButton-label`
+    ).should('not.exist');
+  });
+
   it('is possible to add and delete units for institution with crisin-id for a contributor', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();

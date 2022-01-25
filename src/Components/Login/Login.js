@@ -52,12 +52,10 @@ export default function Login(props) {
     let jsonToken = jwt.decode(search.id_token);
 
     if (
-      jsonToken.aud !== process.env.REACT_APP_CLIENT_ID ||
-      jsonToken.nonce !== localStorage.getItem('nonce') ||
-      search.state !== authState
-    )
-      console.log('Error! Wrong invalid login!');
-    else {
+      jsonToken.aud === process.env.REACT_APP_CLIENT_ID &&
+      jsonToken.nonce === localStorage.getItem('nonce') &&
+      search.state === authState
+    ) {
       localStorage.setItem('authorized', 'true');
       localStorage.setItem(ACESS_TOKEN, search.access_token.toString());
       localStorage.setItem('expires', jsonToken.exp);
