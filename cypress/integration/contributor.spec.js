@@ -138,7 +138,6 @@ context('contributor', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
-    cy.wait(300);
     cy.get('[data-testid="show-institution-selector-2"]').click(); //adding
     cy.get('[data-testid="filter-institution-select-2"]').click();
     cy.get(`[data-testid="${mockInstitutions[1].cristin_institution_id}-option"]`).click(); //velger sintef narvik
