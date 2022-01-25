@@ -2,6 +2,7 @@ import React from 'react';
 import ListModal from '../ListModal/ListModal';
 import { Button, Typography } from '@material-ui/core';
 import styled from 'styled-components';
+import { SavedPublicationLogLine } from '../../types/PublicationTypes';
 
 const LogPanelWrapper = styled.div`
   display: flex;
@@ -37,8 +38,8 @@ export default function LogPanel() {
     const publications = JSON.parse(localStorage.getItem('log') ?? '[]') as any[];
     return publications.length !== 0 ? (
       <div>
-        {publications.reverse().map((pub: any, i: number) => (
-          <StyledPublicationItemWrapper key={i}>
+        {publications.reverse().map((pub: SavedPublicationLogLine) => (
+          <StyledPublicationItemWrapper key={pub.id}>
             <StyledMetadataWrapper>
               <StyledTypography variant="caption">CristinId:</StyledTypography>
               <StyledTypography>{pub.id}</StyledTypography>
@@ -58,9 +59,9 @@ export default function LogPanel() {
   return (
     <LogPanelWrapper data-testid="log-panel">
       <Button color="default" onClick={toggleLog} variant="contained" style={{ margin: '10px' }}>
-        Vis siste importerte publikasjoner
+        Vis mine siste importerte publikasjoner
       </Button>
-      <ListModal title={'Siste importerte publikasjoner'} open={visible} handleClose={close} body={createRows()} />
+      <ListModal title={'Mine siste importerte publikasjoner'} open={visible} handleClose={close} body={createRows()} />
     </LogPanelWrapper>
   );
 }

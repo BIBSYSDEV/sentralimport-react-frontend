@@ -1,4 +1,4 @@
-import { ImportPublication, Language } from '../../types/PublicationTypes';
+import { ImportPublication, Language, SavedPublicationLogLine } from '../../types/PublicationTypes';
 import { CompareFormValuesType } from './CompareFormTypes';
 import { patchPiaPublication, patchPublication, postPublication } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
@@ -104,7 +104,7 @@ export async function handleCreatePublication(publication: any, dispatch: any) {
 }
 
 const addToLog = (publication: any, cristinResultId: any) => {
-  const log = JSON.parse(localStorage.getItem('log') || '[]') ?? [];
+  const log: SavedPublicationLogLine[] = JSON.parse(localStorage.getItem('log') || '[]') ?? [];
   if (log.length > 15) log.shift();
   let title = publication.title[publication.original_language];
   title = title.length > 50 ? title.substring(0, 49) : title;
