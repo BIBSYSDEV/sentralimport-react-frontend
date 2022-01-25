@@ -96,8 +96,9 @@ export const interceptRequestsOnMock = () => {
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions\\?cristin_institution=true.*`)).reply(200, mockInstitutions);
 
   //get institution units
-  mock.onGet(new RegExp(`${CRIST_REST_API}/units/.*`)).reply(200, mockUnits);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/units\\?parent_unit_id=6228`)).reply(200, []);
   mock.onGet(new RegExp(`${CRIST_REST_API}/units\\?parent_unit_id=.*`)).reply(200, mockSimpleUnitResponse);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/units/.*`)).reply(200, mockUnits);
 
   //save publication
   mock
