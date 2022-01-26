@@ -21,7 +21,7 @@ context('import publication', () => {
     cy.get(`[data-testid="show-log-modal"]`).click();
     cy.get(`[data-testid="no-log-content"]`).should('not.exist');
     cy.get(`[data-testid="log-publication-0"]`).should('exist');
-    cy.get(`[data-testid="log-publication-button-0"]`)
+    cy.get(`[data-testid="log-publication-link-0"]`)
       .should('have.attr', 'href')
       .and('include', `results/show.jsf?id=${mockSavedPublication.cristin_result_id}`);
     cy.get(`[data-testid="log-publication-0"]`).contains(mockImportData[0].languages[0].title);
