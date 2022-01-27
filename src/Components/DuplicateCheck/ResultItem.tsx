@@ -57,7 +57,9 @@ const generateAuthorPresentation = (cristinPublication: CristinPublication) => {
 };
 
 export function extractDoiFromCristinPublication(cristinPublication: CristinPublication) {
-  return cristinPublication.links?.find((link) => link.url_type === UrlTypes.Doi)?.url;
+  const doiLink = 'https://doi.org/';
+  const url = cristinPublication.links?.find((link) => link.url_type === UrlTypes.Doi)?.url;
+  return url.replaceAll(doiLink, '');
 }
 
 const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
