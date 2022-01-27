@@ -1,4 +1,4 @@
-import React, { FC, useContext, useLayoutEffect, useRef, useState } from 'react';
+import React, { FC, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Modal, ModalBody, ModalHeader } from 'reactstrap';
 import { Context } from '../../Context';
 import { Button, Checkbox, Divider, FormControlLabel, FormGroup, Typography } from '@material-ui/core';
@@ -116,7 +116,7 @@ const ContributorModal: FC<ContributorProps> = ({
     if (firstUpdate.current) firstUpdate.current = false;
   }, [contributors]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setArrayOfContributorsWithNorwegianInstitution(
       contributors.map((contributor) =>
         contributor.imported?.affiliations?.some((inst) => inst.countryCode === NorwegianCountryCode)
