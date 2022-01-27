@@ -63,6 +63,7 @@ import {
   searchCristinPersons,
 } from '../Contributors/ContributorHelper';
 import { getDuplicateAffiliations } from '../Contributors/InstututionHelper';
+import { extractDoiFromCristinPublication } from '../DuplicateCheck/ResultItem';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -186,12 +187,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           ? {
               title: selectedLang.title ?? '',
               year: state.selectedPublication.year_published,
-              doi:
-                state.selectedPublication.links &&
-                state.selectedPublication.links[state.selectedPublication.links.length - 1]?.url?.substring(
-                  16,
-                  state.selectedPublication.links[0]?.url?.length + 1
-                ),
+              doi: extractDoiFromCristinPublication(state.selectedPublication) ?? '',
               language: selectedLang,
               journal: {
                 cristinTidsskriftNr: await getJournalId(state.selectedPublication.journal),

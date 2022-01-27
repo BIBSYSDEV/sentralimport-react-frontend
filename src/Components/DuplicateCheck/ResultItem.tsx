@@ -56,7 +56,7 @@ const generateAuthorPresentation = (cristinPublication: CristinPublication) => {
     .concat(cristinPublication.authors.length > 3 ? ' et al.' : '');
 };
 
-function extractDoiFromCristinPublication(cristinPublication: CristinPublication) {
+export function extractDoiFromCristinPublication(cristinPublication: CristinPublication) {
   return cristinPublication.links?.find((link) => link.url_type === UrlTypes.Doi)?.url;
 }
 
