@@ -255,6 +255,7 @@ const ContributorModal: FC<ContributorProps> = ({
                     <FormControlLabel
                       control={
                         <Checkbox
+                          data-testid="filter-contributors-check"
                           color="primary"
                           checked={isContributorsFiltered}
                           onChange={handleToggleFilter}
@@ -286,7 +287,11 @@ const ContributorModal: FC<ContributorProps> = ({
                     </StyledOrderColumn>
                     <StyledContributorColumn>
                       {!arrayOfContributorsWithNorwegianInstitution[index] && isContributorsFiltered ? (
-                        <Typography color="textSecondary">Forfatter-info er skjult</Typography>
+                        <Typography
+                          data-testid={`import-contributor-hidden-${contributor.toBeCreated.order}`}
+                          color="textSecondary">
+                          Forfatter-info er skjult
+                        </Typography>
                       ) : (
                         <ImportContributorComponent contributor={contributor} />
                       )}

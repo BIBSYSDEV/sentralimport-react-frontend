@@ -288,4 +288,25 @@ context('contributor', () => {
       `[data-testid="list-item-author-${mockImportData[0].authors[5].surname}-affiliations-${responseCountryInstitutionCN.cristin_institution_id}-institution-name"]`
     ).should('not.exist');
   });
+
+  it('can filter contributors to show only contributors with norwegian affilliation', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+
+    cy.wait(300);
+    cy.get('[data-testid="import-contributor-hidden-1"]').should('not.exist');
+
+    cy.get('[data-testid="filter-contributors-check"]').click();
+    cy.get('[data-testid="import-contributor-hidden-1"]').should('exist');
+    cy.get('[data-testid="creator-name-1"]').should('not.exist');
+    cy.get('[data-testid="contributor-form-0-name"]').should('not.be.visible'); //nb. denne skjules kun visuelt
+    cy.get('[data-testid="move-up-button-2"]').should('not.exist');
+    cy.get('[data-testid="move-down-button-2"]').should('not.exist');
+    cy.get('[data-testid="creator-name-5"]').should('exist');
+
+    cy.get('[data-testid="filter-contributors-check"]').click();
+    cy.get('[data-testid="import-contributor-hidden-1"]').should('not.exist');
+    cy.get('[data-testid="creator-name-1"]').should('exist');
+  });
 });
