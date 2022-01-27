@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid/Grid';
 import FilterFormPanel from './Components/FilterForm/FilterFormPanel';
 import Header from './Components/Header/Header';
 import { useHistory } from 'react-router-dom';
-import LogPanel from './Components/Log/LogPanel';
+import ImportLogPanel from './Components/Log/ImportLogPanel';
 import { Context } from './Context';
 import { USE_MOCK_DATA } from './utils/constants';
 import styled from 'styled-components';
@@ -78,7 +78,7 @@ export default function App() {
         <StyledGrid container spacing={3}>
           <Grid item xs={12} md={3}>
             <FilterFormPanel />
-            <LogPanel />
+            <ImportLogPanel />
           </Grid>
           <Grid item xs={12} md={9}>
             <ImportTable />
