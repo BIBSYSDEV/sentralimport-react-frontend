@@ -187,7 +187,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           ? {
               title: selectedLang.title ?? '',
               year: state.selectedPublication.year_published,
-              doi: extractDoiFromCristinPublication(state.selectedPublication) ?? '',
+              doi: extractDoiFromCristinPublication(state.selectedPublication),
               language: selectedLang,
               journal: {
                 cristinTidsskriftNr: await getJournalId(state.selectedPublication.journal),
