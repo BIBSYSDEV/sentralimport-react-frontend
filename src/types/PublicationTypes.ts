@@ -172,3 +172,9 @@ export enum InternationalStandardNumberTypes {
   PRINTED = 'printed',
   ELECTRONIC = 'electronic',
 }
+
+export interface SavedPublicationLogLine {
+  authorsPresentation: string;
+  id: string;
+  title: string;
+}
