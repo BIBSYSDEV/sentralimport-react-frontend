@@ -124,22 +124,23 @@ const ContributorModal: FC<ContributorProps> = ({
     );
   }, [contributors]);
 
-  async function handleChooseAuthor(author: ContributorWrapper) {
-    const toBeCreatedOrder = author.toBeCreated.order;
-    const copiedAffiliations = JSON.parse(JSON.stringify(author.imported.affiliations));
-    const temp = [...contributors];
-    //TODO: kjøre inst-sjekken  - som konverterer ukjente institutusjoner til landkoder
-    if (toBeCreatedOrder) {
-      temp[toBeCreatedOrder - 1].toBeCreated.affiliations = copiedAffiliations;
-      temp[toBeCreatedOrder - 1].toBeCreated.first_name = author.imported.first_name;
-      temp[toBeCreatedOrder - 1].toBeCreated.surname = author.imported.surname;
-      temp[toBeCreatedOrder - 1].toBeCreated.authorName = author.imported.authorName;
-      temp[toBeCreatedOrder - 1].toBeCreated.cristin_person_id = author.cristin.cristin_person_id
-        ? author.cristin.cristin_person_id
-        : author.imported.cristin_person_id;
-    }
-    setContributors(temp);
-  }
+  // IKKE I BRUK
+  // async function handleChooseAuthor(author: ContributorWrapper) {
+  //   const toBeCreatedOrder = author.toBeCreated.order;
+  //   const copiedAffiliations = JSON.parse(JSON.stringify(author.imported.affiliations));
+  //   const temp = [...contributors];
+  //   //TODO: kjøre inst-sjekken  - som konverterer ukjente institutusjoner til landkoder
+  //   if (toBeCreatedOrder) {
+  //     temp[toBeCreatedOrder - 1].toBeCreated.affiliations = copiedAffiliations;
+  //     temp[toBeCreatedOrder - 1].toBeCreated.first_name = author.imported.first_name;
+  //     temp[toBeCreatedOrder - 1].toBeCreated.surname = author.imported.surname;
+  //     temp[toBeCreatedOrder - 1].toBeCreated.authorName = author.imported.authorName;
+  //     temp[toBeCreatedOrder - 1].toBeCreated.cristin_person_id = author.cristin.cristin_person_id
+  //       ? author.cristin.cristin_person_id
+  //       : author.imported.cristin_person_id;
+  //   }
+  //   setContributors(temp);
+  // }
 
   async function handleChosenAuthorAffiliations(affiliations: Affiliation[]): Promise<Affiliation[]> {
     //todo: error-handling
@@ -287,7 +288,7 @@ const ContributorModal: FC<ContributorProps> = ({
                       {!arrayOfContributorsWithNorwegianInstitution[index] && isContributorsFiltered ? (
                         <Typography color="textSecondary">Forfatter-info er skjult</Typography>
                       ) : (
-                        <ImportContributorComponent contributor={contributor} handleChooseAuthor={handleChooseAuthor} />
+                        <ImportContributorComponent contributor={contributor} />
                       )}
                     </StyledContributorColumn>
                     <StyledContributorColumn>

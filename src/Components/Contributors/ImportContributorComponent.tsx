@@ -20,10 +20,9 @@ interface AffiliationDisplayType {
 
 interface ContributorOrderComponentProps {
   contributor: ContributorWrapper;
-  handleChooseAuthor: any;
 }
 
-const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ contributor, handleChooseAuthor }) => {
+const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ contributor }) => {
   const affiliations: AffiliationDisplayType[] = contributor.imported.affiliations
     ? contributor.imported.affiliations
         .slice()
