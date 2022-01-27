@@ -3,6 +3,7 @@ import { Button } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import styled from 'styled-components';
+import { ContributorWrapper } from '../../types/ContributorTypes';
 
 const StyledOrderWrapper = styled.div`
   display: flex;
@@ -11,9 +12,10 @@ const StyledOrderWrapper = styled.div`
 `;
 
 interface ContributorOrderComponentProps {
-  row: any;
+  row: ContributorWrapper;
   setContributors: any;
-  contributors: any;
+  contributors: ContributorWrapper[];
+  hideArrows: boolean;
 }
 
 enum Direction {
@@ -21,7 +23,12 @@ enum Direction {
   DOWN = 1,
 }
 
-const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, setContributors, contributors }) => {
+const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({
+  row,
+  setContributors,
+  contributors,
+  hideArrows,
+}) => {
   const handleOrderContributors = (author: any, direction: Direction) => {
     const copy = [...contributors];
     const index = author.toBeCreated.order - 1;
@@ -89,7 +96,7 @@ const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, se
 
   return (
     <StyledOrderWrapper>
-      {row.toBeCreated.order > 1 && (
+      {row.toBeCreated.order && row.toBeCreated.order > 1 && !hideArrows && (
         <Button
           aria-label="flytt opp"
           data-testid={`move-up-button-${row.toBeCreated.order}`}
@@ -102,7 +109,7 @@ const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, se
           ? row.toBeCreated.order
           : row.toBeCreated.order + ' (tidl. ' + row.imported.order + ')'}
       </div>
-      {row.toBeCreated.order < contributors.length && (
+      {row.toBeCreated.order && row.toBeCreated.order < contributors.length && !hideArrows && (
         <Button
           aria-label="flytt ned"
           data-testid={`move-down-button-${row.toBeCreated.order}`}

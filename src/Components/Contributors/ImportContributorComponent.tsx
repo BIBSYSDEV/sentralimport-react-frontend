@@ -6,10 +6,6 @@ import { Colors } from '../../assets/styles/StyleConstants';
 import { ContributorWrapper } from '../../types/ContributorTypes';
 import { SimpleUnitResponse } from '../../types/InstitutionTypes';
 
-// const StyledActionWrapper = styled.div`
-//   margin-top: 1rem;
-// `;
-
 const StyledNameTypography = styled(Typography)`
   &.MuiTypography-root {
     margin-bottom: 2rem;
@@ -23,13 +19,13 @@ interface AffiliationDisplayType {
 }
 
 interface ContributorOrderComponentProps {
-  row: ContributorWrapper;
+  contributor: ContributorWrapper;
   handleChooseAuthor: any;
 }
 
-const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, handleChooseAuthor }) => {
-  const affiliations: AffiliationDisplayType[] = row.imported.affiliations
-    ? row.imported.affiliations
+const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ contributor, handleChooseAuthor }) => {
+  const affiliations: AffiliationDisplayType[] = contributor.imported.affiliations
+    ? contributor.imported.affiliations
         .slice()
         .sort((affiliationA, affiliationB) => {
           if (
@@ -61,17 +57,17 @@ const ContributorOrderComponent: FC<ContributorOrderComponentProps> = ({ row, ha
 
   return (
     <>
-      <StyledNameTypography variant="h6" gutterBottom data-testid={`creator-name-${row.toBeCreated.order}`}>
-        {row.imported.surname && row.imported.first_name
-          ? row.imported.first_name + ' ' + row.imported.surname
-          : row.imported.authorName}
+      <StyledNameTypography variant="h6" gutterBottom data-testid={`creator-name-${contributor.toBeCreated.order}`}>
+        {contributor.imported.surname && contributor.imported.first_name
+          ? contributor.imported.first_name + ' ' + contributor.imported.surname
+          : contributor.imported.authorName}
       </StyledNameTypography>
       {affiliations.map((affiliation, affiliationIndex) => (
         <AffiliationDisplay
           key={`${affiliationIndex}`}
           backgroundcolor={Colors.LIGHT_GREY}
           affiliation={affiliation}
-          dataTestid={`creator-${row.toBeCreated.order}-institution-${affiliationIndex}`}
+          dataTestid={`creator-${contributor.toBeCreated.order}-institution-${affiliationIndex}`}
         />
       ))}
       {/*TODO: Knappen skal bare gjemmes før den skrives om*/}
