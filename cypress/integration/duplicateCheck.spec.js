@@ -116,13 +116,16 @@ context('duplication-check-modal', () => {
     cy.get(`[data-testid="search-panel-issn-checkbox"].Mui-checked`).should('not.exist');
   });
 
-  it('can search for duplicates using title', () => {
+  it('can search for duplicates with doi using title', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="search-panel-title-checkbox"]`).click();
     cy.get(`[data-testid="search-panel-title-textfield"]`).clear().type(mockSearchTitleForCristinPubWithDoi);
     cy.get(`[data-testid="search-panel-retry-search-button"]`).click();
 
     cy.get(`[data-testid="duplicates-result-list"]`).should('contain', mockCristinPublicationWithDoi.journal.name);
-    cy.get(`[data-testid="duplicates-result-list"]`).should('contain', mockCristinPublicationWithDoi.links[1].url);
+    cy.get(`[data-testid="duplicates-result-list"]`).should(
+      'contain',
+      mockCristinPublicationWithDoi.links[1].url.substring(17, 30)
+    );
   });
 });
