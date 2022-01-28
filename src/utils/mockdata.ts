@@ -674,8 +674,8 @@ export const mockPersonDetailedDuplicate = {
 
 export const mockPersonDetailedWithoutActiveAffiliations = {
   cristin_person_id: cristinIDWithoutActiveAffiliation,
-  first_name: 'Arne',
-  surname: 'Osen',
+  first_name: 'Olav Kjellevold',
+  surname: 'Olsen',
   identified_cristin_person: true,
   cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
   affiliations: [

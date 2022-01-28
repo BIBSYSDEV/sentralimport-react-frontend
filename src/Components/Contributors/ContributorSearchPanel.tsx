@@ -81,6 +81,8 @@ export interface AddAffiliationError extends Error {
   institutionId: string;
 }
 
+const MaxContributorsToSearchAutomatic = 50;
+
 interface ContributorSearchPanelProps {
   resultListIndex: number;
   contributorData: ContributorWrapper;
@@ -107,11 +109,12 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     setAddAffiliationError(undefined);
   }, [contributorData.toBeCreated.affiliations]);
 
-  const isVerifiedCristinPerson = (person: ContributorType) =>
-    person.cristin_person_id && person.cristin_person_id.toString() !== '0';
-
   useEffect(() => {
-    if (!isVerifiedCristinPerson(contributorData.toBeCreated)) {
+    if (
+      contributorData.toBeCreated.badge_type !== ContributorStatus.Verified &&
+      contributorData.toBeCreated.order &&
+      contributorData.toBeCreated.order <= MaxContributorsToSearchAutomatic
+    ) {
       openSearchPanelAndSearchContributors();
     }
   }, [
@@ -392,7 +395,9 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
 
               {openContributorSearchPanel && !isSearching && (
                 <Grid item xs={12}>
-                  <StyledResultTypography variant="h6">
+                  <StyledResultTypography
+                    variant="h6"
+                    data-testid={`contributor-search-results-header-for-${resultListIndex}`}>
                     {generateSearchResultHeader(searchResultLength, searchResults.length, showFullResultList)}
                   </StyledResultTypography>
                 </Grid>
