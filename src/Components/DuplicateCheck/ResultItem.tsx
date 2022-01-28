@@ -56,8 +56,10 @@ const generateAuthorPresentation = (cristinPublication: CristinPublication) => {
     .concat(cristinPublication.authors.length > 5 ? ' et al.' : '');
 };
 
-function extractDoiFromCristinPublication(cristinPublication: CristinPublication) {
-  return cristinPublication.links?.find((link) => link.url_type === UrlTypes.Doi)?.url;
+export function extractDoiFromCristinPublication(cristinPublication: CristinPublication) {
+  const doiLink = 'https://doi.org/';
+  const url = cristinPublication.links?.find((link) => link.url_type === UrlTypes.Doi)?.url;
+  return url ? url.replaceAll(doiLink, '') : '';
 }
 
 const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
