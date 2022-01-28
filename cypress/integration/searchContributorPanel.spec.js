@@ -182,7 +182,7 @@ context('Search contributor panel', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid="add-contributor-button"]').click();
-    cy.get('#firstName5').should('have.value', '');
+    cy.get('#firstName6').should('have.value', '');
   });
 
   it('makes initial search not take up entire page by hiding excess searchResult', () => {
@@ -206,9 +206,7 @@ context('Search contributor panel', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(`[data-testid="contributor-search-results-header-for-0"]`).should('not.exist'); //active
-    cy.get(`[data-testid="contributor-search-results-header-for-1"]`).should('not.exist'); //active
     cy.get(`[data-testid="contributor-search-results-header-for-2"]`).should('exist'); //no cristin id
-    cy.get(`[data-testid="contributor-search-results-header-for-3"]`).should('exist'); //no cristin id
-    cy.get(`[data-testid="contributor-search-results-header-for-4"]`).should('exist'); //verified cristin id but no active institutions
+    cy.get(`[data-testid="contributor-search-results-header-for-5"]`).should('exist'); //verified cristin id but no active institutions
   });
 });
