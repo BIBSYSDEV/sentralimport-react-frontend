@@ -1,21 +1,17 @@
-import React, { FC, useContext, useLayoutEffect, useRef, useState } from 'react';
+import React, { FC, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Modal, ModalBody, ModalHeader } from 'reactstrap';
 import { Context } from '../../Context';
-import { Button, Divider, Typography } from '@material-ui/core';
+import { Button, Checkbox, Divider, FormControlLabel, FormGroup, Typography } from '@material-ui/core';
 import GenericConfirmDialog from '../Dialogs/GenericConfirmDialog';
-import { SearchLanguage } from '../../api/contributorApi';
 import styled from 'styled-components';
 import AddIcon from '@material-ui/icons/Add';
 import ContributorOrderComponent from './ContributorOrderComponent';
 import ImportContributorComponent from './ImportContributorComponent';
 import { ContributorWrapper, emptyContributorWrapper } from '../../types/ContributorTypes';
 import { Colors } from '../../assets/styles/StyleConstants';
-import { getCountryInformationByCountryCode } from '../../api/institutionApi';
 import { ImportPublication } from '../../types/PublicationTypes';
-import { Affiliation } from '../../types/InstitutionTypes';
 import ContributorForm from './ContributorForm';
 import clone from 'just-clone';
-import { isCristinInstitution } from './InstututionHelper';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -43,12 +39,17 @@ const StyledContributorHeader = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  padding: 0.5rem;
 `;
 
 const StyledOrderColumn = styled.div`
   width: 5%;
   min-width: 6rem;
+`;
+
+const StyledImportHeaderWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const StyledOrderedList = styled.ul`
@@ -61,7 +62,6 @@ const StyledContributorColumn = styled.div`
   width: 45%;
   min-width: 15rem;
   margin-left: 2rem;
-  padding: 0.5rem;
 `;
 
 const StyledHeaderText = styled(Typography)`
@@ -80,6 +80,8 @@ const StyledContributorFooter = styled.div`
   margin-top: 2rem;
 `;
 
+const NorwegianCountryCode = 'NO';
+
 interface ContributorProps {
   importPublication: ImportPublication;
   contributors: ContributorWrapper[];
@@ -97,8 +99,10 @@ const ContributorModal: FC<ContributorProps> = ({
 }) => {
   const [isClosingDialogOpen, setIsClosingDialogOpen] = useState(false);
   const { dispatch } = useContext(Context);
-
-  const countries: any = {}; //object //TODO: denne må fikses
+  const [arrayOfContributorsWithNorwegianInstitution, setArrayOfContributorsWithNorwegianInstitution] = useState(
+    new Array(contributors.length).fill(false)
+  );
+  const [isContributorsFiltered, setIsContributorsFiltered] = useState(false);
 
   const firstUpdate = useRef(true);
 
@@ -106,48 +110,13 @@ const ContributorModal: FC<ContributorProps> = ({
     if (firstUpdate.current) firstUpdate.current = false;
   }, [contributors]);
 
-  async function handleChooseAuthor(author: ContributorWrapper) {
-    const toBeCreatedOrder = author.toBeCreated.order;
-    const copiedAffiliations = JSON.parse(JSON.stringify(author.imported.affiliations));
-    const temp = [...contributors];
-    //TODO: kjøre inst-sjekken  - som konverterer ukjente institutusjoner til landkoder
-    if (toBeCreatedOrder) {
-      temp[toBeCreatedOrder - 1].toBeCreated.affiliations = copiedAffiliations;
-      temp[toBeCreatedOrder - 1].toBeCreated.first_name = author.imported.first_name;
-      temp[toBeCreatedOrder - 1].toBeCreated.surname = author.imported.surname;
-      temp[toBeCreatedOrder - 1].toBeCreated.authorName = author.imported.authorName;
-      temp[toBeCreatedOrder - 1].toBeCreated.cristin_person_id = author.cristin.cristin_person_id
-        ? author.cristin.cristin_person_id
-        : author.imported.cristin_person_id;
-    }
-    setContributors(temp);
-  }
-
-  async function handleChosenAuthorAffiliations(affiliations: Affiliation[]): Promise<Affiliation[]> {
-    //todo: error-handling
-    const tempAffiliations = [];
-    for (let i = 0; i < affiliations.length; i++) {
-      const affiliation = affiliations[i];
-      if (!isCristinInstitution(affiliation.cristinInstitutionNr) && affiliation.countryCode) {
-        //bytter ut institusjon med instkode for nasjonalitet
-        const institutionCountryInformations = (
-          await getCountryInformationByCountryCode(affiliation.countryCode, SearchLanguage.En)
-        ).data;
-        if (institutionCountryInformations.length > 0) {
-          affiliation.institutionName =
-            (institutionCountryInformations[0].institution_name.en ||
-              institutionCountryInformations[0].institution_name.nb) + ' (Ukjent institusjon)';
-          affiliation.unitName =
-            (institutionCountryInformations[0].institution_name.en ||
-              institutionCountryInformations[0].institution_name.nb) + ' (Ukjent institusjon)';
-          affiliation.cristinInstitutionNr = institutionCountryInformations[0].cristin_institution_id;
-        }
-        countries[affiliation.countryCode] = affiliation;
-      }
-      tempAffiliations.push(affiliation);
-    }
-    return tempAffiliations;
-  }
+  useEffect(() => {
+    setArrayOfContributorsWithNorwegianInstitution(
+      contributors.map((contributor) =>
+        contributor.imported?.affiliations?.some((inst) => inst.countryCode === NorwegianCountryCode)
+      )
+    );
+  }, [contributors]);
 
   const updateContributor = (author: ContributorWrapper, rowIndex: number) => {
     const temp = [...contributors];
@@ -215,6 +184,10 @@ const ContributorModal: FC<ContributorProps> = ({
     dispatch({ type: 'contributors', payload: contributors });
   }
 
+  const handleToggleFilter = () => {
+    setIsContributorsFiltered((prevState) => !prevState);
+  };
+
   return (
     <>
       <StyledModal isOpen={isContributorModalOpen}>
@@ -226,7 +199,23 @@ const ContributorModal: FC<ContributorProps> = ({
                 <StyledHeaderText>Rekkefølge</StyledHeaderText>
               </StyledOrderColumn>
               <StyledContributorColumn>
-                <StyledHeaderText>Import-Forfatter</StyledHeaderText>
+                <StyledImportHeaderWrapper>
+                  <StyledHeaderText>Import-Forfatter</StyledHeaderText>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          data-testid="filter-contributors-check"
+                          color="primary"
+                          checked={isContributorsFiltered}
+                          onChange={handleToggleFilter}
+                          name="filterContributors"
+                        />
+                      }
+                      label="Vis kun forfattere ved norske institusjoner"
+                    />
+                  </FormGroup>
+                </StyledImportHeaderWrapper>
               </StyledContributorColumn>
               <StyledContributorColumn>
                 <StyledHeaderText>Cristin-Forfatter</StyledHeaderText>
@@ -235,28 +224,36 @@ const ContributorModal: FC<ContributorProps> = ({
             <Divider />
 
             <StyledOrderedList>
-              {contributors.map((row, index) => (
+              {contributors.map((contributor, index) => (
                 <li key={index} data-testid={`contributor-line-${index}`}>
                   <StyledContributorLineWrapper>
                     <StyledOrderColumn>
                       <ContributorOrderComponent
-                        row={row}
+                        row={contributor}
                         contributors={contributors}
                         setContributors={setContributors}
+                        hideArrows={!arrayOfContributorsWithNorwegianInstitution[index] && isContributorsFiltered}
                       />
                     </StyledOrderColumn>
                     <StyledContributorColumn>
-                      <ImportContributorComponent row={row} handleChooseAuthor={handleChooseAuthor} />
+                      {!arrayOfContributorsWithNorwegianInstitution[index] && isContributorsFiltered ? (
+                        <Typography
+                          data-testid={`import-contributor-hidden-${contributor.toBeCreated.order}`}
+                          color="textSecondary">
+                          Forfatter-info er skjult
+                        </Typography>
+                      ) : (
+                        <ImportContributorComponent contributor={contributor} />
+                      )}
                     </StyledContributorColumn>
                     <StyledContributorColumn>
-                      <div>
+                      <div hidden={!arrayOfContributorsWithNorwegianInstitution[index] && isContributorsFiltered}>
                         <ContributorForm
                           resultListIndex={index}
-                          contributorData={row}
+                          contributorData={contributor}
                           contributors={contributors}
                           updateContributor={updateContributor}
                           deleteContributor={handleCloseDeleteConfirmDialog}
-                          handleChosenAuthorAffiliations={handleChosenAuthorAffiliations}
                         />
                       </div>
                     </StyledContributorColumn>
