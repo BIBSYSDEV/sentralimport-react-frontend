@@ -550,6 +550,7 @@ export const mockPerson = {
 };
 
 export const cristinIDWithoutActiveAffiliation = '9456892';
+export const cristinIDWithoutActiveAffiliation2 = '4359484';
 export const mockCristinIDWithoutAffiliationAttribute = '89754123';
 export const mockCristinIdForbiddenPerson = '1235412375';
 export const mockDoiForEmptyCristinSearch = '123456789';
@@ -693,6 +694,30 @@ export const mockPersonDetailedWithoutActiveAffiliations = {
         en: 'Guest',
       },
     },
+    {
+      institution: {
+        cristin_institution_id: '7492',
+        url: 'https://api.cristin-test.uio.no/v2/institutions/7492',
+      },
+      unit: {
+        cristin_unit_id: '7492.5.1.0',
+        url: 'https://api.cristin-test.uio.no/v2/units/7492.5.1.0',
+      },
+      active: false,
+      position: {
+        en: 'Researcher',
+      },
+    },
+  ],
+};
+
+export const mockPersonDetailedWithoutActiveAffiliations2 = {
+  cristin_person_id: cristinIDWithoutActiveAffiliation,
+  first_name: 'Pelle',
+  surname: 'Persson',
+  identified_cristin_person: true,
+  cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=4359484',
+  affiliations: [
     {
       institution: {
         cristin_institution_id: '7492',

@@ -3,6 +3,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { CRIST_REST_API, PIA_REST_API } from './constants';
 import {
   cristinIDWithoutActiveAffiliation,
+  cristinIDWithoutActiveAffiliation2,
   mockAllCategories,
   mockAllJournals,
   mockCristinIdForbiddenPerson,
@@ -27,6 +28,7 @@ import {
   mockPersonDetailed6,
   mockPersonDetailedDuplicate,
   mockPersonDetailedWithoutActiveAffiliations,
+  mockPersonDetailedWithoutActiveAffiliations2,
   mockPersonDetailedWithoutAffiliationAttribute,
   mockPersonWithoutActiveAffiliation,
   mockPersonWithoutAffiliationAttribute,
@@ -199,6 +201,9 @@ export const interceptRequestsOnMock = () => {
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIDWithoutActiveAffiliation}`))
     .reply(200, mockPersonDetailedWithoutActiveAffiliations);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIDWithoutActiveAffiliation2}`))
+    .reply(200, mockPersonDetailedWithoutActiveAffiliations2);
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockCristinIDWithoutAffiliationAttribute}`))
     .reply(200, mockPersonDetailedWithoutAffiliationAttribute);
