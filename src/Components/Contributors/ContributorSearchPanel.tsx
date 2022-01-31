@@ -121,6 +121,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     contributorData.toBeCreated.surname,
     contributorData.toBeCreated.first_name,
     contributorData.toBeCreated.cristin_person_id,
+    contributorData.toBeCreated.badge_type,
   ]);
 
   const handleChoosePerson = (firstName: string, surname: string) => {
