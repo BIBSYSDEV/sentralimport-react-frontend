@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import { SortValue } from '../../types/ContextType';
 import { getImportData } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
-import { CircularProgress, Typography } from '@material-ui/core';
+import { Chip, CircularProgress, Typography } from '@material-ui/core';
 import axios from 'axios';
 
 const StyledRoot = styled.div`
@@ -35,6 +35,14 @@ const StyledTableWrapper = styled.div`
 
 const StyledNoResultsWrapper = styled.div`
   margin-top: 4rem;
+`;
+
+const StyledFilterWrapper = styled.div`
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1rem;
 `;
 
 const StyledToolBarTitle = styled.div`
@@ -117,6 +125,7 @@ export default function ImportTable(this: any) {
     state.currentPerPage,
     state.currentSortOrder,
     state.currentSortValue,
+    state.doiFilter,
   ]);
 
   const resetSelectedPublications = () => {
@@ -183,8 +192,8 @@ export default function ImportTable(this: any) {
   ]);
 
   useEffect(() => {
-    handleChangeRowsPerPage(state.currentPerPage);
-  }, [state.currentPerPage]);
+    setResultsPerPage(state.currentPerPage.value);
+  }, [state.currentPerPage.value]);
 
   function resetPageNr() {
     dispatch({ type: 'setPageNr', payload: 0 });
@@ -273,10 +282,6 @@ export default function ImportTable(this: any) {
     event.target.className = event.target.className.split(' focused')[0];
   }
 
-  function handleChangeRowsPerPage(option: any) {
-    setResultsPerPage(option.value);
-  }
-
   function checkAll(status: boolean) {
     const temp = [...checked];
     const ids = [];
@@ -358,19 +363,26 @@ export default function ImportTable(this: any) {
       </div>
     ) : (
       <StyledNoResultsWrapper>
-        <Typography variant="h6">Fant ingen publikasjoner med følgende filter:</Typography>
-        <Typography>År -{state.currentImportYear.value}</Typography>
-        <Typography>
-          Importstatus -
-          {state.currentImportStatus === 'true'
-            ? ' Importert'
-            : state.currentImportStatus === 'false'
-            ? ' Ikke importert'
-            : ' Ikke aktuelle'}
-        </Typography>
-        {state.isSampublikasjon && <Typography>Sampublikasjon - Ja</Typography>}
-        {state.currentInstitution.value && <Typography>Institusjon - {state.currentInstitution.label}</Typography>}
-        {state.doiFilter && <Typography>Doi - {state.doiFilter}</Typography>}
+        <Typography variant="h6">Fant ingen publikasjoner</Typography>
+        <Typography>Følgende filter er aktive:</Typography>
+        <StyledFilterWrapper>
+          <Chip color="primary" label={`Publiseringsår: ${state.currentImportYear.value}`} />
+          <Chip
+            color="primary"
+            label={
+              state.currentImportStatus === 'true'
+                ? ' Importert'
+                : state.currentImportStatus === 'false'
+                ? ' Ikke importert'
+                : ' Ikke aktuelle'
+            }
+          />
+          {state.isSampublikasjon && <Chip color="primary" label="Sampublikasjon: Ja" />}
+          {state.currentInstitution.value && (
+            <Chip color="primary" label={`Institusjon: ${state.currentInstitution.label}`} />
+          )}
+          {state.doiFilter && <Chip color="primary" label={`DOI: ${state.doiFilter}`} />}
+        </StyledFilterWrapper>
       </StyledNoResultsWrapper>
     );
   }
