@@ -360,6 +360,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   async function getJournalId(journal: Journal): Promise<string> {
     if (journal) {
+      if (journal.cristin_journal_id) return journal.cristin_journal_id;
       const issnObj = journal.international_standard_numbers?.find(
         (standard_number: InternationalStandardNumber) =>
           standard_number.type === InternationalStandardNumberTypes.PRINTED
