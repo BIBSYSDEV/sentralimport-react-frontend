@@ -81,7 +81,7 @@ export interface AddAffiliationError extends Error {
   institutionId: string;
 }
 
-const MaxContributorsToSearchAutomatic = 50;
+const MaxContributorsToSearchAutomatic = 5;
 
 interface ContributorSearchPanelProps {
   resultListIndex: number;
