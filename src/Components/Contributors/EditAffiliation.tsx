@@ -1,18 +1,25 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import AffiliationDisplay from './AffiliationDisplay';
 import { generateAffiliationDisplayData } from './ContributorSearchResultItem';
 import { Colors } from '../../assets/styles/StyleConstants';
-import { Button, Grid, Typography } from '@material-ui/core';
+import { Button, CircularProgress, Grid, Typography } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import UnitSelect from '../InstitutionSelect/UnitSelect';
 import { Affiliation, SimpleUnitResponse } from '../../types/InstitutionTypes';
 import { ContributorWrapper } from '../../types/ContributorTypes';
 import styled from 'styled-components';
+import { getParentsUnitName } from '../../api/institutionApi';
+import CommonErrorMessage from '../CommonErrorMessage';
 
 const StyledAddUnitButton = styled(Button)`
   &&.MuiButton-root {
     margin-left: 0.7rem;
   }
+`;
+
+export const CircularProgressWrapper = styled.div`
+  display: flex;
+  width: 100%;
 `;
 
 interface EditAffiliationProps {
@@ -32,6 +39,9 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
   const [deleteOrAddUnitError, setDeleteOrAddUnitError] = useState<
     { institutionNr: string; message: string } | undefined
   >();
+  const [units, setUnits] = useState<SimpleUnitResponse[]>([]);
+  const [isLoadingUnits, setIsLoadingUnits] = useState(true);
+  const [loadingUnitError, setLoadingUnitError] = useState<Error | undefined>();
 
   function addUnitToInstitution(newUnit: SimpleUnitResponse, institutionNr: string) {
     const affiliationIndex = contributorData.toBeCreated.affiliations
@@ -121,6 +131,23 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
     }
   }
 
+  useEffect(() => {
+    const fetchUnits = async () => {
+      if (affiliation.cristinInstitutionNr)
+        try {
+          setIsLoadingUnits(true);
+          const parentUnitNamesResponse = await getParentsUnitName(affiliation.cristinInstitutionNr);
+          setUnits(parentUnitNamesResponse.data);
+        } catch (error) {
+          setUnits([]);
+          setLoadingUnitError(error as Error);
+        } finally {
+          setIsLoadingUnits(false);
+        }
+    };
+    fetchUnits().then();
+  }, []);
+
   return (
     <AffiliationDisplay
       removeInstitutionByCristinNrOrName={removeInstitutionByCristinNrOrName}
@@ -132,24 +159,34 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
         deleteUnitToInstitutionAndHandleError(unit, affiliation.cristinInstitutionNr ?? '');
       }}>
       <Grid container spacing={1}>
-        {affiliation.isCristinInstitution === true && (
-          <Grid item>
-            <StyledAddUnitButton
-              size="small"
-              data-testid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}-add-unit`}
-              onClick={() => setShowUnitSelector(true)}
-              startIcon={<AddIcon />}
-              color="primary">
-              Legg til enhet
-            </StyledAddUnitButton>
-          </Grid>
+        {isLoadingUnits ? (
+          <CircularProgressWrapper>
+            <CircularProgress size={'1rem'} />
+            <Typography style={{ margin: '0 0 0 1rem' }}>Laster inn enheter</Typography>
+          </CircularProgressWrapper>
+        ) : loadingUnitError ? (
+          <CommonErrorMessage datatestid="unit-loading-error" errorMessage={`Feil ved lasting av enheter: `} />
+        ) : (
+          units.length > 0 &&
+          affiliation.isCristinInstitution === true && (
+            <Grid item>
+              <StyledAddUnitButton
+                size="small"
+                data-testid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}-add-unit`}
+                onClick={() => setShowUnitSelector(true)}
+                startIcon={<AddIcon />}
+                color="primary">
+                Legg til enhet
+              </StyledAddUnitButton>
+            </Grid>
+          )
         )}
         {showUnitSelector && affiliation.isCristinInstitution === true && (
           <Grid item xs={12}>
             <Grid container spacing={3} alignItems="flex-end">
               <Grid item sm={8}>
                 <UnitSelect
-                  cristinInstitutionNr={affiliation.cristinInstitutionNr ?? ''}
+                  units={units}
                   handleUnitChange={(unit: any) => {
                     setShowUnitSelector(false);
                     addUnitToInstitutionAndHandleError(unit, affiliation.cristinInstitutionNr ?? '');

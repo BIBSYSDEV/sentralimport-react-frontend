@@ -12,10 +12,10 @@ import clone from 'just-clone';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import { removeInstitutionsDuplicatesBasedOnCristinId } from './ContributorModal';
 import { ErrorMessage, Field, FieldProps, Formik } from 'formik';
 import * as Yup from 'yup';
 import CommonErrorMessage from '../CommonErrorMessage';
+import { removeInstitutionsDuplicatesBasedOnCristinId } from './InstututionHelper';
 
 const StyledResultTypography = styled(Typography)`
   &.MuiTypography-root {
@@ -81,6 +81,8 @@ export interface AddAffiliationError extends Error {
   institutionId: string;
 }
 
+const MaxContributorsToSearchAutomatic = 50;
+
 interface ContributorSearchPanelProps {
   resultListIndex: number;
   contributorData: ContributorWrapper;
@@ -107,17 +109,19 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     setAddAffiliationError(undefined);
   }, [contributorData.toBeCreated.affiliations]);
 
-  const isVerifiedCristinPerson = (person: ContributorType) =>
-    person.cristin_person_id && person.cristin_person_id.toString() !== '0';
-
   useEffect(() => {
-    if (!isVerifiedCristinPerson(contributorData.toBeCreated)) {
+    if (
+      contributorData.toBeCreated.badge_type !== ContributorStatus.Verified &&
+      contributorData.toBeCreated.order &&
+      contributorData.toBeCreated.order <= MaxContributorsToSearchAutomatic
+    ) {
       openSearchPanelAndSearchContributors();
     }
   }, [
     contributorData.toBeCreated.surname,
     contributorData.toBeCreated.first_name,
     contributorData.toBeCreated.cristin_person_id,
+    contributorData.toBeCreated.badge_type,
   ]);
 
   const handleChoosePerson = (firstName: string, surname: string) => {
@@ -392,7 +396,9 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
 
               {openContributorSearchPanel && !isSearching && (
                 <Grid item xs={12}>
-                  <StyledResultTypography variant="h6">
+                  <StyledResultTypography
+                    variant="h6"
+                    data-testid={`contributor-search-results-header-for-${resultListIndex}`}>
                     {generateSearchResultHeader(searchResultLength, searchResults.length, showFullResultList)}
                   </StyledResultTypography>
                 </Grid>

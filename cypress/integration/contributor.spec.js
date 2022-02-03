@@ -18,7 +18,6 @@ context('contributor', () => {
   it('handles publication with contributor-errors', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[3].pubId}"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
-    cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid="contributor-loading-error"]').contains(
       'Feil ved lasting av bidragsytere: (Request failed with status code 404)'
     );
@@ -132,6 +131,19 @@ context('contributor', () => {
       .should('have.text', `${mockUnits.unit_name.en}`);
     cy.get(
       `[data-testid="list-item-author-${mockPersonDetailed.surname}-affiliations-${mockPersonDetailed.affiliations[0].institution.cristin_institution_id}-list-item-text-unit-${mockPersonDetailed.affiliations[0].unit.cristin_unit_id}"]`
+    ).should('not.exist');
+  });
+
+  it('is not possible to add units for institution without units', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('[data-testid="show-institution-selector-2"]').click(); //adding
+    cy.get('[data-testid="filter-institution-select-2"]').click();
+    cy.get(`[data-testid="${mockInstitutions[1].cristin_institution_id}-option"]`).click(); //velger sintef narvik
+    cy.get('[data-testid="add-institution-button-2"]').click();
+    cy.get(
+      `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockInstitutions[1].cristin_institution_id}-add-unit"] > .MuiButton-label`
     ).should('not.exist');
   });
 
@@ -275,5 +287,26 @@ context('contributor', () => {
     cy.get(
       `[data-testid="list-item-author-${mockImportData[0].authors[5].surname}-affiliations-${responseCountryInstitutionCN.cristin_institution_id}-institution-name"]`
     ).should('not.exist');
+  });
+
+  it('can filter contributors to show only contributors with norwegian affilliation', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+
+    cy.wait(300);
+    cy.get('[data-testid="import-contributor-hidden-1"]').should('not.exist');
+
+    cy.get('[data-testid="filter-contributors-check"]').click();
+    cy.get('[data-testid="import-contributor-hidden-1"]').should('exist');
+    cy.get('[data-testid="creator-name-1"]').should('not.exist');
+    cy.get('[data-testid="contributor-form-0-name"]').should('not.be.visible'); //nb. denne skjules kun visuelt
+    cy.get('[data-testid="move-up-button-2"]').should('not.exist');
+    cy.get('[data-testid="move-down-button-2"]').should('not.exist');
+    cy.get('[data-testid="creator-name-5"]').should('exist');
+
+    cy.get('[data-testid="filter-contributors-check"]').click();
+    cy.get('[data-testid="import-contributor-hidden-1"]').should('not.exist');
+    cy.get('[data-testid="creator-name-1"]').should('exist');
   });
 });

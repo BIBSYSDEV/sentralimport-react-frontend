@@ -279,6 +279,25 @@
           }
         ]
       }
+    ,
+      {
+        "cristinId": 4359484,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 6,
+        "surname": "Persson",
+        "firstname": "Pelle",
+        "authorName": "Persson P.",
+        "institutions": [
+          {
+            "unitName": "BI Norwegian Business School;University of Bergen",
+            "countryCode": "NO",
+            "institutionName": "University of Bergen",
+            "acronym": "UiB",
+            "cristinInstitutionNr": 184,
+            "isCristinInstitution": true
+          }
+        ]
+      }
     ],
     "languages": [
       {

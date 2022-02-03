@@ -1,4 +1,4 @@
-import { ImportPublication, Language } from '../../types/PublicationTypes';
+import { ImportPublication, Language, SavedPublicationLogLine } from '../../types/PublicationTypes';
 import { CompareFormValuesType } from './CompareFormTypes';
 import { patchPiaPublication, patchPublication, postPublication } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
@@ -21,6 +21,7 @@ const getNumberOfPages = (pageFrom?: string, pageTo?: string) => {
 export const createCristinPublicationForSaving = (
   values: CompareFormValuesType,
   importPublication: ImportPublication,
+  contributors: ContributorWrapper[],
   publicationLanguages: Language[],
   annotation: string,
   cristinResultId?: string
@@ -75,7 +76,7 @@ export const createCristinPublicationForSaving = (
       count: getNumberOfPages(values.pageFrom, values.pageTo),
     },
     contributors: {
-      list: createContributorObject(),
+      list: createContributorObject(contributors),
     },
   };
   if (cristinResultId) {
@@ -102,12 +103,22 @@ export async function handleCreatePublication(publication: any, dispatch: any) {
   }
 }
 
+const generateAuthorPresentation = (publication: any) => {
+  return publication.contributors.list
+    .slice(0, 5)
+    .map((author: any) => [author.surname, author.first_name].join(', '))
+    .join('; ')
+    .concat(publication.contributors.list.length > 5 ? ' et al.' : '');
+};
+
 const addToLog = (publication: any, cristinResultId: any) => {
-  const log = JSON.parse(localStorage.getItem('log') || '[]') ?? [];
+  const log: SavedPublicationLogLine[] = JSON.parse(localStorage.getItem('log') || '[]') ?? [];
   if (log.length > 15) log.shift();
-  let title = publication.title[publication.original_language];
-  title = title.length > 50 ? title.substring(0, 49) : title;
-  log.push({ id: cristinResultId, title: title });
+  log.push({
+    id: cristinResultId,
+    title: publication.title[publication.original_language],
+    authorsPresentation: generateAuthorPresentation(publication),
+  });
   localStorage.setItem('log', JSON.stringify(log));
 };
 
@@ -137,10 +148,9 @@ interface SubmitAffiliation {
   unit?: any;
 }
 
-export const createContributorObject = () => {
-  const temp = JSON.parse(localStorage.getItem('tempContributors') || '{}');
+export const createContributorObject = (contributors: ContributorWrapper[]) => {
   const submitContributors: any = [];
-  temp.contributors?.forEach((contributor: ContributorWrapper) => {
+  contributors?.forEach((contributor: ContributorWrapper) => {
     const affiliations: SubmitAffiliation[] = [];
     contributor.toBeCreated.affiliations?.forEach((affiliation) => {
       if (!affiliation.units) {

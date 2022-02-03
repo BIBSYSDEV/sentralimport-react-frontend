@@ -80,7 +80,7 @@ context('Search contributor panel', () => {
   });
 
   it('displays verified and unverified contributors differently', () => {
-    //active contributors are defined as person with identified_cristin_person = true AND atleast one active affiliation.
+    //active contributors are defined as person with identified_cristin_person = true AND at least one active affiliation.
     //getPersonDetailed may respond with not-authorized, in which case it is not possible to assert whether or not a contributor is verified
     const VerifiedText = 'Verifisert';
     const notVerifiedText = 'Ikke verifisert';
@@ -182,7 +182,7 @@ context('Search contributor panel', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid="add-contributor-button"]').click();
-    cy.get('#firstName5').should('have.value', '');
+    cy.get('#firstName6').should('have.value', '');
   });
 
   it('makes initial search not take up entire page by hiding excess searchResult', () => {
@@ -199,5 +199,14 @@ context('Search contributor panel', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(`[data-testid="contributor-1-form-error"]`).should('exist');
+  });
+
+  it('makes initial search on non-active contributors', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get(`[data-testid="contributor-search-results-header-for-0"]`).should('not.exist'); //active
+    cy.get(`[data-testid="contributor-search-results-header-for-2"]`).should('exist'); //no cristin id
+    cy.get(`[data-testid="contributor-search-results-header-for-5"]`).should('exist'); //verified cristin id but no active institutions
   });
 });

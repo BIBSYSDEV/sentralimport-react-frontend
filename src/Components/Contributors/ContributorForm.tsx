@@ -37,7 +37,7 @@ interface ContributorFormProps {
   contributorData: ContributorWrapper;
   updateContributor: (contributorData: ContributorWrapper, rowIndex: number) => void;
   deleteContributor: (index: number) => void;
-  handleChosenAuthorAffiliations: (affiliations: Affiliation[]) => Promise<Affiliation[]>;
+  contributors: ContributorWrapper[];
 }
 
 const ContributorForm: FC<ContributorFormProps> = ({
@@ -45,27 +45,13 @@ const ContributorForm: FC<ContributorFormProps> = ({
   contributorData,
   deleteContributor,
   updateContributor,
-  handleChosenAuthorAffiliations,
+  contributors,
 }) => {
-  //TODO: denne funksjonen eksisterte på "lukk" knappen. Den bør kjøres på annet vis.
-  /*
-  async function handleSubmit() {
-    const temp = JSON.parse(JSON.stringify(contributorData));
-    const cleanedAffiliations = await handleChosenAuthorAffiliations(temp.toBeCreated.affiliations);
-    //removeInstitutionsDuplicatesBasedOnCristinId trengs fordi dubletter kan komme inn med importdata.
-    temp.toBeCreated.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(cleanedAffiliations);
-    temp.isEditing = false;
-    await updateContributor(temp, resultListIndex);
-  }
-   
-
-
-  */
   const [duplicateWarning, setDuplicateWarning] = useState('');
   const [duplicateError, setDuplicateError] = useState('');
 
   useEffect(() => {
-    checkContributorsForDuplicates(contributorData, setDuplicateWarning, setDuplicateError, false);
+    checkContributorsForDuplicates(contributorData, contributors, setDuplicateWarning, setDuplicateError, false);
   }, [
     contributorData.toBeCreated.first_name,
     contributorData.toBeCreated.surname,

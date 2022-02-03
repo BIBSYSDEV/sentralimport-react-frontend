@@ -28,9 +28,7 @@ context('contributor badges', () => {
     cy.get(`[data-testid="unknown-verified-contributor-badge-${mockForbiddenPerson.cristin_person_id}"]`).should(
       'exist'
     );
-
     //Choose not-verified cristin author:
-    cy.get('[data-testid="expand-contributor-accordion-button-2"]').click();
     cy.get(`[data-testid="add-person-and-affiliations-${mockPersonWithoutAffiliationAttribute.cristin_person_id}"]`)
       .first()
       .click();
@@ -39,7 +37,6 @@ context('contributor badges', () => {
     ).should('exist');
 
     //Choose no cristin author:
-    cy.get('[data-testid="expand-contributor-accordion-button-2"]').click();
     cy.get('[data-testid="choose-text-field-person-2"]').click();
     cy.get(
       `[data-testid="not-verified-contributor-badge-${mockPersonWithoutAffiliationAttribute.cristin_person_id}"]`
