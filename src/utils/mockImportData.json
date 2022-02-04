@@ -583,15 +583,7 @@
         "surname": "Afzal",
         "firstname": "Mohammad Saud",
         "authorName": "Afzal M.S.",
-        "institutions": [
-          {
-            "unitName": "Indian Institute of Technology Kharagpur",
-            "countryCode": "IN",
-            "institutionName": "Indian Institute of Technology Kharagpur",
-            "cristinInstitutionNr": 0,
-            "isCristinInstitution": false
-          }
-        ]
+        "institutions": []
       },
       {
         "cristinId": 666666,

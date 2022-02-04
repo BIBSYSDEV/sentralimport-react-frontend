@@ -12,6 +12,7 @@ import { Colors } from '../../assets/styles/StyleConstants';
 import { ImportPublication } from '../../types/PublicationTypes';
 import ContributorForm from './ContributorForm';
 import clone from 'just-clone';
+import { validateContributors } from './ContributorValidate';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -89,6 +90,7 @@ interface ContributorProps {
   isContributorModalOpen: boolean;
   isDuplicate: boolean;
   handleContributorModalClose: () => void;
+  setContributorErrors: (value: string[]) => void;
 }
 
 const ContributorModal: FC<ContributorProps> = ({
@@ -96,6 +98,7 @@ const ContributorModal: FC<ContributorProps> = ({
   setContributors,
   isContributorModalOpen,
   handleContributorModalClose,
+  setContributorErrors,
 }) => {
   const [isClosingDialogOpen, setIsClosingDialogOpen] = useState(false);
   const { dispatch } = useContext(Context);
@@ -122,6 +125,7 @@ const ContributorModal: FC<ContributorProps> = ({
     const temp = [...contributors];
     temp[rowIndex] = author;
     setContributors(temp);
+    validateContributors(temp, setContributorErrors);
   };
 
   // Ved sletting av en bidragsyter, sjekk om indeksering skal bli beholdt / oppdatert for alle andre elementer i bidragsyterlisten
