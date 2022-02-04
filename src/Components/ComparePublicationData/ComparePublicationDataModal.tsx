@@ -602,6 +602,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         <ContributorModal
           isContributorModalOpen={isContributorModalOpen}
           contributors={contributors}
+          setContributorErrors={setContributorErrors}
           setContributors={setContributors}
           handleContributorModalClose={() => setIsContributorModalOpen(false)}
           importPublication={importPublication}
