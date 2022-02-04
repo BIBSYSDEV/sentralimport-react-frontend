@@ -309,4 +309,20 @@ context('contributor', () => {
     cy.get('[data-testid="import-contributor-hidden-1"]').should('not.exist');
     cy.get('[data-testid="creator-name-1"]').should('exist');
   });
+
+  it('shows error in duplicatecheck-modal if an contributor is missing affiliation', () => {
+    const contributorNumber4IsMissingAffiliation = '4 (Mangler tilknytning)';
+    cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="contributor-errors"]').should('contain.text', contributorNumber4IsMissingAffiliation);
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+
+    //adding institution removes error:
+    cy.get('[data-testid="show-institution-selector-3"]').click();
+    cy.get('[data-testid="filter-institution-select-3"]').click();
+    cy.get(`[data-testid="${mockInstitutions[0].cristin_institution_id}-option"]`).click();
+    cy.get('[data-testid="add-institution-button-3"]').click();
+    cy.get('[data-testid="contributor-back-button"]').click();
+    cy.get('[data-testid="contributor-errors"]').should('not.contain.text', contributorNumber4IsMissingAffiliation);
+  });
 });
