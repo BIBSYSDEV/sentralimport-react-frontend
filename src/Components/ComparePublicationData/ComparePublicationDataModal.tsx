@@ -572,11 +572,17 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                           type="submit"
                           variant="contained"
                           data-testid="import-publication-button">
-                          Importer
+                          {isDuplicate ? 'Oppdater Cristinpublikasjon' : 'Importer'}
                         </Button>
                       </div>
                       {!isValid && (
                         <CommonErrorMessage datatestid="compare-form-error" errorMessage="Det er feil i skjema" />
+                      )}
+                      {!!importPublication?.cristin_id && (
+                        <CommonErrorMessage
+                          datatestid="compare-form-error"
+                          errorMessage="Kan ikke oppdatere importerte poster"
+                        />
                       )}
                     </Grid>
                   </Grid>

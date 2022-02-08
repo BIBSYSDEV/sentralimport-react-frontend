@@ -33,10 +33,6 @@ export const createCristinPublicationForSaving = (
   publicationLanguages: Language[],
   annotation: string
 ) => {
-  const title: any = {};
-  for (let i = 0; i < publicationLanguages.length; i++) {
-    title[publicationLanguages[i].lang.toLowerCase()] = publicationLanguages[i].title;
-  }
   const cristinPublication: any = {
     category: {
       code: values.category.value,
