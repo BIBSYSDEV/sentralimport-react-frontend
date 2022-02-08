@@ -112,7 +112,7 @@ export interface CategoryItem {
 export interface Link {
   url_type: string;
   url_value: string;
-  url: string;
+  url?: string;
 }
 
 export enum UrlTypes {
@@ -120,9 +120,9 @@ export enum UrlTypes {
 }
 
 export interface Journal {
-  cristin_journal_id: string;
-  name: string;
-  international_standard_numbers: InternationalStandardNumber[];
+  cristin_journal_id?: string;
+  name?: string;
+  international_standard_numbers?: InternationalStandardNumber[];
   pia_journal_number?: string | number;
 }
 
@@ -133,20 +133,15 @@ export interface Pages {
 }
 
 export interface PatchPublication {
-  category?: CategoryItem;
-  journal?: Journal;
-  original_language?: string;
-  title?: any;
-  pub_id?: string | number;
-  year_published?: string;
+  original_language: string;
+  title: any;
+  pub_id: string | number;
   import_sources?: any;
-  volume?: string;
-  issue?: string;
-  links?: Link[];
-  pages?: Pages;
-  contributor?: any[];
-  cristin_result_id?: string | number;
+  volume: string;
+  issue: string;
+  links: Link[];
   cristinResultId: string | number;
+  pages?: Pages;
   annotation?: string;
 }
 
@@ -162,10 +157,14 @@ export interface PostPublication {
   issue: string;
   links: Link[];
   pages: Pages;
-  contributor: any[];
-  cristin_result_id: string | number;
-  cristinResultId?: string | number;
+  contributors: {
+    list: any[];
+  };
   annotation?: string;
+}
+
+export interface PostPublicationRespone extends PostPublication {
+  cristin_result_id: string | number;
 }
 
 export enum InternationalStandardNumberTypes {
