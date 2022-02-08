@@ -46,11 +46,7 @@ import CompareFormLanguage from './CompareFormLanguage';
 import { CompareFormValuesType } from './CompareFormTypes';
 import { ContributorType, ContributorWrapper, emptyContributor } from '../../types/ContributorTypes';
 import { DoiFormat, formatCristinCreatedDate, NoDatePlaceHolder } from '../../utils/stringUtils';
-import {
-  createCristinPublicationForSaving,
-  handleCreatePublication,
-  handleUpdatePublication,
-} from './ImportPublicationHelper';
+import { handleCreatePublication, handleUpdatePublication } from './ImportPublicationHelper';
 import { CRISTIN_REACT_APP_URL } from '../../utils/constants';
 import CancelIcon from '@material-ui/icons/Cancel';
 import LaunchIcon from '@material-ui/icons/Launch';
@@ -139,7 +135,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   //publication-form-stuff
   const [initialFormValues, setInitialFormValues] = useState<CompareFormValuesType | undefined>();
-  const [formValuesToSave, setFormValuesToSave] = useState<CompareFormValuesType | undefined>();
+  const [formValues, setFormValues] = useState<CompareFormValuesType | undefined>();
   const sortedLanguagesFromImportPublication = clone(importPublication)
     .languages.sort((a: any, b: any) => a.original - b.original)
     .reverse();
@@ -380,7 +376,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   }
 
   const handleImportButtonClick = (values: CompareFormValuesType) => {
-    setFormValuesToSave(values);
+    setFormValues(values);
     if (state.contributors === null) {
       dispatch({ type: 'contributors', payload: contributors }); //?
     }
@@ -388,18 +384,26 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   };
 
   function handleImportPublicationConfirmed(annotation: string) {
-    if (formValuesToSave) {
-      const publication = createCristinPublicationForSaving(
-        formValuesToSave,
-        importPublication,
-        contributors,
-        publicationLanguages,
-        annotation,
-        isDuplicate && state.selectedPublication.cristin_result_id
-      );
-      isDuplicate
-        ? handleUpdatePublication(publication, dispatch).then((response) => handlePublicationImported(response))
-        : handleCreatePublication(publication, dispatch).then((response) => handlePublicationImported(response));
+    if (formValues) {
+      if (!isDuplicate) {
+        handleCreatePublication(
+          formValues,
+          importPublication,
+          contributors,
+          publicationLanguages,
+          annotation,
+          dispatch
+        ).then((response) => handlePublicationImported(response));
+      } else {
+        handleUpdatePublication(
+          formValues,
+          importPublication,
+          state.selectedPublication.cristin_result_id,
+          publicationLanguages,
+          annotation,
+          dispatch
+        ).then((response) => handlePublicationImported(response));
+      }
     }
   }
 

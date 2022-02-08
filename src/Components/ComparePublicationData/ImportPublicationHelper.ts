@@ -18,13 +18,20 @@ const getNumberOfPages = (pageFrom?: string, pageTo?: string) => {
   }
 };
 
+const generateTitleObjectForCristinPublication = (publicationLanguages: Language[]) => {
+  const title: any = {};
+  publicationLanguages.forEach((language) => {
+    title[language.lang.toLowerCase()] = language.title;
+  });
+  return title;
+};
+
 export const createCristinPublicationForSaving = (
   values: CompareFormValuesType,
   importPublication: ImportPublication,
   contributors: ContributorWrapper[],
   publicationLanguages: Language[],
-  annotation: string,
-  cristinResultId?: string
+  annotation: string
 ) => {
   const title: any = {};
   for (let i = 0; i < publicationLanguages.length; i++) {
@@ -53,7 +60,7 @@ export const createCristinPublicationForSaving = (
             ],
           },
     original_language: publicationLanguages.filter((language: Language) => language.original)[0].lang.toLowerCase(),
-    title: title,
+    title: generateTitleObjectForCristinPublication(publicationLanguages),
     pub_id: importPublication.pubId,
     year_published: values.year.toString(),
     import_sources: [
@@ -79,8 +86,46 @@ export const createCristinPublicationForSaving = (
       list: createContributorObject(contributors),
     },
   };
-  if (cristinResultId) {
-    cristinPublication.cristinResultId = cristinResultId;
+  if (annotation) {
+    cristinPublication.annotation = annotation;
+  }
+  return cristinPublication;
+};
+
+export const createCristinPublicationForUpdating = (
+  values: CompareFormValuesType,
+  importPublication: ImportPublication,
+  cristinResultId: string,
+  publicationLanguages: Language[],
+  annotation: string
+) => {
+  const cristinPublication: any = {
+    cristinResultId,
+    original_language: publicationLanguages.filter((language: Language) => language.original)[0].lang.toLowerCase(),
+    title: generateTitleObjectForCristinPublication(publicationLanguages),
+    pub_id: importPublication.pubId,
+    import_sources: [
+      {
+        source_name: importPublication.sourceName,
+        source_reference_id: importPublication.externalId,
+      },
+    ],
+    volume: values.volume,
+    issue: values.issue,
+    links: [
+      {
+        url_type: 'doi',
+        url_value: values.doi,
+      },
+    ],
+  };
+  const numPages = getNumberOfPages(values.pageFrom, values.pageTo);
+  if (numPages !== '0' && cristinPublication.pages.from && cristinPublication.pages.to) {
+    cristinPublication.pages = {
+      from: values.pageFrom,
+      to: values.pageTo,
+      count: numPages,
+    };
   }
   if (annotation) {
     cristinPublication.annotation = annotation;
@@ -88,10 +133,24 @@ export const createCristinPublicationForSaving = (
   return cristinPublication;
 };
 
-export async function handleCreatePublication(publication: any, dispatch: any) {
+export async function handleCreatePublication(
+  formValues: CompareFormValuesType,
+  importPublication: ImportPublication,
+  contributors: ContributorWrapper[],
+  publicationLanguages: Language[],
+  annotation: string,
+  dispatch: any
+) {
+  const publication = createCristinPublicationForSaving(
+    formValues,
+    importPublication,
+    contributors,
+    publicationLanguages,
+    annotation
+  );
   try {
-    const postPublicationResponse = (await postPublication(publication)).data;
-    const cristinResultId = postPublicationResponse.cristin_result_id;
+    const postPublicationResponse = await postPublication(publication);
+    const cristinResultId = postPublicationResponse.data.cristin_result_id;
     await patchPiaPublication(cristinResultId, publication.pub_id);
     addToLog(publication, cristinResultId);
     dispatch({ type: 'setFormErrors', payload: [] });
@@ -122,14 +181,24 @@ const addToLog = (publication: any, cristinResultId: any) => {
   localStorage.setItem('log', JSON.stringify(log));
 };
 
-export async function handleUpdatePublication(publication: any, dispatch: any) {
-  if (publication.pages.count === '0' && !(publication.pages.from && publication.pages.to)) {
-    //bugfix (if patch is used, all 3 properties must have a value)
-    delete publication.pages;
-  }
+export async function handleUpdatePublication(
+  formValues: CompareFormValuesType,
+  importPublication: ImportPublication,
+  cristinResultId: string,
+  publicationLanguages: Language[],
+  annotation: string,
+  dispatch: any
+) {
+  const publication = createCristinPublicationForUpdating(
+    formValues,
+    importPublication,
+    cristinResultId,
+    publicationLanguages,
+    annotation
+  );
   try {
     await patchPublication(publication);
-    await patchPiaPublication(publication.cristinResultId, publication.pub_id);
+    await patchPiaPublication(cristinResultId, publication.pub_id);
   } catch (error) {
     handlePotentialExpiredSession(error);
     return generateErrorMessage(error);
@@ -137,7 +206,7 @@ export async function handleUpdatePublication(publication: any, dispatch: any) {
   dispatch({ type: 'setContributorsLoaded', payload: false });
   dispatch({ type: 'setFormErrors', payload: [] });
   return {
-    result: { id: publication.cristinResultId, title: publication.title.en ?? publication.title.no },
+    result: { id: cristinResultId, title: publication.title.en ?? publication.title.no },
     status: 200,
   };
 }
