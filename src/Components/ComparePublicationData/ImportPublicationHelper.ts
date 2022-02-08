@@ -120,7 +120,7 @@ export const createCristinPublicationForUpdating = (
     ],
   };
   const numPages = getNumberOfPages(values.pageFrom, values.pageTo);
-  if (numPages !== '0' && cristinPublication.pages.from && cristinPublication.pages.to) {
+  if (numPages !== '0' && values.pageFrom && values.pageTo) {
     cristinPublication.pages = {
       from: values.pageFrom,
       to: values.pageTo,
