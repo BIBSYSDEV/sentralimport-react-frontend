@@ -9,6 +9,7 @@ import {
   Order,
   PatchPublication,
   PostPublication,
+  PostPublicationRespone,
   PublicationCount,
 } from '../types/PublicationTypes';
 import { SearchLanguage } from './contributorApi';
@@ -52,11 +53,11 @@ export async function getCategories(searchLanguage: SearchLanguage): Promise<Axi
   });
 }
 
-export async function postPublication(publication: PostPublication): Promise<AxiosResponse<PostPublication>> {
+export async function postPublication(publication: PostPublication): Promise<AxiosResponse<PostPublicationRespone>> {
   return authenticatedApiRequest({ url: encodeURI(`${CRIST_REST_API}/results`), method: 'POST', data: publication });
 }
 
-export async function patchPublication(publication: PatchPublication): Promise<AxiosResponse<PatchPublication>> {
+export async function patchPublication(publication: PatchPublication): Promise<AxiosResponse<void>> {
   return authenticatedApiRequest({
     url: encodeURI(`${CRIST_REST_API}/results/${publication.cristinResultId}`),
     method: 'PATCH',

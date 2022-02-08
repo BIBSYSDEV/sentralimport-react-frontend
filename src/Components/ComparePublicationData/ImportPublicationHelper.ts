@@ -1,5 +1,12 @@
-import { ImportPublication, Language, SavedPublicationLogLine } from '../../types/PublicationTypes';
-import { CompareFormValuesType } from './CompareFormTypes';
+import {
+  ImportPublication,
+  Journal,
+  Language,
+  PatchPublication,
+  PostPublication,
+  SavedPublicationLogLine,
+} from '../../types/PublicationTypes';
+import { CompareFormJournalType, CompareFormValuesType } from './CompareFormTypes';
 import { patchPiaPublication, patchPublication, postPublication } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
 import { ContributorWrapper } from '../../types/ContributorTypes';
@@ -26,6 +33,26 @@ const generateTitleObjectForCristinPublication = (publicationLanguages: Language
   return title;
 };
 
+const generateJournalObject = (journal: CompareFormJournalType): Journal => {
+  return journal.cristinTidsskriftNr && journal.cristinTidsskriftNr !== '0'
+    ? {
+        cristin_journal_id: journal.cristinTidsskriftNr,
+      }
+    : {
+        name: journal.title,
+        international_standard_numbers: [
+          {
+            type: 'printed',
+            value: journal.issn,
+          },
+          {
+            type: 'electronic',
+            value: journal.eissn,
+          },
+        ],
+      };
+};
+
 export const createCristinPublicationForSaving = (
   values: CompareFormValuesType,
   importPublication: ImportPublication,
@@ -33,28 +60,11 @@ export const createCristinPublicationForSaving = (
   publicationLanguages: Language[],
   annotation: string
 ) => {
-  const cristinPublication: any = {
+  const publication: PostPublication = {
     category: {
       code: values.category.value,
     },
-    journal:
-      values.journal.cristinTidsskriftNr && values.journal.cristinTidsskriftNr !== '0'
-        ? {
-            cristin_journal_id: values.journal.cristinTidsskriftNr,
-          }
-        : {
-            name: values.journal.title,
-            international_standard_numbers: [
-              {
-                type: 'printed',
-                value: values.journal.issn ? values.journal.issn : null, //nødvendig ?
-              },
-              {
-                type: 'electronic',
-                value: values.journal.eissn ? values.journal.eissn : null,
-              },
-            ],
-          },
+    journal: generateJournalObject(values.journal),
     original_language: publicationLanguages.filter((language: Language) => language.original)[0].lang.toLowerCase(),
     title: generateTitleObjectForCristinPublication(publicationLanguages),
     pub_id: importPublication.pubId,
@@ -65,12 +75,12 @@ export const createCristinPublicationForSaving = (
         source_reference_id: importPublication.externalId,
       },
     ],
-    volume: values.volume,
-    issue: values.issue,
+    volume: values.volume ?? '',
+    issue: values.issue ?? '',
     links: [
       {
         url_type: 'doi',
-        url_value: values.doi,
+        url_value: values.doi ?? '',
       },
     ],
     pages: {
@@ -83,9 +93,9 @@ export const createCristinPublicationForSaving = (
     },
   };
   if (annotation) {
-    cristinPublication.annotation = annotation;
+    publication.annotation = annotation;
   }
-  return cristinPublication;
+  return publication;
 };
 
 export const createCristinPublicationForUpdating = (
@@ -95,9 +105,10 @@ export const createCristinPublicationForUpdating = (
   publicationLanguages: Language[],
   annotation: string
 ) => {
-  const cristinPublication: any = {
+  const publication: PatchPublication = {
     cristinResultId,
-    original_language: publicationLanguages.filter((language: Language) => language.original)[0].lang.toLowerCase(),
+    original_language:
+      publicationLanguages.filter((language: Language) => language.original)[0].lang.toLowerCase() ?? '',
     title: generateTitleObjectForCristinPublication(publicationLanguages),
     pub_id: importPublication.pubId,
     import_sources: [
@@ -106,27 +117,27 @@ export const createCristinPublicationForUpdating = (
         source_reference_id: importPublication.externalId,
       },
     ],
-    volume: values.volume,
-    issue: values.issue,
+    volume: values.volume ?? '',
+    issue: values.issue ?? '',
     links: [
       {
         url_type: 'doi',
-        url_value: values.doi,
+        url_value: values.doi ?? '',
       },
     ],
   };
   const numPages = getNumberOfPages(values.pageFrom, values.pageTo);
   if (numPages !== '0' && values.pageFrom && values.pageTo) {
-    cristinPublication.pages = {
+    publication.pages = {
       from: values.pageFrom,
       to: values.pageTo,
       count: numPages,
     };
   }
   if (annotation) {
-    cristinPublication.annotation = annotation;
+    publication.annotation = annotation;
   }
-  return cristinPublication;
+  return publication;
 };
 
 export async function handleCreatePublication(
