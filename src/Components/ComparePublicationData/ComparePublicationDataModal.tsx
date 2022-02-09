@@ -24,6 +24,9 @@ import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import {
   StyledActionButtonsPlaceHolder,
+  StyledCenterContentWrapper,
+  StyledCristinLink,
+  StyledDisabledTypography,
   StyledErrorMessageWrapper,
   StyledFormWrapper,
   StyledHeaderLineWrapper,
@@ -68,10 +71,6 @@ const StyledModal = styled(Modal)`
   min-height: 100%;
   margin: 1rem auto;
   padding: 0;
-`;
-
-const StyledDisabledTypography = styled(Typography)`
-  color: #555555;
 `;
 
 const StyledSnackBarButton: any = styled(Button)`
@@ -263,9 +262,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       }
       setContributors(tempContributors);
     }
-
-    enrichImportPublicationAuthors().then();
-  }, [importPublication, state.selectedPublication]);
+    !isDuplicate && enrichImportPublicationAuthors().then();
+  }, [importPublication, state.selectedPublication, isDuplicate]);
 
   useEffect(() => {
     async function identifyCristinPersonsInContributors_And_CreateListOfIdentified() {
@@ -498,38 +496,58 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                       updatePublicationLanguages={updatePublicationLanguages}
                       selectedLang={selectedLang}
                     />
-                    <CompareFormJournal importPublication={importPublication} loadJournalIdError={loadJournalIdError} />
+                    <CompareFormJournal
+                      importPublication={importPublication}
+                      loadJournalIdError={loadJournalIdError}
+                      isDuplicate={isDuplicate}
+                    />
                     <CompareFormDoi importPublication={importPublication} />
-                    <CompareFormYear importPublication={importPublication} />
-                    <CompareFormCategory importPublication={importPublication} />
+                    <CompareFormYear importPublication={importPublication} isDuplicate={isDuplicate} />
+                    <CompareFormCategory importPublication={importPublication} isDuplicate={isDuplicate} />
                     <CompareFormVolume importPublication={importPublication} />
                     <CompareFormIssue importPublication={importPublication} />
                     <CompareFormPages importPublication={importPublication} />
                   </StyledFormWrapper>
-                  <StyledOpenContributorsButtonWrapper>
-                    {isLoadingContributors ? (
-                      <CircularProgressWrapper>
-                        <CircularProgress size={'1rem'} />
-                        <Typography style={{ margin: '1rem' }}>Laster inn forfattere</Typography>
-                      </CircularProgressWrapper>
-                    ) : loadingContributorsError ? (
-                      <StyledOpenContributorsButtonWrapper>
-                        <CommonErrorMessage
-                          datatestid="contributor-loading-error"
-                          errorMessage={`Feil ved lasting av bidragsytere: (${loadingContributorsError.message})`}
-                        />
-                      </StyledOpenContributorsButtonWrapper>
-                    ) : (
-                      <Button
-                        size="large"
-                        data-testid="open-contributors-modal-button"
-                        onClick={() => setIsContributorModalOpen(true)}
-                        variant="contained"
-                        color="primary">
-                        Vis bidragsytere
-                      </Button>
-                    )}
-                  </StyledOpenContributorsButtonWrapper>
+                  {isDuplicate ? (
+                    <StyledCenterContentWrapper>
+                      <StyledAlert severity="warning" data-testid="duplicate-warning-box">
+                        NB! Duplikatpost.{' '}
+                        <StyledCristinLink
+                          data-testid={`duplicate-warning-publication-link`}
+                          href={`${CRISTIN_REACT_APP_URL}/results/show.jsf?id=${cristinPublication.cristin_result_id}`}
+                          target="_blank"
+                          rel="noopener noreferrer">
+                          Gå til posten i Cristin
+                        </StyledCristinLink>{' '}
+                        om du vil endre på årstall, bidragsyterere, kategori eller tidskrift.
+                      </StyledAlert>
+                    </StyledCenterContentWrapper>
+                  ) : (
+                    <StyledOpenContributorsButtonWrapper>
+                      {isLoadingContributors ? (
+                        <CircularProgressWrapper>
+                          <CircularProgress size={'1rem'} />
+                          <Typography style={{ margin: '1rem' }}>Laster inn forfattere</Typography>
+                        </CircularProgressWrapper>
+                      ) : loadingContributorsError ? (
+                        <StyledOpenContributorsButtonWrapper>
+                          <CommonErrorMessage
+                            datatestid="contributor-loading-error"
+                            errorMessage={`Feil ved lasting av bidragsytere: (${loadingContributorsError.message})`}
+                          />
+                        </StyledOpenContributorsButtonWrapper>
+                      ) : (
+                        <Button
+                          size="large"
+                          data-testid="open-contributors-modal-button"
+                          onClick={() => setIsContributorModalOpen(true)}
+                          variant="contained"
+                          color="primary">
+                          Vis bidragsytere
+                        </Button>
+                      )}
+                    </StyledOpenContributorsButtonWrapper>
+                  )}
                   <StyledErrorMessageWrapper>
                     {contributorErrors.length >= 1 && (
                       <StyledAlert data-testid={`contributor-errors`} severity="error">
@@ -563,10 +581,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         <Button
                           disabled={
                             !isValid ||
-                            !!importPublication?.cristin_id ||
-                            contributorErrors.length >= 1 ||
-                            !state.contributorsLoaded ||
-                            !!loadingContributorsError
+                            (!isDuplicate &&
+                              (contributorErrors.length >= 1 ||
+                                !state.contributorsLoaded ||
+                                !!loadingContributorsError))
                           }
                           color="primary"
                           type="submit"
@@ -577,12 +595,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                       </div>
                       {!isValid && (
                         <CommonErrorMessage datatestid="compare-form-error" errorMessage="Det er feil i skjema" />
-                      )}
-                      {!!importPublication?.cristin_id && (
-                        <CommonErrorMessage
-                          datatestid="compare-form-error"
-                          errorMessage="Kan ikke oppdatere importerte poster"
-                        />
                       )}
                     </Grid>
                   </Grid>

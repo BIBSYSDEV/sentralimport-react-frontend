@@ -3,6 +3,7 @@ import ActionButtons from './ActionButtons';
 import { ErrorMessage, Field, FieldProps, useFormikContext } from 'formik';
 import React, { FC } from 'react';
 import {
+  StyledDisabledTypography,
   StyledLineCristinValue,
   StyledLineImportValue,
   StyledLineLabelTypography,
@@ -13,9 +14,10 @@ import { ImportPublication } from '../../types/PublicationTypes';
 
 interface CompareFormYearProps {
   importPublication: ImportPublication;
+  isDuplicate: boolean;
 }
 
-const CompareFormYear: FC<CompareFormYearProps> = ({ importPublication }) => {
+const CompareFormYear: FC<CompareFormYearProps> = ({ importPublication, isDuplicate }) => {
   const { values, setFieldValue } = useFormikContext<CompareFormValuesType>();
 
   return (
@@ -26,27 +28,33 @@ const CompareFormYear: FC<CompareFormYearProps> = ({ importPublication }) => {
       </StyledLineImportValue>
       <ActionButtons
         isImportAndCristinEqual={+values.year === +importPublication.yearPublished}
-        isCopyBottonDisabled={!importPublication.yearPublished}
+        isCopyBottonDisabled={!importPublication.yearPublished || isDuplicate}
         copyCommand={() => setFieldValue('year', importPublication.yearPublished, true)}
         dataTestid={'compare-form-year-action'}
       />
       <StyledLineCristinValue>
-        <Field name="year">
-          {({ field, meta: { error } }: FieldProps) => (
-            <TextField
-              {...field}
-              id="Cristin-year"
-              name="year"
-              placeholder="Årstall"
-              data-testid="cristindata-year-textfield"
-              inputProps={{ 'data-testid': 'cristindata-year-textfield-input' }}
-              required
-              fullWidth
-              error={!!error}
-              helperText={<ErrorMessage name={field.name} />}
-            />
-          )}
-        </Field>
+        {!isDuplicate ? (
+          <Field name="year">
+            {({ field, meta: { error } }: FieldProps) => (
+              <TextField
+                {...field}
+                id="Cristin-year"
+                name="year"
+                placeholder="Årstall"
+                data-testid="cristindata-year-textfield"
+                inputProps={{ 'data-testid': 'cristindata-year-textfield-input' }}
+                required
+                fullWidth
+                error={!!error}
+                helperText={<ErrorMessage name={field.name} />}
+              />
+            )}
+          </Field>
+        ) : (
+          <StyledDisabledTypography data-testid="cristindata-year-for-duplicate">
+            {values.year}
+          </StyledDisabledTypography>
+        )}
       </StyledLineCristinValue>
     </StyledLineWrapper>
   );
