@@ -35,7 +35,7 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication, 
       </StyledLineImportValue>
       <ActionButtons
         isImportAndCristinEqual={values.category.label === importPublication.categoryName}
-        isCopyBottonDisabled={
+        isCopyButtonDisabled={
           !importPublication.categoryName || !isLegalCategory(importPublication.category) || isDuplicate
         }
         copyCommand={() =>

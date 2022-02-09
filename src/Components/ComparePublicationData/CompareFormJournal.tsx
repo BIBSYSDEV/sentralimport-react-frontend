@@ -74,7 +74,7 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication, is
         isImportAndCristinEqual={
           values.journal?.cristinTidsskriftNr === importPublication.channel?.cristinTidsskriftNr?.toString()
         }
-        isCopyBottonDisabled={!importPublication.channel?.title || isDuplicate}
+        isCopyButtonDisabled={!importPublication.channel?.title || isDuplicate}
         copyCommand={() => setFieldValue('journal', createJournalFromImportPublication, true)}
         dataTestid={'compare-form-journal-action'}
       />
