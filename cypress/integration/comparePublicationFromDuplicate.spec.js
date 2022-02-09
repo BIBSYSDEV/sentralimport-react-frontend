@@ -39,7 +39,8 @@ context('importFromDuplicate', () => {
     cy.get(`[data-testid="import-publication-button"]`).should('exist').should('not.be.disabled');
   });
 
-  it('can open compare-modal from duplicate-cristin-post without journal-object', () => {
+  it('can open compare-modal from duplicate-cristin-post that has errors', () => {
+    //year_published has wrong format, journal is missing and category has an illegal value
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
 
     cy.get(`[data-testid="search-panel-title-checkbox"]`).click();

@@ -118,16 +118,19 @@ context('importModal', () => {
     cy.get(`[data-testid="cristindata-year-textfield-input"]`).clear();
     cy.get(`[data-testid="import-publication-button"]`).focus().should('exist').should('be.disabled');
     cy.get(`#Cristin-year-helper-text`).contains('Årstall er et obligatorisk felt');
+
     cy.get(`[data-testid="cristindata-year-textfield-input"]`).clear().type('ABC');
-    cy.get(`#Cristin-year-helper-text`).contains('Årstall må være et nummer');
-    cy.get(`[data-testid="cristindata-year-textfield-input"]`).clear().type('2999');
-    cy.get(`#Cristin-year-helper-text`).contains('Årstall kan ikke være et framtidig år');
+    cy.get(`#Cristin-year-helper-text`).contains('Årstall må være et tall fra 1000 til 2999');
+
+    cy.get(`[data-testid="cristindata-year-textfield-input"]`).clear().type('3999');
+    cy.get(`#Cristin-year-helper-text`).contains('Årstall må være et tall fra 1000 til 2999');
+
     cy.get(`[data-testid="cristindata-year-textfield-input"]`).clear().type('20');
-    cy.get(`#Cristin-year-helper-text`).contains('Årstall må være større enn');
-    cy.get(`[data-testid="cristindata-year-textfield-input"]`).clear().type('20');
-    cy.get(`#Cristin-year-helper-text`).contains('Årstall må være større enn');
+    cy.get(`#Cristin-year-helper-text`).contains('Årstall må være et tall fra 1000 til 2999');
+
     cy.get(`[data-testid="cristindata-year-textfield-input"]`).clear().type('20.1');
-    cy.get(`#Cristin-year-helper-text`).contains('Årstall må være heltall');
+    cy.get(`#Cristin-year-helper-text`).contains('Årstall må være et tall fra 1000 til 2999');
+
     cy.get(`[data-testid="compare-form-year-action-button"]`).should('not.be.disabled');
 
     //tittel

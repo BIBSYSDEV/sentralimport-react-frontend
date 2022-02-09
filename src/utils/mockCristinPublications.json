@@ -374,9 +374,9 @@
   },
   {
     "category": {
-      "code": "ARTICLE",
+      "code": "xxx",
       "name": {
-        "nb": "Vitenskapelig artikkel"
+        "nb": "Ulovlig verdi"
       }
     },
     "channel": {
@@ -411,7 +411,7 @@
       "nb": "Epistemological Responsibility and A Candle in the Darkness: A Review of Robert D. Stolorow's Trauma and Human Existence",
       "en": "Epistemological Responsibility and A Candle in the Darkness: A Review of Robert D. Stolorow's Trauma and Human Existence"
     },
-    "year_published": "2010",
+    "year_published": "xxx",
     "year_reported": "2010",
     "url": "https://api.cristin.no/v2/results/689770",
     "volume": "4",
