@@ -503,7 +503,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                           rel="noopener noreferrer">
                           Gå til posten i Cristin
                         </StyledCristinLink>{' '}
-                        om du vil endre på årstall, bidragsyterere, kategori eller tidskrift (NVI-felter).
+                        om du vil endre på årstall, bidragsytere, kategori eller tidskrift (NVI-felter).
                       </StyledAlert>
                     </StyledCenterContentWrapper>
                   ) : (
