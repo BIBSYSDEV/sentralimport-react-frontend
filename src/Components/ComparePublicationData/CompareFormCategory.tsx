@@ -3,6 +3,7 @@ import ActionButtons from './ActionButtons';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import React, { FC } from 'react';
 import {
+  StyledDisabledTypography,
   StyledLineCristinValue,
   StyledLineImportValue,
   StyledLineLabelTypography,
@@ -12,11 +13,6 @@ import { ImportPublication } from '../../types/PublicationTypes';
 import { Autocomplete } from '@material-ui/lab';
 import { CompareFormCategoryOption, CompareFormValuesType } from './CompareFormTypes';
 import { isLegalCategory, LegalCategoryOptions } from '../../utils/categoryUtils';
-import styled from 'styled-components';
-
-const StyledDisabledTypography = styled(Typography)`
-  color: #555555;
-`;
 
 interface CompareFormCategoryProps {
   importPublication: ImportPublication;

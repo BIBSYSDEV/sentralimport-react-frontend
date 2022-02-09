@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "audit": " npm audit -production",
-    "build": "react-scripts build && compress-cra",
-    "build:sandbox": "env-cmd -f .env.sandbox react-scripts build && compress-cra",
-    "build:test": "env-cmd -f .env.test react-scripts build && compress-cra",
+    "build": "react-scripts build",
+    "build:sandbox": "env-cmd -f .env.sandbox react-scripts build",
+    "build:test": "env-cmd -f .env.test react-scripts build",
     "start": "react-scripts -r @cypress/instrument-cra start",
     "test": "cypress run",
     "test:cypress": "REACT_APP_USE_MOCK=true start-server-and-test http://localhost:3000"
@@ -62,7 +62,6 @@
     "@types/styled-components": "^5.1.22",
     "@types/yup": "^0.29.13",
     "axios-mock-adapter": "^1.20.0",
-    "compress-create-react-app": "^1.2.1",
     "cypress": "^9.4.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-cypress": "^2.12.1",
