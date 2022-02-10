@@ -26,7 +26,7 @@ const CompareFormVolume: FC<CompareFormVolumeProps> = ({ importPublication }) =>
       </StyledLineImportValue>
       <ActionButtons
         isImportAndCristinEqual={values.volume === importPublication.channel?.volume}
-        isCopyBottonDisabled={!importPublication.channel?.volume}
+        isCopyButtonDisabled={!importPublication.channel?.volume}
         copyCommand={() => setFieldValue('volume', importPublication.channel?.volume ?? '', true)}
         dataTestid={'compare-form-volume-action'}
       />

@@ -23,10 +23,24 @@ context('importFromDuplicate', () => {
     );
 
     cy.get(`[data-testid="importdata-journal-title"]`).contains(mockImportData[0].channel.title);
-    cy.get(`[data-testid="cristindata-journal-title"]`).contains(mockCristinPublications[0].journal.name);
+    cy.get(`[data-testid="cristindata-journal-for-duplicate"]`).contains(mockCristinPublications[0].journal.name);
+
+    cy.get(`[data-testid="importdata-year"]`).contains(mockImportData[0].yearPublished);
+    cy.get(`[data-testid="cristindata-year-for-duplicate"]`).contains(mockCristinPublications[0].year_published);
+
+    cy.get(`[data-testid="importdata-category"]`).contains(mockImportData[0].categoryName);
+    cy.get(`[data-testid="cristindata-category-for-duplicate"]`).contains(mockCristinPublications[0].category.name.nb);
+
+    cy.get(`[data-testid="duplicate-warning-box"]`).should('exist');
+    cy.get(`[data-testid="duplicate-warning-publication-link"]`)
+      .should('have.attr', 'href')
+      .and('include', `results/show.jsf?id=${mockCristinPublications[0].cristin_result_id}`);
+    cy.get(`[data-testid="open-contributors-modal-button"]`).should('not.exist');
+    cy.get(`[data-testid="import-publication-button"]`).should('exist').should('not.be.disabled');
   });
 
-  it('can open compare-modal from duplicate-cristin-post without journal-object', () => {
+  it('can open compare-modal from duplicate-cristin-post that has errors', () => {
+    //year_published has wrong format, journal is missing and category has an illegal value
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
 
     cy.get(`[data-testid="search-panel-title-checkbox"]`).click();
@@ -34,7 +48,8 @@ context('importFromDuplicate', () => {
 
     cy.get(`[data-testid="duplication-result-radio-${mockCristinPublications[4].cristin_result_id}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
-    cy.get(`[data-testid="compare-form-journal-error"]`).contains('Tidsskrift er et obligatorisk felt');
-    cy.get(`[data-testid="cristindata-id"]`).contains(mockCristinPublications[4].cristin_result_id);
+
+    cy.get(`[data-testid="import-publication-button"]`).should('exist').should('not.be.disabled');
+    cy.get(`[data-testid="compare-form-error"]`).should('not.exist');
   });
 });

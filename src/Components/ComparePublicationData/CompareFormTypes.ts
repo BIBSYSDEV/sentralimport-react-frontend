@@ -16,6 +16,7 @@ export const emptyJournal: CompareFormJournalType = {
 };
 
 export interface CompareFormValuesType {
+  isDuplicate: boolean;
   title: string;
   year: string;
   doi?: string;

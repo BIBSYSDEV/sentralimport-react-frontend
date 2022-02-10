@@ -3,6 +3,7 @@ import ActionButtons from './ActionButtons';
 import { useFormikContext } from 'formik';
 import React, { FC, useState } from 'react';
 import {
+  StyledDisabledTypography,
   StyledLineCristinValue,
   StyledLineImportValue,
   StyledLineLabelTypography,
@@ -39,10 +40,11 @@ export enum JournalPanels {
 
 interface CompareFormJournalProps {
   importPublication: ImportPublication;
+  isDuplicate: boolean;
   loadJournalIdError?: Error;
 }
 
-const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication, loadJournalIdError }) => {
+const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication, isDuplicate, loadJournalIdError }) => {
   const { values, setFieldValue, errors } = useFormikContext<CompareFormValuesType>();
   const [expandedPanel, setExpandedPanel] = useState<JournalPanels | undefined>();
 
@@ -72,53 +74,61 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication, lo
         isImportAndCristinEqual={
           values.journal?.cristinTidsskriftNr === importPublication.channel?.cristinTidsskriftNr?.toString()
         }
-        isCopyBottonDisabled={!importPublication.channel?.title}
+        isCopyButtonDisabled={!importPublication.channel?.title || isDuplicate}
         copyCommand={() => setFieldValue('journal', createJournalFromImportPublication, true)}
         dataTestid={'compare-form-journal-action'}
       />
       <StyledLineCristinValue>
-        <StyledJournalPresentationWrapper>
-          <Typography data-testid="cristindata-journal-title">{values.journal?.title}</Typography>
-          {errors.journal?.cristinTidsskriftNr && (
-            <CommonErrorMessage
-              errorMessage={errors.journal.cristinTidsskriftNr}
-              datatestid="compare-form-journal-error"
-            />
-          )}
-          {loadJournalIdError && (
-            <CommonErrorMessage
-              errorMessage="Could not load the journal id from Cristin"
-              datatestid="compare-form-journal-load-error"
-            />
-          )}
-        </StyledJournalPresentationWrapper>
-        <StyledAccordion
-          expanded={expandedPanel === JournalPanels.SEARCH_JOURNAL_PANEL}
-          onChange={handleChangePanel(JournalPanels.SEARCH_JOURNAL_PANEL)}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="search-journal-content"
-            id="search-journal-header">
-            <Typography>Søk opp tidsskrift</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <SearchJournalPanel handleChooseJournal={handleSetJournal} />
-          </AccordionDetails>
-        </StyledAccordion>
+        {!isDuplicate ? (
+          <>
+            <StyledJournalPresentationWrapper>
+              <Typography data-testid="cristindata-journal-title">{values.journal?.title}</Typography>
+              {errors.journal?.cristinTidsskriftNr && (
+                <CommonErrorMessage
+                  errorMessage={errors.journal.cristinTidsskriftNr}
+                  datatestid="compare-form-journal-error"
+                />
+              )}
+              {loadJournalIdError && (
+                <CommonErrorMessage
+                  errorMessage="Could not load the journal id from Cristin"
+                  datatestid="compare-form-journal-load-error"
+                />
+              )}
+            </StyledJournalPresentationWrapper>
+            <StyledAccordion
+              expanded={expandedPanel === JournalPanels.SEARCH_JOURNAL_PANEL}
+              onChange={handleChangePanel(JournalPanels.SEARCH_JOURNAL_PANEL)}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="search-journal-content"
+                id="search-journal-header">
+                <Typography>Søk opp tidsskrift</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <SearchJournalPanel handleChooseJournal={handleSetJournal} />
+              </AccordionDetails>
+            </StyledAccordion>
 
-        <StyledAccordion
-          expanded={expandedPanel === JournalPanels.CREATE_JOURNAL_PANEL}
-          onChange={handleChangePanel(JournalPanels.CREATE_JOURNAL_PANEL)}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="create-journal-content"
-            id="create-journal-header">
-            <Typography>Registrer nytt tidsskrift</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <CreateJournalPanel handleCreateJournal={handleSetJournal} />
-          </AccordionDetails>
-        </StyledAccordion>
+            <StyledAccordion
+              expanded={expandedPanel === JournalPanels.CREATE_JOURNAL_PANEL}
+              onChange={handleChangePanel(JournalPanels.CREATE_JOURNAL_PANEL)}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="create-journal-content"
+                id="create-journal-header">
+                <Typography>Registrer nytt tidsskrift</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <CreateJournalPanel handleCreateJournal={handleSetJournal} />
+              </AccordionDetails>
+            </StyledAccordion>
+          </>
+        ) : (
+          <StyledDisabledTypography data-testid="cristindata-journal-for-duplicate">
+            {values.journal.title}
+          </StyledDisabledTypography>
+        )}
       </StyledLineCristinValue>
     </StyledLineWrapper>
   );

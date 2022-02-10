@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Link, Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import styled from 'styled-components';
 import { SavedPublicationLogLine } from '../../types/PublicationTypes';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { CRISTIN_REACT_APP_URL } from '../../utils/constants';
 import { Modal, ModalBody, ModalHeader } from 'reactstrap';
+import { StyledCristinLink } from '../ComparePublicationData/CompareFormWrappers';
 
 const LogPanelWrapper = styled.div`
   display: flex;
@@ -21,12 +22,6 @@ const StyledModal = styled(Modal)`
 
 const StyledDivider = styled.hr`
   margin: 1.5rem 0 1rem 0;
-`;
-
-const StyledLink = styled(Link)`
-  &:hover {
-    color: ${Colors.PURPLE};
-  }
 `;
 
 const StyledMetaDataTypography = styled(Typography)`
@@ -66,13 +61,13 @@ export default function ImportLogPanel() {
       <>
         {publications.reverse().map((pub: SavedPublicationLogLine, index: number) => (
           <div key={index} data-testid={`log-publication-${index}`}>
-            <StyledLink
+            <StyledCristinLink
               data-testid={`log-publication-link-${index}`}
               href={`${CRISTIN_REACT_APP_URL}/results/show.jsf?id=${pub.id}`}
               target="_blank"
               rel="noopener noreferrer">
               <StyledTitleTypography>{pub.title}</StyledTitleTypography>
-            </StyledLink>
+            </StyledCristinLink>
             <StyledMetaDataTypography>{pub.authorsPresentation}</StyledMetaDataTypography>
             <StyledDivider />
           </div>
