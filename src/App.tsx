@@ -13,6 +13,8 @@ import { handlePotentialExpiredSession } from './api/api';
 import { InstitutionSelector } from './types/InstitutionTypes';
 import createLastUpdated from './Components/Footer/CreateLastUpdated';
 import { Typography } from '@material-ui/core';
+import { getPCB } from './api/contributorApi';
+import { log } from 'util';
 
 const StyledApp = styled.div`
   text-align: center;
@@ -43,6 +45,19 @@ export default function App() {
   const { dispatch } = useContext(Context);
   const isAuthorized = localStorage.getItem('authorized') === 'true' || USE_MOCK_DATA;
 
+  useEffect(() => {
+    const promp = async () => {
+      try {
+        const response = await getPCB();
+        debugger;
+      } catch (error) {
+        console.log('@PCB2', error);
+        //handlePotentialExpiredSession(error);
+      }
+    };
+    promp();
+  }, []);
+
   //fetches instututions to populate drop-down lists
   useEffect(() => {
     const createInstitutionLists = async () => {
@@ -64,7 +79,7 @@ export default function App() {
         handlePotentialExpiredSession(error);
       }
     };
-    isAuthorized && createInstitutionLists().then();
+    // isAuthorized && createInstitutionLists().then();
   }, [isAuthorized]);
 
   if (!isAuthorized) {
@@ -73,21 +88,21 @@ export default function App() {
 
   return isAuthorized ? (
     <StyledApp>
-      <Header />
-      <StyledBody>
-        <StyledGrid container spacing={3}>
-          <Grid item xs={12} md={3}>
-            <FilterFormPanel />
-            <ImportLogPanel />
-          </Grid>
-          <Grid item xs={12} md={9}>
-            <ImportTable />
-          </Grid>
-        </StyledGrid>
-      </StyledBody>
-      <StyledFooter>
-        <Typography variant="caption">{createLastUpdated()}</Typography>
-      </StyledFooter>
+      {/*<Header />*/}
+      {/*<StyledBody>*/}
+      {/*  <StyledGrid container spacing={3}>*/}
+      {/*    <Grid item xs={12} md={3}>*/}
+      {/*      <FilterFormPanel />*/}
+      {/*      <ImportLogPanel />*/}
+      {/*    </Grid>*/}
+      {/*    <Grid item xs={12} md={9}>*/}
+      {/*      <ImportTable />*/}
+      {/*    </Grid>*/}
+      {/*  </StyledGrid>*/}
+      {/*</StyledBody>*/}
+      {/*<StyledFooter>*/}
+      {/*  <Typography variant="caption">{createLastUpdated()}</Typography>*/}
+      {/*</StyledFooter>*/}
     </StyledApp>
   ) : (
     <></>

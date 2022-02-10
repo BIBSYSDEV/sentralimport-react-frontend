@@ -20,16 +20,25 @@ export async function getInstitutionName(
   if (institutionId === '0') return { institutionName: '', cachedInstitutionResult };
   if (cachedInstitutionResult.get(institutionId))
     return { institutionName: cachedInstitutionResult.get(institutionId) ?? '', cachedInstitutionResult };
+
   const institution = await (authenticatedApiRequest({
     url: encodeURI(`${CRIST_REST_API}/institutions/${institutionId}?lang=${searchLanguage}`),
     method: 'GET',
   }) as AxiosPromise<Institution>);
+
   const institutionName = institution.data.institution_name.en || institution.data.institution_name.nb;
   cachedInstitutionResult.set(institutionId, institutionName);
   return {
     institutionName,
     cachedInstitutionResult: cachedInstitutionResult,
   };
+}
+
+export async function getPCB() {
+  return authenticatedApiRequest({
+    url: encodeURI(`${CRIST_REST_API}/institutions/7630?lang=en`),
+    method: 'GET',
+  }) as AxiosPromise<Institution>;
 }
 
 export async function getInstitutionUnitName(
