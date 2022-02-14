@@ -1,6 +1,6 @@
 import { Affiliation, ImportPublicationPersonInstutution } from '../../types/InstitutionTypes';
-import { getCountryInformationByCountryCode } from '../../api/institutionApi';
-import { getInstitutionName, SearchLanguage } from '../../api/contributorApi';
+import { getCountryInformationByCountryCode, getInstitutionName } from '../../api/institutionApi';
+import { SearchLanguage } from '../../api/contributorApi';
 import { ContributorType } from '../../types/ContributorTypes';
 
 const Foreign_educational_institution_generic_code = '9127';

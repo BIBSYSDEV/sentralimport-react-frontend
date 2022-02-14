@@ -1,7 +1,7 @@
 import axios, { AxiosPromise, AxiosResponse } from 'axios';
 import { CRIST_REST_API } from '../utils/constants';
 import { authenticatedApiRequest, handlePotentialExpiredSession } from './api';
-import { Affiliation, Institution, UnitResponse } from '../types/InstitutionTypes';
+import { Affiliation, UnitResponse } from '../types/InstitutionTypes';
 import { ContributorStatus, ContributorType } from '../types/ContributorTypes';
 
 export enum SearchLanguage {
@@ -10,36 +10,6 @@ export enum SearchLanguage {
 }
 
 export const ForbiddenPersonErrorMessage = 'Client lacks authorization.';
-
-export async function getInstitutionName(
-  institutionId: string | undefined,
-  searchLanguage: SearchLanguage,
-  cachedInstitutionResult: Map<string, string>
-): Promise<{ institutionName: string; cachedInstitutionResult: Map<string, string> }> {
-  if (!institutionId) return { institutionName: '', cachedInstitutionResult };
-  if (institutionId === '0') return { institutionName: '', cachedInstitutionResult };
-  if (cachedInstitutionResult.get(institutionId))
-    return { institutionName: cachedInstitutionResult.get(institutionId) ?? '', cachedInstitutionResult };
-
-  const institution = await (authenticatedApiRequest({
-    url: encodeURI(`${CRIST_REST_API}/institutions/${institutionId}?lang=${searchLanguage}`),
-    method: 'GET',
-  }) as AxiosPromise<Institution>);
-
-  const institutionName = institution.data.institution_name.en || institution.data.institution_name.nb;
-  cachedInstitutionResult.set(institutionId, institutionName);
-  return {
-    institutionName,
-    cachedInstitutionResult: cachedInstitutionResult,
-  };
-}
-
-export async function getPCB() {
-  return authenticatedApiRequest({
-    url: encodeURI(`${CRIST_REST_API}/institutions/7630?lang=en`),
-    method: 'GET',
-  }) as AxiosPromise<Institution>;
-}
 
 export async function getInstitutionUnitName(
   institutionUnitId: string,
