@@ -17,6 +17,7 @@ context('contributor', () => {
 
   it('handles publication with contributor-errors', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[3].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="contributor-loading-error"]').contains(
       'Feil ved lasting av bidragsytere: (Request failed with status code 404)'
@@ -122,6 +123,7 @@ context('contributor', () => {
 
   it('hides inactive affiliations for authors with cristin-id', () => {
     cy.get('[data-testid="import-table-row-610213"]').click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(
@@ -136,6 +138,7 @@ context('contributor', () => {
 
   it('is not possible to add units for institution without units', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid="show-institution-selector-2"]').click(); //adding
@@ -149,6 +152,7 @@ context('contributor', () => {
 
   it('is possible to add and delete units for institution with crisin-id for a contributor', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(
@@ -186,6 +190,7 @@ context('contributor', () => {
 
   it('is possible to remove affiliations for a contributor', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(
@@ -205,6 +210,7 @@ context('contributor', () => {
     //"authorName": "Kinshuk",
     //no firstname
     cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid="contributor-loading-error"]').should('not.exist');
@@ -212,6 +218,7 @@ context('contributor', () => {
 
   it('is possible to add more affiliations', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
 
@@ -244,6 +251,7 @@ context('contributor', () => {
 
   it('Shows an error for authors with same cristinid', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(`[data-testid=contributor-form-6-duplicate-error]`).contains('Det finnes bidragsytere med samme id');
