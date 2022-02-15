@@ -83,7 +83,7 @@ export const interceptRequestsOnMock = () => {
 
   //get cristin institutions by id
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/([1-9][0-9]*).*`)).reply(200, resultInstitutionNTNU);
-  //crisrest-utv.dataporten-api.no/institutions/7492?lang=en
+  //mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/1234567.*`)).networkError();
 
   //get institution by name
   mock
