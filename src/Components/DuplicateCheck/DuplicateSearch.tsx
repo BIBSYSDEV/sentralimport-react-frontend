@@ -68,7 +68,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
   }, [importPublication]);
 
   useEffect(() => {
-    if (importPublication.cristin_id && resultList.length > 0) {
+    if (resultList.length > 0) {
       setSelectedRadioButton(resultList[0].cristin_result_id);
       dispatch({ type: 'setSelectedPublication', payload: resultList[0] });
     }
@@ -127,7 +127,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
           <div>
             <FormControlLabel
               value={SelectValues.CREATE_NEW}
-              control={<Radio />}
+              control={<Radio data-testid={`duplication-result-radio-create-new`} />}
               label="Opprett ny cristin-publikasjon basert på importpublikasjon"
               disabled={!!importPublication.cristin_id}
             />

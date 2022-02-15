@@ -19,7 +19,7 @@ context('import publication', () => {
   });
 
   it('can update an publication', () => {
-    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get(`[data-testid="duplication-result-radio-${mockCristinPublications[0].cristin_result_id}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="import-publication-button"]`).click();
@@ -32,6 +32,8 @@ context('import publication', () => {
   it('handles errors when saving publication', () => {
     cy.get(`#rowsPerPageSelector`).click().type('10{enter}{enter}');
     cy.get(`[data-testid="import-table-row-${mockImportData[6].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
+
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="import-publication-button"]`).click();
     cy.get(`[data-testid="confirm-import-dialog-ok"]`).click();

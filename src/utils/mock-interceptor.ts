@@ -11,7 +11,6 @@ import {
   mockCristinPersonNotFound,
   mockCristinPersonNotFoundResponse,
   mockCristinPublicationWithDoi,
-  mockDoiForEmptyCristinSearch,
   mockDoiForPublicationWithoutDoi,
   mockForbiddenPerson,
   mockImportPublication1,
@@ -124,16 +123,8 @@ export const interceptRequestsOnMock = () => {
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=issn.*`)).reply(200, mockIssnChannel);
 
   //doi-search
-  mock
-    .onGet(new RegExp(`${CRIST_REST_API}/results.*doi=${mockImportData[0].doi}`))
-    .reply(200, [mockCristinPublications[0]], {
-      'x-total-count': 1,
-    });
-  mock.onGet(new RegExp(`${CRIST_REST_API}/results.*doi=${mockDoiForEmptyCristinSearch}`)).reply(200, [], {
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results.*doi=.*`)).reply(200, [], {
     'x-total-count': 0,
-  });
-  mock.onGet(new RegExp(`${CRIST_REST_API}/results.*doi=.*`)).reply(200, mockCristinPublications, {
-    'x-total-count': 999,
   });
 
   mock.onGet(new RegExp(`${CRIST_REST_API}/results&.*`)).reply(200, mockCristinPublications);

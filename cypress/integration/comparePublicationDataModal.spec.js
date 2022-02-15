@@ -94,6 +94,7 @@ context('importModal', () => {
 
   it('can show validation errors on comparePublicationDataModal-form', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[2].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
 
     //skal være tidsskrift-feil

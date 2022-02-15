@@ -10,6 +10,7 @@ context('contributor badges', () => {
 
   it('shows bagdes on verified cristin person from importdata', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid="contributor-form-0-name"]').should('have.css', 'color', Colors.Text.GREEN);
@@ -19,6 +20,7 @@ context('contributor badges', () => {
 
   it('retains contributor badges from the search panel', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
 
