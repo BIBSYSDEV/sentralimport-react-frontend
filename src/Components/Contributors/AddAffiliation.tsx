@@ -155,7 +155,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
       )}
       <StyledCollapse in={showAddAffiliationSelector}>
         <Grid container spacing={2} justifyContent="flex-start" alignItems="baseline">
-          <Grid item xs={12} xl={8}>
+          <Grid item xs={12}>
             <Autocomplete
               loading={loading}
               value={selectedInstitution}
@@ -197,7 +197,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
               options={sortInstitutions(institutionsWithGlobalInstitutions)}
             />
           </Grid>
-          <Grid item xs={12} xl={4}>
+          <Grid item xs={12}>
             <Grid container spacing={1}>
               <Grid item>
                 <Button
