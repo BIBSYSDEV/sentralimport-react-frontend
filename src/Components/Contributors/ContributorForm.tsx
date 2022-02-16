@@ -116,25 +116,34 @@ const ContributorForm: FC<ContributorFormProps> = ({
             updateContributor={updateContributor}
           />
         </Grid>
-        <Grid item xs={12}>
-          <StyledInstitutionList data-testid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations`}>
-            {contributorData.toBeCreated.affiliations
-              ?.filter(
-                (item: Affiliation, number: number) =>
-                  contributorData.toBeCreated.affiliations?.indexOf(item) === number
-              )
-              .map((affiliation, affiliationIndex) => (
-                <EditAffiliation
-                  key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
-                  affiliation={affiliation}
-                  contributorData={contributorData}
-                  resultListIndex={resultListIndex}
-                  updateContributor={updateContributor}
-                />
-              ))}
-          </StyledInstitutionList>
-        </Grid>
+        {contributorData.toBeCreated.affiliations && contributorData.toBeCreated.affiliations.length > 0 ? (
+          <Grid item xs={12}>
+            <StyledInstitutionList data-testid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations`}>
+              {contributorData.toBeCreated.affiliations
+                ?.filter(
+                  (item: Affiliation, number: number) =>
+                    contributorData.toBeCreated.affiliations?.indexOf(item) === number
+                )
+                .map((affiliation, affiliationIndex) => (
+                  <EditAffiliation
+                    key={`${affiliation.cristinInstitutionNr ?? 0}-${affiliationIndex}`}
+                    affiliation={affiliation}
+                    contributorData={contributorData}
+                    resultListIndex={resultListIndex}
+                    updateContributor={updateContributor}
+                  />
+                ))}
+            </StyledInstitutionList>
+          </Grid>
+        ) : (
+          <Grid item xs={12}>
+            <StyledAlert data-testid={`contributor-form-${resultListIndex}-missing-affiliation-error`} severity="error">
+              Bidragsyter mangler tilknytning
+            </StyledAlert>
+          </Grid>
+        )}
       </Grid>
+
       <AddAffiliation
         contributorData={contributorData}
         resultListIndex={resultListIndex}
