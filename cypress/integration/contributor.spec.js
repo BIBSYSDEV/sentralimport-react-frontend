@@ -258,6 +258,14 @@ context('contributor', () => {
     cy.get(`[data-testid=contributor-form-5-duplicate-error]`).contains('Det finnes bidragsytere med samme id');
   });
 
+  it('Shows an error for authors without affiliation', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get(`[data-testid=contributor-form-5-missing-affiliation-error]`).contains('Bidragsyter mangler tilknytning');
+  });
+
   it('removes duplicate institutions from import data', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
