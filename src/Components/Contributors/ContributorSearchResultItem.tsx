@@ -156,7 +156,7 @@ const ContributorSearchResultItem: FC<ContributorSearchResultItemProps> = ({
         color="primary"
         onClick={() => handleChoose(contributor)}>
         {contributor.affiliations && contributor.affiliations.length > 0
-          ? 'Velg person og tilknyttning'
+          ? 'Velg person og tilknytning'
           : 'Velg person og fjern tilknytninger'}
       </Button>
       <hr />
