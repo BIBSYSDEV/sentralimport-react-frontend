@@ -168,7 +168,7 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
           <CommonErrorMessage datatestid="unit-loading-error" errorMessage={`Feil ved lasting av enheter: `} />
         ) : (
           units.length > 0 &&
-          affiliation.isCristinInstitution === true &&
+          affiliation.isCristinInstitution &&
           !showUnitSelector && (
             <Grid item>
               <StyledAddUnitButton
@@ -182,7 +182,7 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
             </Grid>
           )
         )}
-        {showUnitSelector && affiliation.isCristinInstitution === true && (
+        {showUnitSelector && affiliation.isCristinInstitution && (
           <Grid item xs={12}>
             <Grid container spacing={3} alignItems="center">
               <Grid item sm={9}>
