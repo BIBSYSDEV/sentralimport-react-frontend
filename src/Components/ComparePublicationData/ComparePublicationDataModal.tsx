@@ -323,9 +323,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   const handleImportButtonClick = (values: CompareFormValuesType) => {
     setFormValues(values);
-    if (state.contributors === null) {
-      dispatch({ type: 'contributors', payload: contributors }); //?
-    }
     setIsConfirmImportDialogOpen(true);
   };
 

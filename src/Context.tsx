@@ -17,7 +17,6 @@ const initialState: ContextType = {
   currentSortValue: SortValue.Date,
   currentSortOrder: Order.desc,
   totalCount: 0,
-  contributors: null, //TODO: brukes ikke ???
   institutions: null,
   allChecked: false,
   param: null,
@@ -55,12 +54,6 @@ const reducer = (state: ContextType, action: { type: string; payload: any }) => 
       return { ...state, selectedPublication: action.payload };
     case 'setTotalCount':
       return { ...state, totalCount: action.payload };
-    case 'contributors':
-      return { ...state, contributors: action.payload };
-    case 'setContributorPage':
-      return { ...state, contributorPage: action.payload };
-    case 'setContributorPerPage':
-      return { ...state, contributorPerPage: action.payload };
     case 'institutions':
       return { ...state, institutions: action.payload };
     case 'allChecked':

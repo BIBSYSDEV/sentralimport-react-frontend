@@ -185,11 +185,6 @@ const ContributorModal: FC<ContributorProps> = ({
     setIsClosingDialogOpen(!isClosingDialogOpen);
   };
 
-  function handleCloseContributorModal() {
-    handleContributorModalClose();
-    dispatch({ type: 'contributors', payload: contributors });
-  }
-
   const handleToggleFilter = () => {
     setIsContributorsFiltered((prevState) => !prevState);
   };
@@ -197,7 +192,7 @@ const ContributorModal: FC<ContributorProps> = ({
   return (
     <>
       <StyledModal isOpen={isContributorModalOpen}>
-        <ModalHeader toggle={handleCloseContributorModal}>Bidragsytere</ModalHeader>
+        <ModalHeader toggle={handleContributorModalClose}>Bidragsytere</ModalHeader>
         <ModalBody>
           <StyledContentWrapper>
             <StyledContributorHeader>
@@ -292,7 +287,7 @@ const ContributorModal: FC<ContributorProps> = ({
                 variant="contained"
                 color="primary"
                 data-testid="contributor-back-button"
-                onClick={handleCloseContributorModal}>
+                onClick={handleContributorModalClose}>
                 Tilbake
               </Button>
             </StyledContributorFooter>
