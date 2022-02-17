@@ -22,7 +22,6 @@ export interface ContextType {
   isSampublikasjon: boolean;
   param: null | any;
   selectedField: string;
-  selectedPublication: SelectedPublication | any; //TODO: code-cleanup, selectedPublication changes interface throughout the application (possibly only the initial state is incorrect)
   totalCount: number;
   validation: string;
   triggerImportDataSearch: boolean;
@@ -52,7 +51,7 @@ export enum BooleanString {
   true = 'true',
 }
 
-export interface SelectedPublication {
+/*export interface SelectedPublication {
   authors?: any;
   category: {
     code: string;
@@ -72,7 +71,7 @@ export interface SelectedPublication {
   categoryName?: string;
   cristin_result_id: string;
   original_language?: string;
-}
+}*/
 
 export interface ImportSources {
   source_name: string;

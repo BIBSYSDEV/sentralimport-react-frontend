@@ -103,7 +103,7 @@ interface ComparePublicationDataModalProps {
   isComparePublicationDataModalOpen: boolean;
   handleComparePublicationDataModalClose: () => void;
   importPublication: ImportPublication;
-  cristinPublication: CristinPublication; //TODO: Rydd i dette tullet
+  cristinPublication?: CristinPublication;
   handleDuplicateCheckModalClose: () => void;
   isDuplicate: boolean;
 }
@@ -127,7 +127,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [contributorErrors, setContributorErrors] = useState<string[]>([]);
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors, setContributors] = useState<ContributorWrapper[]>(
-    isDuplicate ? state.selectedPublication.authors : importPublication?.authors || []
+    cristinPublication ? cristinPublication.authors : importPublication?.authors || []
   );
   const [isLoadingContributors, setIsLoadingContributors] = useState(false);
   const [loadingContributorsError, setLoadingContributorsError] = useState<Error | undefined>();
@@ -139,28 +139,25 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     .languages.sort((a: any, b: any) => a.original - b.original)
     .reverse();
   const [publicationLanguages, setPublicationLanguages] = useState(
-    isDuplicate
-      ? [generateLanguageObjectFromCristinPublication(state.selectedPublication)]
+    cristinPublication
+      ? [generateLanguageObjectFromCristinPublication(cristinPublication)]
       : sortedLanguagesFromImportPublication
   ); //TODO: putt hele publicationLanguages i formik
   const [selectedLang, setSelectedLang] = useState<Language>(
-    isDuplicate
+    cristinPublication
       ? {
-          title: state.selectedPublication.title
-            ? state.selectedPublication.title[state.selectedPublication.original_language]
-            : '',
-          lang: state.selectedPublication.original_language?.toUpperCase(),
+          title: cristinPublication.title ? cristinPublication.title[cristinPublication.original_language] : '',
+          lang: cristinPublication.original_language?.toUpperCase(),
           original: true,
         }
       : importPublication.languages?.find((lang: Language) => lang.original) ?? importPublication.languages[0]
   );
-  const kildeId = isDuplicate
-    ? (state.selectedPublication.import_sources && state.selectedPublication.import_sources[0]?.source_reference_id) ||
+  const kildeId = cristinPublication
+    ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_reference_id) ||
       'Ingen kildeId funnet'
     : importPublication.externalId;
-  const kilde = isDuplicate
-    ? (state.selectedPublication.import_sources && state.selectedPublication.import_sources[0]?.source_name) ||
-      'Ingen kilde funnet'
+  const kilde = cristinPublication
+    ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_name) || 'Ingen kilde funnet'
     : importPublication.sourceName;
 
   const updatePublicationLanguages = (title: string, lang: string) => {
@@ -174,29 +171,29 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   useEffect(() => {
     //init ligger i en useeffect pga asynkront kall til getJournalId
     const initFormik = async () => {
-      //Formik is initiated from either importPublication or state.selectedPublication (set in duplicate-modal)
+      //Formik is initiated from either importPublication orcristinPublication (set in duplicate-modal)
 
-      //TODO: det trengs en sjekk på om state.selectedPublication.links inneholder en doi - nå settes den uansett
+      //TODO: det trengs en sjekk på om cristinPublication.links inneholder en doi - nå settes den uansett
       setInitialFormValues(
-        isDuplicate && state.selectedPublication
+        cristinPublication
           ? {
               isDuplicate: true,
               title: selectedLang.title ?? '',
-              year: state.selectedPublication.year_published,
-              doi: extractDoiFromCristinPublication(state.selectedPublication),
+              year: cristinPublication.year_published,
+              doi: extractDoiFromCristinPublication(cristinPublication),
               language: selectedLang,
               journal: {
-                cristinTidsskriftNr: await getJournalId(state.selectedPublication.journal),
-                title: state.selectedPublication.journal?.name || 'Ingen tidsskrift funnet',
+                cristinTidsskriftNr: await getJournalId(cristinPublication.journal),
+                title: cristinPublication.journal?.name || 'Ingen tidsskrift funnet',
               },
               category: {
-                value: state.selectedPublication.category?.code,
-                label: state.selectedPublication.category?.name?.nb,
+                value: cristinPublication.category?.code,
+                label: cristinPublication.category?.name?.nb,
               },
-              volume: state.selectedPublication.volume ?? '',
-              issue: state.selectedPublication.issue ?? '',
-              pageFrom: state.selectedPublication.pages?.from ?? '',
-              pageTo: state.selectedPublication.pages?.to ?? '',
+              volume: cristinPublication.volume ?? '',
+              issue: cristinPublication.issue ?? '',
+              pageFrom: cristinPublication.pages?.from ?? '',
+              pageTo: cristinPublication.pages?.to ?? '',
             }
           : {
               isDuplicate: false,
@@ -217,7 +214,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       );
     };
     initFormik().then();
-  }, [isDuplicate, state.selectedPublication, importPublication]);
+  }, [isDuplicate, cristinPublication, importPublication]);
 
   useLayoutEffect(() => {
     async function enrichImportPublicationAuthors() {
@@ -229,16 +226,16 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         const authorsFromImportPublication = importPublication.authors;
 
         let cristinAuthors: ContributorType[];
-        if (isDuplicate) {
-          cristinAuthors = state.selectedPublication.authors;
+        if (cristinPublication) {
+          cristinAuthors = cristinPublication.authors;
         } else {
           cristinAuthors = await searchCristinPersons(authorsFromImportPublication);
         }
         for (let i = 0; i < Math.max(cristinAuthors.length, authorsFromImportPublication.length); i++) {
           if (cristinAuthors[i]) {
-            if (isDuplicate && state.doSave) {
+            if (cristinPublication && state.doSave) {
               if (i < cristinAuthors.length) {
-                cristinAuthors[i].affiliations = await getDuplicateAffiliations(state.selectedPublication.authors[i]);
+                cristinAuthors[i].affiliations = await getDuplicateAffiliations(cristinPublication.authors[i]);
               } else {
                 cristinAuthors[i] = { ...emptyContributor };
               }
@@ -265,7 +262,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       setContributors(tempContributors);
     }
     !isDuplicate && enrichImportPublicationAuthors().then();
-  }, [importPublication, state.selectedPublication, isDuplicate]);
+  }, [importPublication, cristinPublication, isDuplicate]);
 
   useEffect(() => {
     async function identifyCristinPersonsInContributors_And_CreateListOfIdentified() {
@@ -284,10 +281,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           ) {
             const person = await getPersonDetailById(contributors[i].imported);
             identifiedImported[i] = person.identified_cristin_person ?? false;
-          }
-          if (!contributors[i].toBeCreated.identified_cristin_person && isDuplicate) {
-            //const person = await getPersonDetailById(contributors[i].toBeCreated); //TODO! Denne gir ingen mening - søker på cristinid=0 som gir 404-feil
-            // identified[i] = person.identified_cristin_person ?? false;
           }
         }
         dispatch({ type: 'identifiedImported', payload: identifiedImported });
@@ -385,7 +378,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   function handleImportPublicationConfirmed(annotation: string) {
     if (formValues) {
-      if (!isDuplicate) {
+      if (!cristinPublication) {
         handleCreatePublication(
           formValues,
           importPublication,
@@ -398,7 +391,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         handleUpdatePublication(
           formValues,
           importPublication,
-          state.selectedPublication.cristin_result_id,
+          cristinPublication.cristin_result_id,
           publicationLanguages,
           annotation,
           dispatch
@@ -436,7 +429,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                       <StyledActionButtonsPlaceHolder />
                       <StyledLineCristinValue>
                         <StyledDisabledTypography data-testid="cristindata-id">
-                          {isDuplicate ? cristinPublication.cristin_result_id : 'Ingen Cristin-Id'}
+                          {cristinPublication ? cristinPublication.cristin_result_id : 'Ingen Cristin-Id'}
                         </StyledDisabledTypography>
                       </StyledLineCristinValue>
                     </StyledLineWrapper>
@@ -492,7 +485,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                     <CompareFormIssue importPublication={importPublication} />
                     <CompareFormPages importPublication={importPublication} />
                   </StyledFormWrapper>
-                  {isDuplicate ? (
+                  {cristinPublication ? (
                     <StyledCenterContentWrapper>
                       <StyledAlert severity="warning" data-testid="duplicate-warning-box">
                         NB! Posten eksisterer i Cristin.{' '}

@@ -1,4 +1,5 @@
 import { ImportPublicationPerson } from './ContributorTypes';
+import { ImportSources } from './ContextType';
 
 export enum Order {
   asc = 'asc',
@@ -21,7 +22,6 @@ export interface ImportPublication {
   externalCategory: string;
   languages: Language[];
 }
-
 export interface CristinPublication {
   authorTotalCount: number;
   authors: any;
@@ -37,6 +37,10 @@ export interface CristinPublication {
   links?: any[];
   journal?: any;
   cristin_result_id: string;
+  issue?: string;
+  volume?: string;
+  pages?: Pages;
+  import_sources?: ImportSources[];
 }
 
 export interface Channel {
@@ -127,8 +131,8 @@ export interface Journal {
 }
 
 export interface Pages {
-  from: string | number;
-  to: string | number;
+  from: string;
+  to: string;
   count: string;
 }
 

@@ -2,7 +2,7 @@ import React, { FC, useContext, useState } from 'react';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Context } from '../../Context';
 import ComparePublicationDataModal from '../ComparePublicationData/ComparePublicationDataModal';
-import { ImportPublication } from '../../types/PublicationTypes';
+import { CristinPublication, ImportPublication } from '../../types/PublicationTypes';
 import { Button, Divider, Grid, Typography } from '@material-ui/core';
 import ImportPublicationPresentation from './ImportPublicationPresentation';
 import DuplicateSearch from './DuplicateSearch';
@@ -52,6 +52,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
   const [isDuplicate, setIsDuplicate] = useState(false); // TODO: Trenger ikke duplicate om vi bruker en useState for selectedCristinPublication
   const [selectedRadioButton, setSelectedRadioButton] = useState<string>(SelectValues.CREATE_NEW);
   const [handleOkButtonError, setHandleOkButtonError] = useState<Error | undefined>();
+  const [selectedPublication, setSelectedPublication] = useState<CristinPublication | undefined>();
 
   async function handleClickOkButton() {
     try {
@@ -59,6 +60,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
       if (selectedRadioButton === SelectValues.CREATE_NEW) {
         dispatch({ type: 'doSave', payload: true }); //TODO: trengs denne egentlig?
         setIsDuplicate(false);
+        setSelectedPublication(undefined);
         setIsComparePublicationDataModalOpen(true);
       } else if (selectedRadioButton === SelectValues.TOGGLE_RELEVANT) {
         await toggleRelevantStatus();
@@ -100,6 +102,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
             importPublication={importPublication}
             setSelectedRadioButton={setSelectedRadioButton}
             selectedRadioButton={selectedRadioButton}
+            setSelectedPublication={setSelectedPublication}
           />
         </StyledBodyWrapper>
       </ModalBody>
@@ -132,7 +135,7 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
           handleComparePublicationDataModalClose={handleComparePublicationDataModalClose.bind(this)}
           handleDuplicateCheckModalClose={handleDuplicateCheckModalClose}
           importPublication={importPublication}
-          cristinPublication={state.selectedPublication}
+          cristinPublication={selectedPublication}
           isDuplicate={isDuplicate}
         />
       )}
