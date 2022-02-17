@@ -160,7 +160,6 @@ export async function handleCreatePublication(
     const cristinResultId = postPublicationResponse.data.cristin_result_id;
     await patchPiaPublication(cristinResultId, publication.pub_id);
     addToLog(publication, cristinResultId);
-    dispatch({ type: 'setFormErrors', payload: [] });
     dispatch({ type: 'setContributorsLoaded', payload: false });
     return { result: { id: cristinResultId, title: publication.title[publication.original_language] }, status: 200 };
   } catch (error) {
@@ -211,7 +210,6 @@ export async function handleUpdatePublication(
     return generateErrorMessage(error);
   }
   dispatch({ type: 'setContributorsLoaded', payload: false });
-  dispatch({ type: 'setFormErrors', payload: [] });
   return {
     result: { id: cristinResultId, title: publication.title.en ?? publication.title.no },
     status: 200,

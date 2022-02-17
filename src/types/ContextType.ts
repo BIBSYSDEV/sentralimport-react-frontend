@@ -12,18 +12,12 @@ export interface ContextType {
   currentPerPage: CurrentPerPage;
   currentSortOrder: Order;
   currentSortValue: SortValue;
-  doSave: boolean;
   doiFilter: string | null;
-  formErrors: string[];
-  identified: any[];
-  identifiedImported: any[];
   institutions: null | InstitutionSelector[];
   globalInstitutions: Institution[];
   isSampublikasjon: boolean;
   param: null | any;
-  selectedField: string;
   totalCount: number;
-  validation: string;
   triggerImportDataSearch: boolean;
 }
 

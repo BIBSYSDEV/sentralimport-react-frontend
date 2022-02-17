@@ -57,7 +57,6 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
     try {
       setHandleOkButtonError(undefined);
       if (selectedRadioButton === SelectValues.CREATE_NEW) {
-        dispatch({ type: 'doSave', payload: true }); //TODO: trengs denne egentlig?
         setSelectedPublication(undefined);
         setIsComparePublicationDataModalOpen(true);
       } else if (selectedRadioButton === SelectValues.TOGGLE_RELEVANT) {
@@ -65,7 +64,6 @@ const DuplicateCheckModal: FC<DuplicateCheckModalProps> = ({
         handleDuplicateCheckModalClose();
         dispatch({ type: 'triggerImportDataSearch', payload: !state.triggerImportDataSearch });
       } else {
-        dispatch({ type: 'doSave', payload: true });
         setIsComparePublicationDataModalOpen(true);
       }
     } catch (error) {

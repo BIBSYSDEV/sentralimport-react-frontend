@@ -5,6 +5,7 @@ import { Context } from '../../Context';
 export default function GenericConfirmDialog(props) {
   let { state } = React.useContext(Context);
 
+  //TODO: bytt ut denne skiten
   return (
     <Dialog
       open={props.open}
@@ -27,7 +28,7 @@ export default function GenericConfirmDialog(props) {
           data-testid="dialog-confirm-button"
           variant="contained"
           onClick={() => {
-            props.doFunction(state.param); //urk!
+            props.doFunction && props.doFunction(state.param); //urk!
             props.handleClose();
           }}>
           Ja

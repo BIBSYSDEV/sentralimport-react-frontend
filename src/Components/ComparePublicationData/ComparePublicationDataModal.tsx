@@ -16,7 +16,6 @@ import {
   Journal,
   Language,
 } from '../../types/PublicationTypes';
-import { getPersonDetailById } from '../../api/contributorApi';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
 import { ChannelQueryMethod, getJournalsByQuery } from '../../api/publicationApi';
@@ -220,7 +219,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       try {
         setIsLoadingContributors(true);
         setLoadingContributorsError(undefined);
-        const identified: boolean[] = [];
         const authorsFromImportPublication = importPublication.authors;
 
         let cristinAuthors: ContributorType[];
@@ -231,14 +229,13 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         }
         for (let i = 0; i < Math.max(cristinAuthors.length, authorsFromImportPublication.length); i++) {
           if (cristinAuthors[i]) {
-            if (cristinPublication && state.doSave) {
+            if (cristinPublication) {
               if (i < cristinAuthors.length) {
                 cristinAuthors[i].affiliations = await getDuplicateAffiliations(cristinPublication.authors[i]);
               } else {
                 cristinAuthors[i] = { ...emptyContributor };
               }
             }
-            identified[i] = cristinAuthors[i].identified_cristin_person ?? false;
             tempContributors[i] = createContributorWrapper(authorsFromImportPublication, i, cristinAuthors);
             tempContributors[i].toBeCreated = await generateToBeCreatedContributor(
               tempContributors[i],
@@ -249,8 +246,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           }
         }
         dispatch({ type: 'setContributorsLoaded', payload: true });
-        dispatch({ type: 'identified', payload: identified }); //skjer dette to steder ?
-        dispatch({ type: 'identifiedImported', payload: identified });
         validateContributors(tempContributors, setContributorErrors);
       } catch (error) {
         setLoadingContributorsError(error as Error);
@@ -261,38 +256,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     }
     !cristinPublication && enrichImportPublicationAuthors().then();
   }, [importPublication, cristinPublication]);
-
-  useEffect(() => {
-    async function identifyCristinPersonsInContributors_And_CreateListOfIdentified() {
-      try {
-        if (!isLoadingContributors) {
-          return;
-        }
-        const identified: boolean[] = [];
-        const identifiedImported: boolean[] = [];
-        for (let i = 0; i < contributors.length; i++) {
-          if (
-            !contributors[i].imported.identified_cristin_person &&
-            contributors[i].imported.cristin_person_id !== null &&
-            contributors[i].imported.cristin_person_id !== 0 &&
-            i < contributors.length
-          ) {
-            const person = await getPersonDetailById(contributors[i].imported);
-            identifiedImported[i] = person.identified_cristin_person ?? false;
-          }
-        }
-        dispatch({ type: 'identifiedImported', payload: identifiedImported });
-        dispatch({ type: 'identified', payload: identified });
-        //TODO: kan ikke dette ligge direkte på contributor-objektet isteden ?
-      } catch (error) {
-        setLoadingContributorsError(error as Error);
-      } finally {
-        setIsLoadingContributors(false);
-      }
-    }
-    if (!cristinPublication) return;
-    identifyCristinPersonsInContributors_And_CreateListOfIdentified().then();
-  }, [contributors]);
 
   const successSnackBarActions = (key: any, resultId: string) => (
     <>
@@ -329,20 +292,14 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       const errorMessage = `Noe gikk galt med import av publikasjon med pub-id: ${importPublication.pubId}.
        Dine endringer er fortsatt lagret i browseren. ${result.errorMessage ?? ''}`;
       setImportPublicationError(new Error(errorMessage));
-      // dispatch({ type: 'setContributorsLoaded', payload: false });
     }
   }
 
   function handleConfirmAbortDialogSubmit() {
-    dispatch({ type: 'doSave', payload: false });
     setIsConfirmAbortDialogOpen(false);
     handleComparePublicationDataModalClose();
     handleDuplicateCheckModalClose();
     dispatch({ type: 'setContributorsLoaded', payload: false });
-  }
-
-  function emptyGlobalFormErrors() {
-    dispatch({ type: 'setFormErrors', payload: [] });
   }
 
   async function getJournalId(journal: Journal): Promise<string> {
@@ -586,7 +543,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         )}
       </StyledModal>
       <GenericConfirmDialog
-        doFunction={emptyGlobalFormErrors}
         title={'Avbryt import'}
         text={
           'Er du sikker på at du vil lukke denne publikasjonen? Endringer vil bli lagret fram til man åpner en ny publikasjon'
