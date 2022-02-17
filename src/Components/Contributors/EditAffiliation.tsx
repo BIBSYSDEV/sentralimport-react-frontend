@@ -168,7 +168,8 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
           <CommonErrorMessage datatestid="unit-loading-error" errorMessage={`Feil ved lasting av enheter: `} />
         ) : (
           units.length > 0 &&
-          affiliation.isCristinInstitution === true && (
+          affiliation.isCristinInstitution &&
+          !showUnitSelector && (
             <Grid item>
               <StyledAddUnitButton
                 size="small"
@@ -181,10 +182,10 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
             </Grid>
           )
         )}
-        {showUnitSelector && affiliation.isCristinInstitution === true && (
+        {showUnitSelector && affiliation.isCristinInstitution && (
           <Grid item xs={12}>
-            <Grid container spacing={3} alignItems="flex-end">
-              <Grid item sm={8}>
+            <Grid container spacing={3} alignItems="center">
+              <Grid item sm={9}>
                 <UnitSelect
                   units={units}
                   handleUnitChange={(unit: any) => {
@@ -193,7 +194,7 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
                   }}
                 />
               </Grid>
-              <Grid item sm={4}>
+              <Grid item sm={3} style={{ display: 'grid', justifyContent: 'end' }}>
                 <Button
                   data-testid={`cancel-list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}-add-unit`}
                   onClick={() => setShowUnitSelector(false)}

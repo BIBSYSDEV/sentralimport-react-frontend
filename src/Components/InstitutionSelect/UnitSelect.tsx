@@ -3,10 +3,11 @@ import { Autocomplete, FilterOptionsState } from '@material-ui/lab';
 import { SimpleUnitResponse } from '../../types/InstitutionTypes';
 import styled from 'styled-components';
 import { TextField, Typography } from '@material-ui/core';
+import { Colors } from '../../assets/styles/StyleConstants';
 
 const StyledTextField = styled(TextField)`
   .MuiInputBase-root {
-    background-color: white;
+    background-color: ${Colors.WHITE};
   }
 `;
 
@@ -61,7 +62,7 @@ const UnitSelect: FC<UnitSelectProps> = ({ handleUnitChange, units }) => {
         handleUnitChange(value);
       }}
       renderInput={(params) => (
-        <StyledTextField {...params} data-testid="filter-unit-select" multiline label="velg enhet" variant="outlined" />
+        <StyledTextField {...params} data-testid="filter-unit-select" multiline label="Velg enhet" variant="outlined" />
       )}
     />
   );

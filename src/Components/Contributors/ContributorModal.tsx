@@ -93,6 +93,8 @@ interface ContributorProps {
   setContributorErrors: (value: string[]) => void;
 }
 
+const NumberOfContributorsToShow = 50;
+
 const ContributorModal: FC<ContributorProps> = ({
   contributors,
   setContributors,
@@ -101,6 +103,7 @@ const ContributorModal: FC<ContributorProps> = ({
   setContributorErrors,
 }) => {
   const [isClosingDialogOpen, setIsClosingDialogOpen] = useState(false);
+  const [maxContributorsToShow, setMaxContributorsToShow] = useState(NumberOfContributorsToShow);
   const { dispatch } = useContext(Context);
   const [arrayOfContributorsWithNorwegianInstitution, setArrayOfContributorsWithNorwegianInstitution] = useState(
     new Array(contributors.length).fill(false)
@@ -228,7 +231,7 @@ const ContributorModal: FC<ContributorProps> = ({
             <Divider />
 
             <StyledOrderedList>
-              {contributors.map((contributor, index) => (
+              {contributors.slice(0, maxContributorsToShow).map((contributor, index) => (
                 <li key={index} data-testid={`contributor-line-${index}`}>
                   <StyledContributorLineWrapper>
                     <StyledOrderColumn>
@@ -266,6 +269,15 @@ const ContributorModal: FC<ContributorProps> = ({
                 </li>
               ))}
             </StyledOrderedList>
+
+            {maxContributorsToShow < contributors.length && (
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={() => setMaxContributorsToShow((prevState) => prevState + NumberOfContributorsToShow)}>
+                (Viser {maxContributorsToShow} av {contributors.length}) Vis flere ...
+              </Button>
+            )}
 
             <StyledContributorFooter>
               <Button

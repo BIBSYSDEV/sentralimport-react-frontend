@@ -34,7 +34,7 @@ const CompareFormPages: FC<CompareFormPagesProps> = ({ importPublication }) => {
           ((!importPublication.channel?.pageTo && values.pageTo === '') ||
             importPublication.channel?.pageTo === values.pageTo)
         }
-        isCopyBottonDisabled={!(importPublication.channel?.pageFrom || importPublication.channel?.pageTo)}
+        isCopyButtonDisabled={!(importPublication.channel?.pageFrom || importPublication.channel?.pageTo)}
         copyCommand={() => {
           setFieldValue('pageFrom', importPublication.channel?.pageFrom ?? '', true);
           setFieldValue('pageTo', importPublication.channel?.pageTo ?? '', true);

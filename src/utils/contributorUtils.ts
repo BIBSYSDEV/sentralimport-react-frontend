@@ -1,10 +1,7 @@
-import {
-  getInstitutionName,
-  getInstitutionUnitNameBasedOnIDAndInstitutionStatus,
-  SearchLanguage,
-} from '../api/contributorApi';
+import { getInstitutionUnitNameBasedOnIDAndInstitutionStatus, SearchLanguage } from '../api/contributorApi';
 import { Affiliation } from '../types/InstitutionTypes';
 import { ContributorStatus, ContributorType } from '../types/ContributorTypes';
+import { getInstitutionName } from '../api/institutionApi';
 
 export async function getAffiliationDetails(
   affiliation: Affiliation | undefined,

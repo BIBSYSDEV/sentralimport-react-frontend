@@ -1,6 +1,6 @@
 import { Affiliation, ImportPublicationPersonInstutution } from '../../types/InstitutionTypes';
-import { getCountryInformationByCountryCode } from '../../api/institutionApi';
-import { getInstitutionName, SearchLanguage } from '../../api/contributorApi';
+import { getCountryInformationByCountryCode, getInstitutionName } from '../../api/institutionApi';
+import { SearchLanguage } from '../../api/contributorApi';
 import { ContributorType } from '../../types/ContributorTypes';
 
 const Foreign_educational_institution_generic_code = '9127';
@@ -114,7 +114,7 @@ export async function getDuplicateAffiliations(author: ContributorType) {
         const temptemp: Affiliation = {
           cristinInstitutionNr: author.affiliations[i].institution?.cristin_institution_id,
           institutionName: institutionNameAndCache.institutionName,
-          isCristinInstitution: author.affiliations[i].institution?.isCristinInstitution === true,
+          isCristinInstitution: author.affiliations[i].institution?.isCristinInstitution,
         };
         const unit = author.affiliations[i].unit;
         if (unit)

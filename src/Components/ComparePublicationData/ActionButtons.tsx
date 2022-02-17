@@ -20,14 +20,14 @@ const Wrapper = styled.div`
 
 interface ComparePublicationDataModalProps {
   isImportAndCristinEqual: boolean;
-  isCopyBottonDisabled: boolean;
+  isCopyButtonDisabled: boolean;
   copyCommand: () => void;
   dataTestid: string;
 }
 
 const ActionButtons: FC<ComparePublicationDataModalProps> = ({
   isImportAndCristinEqual,
-  isCopyBottonDisabled,
+  isCopyButtonDisabled,
   copyCommand,
   dataTestid,
 }) => {
@@ -43,7 +43,7 @@ const ActionButtons: FC<ComparePublicationDataModalProps> = ({
             data-testid={`${dataTestid}-button`}
             color="secondary"
             onClick={copyCommand}
-            disabled={isCopyBottonDisabled}>
+            disabled={isCopyButtonDisabled}>
             <DoubleArrowIcon />
           </IconButton>
         </div>

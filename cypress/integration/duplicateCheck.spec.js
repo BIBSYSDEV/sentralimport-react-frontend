@@ -56,13 +56,6 @@ context('duplication-check-modal', () => {
       'have.value',
       mockImportData[0].channel.issn
     );
-    //resultlist
-    cy.get(`[data-testid="duplication-result-${mockCristinPublications[0].cristin_result_id}"]`).contains(
-      mockCristinPublications[0].title[mockCristinPublications[0].original_language]
-    );
-    cy.get(`[data-testid="duplication-result-${mockCristinPublications[0].cristin_result_id}"]`).contains(
-      mockCristinPublications[0].year_published
-    );
     //buttons
     cy.get(`[data-testid="duplication-modal-cancel-button"]`).scrollIntoView().should('be.visible');
     cy.get(`[data-testid="duplication-modal-ok-button"]`).scrollIntoView().should('be.visible');

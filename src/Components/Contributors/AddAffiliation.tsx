@@ -8,6 +8,11 @@ import useDebounce from '../../utils/useDebounce';
 import { searchForInstitutionsByName } from '../../api/institutionApi';
 import { SearchLanguage } from '../../api/contributorApi';
 import { ContributorWrapper } from '../../types/ContributorTypes';
+import styled from 'styled-components';
+
+const StyledCollapse = styled(Collapse)`
+  margin-bottom: 1rem;
+`;
 
 function filterByInstitutionNameAndAcronym(
   options: Institution[],
@@ -145,12 +150,12 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
             setAddInstitutionError(undefined);
             setErrorFetchingAdditionalInstitutions(undefined);
           }}>
-          Legg til tilknyttning
+          Legg til tilknytning
         </Button>
       )}
-      <Collapse in={showAddAffiliationSelector}>
+      <StyledCollapse in={showAddAffiliationSelector}>
         <Grid container spacing={2} justifyContent="flex-start" alignItems="baseline">
-          <Grid item xs={12} xl={8}>
+          <Grid item xs={12}>
             <Autocomplete
               loading={loading}
               value={selectedInstitution}
@@ -176,7 +181,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
                   {...params}
                   data-testid={`filter-institution-select-${resultListIndex}`}
                   multiline
-                  label="velg institusjon"
+                  label="Velg institusjon"
                   variant="outlined"
                   InputProps={{
                     ...params.InputProps,
@@ -192,8 +197,8 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
               options={sortInstitutions(institutionsWithGlobalInstitutions)}
             />
           </Grid>
-          <Grid item xs={12} xl={4}>
-            <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Grid container spacing={1}>
               <Grid item>
                 <Button
                   variant="contained"
@@ -205,7 +210,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
                 </Button>
               </Grid>
               <Grid item>
-                <Button variant="outlined" onClick={() => setShowAddAffiliationSelector(false)} color="secondary">
+                <Button onClick={() => setShowAddAffiliationSelector(false)} color="secondary">
                   Avbryt institusjonsvalg
                 </Button>
               </Grid>
@@ -226,7 +231,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
             </Grid>
           </Grid>
         </Grid>
-      </Collapse>
+      </StyledCollapse>
     </>
   );
 };

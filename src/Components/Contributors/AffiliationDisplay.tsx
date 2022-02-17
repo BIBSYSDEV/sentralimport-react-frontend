@@ -7,7 +7,6 @@ import { Colors } from '../../assets/styles/StyleConstants';
 
 const StyledAffiliationsWrapper = styled.div<{ backgroundcolor: string }>`
   margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
   background-color: ${(props) => props.backgroundcolor};
 `;
 
@@ -25,7 +24,7 @@ export const StyledGridWithRightAlignContent = styled(Grid)`
 `;
 
 const StyledContent = styled.div`
-  padding: 1rem 0 0.3rem 1rem;
+  padding: 0.5rem;
 `;
 
 const StyledListItemText = styled(ListItemText)`
@@ -112,7 +111,7 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
                 }
                 data-testid={`${dataTestid}-delete-institution`}
                 color="secondary">
-                Fjern tilknyttning
+                Fjern tilknytning
               </Button>
             </StyledGridWithRightAlignContent>
           )}
@@ -123,7 +122,7 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
                 onClick={() => handleAddAffiliationButtonClick()}
                 size="small"
                 color="primary">
-                Velg kun tilknyttning
+                Velg kun tilknytning
               </Button>
 
               {addAffiliationError &&

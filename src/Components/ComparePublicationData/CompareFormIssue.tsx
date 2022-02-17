@@ -26,7 +26,7 @@ const CompareFormIssue: FC<CompareFormIssueProps> = ({ importPublication }) => {
       </StyledLineImportValue>
       <ActionButtons
         isImportAndCristinEqual={values.issue === importPublication.channel?.issue}
-        isCopyBottonDisabled={!importPublication.channel?.issue}
+        isCopyButtonDisabled={!importPublication.channel?.issue}
         copyCommand={() => setFieldValue('issue', importPublication.channel?.issue ?? '', true)}
         dataTestid={'compare-form-issue-action'}
       />

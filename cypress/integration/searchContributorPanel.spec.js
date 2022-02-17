@@ -18,6 +18,7 @@ context('Search contributor panel', () => {
 
   it('handles searching manually', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
 
@@ -29,6 +30,7 @@ context('Search contributor panel', () => {
 
   it('can validate search parameters', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
 
@@ -61,6 +63,7 @@ context('Search contributor panel', () => {
 
   it('handles contributors without affilations', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(`[data-testid=author-name-${mockCristinIDWithoutAffiliationAttribute}]`).first().should('exist');
@@ -68,6 +71,7 @@ context('Search contributor panel', () => {
 
   it('hides inactive affiliations for authors when user is searching for contributors', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(
@@ -118,6 +122,7 @@ context('Search contributor panel', () => {
 
   it('handles contributors with limited access', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(`[data-testid=person-limited-access-${mockCristinIdForbiddenPerson}]`)
@@ -127,6 +132,7 @@ context('Search contributor panel', () => {
 
   it('is possible to choose search and select a cristin person without also getting their affiliation', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(
@@ -140,6 +146,7 @@ context('Search contributor panel', () => {
 
   it('is possible to search and replace both person and affiliations', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(
@@ -153,6 +160,7 @@ context('Search contributor panel', () => {
 
   it('is possible to search and replace only affiliation', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(
@@ -179,6 +187,7 @@ context('Search contributor panel', () => {
 
   it('shows the searchPanel expanded after adding new contributor', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid="add-contributor-button"]').click();
@@ -196,6 +205,7 @@ context('Search contributor panel', () => {
 
   it('can validate long author names from import', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(`[data-testid="contributor-1-form-error"]`).should('exist');
@@ -203,6 +213,7 @@ context('Search contributor panel', () => {
 
   it('makes initial search on non-active contributors', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get(`[data-testid="contributor-search-results-header-for-0"]`).should('not.exist'); //active

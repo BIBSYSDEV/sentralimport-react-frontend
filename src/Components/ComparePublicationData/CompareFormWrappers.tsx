@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Colors } from '../../assets/styles/StyleConstants';
-import { Typography } from '@material-ui/core';
+import { Link, Typography } from '@material-ui/core';
 
 export const StyledLineWrapper = styled.div`
   width: 100%;
@@ -36,13 +36,6 @@ export const StyledActionButtonsPlaceHolder = styled.div`
   width: 5%;
 `;
 
-export const StyledErrorMessageWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-`;
-
 export const StyledFormWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -56,14 +49,36 @@ export const StyledHeaderLineWrapper = styled(StyledLineWrapper)`
   margin-bottom: 1rem;
 `;
 
-export const StyledOpenContributorsButtonWrapper = styled.div`
+export const StyledCenterContentWrapper = styled.div`
   display: flex;
-  width: 100%;
   justify-content: center;
+`;
+
+export const StyledOpenContributorsButtonWrapper = styled(StyledCenterContentWrapper)`
+  width: 100%;
+  margin-top: 1rem;
+`;
+
+export const StyledErrorMessageWrapper = styled(StyledCenterContentWrapper)`
+  width: 100%;
   margin-top: 1rem;
 `;
 
 export const StyledLineHeader = styled(Typography)`
   min-width: 20rem;
   width: 40%;
+`;
+
+export const StyledDisabledTypography = styled(Typography)`
+  color: #555555;
+`;
+
+export const StyledCristinLink = styled(Link)`
+  font-weight: bold;
+  && {
+    color: ${Colors.PURPLE};
+  }
+  &:hover {
+    color: ${Colors.PURPLE};
+  }
 `;
