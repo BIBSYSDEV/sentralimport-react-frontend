@@ -332,22 +332,16 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   function handleImportPublicationConfirmed(annotation: string) {
     if (formValues) {
       if (!cristinPublication) {
-        handleCreatePublication(
-          formValues,
-          importPublication,
-          contributors,
-          publicationLanguages,
-          annotation,
-          dispatch
-        ).then((response) => handlePublicationImported(response));
+        handleCreatePublication(formValues, importPublication, contributors, publicationLanguages, annotation).then(
+          (response) => handlePublicationImported(response)
+        );
       } else {
         handleUpdatePublication(
           formValues,
           importPublication,
           cristinPublication.cristin_result_id,
           publicationLanguages,
-          annotation,
-          dispatch
+          annotation
         ).then((response) => handlePublicationImported(response));
       }
     }
