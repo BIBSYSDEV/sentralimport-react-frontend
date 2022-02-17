@@ -22,7 +22,6 @@ const initialState: ContextType = {
   allChecked: false,
   param: null,
   doiFilter: null,
-  contributorsLoaded: false,
   triggerImportDataSearch: false,
   globalInstitutions: [],
 };
@@ -70,8 +69,6 @@ const reducer = (state: ContextType, action: { type: string; payload: any }) => 
       return { ...state, param: action.payload };
     case 'doiFilter':
       return { ...state, doiFilter: action.payload };
-    case 'setContributorsLoaded':
-      return { ...state, contributorsLoaded: action.payload };
     case 'triggerImportDataSearch':
       return { ...state, triggerImportDataSearch: action.payload };
     case 'globalInstitutions':

@@ -245,7 +245,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             );
           }
         }
-        dispatch({ type: 'setContributorsLoaded', payload: true });
         validateContributors(tempContributors, setContributorErrors);
       } catch (error) {
         setLoadingContributorsError(error as Error);
@@ -299,7 +298,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     setIsConfirmAbortDialogOpen(false);
     handleComparePublicationDataModalClose();
     handleDuplicateCheckModalClose();
-    dispatch({ type: 'setContributorsLoaded', payload: false });
   }
 
   async function getJournalId(journal: Journal): Promise<string> {
@@ -517,13 +515,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                     <Grid item>
                       <div>
                         <Button
-                          disabled={
-                            !isValid ||
-                            (!cristinPublication &&
-                              (contributorErrors.length >= 1 ||
-                                !state.contributorsLoaded ||
-                                !!loadingContributorsError))
-                          }
+                          disabled={!isValid || contributorErrors.length >= 1 || !!loadingContributorsError}
                           color="primary"
                           type="submit"
                           variant="contained"

@@ -210,7 +210,6 @@ export default function ImportTable(this: any) {
   function handleClose() {
     setIsDuplicateCheckModalOpen(false);
     if (openSeveral.length > 1) {
-      dispatch({ type: 'setContributorsLoaded', payload: false });
       const index = importPublications.findIndex((id) => id.pubId === openSeveral[1]);
       const temp = [...openSeveral];
       temp.splice(0, 1);
@@ -218,7 +217,6 @@ export default function ImportTable(this: any) {
       setModalData(importPublications[index]);
       setIsDuplicateCheckModalOpen(true);
     } else {
-      dispatch({ type: 'setContributorsLoaded', payload: false });
       checkAll(false);
       dispatch({ type: 'allChecked', payload: false });
     }
