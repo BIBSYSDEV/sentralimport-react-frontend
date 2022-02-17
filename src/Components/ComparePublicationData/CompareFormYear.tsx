@@ -14,10 +14,10 @@ import { ImportPublication } from '../../types/PublicationTypes';
 
 interface CompareFormYearProps {
   importPublication: ImportPublication;
-  isDuplicate: boolean;
+  isCristinPublicationSelected: boolean;
 }
 
-const CompareFormYear: FC<CompareFormYearProps> = ({ importPublication, isDuplicate }) => {
+const CompareFormYear: FC<CompareFormYearProps> = ({ importPublication, isCristinPublicationSelected }) => {
   const { values, setFieldValue } = useFormikContext<CompareFormValuesType>();
 
   return (
@@ -28,12 +28,12 @@ const CompareFormYear: FC<CompareFormYearProps> = ({ importPublication, isDuplic
       </StyledLineImportValue>
       <ActionButtons
         isImportAndCristinEqual={+values.year === +importPublication.yearPublished}
-        isCopyButtonDisabled={!importPublication.yearPublished || isDuplicate}
+        isCopyButtonDisabled={!importPublication.yearPublished || isCristinPublicationSelected}
         copyCommand={() => setFieldValue('year', importPublication.yearPublished, true)}
         dataTestid={'compare-form-year-action'}
       />
       <StyledLineCristinValue>
-        {!isDuplicate ? (
+        {!isCristinPublicationSelected ? (
           <Field name="year">
             {({ field, meta: { error } }: FieldProps) => (
               <TextField

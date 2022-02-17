@@ -88,7 +88,6 @@ interface ContributorProps {
   contributors: ContributorWrapper[];
   setContributors: (contributors: ContributorWrapper[]) => void;
   isContributorModalOpen: boolean;
-  isDuplicate: boolean;
   handleContributorModalClose: () => void;
   setContributorErrors: (value: string[]) => void;
 }

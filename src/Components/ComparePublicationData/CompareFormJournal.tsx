@@ -40,11 +40,15 @@ export enum JournalPanels {
 
 interface CompareFormJournalProps {
   importPublication: ImportPublication;
-  isDuplicate: boolean;
+  isCristinPublicationSelected: boolean;
   loadJournalIdError?: Error;
 }
 
-const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication, isDuplicate, loadJournalIdError }) => {
+const CompareFormJournal: FC<CompareFormJournalProps> = ({
+  importPublication,
+  isCristinPublicationSelected,
+  loadJournalIdError,
+}) => {
   const { values, setFieldValue, errors } = useFormikContext<CompareFormValuesType>();
   const [expandedPanel, setExpandedPanel] = useState<JournalPanels | undefined>();
 
@@ -74,12 +78,12 @@ const CompareFormJournal: FC<CompareFormJournalProps> = ({ importPublication, is
         isImportAndCristinEqual={
           values.journal?.cristinTidsskriftNr === importPublication.channel?.cristinTidsskriftNr?.toString()
         }
-        isCopyButtonDisabled={!importPublication.channel?.title || isDuplicate}
+        isCopyButtonDisabled={!importPublication.channel?.title || isCristinPublicationSelected}
         copyCommand={() => setFieldValue('journal', createJournalFromImportPublication, true)}
         dataTestid={'compare-form-journal-action'}
       />
       <StyledLineCristinValue>
-        {!isDuplicate ? (
+        {!isCristinPublicationSelected ? (
           <>
             <StyledJournalPresentationWrapper>
               <Typography data-testid="cristindata-journal-title">{values.journal?.title}</Typography>

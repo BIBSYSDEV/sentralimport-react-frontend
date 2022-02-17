@@ -105,7 +105,6 @@ interface ComparePublicationDataModalProps {
   importPublication: ImportPublication;
   cristinPublication?: CristinPublication;
   handleDuplicateCheckModalClose: () => void;
-  isDuplicate: boolean;
 }
 
 const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
@@ -114,7 +113,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   importPublication,
   cristinPublication,
   handleDuplicateCheckModalClose,
-  isDuplicate,
 }) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Context);
@@ -127,7 +125,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [contributorErrors, setContributorErrors] = useState<string[]>([]);
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors, setContributors] = useState<ContributorWrapper[]>(
-    cristinPublication ? cristinPublication.authors : importPublication?.authors || []
+    cristinPublication ? cristinPublication.authors : importPublication?.authors ?? []
   );
   const [isLoadingContributors, setIsLoadingContributors] = useState(false);
   const [loadingContributorsError, setLoadingContributorsError] = useState<Error | undefined>();
@@ -153,11 +151,11 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       : importPublication.languages?.find((lang: Language) => lang.original) ?? importPublication.languages[0]
   );
   const kildeId = cristinPublication
-    ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_reference_id) ||
+    ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_reference_id) ??
       'Ingen kildeId funnet'
     : importPublication.externalId;
   const kilde = cristinPublication
-    ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_name) || 'Ingen kilde funnet'
+    ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_name) ?? 'Ingen kilde funnet'
     : importPublication.sourceName;
 
   const updatePublicationLanguages = (title: string, lang: string) => {
@@ -177,14 +175,14 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       setInitialFormValues(
         cristinPublication
           ? {
-              isDuplicate: true,
+              isInitiatedFromCristinPublication: true,
               title: selectedLang.title ?? '',
               year: cristinPublication.year_published,
               doi: extractDoiFromCristinPublication(cristinPublication),
               language: selectedLang,
               journal: {
                 cristinTidsskriftNr: await getJournalId(cristinPublication.journal),
-                title: cristinPublication.journal?.name || 'Ingen tidsskrift funnet',
+                title: cristinPublication.journal?.name ?? 'Ingen tidsskrift funnet',
               },
               category: {
                 value: cristinPublication.category?.code,
@@ -196,7 +194,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
               pageTo: cristinPublication.pages?.to ?? '',
             }
           : {
-              isDuplicate: false,
+              isInitiatedFromCristinPublication: false,
               title: selectedLang.title ?? '',
               year: importPublication.yearPublished,
               doi: importPublication.doi,
@@ -214,7 +212,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       );
     };
     initFormik().then();
-  }, [isDuplicate, cristinPublication, importPublication]);
+  }, [cristinPublication, importPublication]);
 
   useLayoutEffect(() => {
     async function enrichImportPublicationAuthors() {
@@ -240,13 +238,13 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                 cristinAuthors[i] = { ...emptyContributor };
               }
             }
-            identified[i] = cristinAuthors[i].identified_cristin_person || false;
+            identified[i] = cristinAuthors[i].identified_cristin_person ?? false;
             tempContributors[i] = createContributorWrapper(authorsFromImportPublication, i, cristinAuthors);
             tempContributors[i].toBeCreated = await generateToBeCreatedContributor(
               tempContributors[i],
               cristinAuthors[i],
               authorsFromImportPublication[i],
-              isDuplicate
+              !!cristinPublication
             );
           }
         }
@@ -261,8 +259,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       }
       setContributors(tempContributors);
     }
-    !isDuplicate && enrichImportPublicationAuthors().then();
-  }, [importPublication, cristinPublication, isDuplicate]);
+    !cristinPublication && enrichImportPublicationAuthors().then();
+  }, [importPublication, cristinPublication]);
 
   useEffect(() => {
     async function identifyCristinPersonsInContributors_And_CreateListOfIdentified() {
@@ -292,7 +290,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         setIsLoadingContributors(false);
       }
     }
-    if (!isDuplicate) return;
+    if (!cristinPublication) return;
     identifyCristinPersonsInContributors_And_CreateListOfIdentified().then();
   }, [contributors]);
 
@@ -443,7 +441,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                       <StyledActionButtonsPlaceHolder />
                       <StyledLineCristinValue data-testid="cristindata-created">
                         <StyledDisabledTypography>
-                          {isDuplicate && cristinPublication
+                          {cristinPublication
                             ? formatCristinCreatedDate(cristinPublication.created.date)
                             : NoDatePlaceHolder}
                         </StyledDisabledTypography>
@@ -476,11 +474,17 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                     <CompareFormJournal
                       importPublication={importPublication}
                       loadJournalIdError={loadJournalIdError}
-                      isDuplicate={isDuplicate}
+                      isCristinPublicationSelected={!!cristinPublication}
                     />
                     <CompareFormDoi importPublication={importPublication} />
-                    <CompareFormYear importPublication={importPublication} isDuplicate={isDuplicate} />
-                    <CompareFormCategory importPublication={importPublication} isDuplicate={isDuplicate} />
+                    <CompareFormYear
+                      importPublication={importPublication}
+                      isCristinPublicationSelected={!!cristinPublication}
+                    />
+                    <CompareFormCategory
+                      importPublication={importPublication}
+                      isCristinPublicationSelected={!!cristinPublication}
+                    />
                     <CompareFormVolume importPublication={importPublication} />
                     <CompareFormIssue importPublication={importPublication} />
                     <CompareFormPages importPublication={importPublication} />
@@ -558,7 +562,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         <Button
                           disabled={
                             !isValid ||
-                            (!isDuplicate &&
+                            (!cristinPublication &&
                               (contributorErrors.length >= 1 ||
                                 !state.contributorsLoaded ||
                                 !!loadingContributorsError))
@@ -567,7 +571,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                           type="submit"
                           variant="contained"
                           data-testid="import-publication-button">
-                          {isDuplicate ? 'Oppdater Cristinpublikasjon' : 'Importer'}
+                          {cristinPublication ? 'Oppdater Cristinpublikasjon' : 'Importer'}
                         </Button>
                       </div>
                       {!isValid && (
@@ -605,7 +609,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           setContributors={setContributors}
           handleContributorModalClose={() => setIsContributorModalOpen(false)}
           importPublication={importPublication}
-          isDuplicate={isDuplicate}
         />
       )}
     </>
