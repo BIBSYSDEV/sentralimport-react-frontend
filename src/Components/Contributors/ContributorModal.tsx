@@ -1,8 +1,6 @@
-import React, { FC, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Modal, ModalBody, ModalHeader } from 'reactstrap';
-import { Context } from '../../Context';
 import { Button, Checkbox, Divider, FormControlLabel, FormGroup, Typography } from '@material-ui/core';
-import GenericConfirmDialog from '../Dialogs/GenericConfirmDialog';
 import styled from 'styled-components';
 import AddIcon from '@material-ui/icons/Add';
 import ContributorOrderComponent from './ContributorOrderComponent';
@@ -101,9 +99,7 @@ const ContributorModal: FC<ContributorProps> = ({
   handleContributorModalClose,
   setContributorErrors,
 }) => {
-  const [isClosingDialogOpen, setIsClosingDialogOpen] = useState(false);
   const [maxContributorsToShow, setMaxContributorsToShow] = useState(NumberOfContributorsToShow);
-  const { dispatch } = useContext(Context);
   const [arrayOfContributorsWithNorwegianInstitution, setArrayOfContributorsWithNorwegianInstitution] = useState(
     new Array(contributors.length).fill(false)
   );
@@ -180,11 +176,6 @@ const ContributorModal: FC<ContributorProps> = ({
     setContributors([...contributors, newContributor]);
   }
 
-  const handleCloseDeleteConfirmDialog = (rowIndex: number) => {
-    dispatch({ type: 'param', payload: rowIndex });
-    setIsClosingDialogOpen(!isClosingDialogOpen);
-  };
-
   const handleToggleFilter = () => {
     setIsContributorsFiltered((prevState) => !prevState);
   };
@@ -254,7 +245,7 @@ const ContributorModal: FC<ContributorProps> = ({
                           contributorData={contributor}
                           contributors={contributors}
                           updateContributor={updateContributor}
-                          deleteContributor={handleCloseDeleteConfirmDialog}
+                          removeContributor={removeContributor}
                         />
                       </div>
                     </StyledContributorColumn>
@@ -294,14 +285,6 @@ const ContributorModal: FC<ContributorProps> = ({
           </StyledContentWrapper>
         </ModalBody>
       </StyledModal>
-      <GenericConfirmDialog
-        doFunction={removeContributor}
-        title={'Slett bidragsyter'}
-        text={'Er du sikker på at du vil slette denne bidragsyteren?'}
-        open={isClosingDialogOpen}
-        handleClose={handleCloseDeleteConfirmDialog}
-        handleAbort={handleCloseDeleteConfirmDialog}
-      />
     </>
   );
 };

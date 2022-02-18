@@ -19,7 +19,6 @@ const initialState: ContextType = {
   totalCount: 0,
   institutions: null,
   allChecked: false,
-  param: null,
   doiFilter: null,
   triggerImportDataSearch: false,
   globalInstitutions: [],
@@ -58,8 +57,6 @@ const reducer = (state: ContextType, action: { type: string; payload: any }) => 
       return { ...state, institutions: action.payload };
     case 'allChecked':
       return { ...state, allChecked: action.payload };
-    case 'param':
-      return { ...state, param: action.payload };
     case 'doiFilter':
       return { ...state, doiFilter: action.payload };
     case 'triggerImportDataSearch':

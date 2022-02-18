@@ -2,7 +2,6 @@ import React, { FC, useContext, useEffect, useLayoutEffect, useState } from 'rea
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Button, CircularProgress, Grid, Typography } from '@material-ui/core';
 import ConfirmImportDialog from '../Dialogs/ConfirmImportDialog';
-import GenericConfirmDialog from '../Dialogs/GenericConfirmDialog';
 import { Context } from '../../Context';
 import ContributorModal from '../Contributors/ContributorModal';
 import styled from 'styled-components';
@@ -116,7 +115,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Context);
   const [isConfirmImportDialogOpen, setIsConfirmImportDialogOpen] = useState(false);
-  const [isConfirmAbortDialogOpen, setIsConfirmAbortDialogOpen] = useState(false);
   const [importPublicationError, setImportPublicationError] = useState<Error | undefined>();
   const [loadJournalIdError, setLoadJournalIdError] = useState<Error | undefined>();
 
@@ -292,12 +290,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
        Dine endringer er fortsatt lagret i browseren. ${result.errorMessage ?? ''}`;
       setImportPublicationError(new Error(errorMessage));
     }
-  }
-
-  function handleConfirmAbortDialogSubmit() {
-    setIsConfirmAbortDialogOpen(false);
-    handleComparePublicationDataModalClose();
-    handleDuplicateCheckModalClose();
   }
 
   async function getJournalId(journal: Journal): Promise<string> {
@@ -525,21 +517,11 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           </Formik>
         )}
       </StyledModal>
-      <GenericConfirmDialog
-        title={'Avbryt import'}
-        text={
-          'Er du sikker på at du vil lukke denne publikasjonen? Endringer vil bli lagret fram til man åpner en ny publikasjon'
-        }
-        open={isConfirmAbortDialogOpen}
-        handleClose={handleConfirmAbortDialogSubmit}
-        handleAbort={() => setIsConfirmAbortDialogOpen(false)}
-      />
       <ConfirmImportDialog
         handleImportPublicationConfirmed={handleImportPublicationConfirmed}
         isOpen={isConfirmImportDialogOpen}
         handleAbort={() => setIsConfirmImportDialogOpen(false)}
       />
-
       {importPublication && (
         <ContributorModal
           isContributorModalOpen={isContributorModalOpen}

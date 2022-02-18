@@ -14,7 +14,6 @@ export interface ContextType {
   institutions: null | InstitutionSelector[];
   globalInstitutions: Institution[];
   isSampublikasjon: boolean;
-  param: null | any;
   totalCount: number;
   triggerImportDataSearch: boolean;
 }

@@ -14,6 +14,7 @@ import EditAffiliation from './EditAffiliation';
 import { Alert } from '@material-ui/lab';
 import { checkContributorsForDuplicates } from './duplicateCheckHelper';
 import { Colors } from '../../assets/styles/StyleConstants';
+import ConfirmRemoveContributorDialog from '../Dialogs/ConfirmRemoveContributorDialog';
 
 const StyledVerifiedNameTypography = styled(Typography)`
   color: ${Colors.Text.GREEN};
@@ -36,19 +37,20 @@ interface ContributorFormProps {
   resultListIndex: number;
   contributorData: ContributorWrapper;
   updateContributor: (contributorData: ContributorWrapper, rowIndex: number) => void;
-  deleteContributor: (index: number) => void;
+  removeContributor: (index: number) => void;
   contributors: ContributorWrapper[];
 }
 
 const ContributorForm: FC<ContributorFormProps> = ({
   resultListIndex,
   contributorData,
-  deleteContributor,
   updateContributor,
+  removeContributor,
   contributors,
 }) => {
   const [duplicateWarning, setDuplicateWarning] = useState('');
   const [duplicateError, setDuplicateError] = useState('');
+  const [isRemoveContributorDialogOpen, setIsRemoveContributorDialogOpen] = useState(false);
 
   useEffect(() => {
     checkContributorsForDuplicates(contributorData, contributors, setDuplicateWarning, setDuplicateError, false);
@@ -90,7 +92,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
           <Button
             data-testid={`contributor-delete-button-form-${resultListIndex}`}
             color="secondary"
-            onClick={() => deleteContributor(resultListIndex)}>
+            onClick={() => setIsRemoveContributorDialogOpen(true)}>
             Fjern bidragsyter
           </Button>
         </Grid>
@@ -143,7 +145,11 @@ const ContributorForm: FC<ContributorFormProps> = ({
           </Grid>
         )}
       </Grid>
-
+      <ConfirmRemoveContributorDialog
+        isDialogOpen={isRemoveContributorDialogOpen}
+        handleRemoveContributor={() => removeContributor(resultListIndex)}
+        handleCloseDialog={() => setIsRemoveContributorDialogOpen(false)}
+      />
       <AddAffiliation
         contributorData={contributorData}
         resultListIndex={resultListIndex}
