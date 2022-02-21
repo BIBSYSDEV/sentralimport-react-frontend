@@ -16,10 +16,10 @@ import { isLegalCategory, LegalCategoryOptions } from '../../utils/categoryUtils
 
 interface CompareFormCategoryProps {
   importPublication: ImportPublication;
-  isDuplicate: boolean;
+  isCristinPublicationSelected: boolean;
 }
 
-const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication, isDuplicate }) => {
+const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication, isCristinPublicationSelected }) => {
   const { values, setFieldValue } = useFormikContext<CompareFormValuesType>();
 
   return (
@@ -36,7 +36,9 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication, 
       <ActionButtons
         isImportAndCristinEqual={values.category.label === importPublication.categoryName}
         isCopyButtonDisabled={
-          !importPublication.categoryName || !isLegalCategory(importPublication.category) || isDuplicate
+          !importPublication.categoryName ||
+          !isLegalCategory(importPublication.category) ||
+          isCristinPublicationSelected
         }
         copyCommand={() =>
           setFieldValue('category', { value: importPublication.category, label: importPublication.categoryName }, true)
@@ -44,7 +46,7 @@ const CompareFormCategory: FC<CompareFormCategoryProps> = ({ importPublication, 
         dataTestid={'compare-form-category-action'}
       />
       <StyledLineCristinValue>
-        {!isDuplicate ? (
+        {!isCristinPublicationSelected ? (
           <Field name="category">
             {({ field, meta: { error } }: FieldProps) => (
               <>

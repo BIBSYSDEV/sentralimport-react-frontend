@@ -145,8 +145,7 @@ export async function handleCreatePublication(
   importPublication: ImportPublication,
   contributors: ContributorWrapper[],
   publicationLanguages: Language[],
-  annotation: string,
-  dispatch: any
+  annotation: string
 ) {
   const publication = createCristinPublicationForSaving(
     formValues,
@@ -160,8 +159,6 @@ export async function handleCreatePublication(
     const cristinResultId = postPublicationResponse.data.cristin_result_id;
     await patchPiaPublication(cristinResultId, publication.pub_id);
     addToLog(publication, cristinResultId);
-    dispatch({ type: 'setFormErrors', payload: [] });
-    dispatch({ type: 'setContributorsLoaded', payload: false });
     return { result: { id: cristinResultId, title: publication.title[publication.original_language] }, status: 200 };
   } catch (error) {
     handlePotentialExpiredSession(error);
@@ -193,8 +190,7 @@ export async function handleUpdatePublication(
   importPublication: ImportPublication,
   cristinResultId: string,
   publicationLanguages: Language[],
-  annotation: string,
-  dispatch: any
+  annotation: string
 ) {
   const publication = createCristinPublicationForUpdating(
     formValues,
@@ -210,8 +206,6 @@ export async function handleUpdatePublication(
     handlePotentialExpiredSession(error);
     return generateErrorMessage(error);
   }
-  dispatch({ type: 'setContributorsLoaded', payload: false });
-  dispatch({ type: 'setFormErrors', payload: [] });
   return {
     result: { id: cristinResultId, title: publication.title.en ?? publication.title.no },
     status: 200,

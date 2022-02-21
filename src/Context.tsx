@@ -16,27 +16,10 @@ const initialState: ContextType = {
   currentPerPage: { value: 5, label: '5' },
   currentSortValue: SortValue.Date,
   currentSortOrder: Order.desc,
-  selectedField: '',
-  selectedPublication: {
-    cristin_result_id: '0',
-    journal: { name: 'none' },
-    import_sources: [{ source_name: 'test' }],
-    title: { en: 'title' },
-    category: { code: 'test' },
-    created: { date: '11223344556677889' },
-  },
-  validation: ' ',
-  formErrors: ['Ingen tidsskrift valgt'],
   totalCount: 0,
-  contributors: null,
   institutions: null,
-  doSave: false,
   allChecked: false,
-  param: null,
   doiFilter: null,
-  contributorsLoaded: false,
-  identified: [],
-  identifiedImported: [],
   triggerImportDataSearch: false,
   globalInstitutions: [],
 };
@@ -66,40 +49,16 @@ const reducer = (state: ContextType, action: { type: string; payload: any }) => 
       return { ...state, currentSortValue: action.payload };
     case 'setSortOrder':
       return { ...state, currentSortOrder: action.payload };
-    case 'setSelectedField':
-      return { ...state, selectedField: action.payload };
     case 'setSelectedPublication':
       return { ...state, selectedPublication: action.payload };
-    case 'setValidation':
-      return { ...state, validation: action.payload };
-    case 'setFormErrors':
-      return { ...state, formErrors: action.payload };
     case 'setTotalCount':
       return { ...state, totalCount: action.payload };
-    case 'contributors':
-      return { ...state, contributors: action.payload };
-    case 'setContributorPage':
-      return { ...state, contributorPage: action.payload };
-    case 'setContributorPerPage':
-      return { ...state, contributorPerPage: action.payload };
     case 'institutions':
       return { ...state, institutions: action.payload };
-    case 'institutionsEnglish':
-      return { ...state, institutionsEnglish: action.payload };
-    case 'doSave':
-      return { ...state, doSave: action.payload };
     case 'allChecked':
       return { ...state, allChecked: action.payload };
-    case 'param':
-      return { ...state, param: action.payload };
     case 'doiFilter':
       return { ...state, doiFilter: action.payload };
-    case 'setContributorsLoaded':
-      return { ...state, contributorsLoaded: action.payload };
-    case 'identified':
-      return { ...state, identified: action.payload };
-    case 'identifiedImported':
-      return { ...state, identifiedImported: action.payload };
     case 'triggerImportDataSearch':
       return { ...state, triggerImportDataSearch: action.payload };
     case 'globalInstitutions':
