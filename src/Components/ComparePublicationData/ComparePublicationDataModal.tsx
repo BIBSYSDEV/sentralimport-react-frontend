@@ -6,7 +6,6 @@ import { Context } from '../../Context';
 import ContributorModal from '../Contributors/ContributorModal';
 import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
-import clone from 'just-clone';
 import {
   CristinPublication,
   ImportPublication,
@@ -42,7 +41,6 @@ import CompareFormVolume from './CompareFormVolume';
 import CompareFormIssue from './CompareFormIssue';
 import CompareFormPages from './CompareFormPages';
 import CompareFormJournal from './CompareFormJournal';
-import CompareFormLanguage from './CompareFormLanguage';
 import { CompareFormValuesType } from './CompareFormTypes';
 import { ContributorType, ContributorWrapper, emptyContributor } from '../../types/ContributorTypes';
 import { formatCristinCreatedDate, NoDatePlaceHolder } from '../../utils/stringUtils';
@@ -89,13 +87,10 @@ const StyledAlert = styled(Alert)`
   margin-bottom: 0.5rem;
 `;
 
-const generateLanguageObjectFromCristinPublication = (publ: CristinPublication) => {
-  return {
-    title: publ.title ? publ.title[publ.original_language] : '',
-    lang: publ.original_language?.toUpperCase(),
-    original: true,
-  };
-};
+export interface CombinedTitleType {
+  titleToBeImported: string;
+  titleFromImportPublication: string;
+}
 
 interface ComparePublicationDataModalProps {
   isComparePublicationDataModalOpen: boolean;
@@ -130,53 +125,46 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   //publication-form-stuff
   const [initialFormValues, setInitialFormValues] = useState<CompareFormValuesType | undefined>();
   const [formValues, setFormValues] = useState<CompareFormValuesType | undefined>();
-  const sortedLanguagesFromImportPublication = clone(importPublication)
-    .languages.sort((a: any, b: any) => a.original - b.original)
-    .reverse();
-  const [publicationLanguages, setPublicationLanguages] = useState(
-    cristinPublication
-      ? [generateLanguageObjectFromCristinPublication(cristinPublication)]
-      : sortedLanguagesFromImportPublication
-  ); //TODO: putt hele publicationLanguages i formik
-  const [selectedLang, setSelectedLang] = useState<Language>(
-    cristinPublication
-      ? {
-          title: cristinPublication.title ? cristinPublication.title[cristinPublication.original_language] : '',
-          lang: cristinPublication.original_language?.toUpperCase(),
-          original: true,
-        }
-      : importPublication.languages?.find((lang: Language) => lang.original) ?? importPublication.languages[0]
+
+  const titleMap = new Map<string, CombinedTitleType>();
+  importPublication.languages.map((language) =>
+    titleMap.set(language.lang, { titleFromImportPublication: language.title, titleToBeImported: language.title })
   );
+  if (cristinPublication) {
+    for (const title in cristinPublication.title) {
+      console.log('@PCB', title);
+      //TODO
+      //if exists, update titleToBeImported
+      //else create new
+    }
+  }
+
+  const originalLanguageStringFromimportPublication: string =
+    importPublication.languages.find((lang: Language) => lang.original)?.lang ?? importPublication.languages[0].lang;
+
   const kildeId = cristinPublication
     ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_reference_id) ??
       'Ingen kildeId funnet'
     : importPublication.externalId;
+
   const kilde = cristinPublication
     ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_name) ?? 'Ingen kilde funnet'
     : importPublication.sourceName;
-
-  const updatePublicationLanguages = (title: string, lang: string) => {
-    const index = publicationLanguages.map((lang: any) => lang.lang).indexOf(lang);
-    if (publicationLanguages[index]) {
-      publicationLanguages[index].title = title;
-    }
-    setPublicationLanguages(publicationLanguages);
-  };
 
   useEffect(() => {
     //init ligger i en useeffect pga asynkront kall til getJournalId
     const initFormik = async () => {
       //Formik is initiated from either importPublication orcristinPublication (set in duplicate-modal)
-
+      const titlesToBeImported = [...titleMap.values()].map((values) => values.titleToBeImported);
       //TODO: det trengs en sjekk på om cristinPublication.links inneholder en doi - nå settes den uansett
       setInitialFormValues(
         cristinPublication
           ? {
               isInitiatedFromCristinPublication: true,
-              title: selectedLang.title ?? '',
+              originalLanguage: cristinPublication.original_language.toUpperCase() ?? '',
+              titles: titlesToBeImported,
               year: cristinPublication.year_published,
               doi: extractDoiFromCristinPublication(cristinPublication),
-              language: selectedLang,
               journal: {
                 cristinTidsskriftNr: await getJournalId(cristinPublication.journal),
                 title: cristinPublication.journal?.name ?? 'Ingen tidsskrift funnet',
@@ -192,10 +180,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             }
           : {
               isInitiatedFromCristinPublication: false,
-              title: selectedLang.title ?? '',
+              originalLanguage: originalLanguageStringFromimportPublication.toUpperCase(),
+              titles: titlesToBeImported,
               year: importPublication.yearPublished,
               doi: importPublication.doi,
-              language: selectedLang,
               journal: {
                 cristinTidsskriftNr: importPublication?.channel?.cristinTidsskriftNr?.toString() ?? '',
                 title: importPublication?.channel?.title ?? 'Ingen tidsskrift funnet',
@@ -321,15 +309,15 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   function handleImportPublicationConfirmed(annotation: string) {
     if (formValues) {
       if (!cristinPublication) {
-        handleCreatePublication(formValues, importPublication, contributors, publicationLanguages, annotation).then(
-          (response) => handlePublicationImported(response)
+        handleCreatePublication(formValues, importPublication, contributors, annotation).then((response) =>
+          handlePublicationImported(response)
         );
       } else {
         handleUpdatePublication(
           formValues,
           importPublication,
           cristinPublication.cristin_result_id,
-          publicationLanguages,
+
           annotation
         ).then((response) => handlePublicationImported(response));
       }
@@ -399,16 +387,26 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         </StyledDisabledTypography>
                       </StyledLineCristinValue>
                     </StyledLineWrapper>
-                    <CompareFormLanguage
-                      languages={publicationLanguages}
-                      selectedLang={selectedLang}
-                      setSelectedLang={setSelectedLang}
-                    />
-                    <CompareFormTitle
-                      importPublication={importPublication}
-                      updatePublicationLanguages={updatePublicationLanguages}
-                      selectedLang={selectedLang}
-                    />
+                    <StyledLineWrapper>
+                      <StyledLineLabelTypography>Originalspråk</StyledLineLabelTypography>
+                      <StyledLineImportValue>
+                        <Typography data-testid="importdata-source">
+                          {originalLanguageStringFromimportPublication}
+                        </Typography>
+                      </StyledLineImportValue>
+                      <StyledActionButtonsPlaceHolder />
+                      <StyledLineCristinValue>
+                        <StyledDisabledTypography data-testid="cristindata-source">
+                          {initialFormValues.originalLanguage}
+                        </StyledDisabledTypography>
+                      </StyledLineCristinValue>
+                    </StyledLineWrapper>
+                    {/*<CompareFormLanguage*/}
+                    {/*  languages={publicationLanguages}*/}
+                    {/*  selectedLang={selectedLang}*/}
+                    {/*  setSelectedLang={setSelectedLang}*/}
+                    {/*/>*/}
+                    <CompareFormTitle titleMap={titleMap} />
                     <CompareFormJournal
                       importPublication={importPublication}
                       loadJournalIdError={loadJournalIdError}

@@ -1,7 +1,6 @@
 import {
   ImportPublication,
   Journal,
-  Language,
   PatchPublication,
   PostPublication,
   SavedPublicationLogLine,
@@ -25,11 +24,21 @@ const getNumberOfPages = (pageFrom?: string, pageTo?: string) => {
   }
 };
 
-const generateTitleObjectForCristinPublication = (publicationLanguages: Language[]) => {
+const generateTitleObjectForCristinPublication = (values: CompareFormValuesType) => {
   const title: any = {};
-  publicationLanguages.forEach((language) => {
-    title[language.lang.toLowerCase()] = language.title;
-  });
+
+  //TODO
+  // const langCodes = [...titleMap.keys()];
+  // langCodes.map((langCode, index) => (
+  //     title: values.titles[index]
+  // )}
+
+  //TODO: Avklare hvordan man lagret tomme verider ?
+
+  // const langCodes: string[] = [...values.titles.keys()];
+  // langCodes.forEach((langCode) => {
+  //   title[langCode.toLowerCase()] = values.titles.get(langCode)?.title ?? '';
+  // });
   return title;
 };
 
@@ -57,7 +66,6 @@ export const createCristinPublicationForSaving = (
   values: CompareFormValuesType,
   importPublication: ImportPublication,
   contributors: ContributorWrapper[],
-  publicationLanguages: Language[],
   annotation: string
 ) => {
   const publication: PostPublication = {
@@ -65,8 +73,8 @@ export const createCristinPublicationForSaving = (
       code: values.category.value,
     },
     journal: generateJournalObject(values.journal),
-    original_language: publicationLanguages.filter((language: Language) => language.original)[0].lang.toLowerCase(),
-    title: generateTitleObjectForCristinPublication(publicationLanguages),
+    original_language: values.originalLanguage ?? '',
+    title: generateTitleObjectForCristinPublication(values),
     pub_id: importPublication.pubId,
     year_published: values.year.toString(),
     import_sources: [
@@ -102,14 +110,12 @@ export const createCristinPublicationForUpdating = (
   values: CompareFormValuesType,
   importPublication: ImportPublication,
   cristinResultId: string,
-  publicationLanguages: Language[],
   annotation: string
 ) => {
   const publication: PatchPublication = {
     cristinResultId,
-    original_language:
-      publicationLanguages.filter((language: Language) => language.original)[0].lang.toLowerCase() ?? '',
-    title: generateTitleObjectForCristinPublication(publicationLanguages),
+    original_language: values.originalLanguage ?? '',
+    title: generateTitleObjectForCristinPublication(values),
     pub_id: importPublication.pubId,
     import_sources: [
       {
@@ -144,16 +150,9 @@ export async function handleCreatePublication(
   formValues: CompareFormValuesType,
   importPublication: ImportPublication,
   contributors: ContributorWrapper[],
-  publicationLanguages: Language[],
   annotation: string
 ) {
-  const publication = createCristinPublicationForSaving(
-    formValues,
-    importPublication,
-    contributors,
-    publicationLanguages,
-    annotation
-  );
+  const publication = createCristinPublicationForSaving(formValues, importPublication, contributors, annotation);
   try {
     const postPublicationResponse = await postPublication(publication);
     const cristinResultId = postPublicationResponse.data.cristin_result_id;
@@ -189,16 +188,9 @@ export async function handleUpdatePublication(
   formValues: CompareFormValuesType,
   importPublication: ImportPublication,
   cristinResultId: string,
-  publicationLanguages: Language[],
   annotation: string
 ) {
-  const publication = createCristinPublicationForUpdating(
-    formValues,
-    importPublication,
-    cristinResultId,
-    publicationLanguages,
-    annotation
-  );
+  const publication = createCristinPublicationForUpdating(formValues, importPublication, cristinResultId, annotation);
   try {
     await patchPublication(publication);
     await patchPiaPublication(cristinResultId, publication.pub_id);

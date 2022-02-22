@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 import { DoiFormat } from '../../utils/stringUtils';
 
 export const formValidationSchema = Yup.object().shape({
-  title: Yup.string().required('Tittel er et obligatorisk felt'),
+  //TODO: title: Yup.string().required('Tittel er et obligatorisk felt'),
   category: Yup.object().when('isInitiatedFromCristinPublication', {
     is: false,
     then: (schema) =>

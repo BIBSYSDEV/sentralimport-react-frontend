@@ -17,10 +17,10 @@ export const emptyJournal: CompareFormJournalType = {
 
 export interface CompareFormValuesType {
   isInitiatedFromCristinPublication: boolean;
-  title: string;
+  originalLanguage: string;
+  titles: string[]; //follows index from CombinedTitleType
   year: string;
   doi?: string;
-  language: any;
   category: CompareFormCategoryOption;
   volume?: string;
   issue?: string;
