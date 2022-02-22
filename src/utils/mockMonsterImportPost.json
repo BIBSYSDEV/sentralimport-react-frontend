@@ -683,19 +683,13 @@
         ]
       },
       {
-        "cristinId": 0,
+        "cristinId": 12121212,
+        "sequenceNr": 43,
         "roleCode": "FORFATTER",
-        "surname": "Mocklastname",
-        "firstname": "Mockfirstname",
-        "authorName": "Olsen P.",
+        "surname": "Bottolf",
+        "firstname": "Gunnar",
+        "authorName": "Bottolf G.",
         "institutions": [
-          {
-            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
-            "countryCode": "CN",
-            "institutionName": "Tianjin University of Technology",
-            "cristinInstitutionNr": 9127,
-            "isCristinInstitution": false
-          }
         ]
       },
       {

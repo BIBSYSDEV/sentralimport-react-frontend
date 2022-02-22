@@ -26,6 +26,7 @@ import {
   mockPersonDetailed,
   mockPersonDetailed5,
   mockPersonDetailed6,
+  mockPersonDetailed7,
   mockPersonDetailedDuplicate,
   mockPersonDetailedWithoutActiveAffiliations,
   mockPersonDetailedWithoutActiveAffiliations2,
@@ -182,6 +183,11 @@ export const interceptRequestsOnMock = () => {
         'x-total-count': 6,
       }
     );
+
+  mock.onGet(new RegExp(`${CRIST_REST_API}/persons/\\?name=${mockPersonDetailed7.first_name}*.`)).reply(200, [], {
+    'x-total-count': 0,
+  });
+
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/\\?name.*`))
     .reply(
@@ -211,6 +217,11 @@ export const interceptRequestsOnMock = () => {
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed5.cristin_person_id}`))
     .reply(200, mockPersonDetailed5);
+
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed7.cristin_person_id}`))
+    .reply(200, mockPersonDetailed7);
+
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed6.cristin_person_id}`))
     .reply(200, mockPersonDetailed6);

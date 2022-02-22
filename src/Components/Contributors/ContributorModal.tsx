@@ -109,6 +109,7 @@ const ContributorModal: FC<ContributorProps> = ({
   const [arrayOfContributorsWithNorwegianInstitution, setArrayOfContributorsWithNorwegianInstitution] = useState(
     new Array(contributors.length).fill(false)
   );
+
   const [isContributorsFiltered, setIsContributorsFiltered] = useState(isMonsterPost(contributors));
 
   const firstUpdate = useRef(true);
@@ -231,11 +232,17 @@ const ContributorModal: FC<ContributorProps> = ({
                         row={contributor}
                         contributors={contributors}
                         setContributors={setContributors}
-                        hideArrows={!arrayOfContributorsWithNorwegianInstitution[index] && isContributorsFiltered}
+                        hideArrows={
+                          !arrayOfContributorsWithNorwegianInstitution[index] &&
+                          contributor.toBeCreated.affiliations?.length !== 0 &&
+                          isContributorsFiltered
+                        }
                       />
                     </StyledOrderColumn>
                     <StyledContributorColumn>
-                      {!arrayOfContributorsWithNorwegianInstitution[index] && isContributorsFiltered ? (
+                      {!arrayOfContributorsWithNorwegianInstitution[index] &&
+                      contributor.toBeCreated.affiliations?.length !== 0 &&
+                      isContributorsFiltered ? (
                         <Typography
                           data-testid={`import-contributor-hidden-${contributor.toBeCreated.order}`}
                           color="textSecondary">
@@ -246,7 +253,12 @@ const ContributorModal: FC<ContributorProps> = ({
                       )}
                     </StyledContributorColumn>
                     <StyledContributorColumn>
-                      <div hidden={!arrayOfContributorsWithNorwegianInstitution[index] && isContributorsFiltered}>
+                      <div
+                        hidden={
+                          !arrayOfContributorsWithNorwegianInstitution[index] &&
+                          contributor.toBeCreated.affiliations?.length !== 0 &&
+                          isContributorsFiltered
+                        }>
                         <ContributorForm
                           resultListIndex={index}
                           contributorData={contributor}
