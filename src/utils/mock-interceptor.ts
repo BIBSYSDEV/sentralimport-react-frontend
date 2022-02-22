@@ -11,6 +11,7 @@ import {
   mockCristinPersonNotFound,
   mockCristinPersonNotFoundResponse,
   mockCristinPublicationWithDoi,
+  mockDoiForMonsterPublication,
   mockDoiForPublicationWithoutDoi,
   mockForbiddenPerson,
   mockImportPublication1,
@@ -44,6 +45,7 @@ import {
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
+import mockMonsterImportPost from './mockMonsterImportPost.json';
 import mockCristinPublications from './mockCristinPublications.json';
 import mockCristinContributors from './mockCristinContributors.json';
 import { PostPublication } from '../types/PublicationTypes';
@@ -66,6 +68,14 @@ export const interceptRequestsOnMock = () => {
   mock
     .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*${urlSearchParams2.toString()}.*`))
     .reply(200, [mockImportPublication1], {
+      'x-total-count': 1,
+    });
+
+  const urlSearchParams3 = new URLSearchParams();
+  urlSearchParams3.set('doi', mockDoiForMonsterPublication);
+  mock
+    .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*${urlSearchParams3.toString()}.*`))
+    .reply(200, [mockMonsterImportPost], {
       'x-total-count': 1,
     });
 

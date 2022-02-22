@@ -522,7 +522,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         isOpen={isConfirmImportDialogOpen}
         handleAbort={() => setIsConfirmImportDialogOpen(false)}
       />
-      {importPublication && (
+      {importPublication && isContributorModalOpen && (
         <ContributorModal
           isContributorModalOpen={isContributorModalOpen}
           contributors={contributors}

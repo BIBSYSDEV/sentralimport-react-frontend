@@ -90,7 +90,10 @@ interface ContributorProps {
   setContributorErrors: (value: string[]) => void;
 }
 
-const NumberOfContributorsToShow = 50;
+const NumberOfContributorsToShow = 30;
+export const NumberOfContributorsToDefineMonsterPost = 100;
+const isMonsterPost = (contributors: ContributorWrapper[]) =>
+  contributors.length > NumberOfContributorsToDefineMonsterPost;
 
 const ContributorModal: FC<ContributorProps> = ({
   contributors,
@@ -99,11 +102,14 @@ const ContributorModal: FC<ContributorProps> = ({
   handleContributorModalClose,
   setContributorErrors,
 }) => {
-  const [maxContributorsToShow, setMaxContributorsToShow] = useState(NumberOfContributorsToShow);
+  const [maxContributorsToShow, setMaxContributorsToShow] = useState(
+    isMonsterPost(contributors) ? contributors.length : NumberOfContributorsToShow
+  );
+
   const [arrayOfContributorsWithNorwegianInstitution, setArrayOfContributorsWithNorwegianInstitution] = useState(
     new Array(contributors.length).fill(false)
   );
-  const [isContributorsFiltered, setIsContributorsFiltered] = useState(false);
+  const [isContributorsFiltered, setIsContributorsFiltered] = useState(isMonsterPost(contributors));
 
   const firstUpdate = useRef(true);
 
@@ -199,6 +205,7 @@ const ContributorModal: FC<ContributorProps> = ({
                         <Checkbox
                           data-testid="filter-contributors-check"
                           color="primary"
+                          disabled={isMonsterPost(contributors)}
                           checked={isContributorsFiltered}
                           onChange={handleToggleFilter}
                           name="filterContributors"
