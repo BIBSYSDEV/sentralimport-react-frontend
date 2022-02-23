@@ -147,7 +147,10 @@ const ContributorForm: FC<ContributorFormProps> = ({
       </Grid>
       <ConfirmRemoveContributorDialog
         isDialogOpen={isRemoveContributorDialogOpen}
-        handleRemoveContributor={() => removeContributor(resultListIndex)}
+        handleRemoveContributor={() => {
+          setIsRemoveContributorDialogOpen(false);
+          removeContributor(resultListIndex);
+        }}
         handleCloseDialog={() => setIsRemoveContributorDialogOpen(false)}
       />
       <AddAffiliation
