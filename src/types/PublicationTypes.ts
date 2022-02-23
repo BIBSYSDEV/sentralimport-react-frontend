@@ -30,7 +30,7 @@ export interface CristinPublication {
   year_published: any;
   category: any;
   title: any;
-  original_language?: any;
+  original_language: string;
   created: {
     date: string;
   };
