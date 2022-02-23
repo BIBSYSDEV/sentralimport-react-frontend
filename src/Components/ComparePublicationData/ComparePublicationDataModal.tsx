@@ -58,7 +58,7 @@ import {
 } from '../Contributors/ContributorHelper';
 import { getDuplicateAffiliations } from '../Contributors/InstututionHelper';
 import { extractDoiFromCristinPublication } from '../DuplicateCheck/ResultItem';
-import { formValidationSchema } from './CompareFormValidationSchema';
+import { generateFormValidationSchema } from './CompareFormValidationSchema';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -354,7 +354,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             onSubmit={handleImportButtonClick}
             initialValues={initialFormValues}
             validateOnMount
-            validationSchema={formValidationSchema}>
+            validationSchema={generateFormValidationSchema(initialFormValues.originalLanguage)}>
             {({ isValid, handleSubmit }) => (
               <Form onSubmit={handleSubmit}>
                 <ModalBody>
@@ -423,11 +423,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         </StyledDisabledTypography>
                       </StyledLineCristinValue>
                     </StyledLineWrapper>
-                    {/*<CompareFormLanguage*/}
-                    {/*  languages={publicationLanguages}*/}
-                    {/*  selectedLang={selectedLang}*/}
-                    {/*  setSelectedLang={setSelectedLang}*/}
-                    {/*/>*/}
                     <CompareFormTitle titleMap={titleMap} />
                     <CompareFormJournal
                       importPublication={importPublication}
