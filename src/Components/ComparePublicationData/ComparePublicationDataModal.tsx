@@ -196,7 +196,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             }
           : {
               isInitiatedFromCristinPublication: false,
-              originalLanguage: originalLanguageStringFromimportPublication.toUpperCase(),
+              originalLanguage: originalLanguageStringFromimportPublication.toUpperCase() ?? '',
               titles: generateTitlesToBeImported(),
               year: importPublication.yearPublished,
               doi: importPublication.doi,
