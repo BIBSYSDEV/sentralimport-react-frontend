@@ -151,18 +151,28 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_name) ?? 'Ingen kilde funnet'
     : importPublication.sourceName;
 
+  const generateTitlesToBeImported = () => {
+    const langCodes = [...titleMap.keys()];
+    return [...titleMap.values()].map((value, index) => {
+      return {
+        title: value.titleToBeImported,
+        langCode: langCodes[index],
+      };
+    });
+  };
+
   useEffect(() => {
     //init ligger i en useeffect pga asynkront kall til getJournalId
     const initFormik = async () => {
       //Formik is initiated from either importPublication orcristinPublication (set in duplicate-modal)
-      const titlesToBeImported = [...titleMap.values()].map((values) => values.titleToBeImported);
+
       //TODO: det trengs en sjekk på om cristinPublication.links inneholder en doi - nå settes den uansett
       setInitialFormValues(
         cristinPublication
           ? {
               isInitiatedFromCristinPublication: true,
               originalLanguage: cristinPublication.original_language.toUpperCase() ?? '',
-              titles: titlesToBeImported,
+              titles: generateTitlesToBeImported(),
               year: cristinPublication.year_published,
               doi: extractDoiFromCristinPublication(cristinPublication),
               journal: {
@@ -181,7 +191,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           : {
               isInitiatedFromCristinPublication: false,
               originalLanguage: originalLanguageStringFromimportPublication.toUpperCase(),
-              titles: titlesToBeImported,
+              titles: generateTitlesToBeImported(),
               year: importPublication.yearPublished,
               doi: importPublication.doi,
               journal: {

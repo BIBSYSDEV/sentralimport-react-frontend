@@ -10,6 +10,11 @@ export interface CompareFormJournalType {
   eissn?: string;
 }
 
+export interface CompareFormTitleType {
+  title: string;
+  langCode: string;
+}
+
 export const emptyJournal: CompareFormJournalType = {
   cristinTidsskriftNr: '0',
   title: '',
@@ -18,7 +23,7 @@ export const emptyJournal: CompareFormJournalType = {
 export interface CompareFormValuesType {
   isInitiatedFromCristinPublication: boolean;
   originalLanguage: string;
-  titles: string[]; //follows index from CombinedTitleType
+  titles: CompareFormTitleType[];
   year: string;
   doi?: string;
   category: CompareFormCategoryOption;

@@ -32,18 +32,20 @@ const CompareFormTitle: FC<CompareFormTitleProps> = ({ titleMap }) => {
             </Typography>
           </StyledLineImportValue>
           <ActionButtons
-            isImportAndCristinEqual={values.titles[index] === titleMap.get(langCode)?.titleFromImportPublication}
+            isImportAndCristinEqual={values.titles[index].title === titleMap.get(langCode)?.titleFromImportPublication}
             isCopyButtonDisabled={false}
-            copyCommand={() => setFieldValue(`titles[${index}]`, titleMap.get(langCode)?.titleFromImportPublication)}
+            copyCommand={() =>
+              setFieldValue(`titles[${index}].title`, titleMap.get(langCode)?.titleFromImportPublication)
+            }
             dataTestid={`compare-form-title-${langCode}-action`}
           />
           <StyledLineCristinValue>
-            <Field name={`titles[${index}]`}>
+            <Field name={`titles[${index}].title`}>
               {({ field, meta: { error } }: FieldProps) => (
                 <TextField
                   {...field}
                   id={`Cristin-title-${index}`}
-                  name={`titles[${index}]`}
+                  name={`titles[${index}].title`}
                   placeholder={`Tittel (${langCode})`}
                   data-testid={`cristindata-title-${langCode}-textfield`}
                   inputProps={{ 'data-testid': `cristindata-title-${langCode}-textfield-input` }}
