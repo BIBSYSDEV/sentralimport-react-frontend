@@ -122,26 +122,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [isLoadingContributors, setIsLoadingContributors] = useState(false);
   const [loadingContributorsError, setLoadingContributorsError] = useState<Error | undefined>();
 
-  //publication-form-stuff
-  const [initialFormValues, setInitialFormValues] = useState<CompareFormValuesType | undefined>();
-  const [formValues, setFormValues] = useState<CompareFormValuesType | undefined>();
-
-  const titleMap = new Map<string, CombinedTitleType>();
-  importPublication.languages.map((language) =>
-    titleMap.set(language.lang, { titleFromImportPublication: language.title, titleToBeImported: language.title })
-  );
-  if (cristinPublication) {
-    for (const title in cristinPublication.title) {
-      console.log('@PCB', title);
-      //TODO
-      //if exists, update titleToBeImported
-      //else create new
-    }
-  }
-
-  const originalLanguageStringFromimportPublication: string =
-    importPublication.languages.find((lang: Language) => lang.original)?.lang ?? importPublication.languages[0].lang;
-
   const kildeId = cristinPublication
     ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_reference_id) ??
       'Ingen kildeId funnet'
@@ -150,6 +130,38 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const kilde = cristinPublication
     ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_name) ?? 'Ingen kilde funnet'
     : importPublication.sourceName;
+
+  //publication-form-stuff
+  const [initialFormValues, setInitialFormValues] = useState<CompareFormValuesType | undefined>();
+  const [formValues, setFormValues] = useState<CompareFormValuesType | undefined>();
+
+  //title-stuff
+  const titleMap = new Map<string, CombinedTitleType>();
+  importPublication.languages.map((language) =>
+    titleMap.set(language.lang.toUpperCase(), {
+      titleFromImportPublication: language.title,
+      titleToBeImported: language.title,
+    })
+  );
+  if (cristinPublication) {
+    for (const langCode in cristinPublication.title) {
+      const existingTitle = titleMap.get(langCode);
+      if (existingTitle) {
+        titleMap.set(langCode.toUpperCase(), {
+          titleFromImportPublication: existingTitle.titleFromImportPublication,
+          titleToBeImported: cristinPublication.title[langCode],
+        });
+      } else {
+        titleMap.set(langCode.toUpperCase(), {
+          titleFromImportPublication: '',
+          titleToBeImported: cristinPublication.title[langCode],
+        });
+      }
+    }
+  }
+
+  const originalLanguageStringFromimportPublication: string =
+    importPublication.languages.find((lang: Language) => lang.original)?.lang ?? importPublication.languages[0].lang;
 
   const generateTitlesToBeImported = () => {
     const langCodes = [...titleMap.keys()];
