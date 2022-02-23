@@ -310,11 +310,10 @@ context('contributor', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
 
-    cy.wait(300);
-    cy.get('[data-testid="import-contributor-hidden-1"]').should('not.exist');
+    cy.get('[data-testid="import-contributor-hidden-9"]').should('not.exist');
 
     cy.get('[data-testid="filter-contributors-check"]').click();
-    cy.get('[data-testid="import-contributor-hidden-1"]').should('exist');
+    cy.get('[data-testid="import-contributor-hidden-0"]').should('exist');
     cy.get('[data-testid="creator-name-1"]').should('not.exist');
     cy.get('[data-testid="contributor-form-0-name"]').should('not.be.visible'); //nb. denne skjules kun visuelt
     cy.get('[data-testid="move-up-button-2"]').should('not.exist');
@@ -322,7 +321,7 @@ context('contributor', () => {
     cy.get('[data-testid="creator-name-5"]').should('exist');
 
     cy.get('[data-testid="filter-contributors-check"]').click();
-    cy.get('[data-testid="import-contributor-hidden-1"]').should('not.exist');
+    cy.get('[data-testid="import-contributor-hidden-0"]').should('not.exist');
     cy.get('[data-testid="creator-name-1"]').should('exist');
   });
 
