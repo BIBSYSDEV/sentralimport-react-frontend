@@ -234,18 +234,16 @@ const ContributorModal: FC<ContributorProps> = ({
                         setContributors={setContributors}
                         hideArrows={
                           !arrayOfContributorsWithNorwegianInstitution[index] &&
-                          contributor.toBeCreated.affiliations?.length !== 0 &&
+                          contributor.toBeCreated?.affiliations?.length !== 0 &&
                           isContributorsFiltered
                         }
                       />
                     </StyledOrderColumn>
                     <StyledContributorColumn>
                       {!arrayOfContributorsWithNorwegianInstitution[index] &&
-                      contributor.toBeCreated.affiliations?.length !== 0 &&
+                      contributor.toBeCreated?.affiliations?.length !== 0 &&
                       isContributorsFiltered ? (
-                        <Typography
-                          data-testid={`import-contributor-hidden-${contributor.toBeCreated.order}`}
-                          color="textSecondary">
+                        <Typography data-testid={`import-contributor-hidden-${index}`} color="textSecondary">
                           Forfatter-info er skjult
                         </Typography>
                       ) : (
@@ -256,7 +254,7 @@ const ContributorModal: FC<ContributorProps> = ({
                       <div
                         hidden={
                           !arrayOfContributorsWithNorwegianInstitution[index] &&
-                          contributor.toBeCreated.affiliations?.length !== 0 &&
+                          contributor.toBeCreated?.affiliations?.length !== 0 &&
                           isContributorsFiltered
                         }>
                         <ContributorForm

@@ -379,7 +379,7 @@ export const mockImportPublication1 = {
 };
 
 export const mockDoiForMonsterPublication = '10.1038/s41467-021-25342423'; // easiest way to get the one publication
-export const mockDoiForPublicationWithoutDoi = '10.1038/s41467-021-25510-wXXX'; // easiest way to get the one publication
+export const mockDoiForPublicationWithoutDoi = '10.1038/s41467-021-25510-wXXX';
 
 export const mockImportPublicationWithoutDoi = {
   pubId: 591853,
