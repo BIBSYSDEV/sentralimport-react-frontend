@@ -150,7 +150,10 @@ export async function handleCreatePublication(
     const cristinResultId = postPublicationResponse.data.cristin_result_id;
     await patchPiaPublication(cristinResultId, publication.pub_id);
     addToLog(publication, cristinResultId);
-    return { result: { id: cristinResultId, title: publication.title[publication.original_language] }, status: 200 };
+    return {
+      result: { id: cristinResultId, title: publication.title[publication.original_language.toLowerCase()] },
+      status: 200,
+    };
   } catch (error) {
     handlePotentialExpiredSession(error);
     return generateErrorMessage(error);
@@ -170,7 +173,7 @@ const addToLog = (publication: any, cristinResultId: any) => {
   if (log.length > 15) log.shift();
   log.push({
     id: cristinResultId,
-    title: publication.title[publication.original_language],
+    title: publication.title[publication.original_language.toLowerCase()],
     authorsPresentation: generateAuthorPresentation(publication),
   });
   localStorage.setItem('log', JSON.stringify(log));

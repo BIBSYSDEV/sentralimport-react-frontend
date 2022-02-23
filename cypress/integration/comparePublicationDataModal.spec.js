@@ -5,7 +5,7 @@ import {
   mockImportPublicationWithoutDoi,
 } from '../../src/utils/mockdata';
 
-context('importModal', () => {
+context('comparePublicationModal', () => {
   beforeEach(() => {
     cy.login();
     cy.visit('/');
@@ -26,10 +26,15 @@ context('importModal', () => {
     cy.get(`[data-testid="importdata-date-registered"]`).contains(mockImportData[0].registered);
     cy.get(`[data-testid="cristindata-created"]`).contains('-');
 
-    cy.get(`[data-testid="importdata-title"]`).contains(mockImportData[0].languages[0].title);
-    cy.get(`[data-testid="cristindata-title-textfield"] textarea`).should(
+    cy.get(`[data-testid="importdata-title-EN"]`).contains(mockImportData[0].languages[0].title);
+    cy.get(`[data-testid="cristindata-title-EN-textfield"] textarea`).should(
       'have.value',
       mockImportData[0].languages[0].title
+    );
+    cy.get(`[data-testid="importdata-title-NO"]`).contains(mockImportData[0].languages[1].title);
+    cy.get(`[data-testid="cristindata-title-NO-textfield"] textarea`).should(
+      'have.value',
+      mockImportData[0].languages[1].title
     );
 
     cy.get(`[data-testid="importdata-journal-title"]`).contains(mockImportData[0].channel.title);
@@ -37,9 +42,6 @@ context('importModal', () => {
 
     cy.get(`[data-testid="importdata-doi"]`).contains(mockImportData[0].doi);
     cy.get(`[data-testid="cristindata-doi-textfield-input"]`).should('have.value', mockImportData[0].doi);
-
-    cy.get(`[data-testid="importdata-lang"]`).contains(mockImportData[0].languages[0].lang);
-    cy.get(`[data-testid="cristindata-lang-buttongroup"]`).contains(mockImportData[0].languages[0].lang);
 
     cy.get(`[data-testid="importdata-year"]`).contains(mockImportData[0].yearPublished);
     cy.get(`[data-testid="cristindata-year-textfield-input"]`).should('have.value', mockImportData[0].yearPublished);
@@ -79,23 +81,11 @@ context('importModal', () => {
     cy.get(`[data-testid="contributor-errors"]`).contains('4, 5, 6 (Duplisert CristinId)');
   });
 
-  it('has language-buttons, that shifts publication title view', () => {
-    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
-    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
-    cy.get(`[data-testid="importdata-pubid"]`).contains(mockImportData[0].pubId);
-    cy.get(`[data-testid="compare-form-lang-button-EN"]`).contains('EN');
-    cy.get(`[data-testid="compare-form-lang-button-NO"]`).contains('NO');
-    cy.get(`[data-testid="importdata-title"]`).contains(mockImportData[0].languages[0].title);
-    cy.get(`[data-testid="compare-form-lang-button-NO"]`).click();
-    cy.get(`[data-testid="importdata-title"]`).contains(mockImportData[0].languages[1].title);
-    cy.get(`[data-testid="compare-form-lang-button-EN"]`).click();
-    cy.get(`[data-testid="importdata-title"]`).contains(mockImportData[0].languages[0].title);
-  });
-
   it('can show validation errors on comparePublicationDataModal-form', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[2].pubId}"]`).click();
     cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.wait(400);
 
     //skal være tidsskrift-feil
     cy.get(`[data-testid="importdata-pubid"]`).contains(mockImportData[2].pubId);
@@ -132,19 +122,28 @@ context('importModal', () => {
     cy.get(`[data-testid="cristindata-year-textfield-input"]`).clear().type('20.1');
     cy.get(`#Cristin-year-helper-text`).contains('Årstall må være et tall fra 1000 til 2999');
 
-    cy.get(`[data-testid="compare-form-year-action-button"]`).should('not.be.disabled');
+    cy.get(`[data-testid="compare-form-year-action-button"]`).should('not.be.disabled').click();
+    cy.get(`[data-testid="import-publication-button"]`).focus().should('exist').should('not.be.disabled');
 
-    //tittel
-    cy.get(`[data-testid="compare-form-title-action-equals-icon"]`).should('exist');
-    cy.get(`[data-testid="cristindata-title-textfield-input"]`).clear();
+    //originaltittel
+    cy.get(`[data-testid="compare-form-title-EN-action-equals-icon"]`).should('exist');
+    cy.get(`[data-testid="cristindata-title-EN-textfield-input"]`).clear();
     cy.get(`[data-testid="import-publication-button"]`).focus().should('exist').should('be.disabled');
-    cy.get(`#Cristin-title-helper-text`).contains('Tittel er et obligatorisk felt');
-    cy.get(`[data-testid="compare-form-title-action-button"]`).should('not.be.disabled');
+    cy.get(`#Cristin-title-0-helper-text`).contains('Originaltittel er et obligatorisk felt');
+    cy.get(`[data-testid="import-publication-button"]`).focus().should('exist').should('be.disabled');
+    cy.get(`[data-testid="compare-form-title-EN-action-button"]`).should('not.be.disabled');
+    cy.get(`[data-testid="compare-form-title-EN-action-button"]`).click();
+    cy.get(`[data-testid="cristindata-title-EN-textfield-input"]`).contains(mockImportData[2].languages[0].title);
+    cy.get(`[data-testid="import-publication-button"]`).focus().should('exist').should('not.be.disabled');
+
+    //tittel - norsk
+    cy.get(`[data-testid="compare-form-title-NO-action-equals-icon"]`).should('exist');
+    cy.get(`[data-testid="cristindata-title-NO-textfield-input"]`).clear();
+    cy.get(`[data-testid="compare-form-title-NO-action-button"]`).should('not.be.disabled');
+    cy.get(`[data-testid="import-publication-button"]`).focus().should('exist').should('not.be.disabled');
 
     //doi
     cy.get(`[data-testid="compare-form-doi-action-equals-icon"]`).should('exist');
-    cy.get(`[data-testid="cristindata-doi-textfield-input"]`).clear();
-    cy.get(`[data-testid="import-publication-button"]`).focus().should('exist').should('be.disabled');
     cy.get(`[data-testid="cristindata-doi-textfield-input"]`).clear().type('ABC');
     cy.get(`#Cristin-doi-helper-text`).contains('Doi har galt format');
     cy.get(`[data-testid="compare-form-doi-action-button"]`).should('exist').should('be.disabled');
