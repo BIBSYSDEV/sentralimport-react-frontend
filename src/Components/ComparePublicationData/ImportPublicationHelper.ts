@@ -27,7 +27,9 @@ const getNumberOfPages = (pageFrom?: string, pageTo?: string) => {
 const generateTitleObjectForCristinPublication = (values: CompareFormValuesType) => {
   const title: any = {};
   values.titles.forEach((titleObj) => {
-    title[titleObj.langCode.toLowerCase()] = titleObj.title ?? '';
+    if (titleObj.title) {
+      title[titleObj.langCode.toLowerCase()] = titleObj.title;
+    }
   });
   return title;
 };

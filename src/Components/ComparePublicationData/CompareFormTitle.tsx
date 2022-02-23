@@ -11,16 +11,15 @@ import {
 import { CompareFormValuesType } from './CompareFormTypes';
 import { cleanTitleForMarkup } from '../../utils/stringUtils';
 import { Markup } from 'interweave';
-import { CombinedTitleType } from './ComparePublicationDataModal';
 
 interface CompareFormTitleProps {
-  titleMap: Map<string, CombinedTitleType>;
+  titlesFromImportPublicationMap: Map<string, string>;
 }
 
-const CompareFormTitle: FC<CompareFormTitleProps> = ({ titleMap }) => {
+const CompareFormTitle: FC<CompareFormTitleProps> = ({ titlesFromImportPublicationMap }) => {
   const { values, setFieldValue } = useFormikContext<CompareFormValuesType>();
 
-  const langCodes = [...titleMap.keys()];
+  const langCodes = [...titlesFromImportPublicationMap.keys()];
   return (
     <>
       {langCodes.map((langCode, index) => (
@@ -28,15 +27,13 @@ const CompareFormTitle: FC<CompareFormTitleProps> = ({ titleMap }) => {
           <StyledLineLabelTypography htmlFor="Cristin-tittel">Tittel ({langCode})</StyledLineLabelTypography>
           <StyledLineImportValue>
             <Typography data-testid={`importdata-title-${langCode}`}>
-              <Markup content={cleanTitleForMarkup(titleMap.get(langCode)?.titleFromImportPublication)} />
+              <Markup content={cleanTitleForMarkup(titlesFromImportPublicationMap.get(langCode))} />
             </Typography>
           </StyledLineImportValue>
           <ActionButtons
-            isImportAndCristinEqual={values.titles[index].title === titleMap.get(langCode)?.titleFromImportPublication}
+            isImportAndCristinEqual={values.titles[index].title === titlesFromImportPublicationMap.get(langCode)}
             isCopyButtonDisabled={false}
-            copyCommand={() =>
-              setFieldValue(`titles[${index}].title`, titleMap.get(langCode)?.titleFromImportPublication)
-            }
+            copyCommand={() => setFieldValue(`titles[${index}].title`, titlesFromImportPublicationMap.get(langCode))}
             dataTestid={`compare-form-title-${langCode}-action`}
           />
           <StyledLineCristinValue>
@@ -49,7 +46,6 @@ const CompareFormTitle: FC<CompareFormTitleProps> = ({ titleMap }) => {
                   placeholder={`Tittel (${langCode})`}
                   data-testid={`cristindata-title-${langCode}-textfield`}
                   inputProps={{ 'data-testid': `cristindata-title-${langCode}-textfield-input` }}
-                  required
                   multiline
                   fullWidth
                   error={!!error}

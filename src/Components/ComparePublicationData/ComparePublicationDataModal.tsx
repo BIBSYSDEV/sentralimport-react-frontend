@@ -136,27 +136,21 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [formValues, setFormValues] = useState<CompareFormValuesType | undefined>();
 
   //title-stuff
-  const titleMap = new Map<string, CombinedTitleType>();
-  importPublication.languages.map((language) =>
-    titleMap.set(language.lang.toUpperCase(), {
-      titleFromImportPublication: language.title,
-      titleToBeImported: language.title,
-    })
-  );
+  const titlesFromImportPublicationMap = new Map<string, string>();
+  const titlesToBeImportedMap = new Map<string, string>();
+  importPublication.languages.forEach((language) => {
+    titlesToBeImportedMap.set(language.lang.toUpperCase(), language.title);
+    titlesFromImportPublicationMap.set(language.lang.toUpperCase(), language.title);
+  });
+
   if (cristinPublication) {
     for (const langCode in cristinPublication.title) {
-      const existingTitle = titleMap.get(langCode);
-      if (existingTitle) {
-        titleMap.set(langCode.toUpperCase(), {
-          titleFromImportPublication: existingTitle.titleFromImportPublication,
-          titleToBeImported: cristinPublication.title[langCode],
-        });
-      } else {
-        titleMap.set(langCode.toUpperCase(), {
-          titleFromImportPublication: '',
-          titleToBeImported: cristinPublication.title[langCode],
-        });
-      }
+      titlesToBeImportedMap.set(langCode.toUpperCase(), cristinPublication.title[langCode]);
+      const existingTitle = titlesFromImportPublicationMap.get(langCode);
+      titlesFromImportPublicationMap.set(
+        langCode.toUpperCase(),
+        existingTitle ? cristinPublication.title[langCode] : ''
+      );
     }
   }
 
@@ -164,10 +158,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     importPublication.languages.find((lang: Language) => lang.original)?.lang ?? importPublication.languages[0].lang;
 
   const generateTitlesToBeImported = () => {
-    const langCodes = [...titleMap.keys()];
-    return [...titleMap.values()].map((value, index) => {
+    const langCodes = [...titlesToBeImportedMap.keys()];
+    return [...titlesToBeImportedMap.values()].map((value, index) => {
       return {
-        title: value.titleToBeImported,
+        title: value,
         langCode: langCodes[index],
       };
     });
@@ -423,7 +417,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         </StyledDisabledTypography>
                       </StyledLineCristinValue>
                     </StyledLineWrapper>
-                    <CompareFormTitle titleMap={titleMap} />
+                    <CompareFormTitle titlesFromImportPublicationMap={titlesFromImportPublicationMap} />
                     <CompareFormJournal
                       importPublication={importPublication}
                       loadJournalIdError={loadJournalIdError}
