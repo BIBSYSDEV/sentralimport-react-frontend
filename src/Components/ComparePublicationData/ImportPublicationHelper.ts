@@ -26,19 +26,9 @@ const getNumberOfPages = (pageFrom?: string, pageTo?: string) => {
 
 const generateTitleObjectForCristinPublication = (values: CompareFormValuesType) => {
   const title: any = {};
-
-  //TODO
-  // const langCodes = [...titleMap.keys()];
-  // langCodes.map((langCode, index) => (
-  //     title: values.titles[index]
-  // )}
-
-  //TODO: Avklare hvordan man lagret tomme verider ?
-
-  // const langCodes: string[] = [...values.titles.keys()];
-  // langCodes.forEach((langCode) => {
-  //   title[langCode.toLowerCase()] = values.titles.get(langCode)?.title ?? '';
-  // });
+  values.titles.forEach((titleObj) => {
+    title[titleObj.langCode.toLowerCase()] = titleObj.title ?? '';
+  });
   return title;
 };
 
