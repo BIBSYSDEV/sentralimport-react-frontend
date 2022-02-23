@@ -85,7 +85,6 @@ context('comparePublicationModal', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[2].pubId}"]`).click();
     cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
-    cy.wait(400);
 
     //skal være tidsskrift-feil
     cy.get(`[data-testid="importdata-pubid"]`).contains(mockImportData[2].pubId);
@@ -144,7 +143,7 @@ context('comparePublicationModal', () => {
 
     //doi
     cy.get(`[data-testid="compare-form-doi-action-equals-icon"]`).should('exist');
-    cy.get(`[data-testid="cristindata-doi-textfield-input"]`).clear().type('ABC');
+    cy.get(`[data-testid="cristindata-doi-textfield-input"]`).clear().type('ABC').blur();
     cy.get(`#Cristin-doi-helper-text`).contains('Doi har galt format');
     cy.get(`[data-testid="compare-form-doi-action-button"]`).should('exist').should('be.disabled');
 
