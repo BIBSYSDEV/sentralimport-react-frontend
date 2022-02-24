@@ -144,7 +144,6 @@ context('contributor', () => {
     cy.get('[data-testid="show-institution-selector-2"]').click(); //adding
     cy.get('[data-testid="filter-institution-select-2"]').click();
     cy.get(`[data-testid="${mockInstitutions[1].cristin_institution_id}-option"]`).click(); //velger sintef narvik
-    cy.get('[data-testid="add-institution-button-2"]').click();
     cy.get(
       `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockInstitutions[1].cristin_institution_id}-add-unit"] > .MuiButton-label`
     ).should('not.exist');
@@ -229,7 +228,6 @@ context('contributor', () => {
     cy.get('[data-testid="show-institution-selector-2"]').click();
     cy.get('[data-testid="filter-institution-select-2"]').click();
     cy.get(`[data-testid="${mockInstitutions[0].cristin_institution_id}-option"]`).click();
-    cy.get('[data-testid="add-institution-button-2"]').click();
     cy.get(
       `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockInstitutions[0].cristin_institution_id}-institution-name"]`
     ).should('exist');
@@ -238,8 +236,7 @@ context('contributor', () => {
     cy.get('[data-testid="show-institution-selector-2"]').click();
     cy.get('[data-testid="filter-institution-select-2"]').click();
     cy.get(`[data-testid="${mockInstitutions[0].cristin_institution_id}-option"]`).click();
-    cy.get('[data-testid="add-institution-button-2"]').click();
-    cy.get('[data-testid="add-institution-error-2"]').should('have.text', 'institusjonen finnes allerede fra før av');
+    cy.get('[data-testid="add-institution-error-2"]').should('have.text', 'Institusjonen finnes allerede fra før');
   });
 
   it('Shows a warning about duplicate authors', () => {
@@ -336,7 +333,6 @@ context('contributor', () => {
     cy.get('[data-testid="show-institution-selector-3"]').click();
     cy.get('[data-testid="filter-institution-select-3"]').click();
     cy.get(`[data-testid="${mockInstitutions[0].cristin_institution_id}-option"]`).click();
-    cy.get('[data-testid="add-institution-button-3"]').click();
     cy.get('[data-testid="contributor-back-button"]').click();
     cy.get('[data-testid="contributor-errors"]').should('not.contain.text', contributorNumber4IsMissingAffiliation);
   });

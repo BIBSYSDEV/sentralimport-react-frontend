@@ -110,7 +110,7 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
           selectedInstitution?.cristin_institution_id.toString()
       );
     if (institutionAlreadyExists) {
-      throw new Error(`Institusjonen finnes allerede fra før av`);
+      throw new Error(`Institusjonen finnes allerede fra før`);
     }
     contributorData.toBeCreated.affiliations = [
       ...(contributorData.toBeCreated.affiliations ?? []),
