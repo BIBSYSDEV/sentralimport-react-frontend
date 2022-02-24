@@ -30,7 +30,7 @@ const StyledMetaDataTypography = styled(Typography)`
   }
 `;
 
-const StyledMonsterPostWarningTypography = styled(StyledMetaDataTypography)`
+const StyledWarningTypography = styled(StyledMetaDataTypography)`
   color: ${Colors.WARNING};
   && {
     font-weight: 700;
@@ -77,10 +77,10 @@ const ImportPublicationPresentation: FC<ImportPublicationPresentationProps> = ({
       </StyledMetaDataTypography>
       {isInImportTable &&
         (importPublication.authors.length > NumberOfContributorsToDefineMonsterPost ? (
-          <StyledMonsterPostWarningTypography
+          <StyledWarningTypography
             data-testid={`importdata-author-presentation-${importPublication.pubId}-monster-warning`}>
             ({importPublication.authors.length}) Stort antall bidragsytere
-          </StyledMonsterPostWarningTypography>
+          </StyledWarningTypography>
         ) : (
           <StyledMetaDataTypography
             data-testid={`importdata-author-presentation-${importPublication.pubId}-auhtor-count`}
@@ -88,8 +88,13 @@ const ImportPublicationPresentation: FC<ImportPublicationPresentationProps> = ({
             {`(${countFoundPersons(importPublication.authors)} av ${importPublication.authors.length} er verifisert)`}
           </StyledMetaDataTypography>
         ))}
-      {importPublication.channel?.title && (
-        <StyledMetaDataTypography>{importPublication.channel?.title}</StyledMetaDataTypography>
+      {importPublication.channel?.title ? (
+        <StyledMetaDataTypography>{importPublication.channel.title}</StyledMetaDataTypography>
+      ) : (
+        <StyledWarningTypography
+          data-testid={`importdata-author-presentation-${importPublication.pubId}-journal-warning`}>
+          Tidskrift mangler
+        </StyledWarningTypography>
       )}
       <StyledMetaDataTypography>
         {importPublication.yearPublished + ';'}

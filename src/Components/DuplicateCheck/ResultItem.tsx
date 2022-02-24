@@ -37,6 +37,13 @@ const StyledStandardNumberTypography = styled(StyledMetaDataTypography)`
   }
 `;
 
+const StyledWarningTypography = styled(StyledMetaDataTypography)`
+  color: ${Colors.WARNING};
+  && {
+    font-weight: 700;
+  }
+`;
+
 const StyledResultLink = styled.a`
   margin-left: 0.5rem;
   &:hover {
@@ -92,7 +99,14 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
                 (issn: InternationalStandardNumber) => 'ISSN ' + issn.type + ': ' + issn.value + '; '
               )}
           </StyledStandardNumberTypography>
-          <StyledMetaDataTypography>{cristinPublication.journal?.name}</StyledMetaDataTypography>
+          {cristinPublication.journal ? (
+            <StyledMetaDataTypography>{cristinPublication.journal?.name}</StyledMetaDataTypography>
+          ) : (
+            <StyledWarningTypography
+              data-testid={`duplication-result-${cristinPublication.cristin_result_id}-journal-warning`}>
+              Tidskrift mangler
+            </StyledWarningTypography>
+          )}
           <StyledMetaDataTypography>
             {cristinPublication.year_published + ';'}
             {doi && ' doi:' + doi}
