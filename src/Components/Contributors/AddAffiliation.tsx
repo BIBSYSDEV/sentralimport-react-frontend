@@ -14,6 +14,11 @@ const StyledCollapse = styled(Collapse)`
   margin-bottom: 1rem;
 `;
 
+const StyledGridForAbortButton = styled(Grid)`
+  display: grid;
+  justify-content: end;
+`;
+
 function filterByInstitutionNameAndAcronym(
   options: Institution[],
   state: FilterOptionsState<Institution>
@@ -185,11 +190,11 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
               options={sortInstitutions(institutionsWithGlobalInstitutions)}
             />
           </Grid>
-          <Grid item sm={3} style={{ display: 'grid', justifyContent: 'end' }}>
+          <StyledGridForAbortButton item sm={3}>
             <Button onClick={() => setShowAddAffiliationSelector(false)} color="secondary">
               Avbryt
             </Button>
-          </Grid>
+          </StyledGridForAbortButton>
         </Grid>
         {errorFetchingAdditionalInstitutions && (
           <Typography variant="body2" color="error">

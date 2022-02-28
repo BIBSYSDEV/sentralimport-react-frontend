@@ -17,6 +17,11 @@ const StyledAddUnitButton = styled(Button)`
   }
 `;
 
+const StyledGridForAbortButton = styled(Grid)`
+  display: grid;
+  justify-content: end;
+`;
+
 export const CircularProgressWrapper = styled.div`
   display: flex;
   width: 100%;
@@ -194,14 +199,14 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
                   }}
                 />
               </Grid>
-              <Grid item sm={3} style={{ display: 'grid', justifyContent: 'end' }}>
+              <StyledGridForAbortButton item sm={3}>
                 <Button
                   data-testid={`cancel-list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}-add-unit`}
                   onClick={() => setShowUnitSelector(false)}
                   color="secondary">
                   Avbryt
                 </Button>
-              </Grid>
+              </StyledGridForAbortButton>
             </Grid>
           </Grid>
         )}
