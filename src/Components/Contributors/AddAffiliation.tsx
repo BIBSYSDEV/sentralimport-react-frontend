@@ -171,7 +171,9 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
               filterOptions={(options: Institution[], state) => filterByInstitutionNameAndAcronym(options, state)}
               renderOption={(option) => (
                 <div data-testid={`${option.cristin_institution_id}-option`}>
-                  <Typography>{option.institution_name.en ?? ''}</Typography>
+                  <Typography>
+                    {option.institution_name.en ?? ''} ({option.country})
+                  </Typography>
                   <Typography variant="body2">{option.institution_name.nb ?? ''}</Typography>
                 </div>
               )}
