@@ -65,7 +65,7 @@ export const createCristinPublicationForSaving = (
       code: values.category.value,
     },
     journal: generateJournalObject(values.journal),
-    original_language: values.originalLanguage ?? '',
+    original_language: values.originalLanguage.toLowerCase() ?? '',
     title: generateTitleObjectForCristinPublication(values),
     pub_id: importPublication.pubId,
     year_published: values.year.toString(),
@@ -106,7 +106,7 @@ export const createCristinPublicationForUpdating = (
 ) => {
   const publication: PatchPublication = {
     cristinResultId,
-    original_language: values.originalLanguage ?? '',
+    original_language: values.originalLanguage.toLowerCase() ?? '',
     title: generateTitleObjectForCristinPublication(values),
     pub_id: importPublication.pubId,
     import_sources: [
