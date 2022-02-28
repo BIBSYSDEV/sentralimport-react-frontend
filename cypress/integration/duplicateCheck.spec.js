@@ -121,4 +121,10 @@ context('duplication-check-modal', () => {
       mockCristinPublicationWithDoi.links[1].url.substring(17, 30)
     );
   });
+
+  it('can show no journal-warning in search results', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-689770-journal-warning"]`).should('contain', 'Tidskrift mangler');
+    cy.get(`[data-testid="duplication-result-688231-journal-warning"]`).should('not.exist');
+  });
 });

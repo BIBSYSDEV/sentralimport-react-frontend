@@ -45,4 +45,9 @@ context('application', () => {
     cy.get(`#institution-select-option-0`).click();
     cy.get('#institution-select').should('have.value', mockInstitutions[6].institution_name.nb);
   });
+
+  it('can show warning when import-data is missing journal', () => {
+    cy.get('[data-testid="importdata-author-presentation-610214-journal-warning"]').contains('Tidskrift mangler');
+    cy.get('[data-testid="importdata-author-presentation-610220-journal-warning"]').should('not.exist');
+  });
 });
