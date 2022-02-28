@@ -173,6 +173,7 @@ const ContributorModal: FC<ContributorProps> = ({
       }
     }
     setContributors(tempContrib);
+    validateContributors(tempContrib, setContributorErrors);
   };
 
   function addContributor() {
