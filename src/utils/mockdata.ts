@@ -78,6 +78,16 @@ export const mockInstitutions = [
     cristin_user_institution: true,
     url: 'https://api.cristin.no/v2/institutions/194',
   },
+  {
+    cristin_institution_id: '3331',
+    institution_name: {
+      nb: 'ZZ-Denne institusjonen har kun norsk navn',
+    },
+    acronym: 'DIHKNN',
+    country: 'NO',
+    cristin_user_institution: true,
+    url: 'https://api.cristin.no/v2/institutions/3331',
+  },
 ];
 
 export const resultInstitutionNTNU = {
