@@ -188,6 +188,14 @@ const ContributorModal: FC<ContributorProps> = ({
     setIsContributorsFiltered((prevState) => !prevState);
   };
 
+  const isFilteredMode = (contributor: ContributorWrapper, contributorIndex: number) => {
+    return (
+      !arrayOfContributorsWithNorwegianInstitution[contributorIndex] &&
+      contributor.toBeCreated?.affiliations?.length !== 0 &&
+      isContributorsFiltered
+    );
+  };
+
   return (
     <>
       <StyledModal isOpen={isContributorModalOpen}>
@@ -233,17 +241,11 @@ const ContributorModal: FC<ContributorProps> = ({
                         row={contributor}
                         contributors={contributors}
                         setContributors={setContributors}
-                        hideArrows={
-                          !arrayOfContributorsWithNorwegianInstitution[index] &&
-                          contributor.toBeCreated?.affiliations?.length !== 0 &&
-                          isContributorsFiltered
-                        }
+                        hideArrows={isFilteredMode(contributor, index)}
                       />
                     </StyledOrderColumn>
                     <StyledContributorColumn>
-                      {!arrayOfContributorsWithNorwegianInstitution[index] &&
-                      contributor.toBeCreated?.affiliations?.length !== 0 &&
-                      isContributorsFiltered ? (
+                      {isFilteredMode(contributor, index) ? (
                         <Typography data-testid={`import-contributor-hidden-${index}`} color="textSecondary">
                           Forfatter-info er skjult
                         </Typography>
@@ -252,19 +254,16 @@ const ContributorModal: FC<ContributorProps> = ({
                       )}
                     </StyledContributorColumn>
                     <StyledContributorColumn>
-                      <div
-                        hidden={
-                          !arrayOfContributorsWithNorwegianInstitution[index] &&
-                          contributor.toBeCreated?.affiliations?.length !== 0 &&
-                          isContributorsFiltered
-                        }>
-                        <ContributorForm
-                          resultListIndex={index}
-                          contributorData={contributor}
-                          contributors={contributors}
-                          updateContributor={updateContributor}
-                          removeContributor={removeContributor}
-                        />
+                      <div>
+                        {!isFilteredMode(contributor, index) && (
+                          <ContributorForm
+                            resultListIndex={index}
+                            contributorData={contributor}
+                            contributors={contributors}
+                            updateContributor={updateContributor}
+                            removeContributor={removeContributor}
+                          />
+                        )}
                       </div>
                     </StyledContributorColumn>
                   </StyledContributorLineWrapper>
