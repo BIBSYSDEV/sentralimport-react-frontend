@@ -24,7 +24,7 @@ export interface CompareFormValuesType {
   isInitiatedFromCristinPublication: boolean;
   originalLanguage: string;
   titles: CompareFormTitleType[];
-  year: string;
+  year: number | undefined;
   doi?: string;
   category: CompareFormCategoryOption;
   volume?: string;
