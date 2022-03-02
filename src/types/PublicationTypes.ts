@@ -13,7 +13,7 @@ export interface ImportPublication {
   category?: any;
   pubId: string;
   authors: ImportPublicationPerson[];
-  yearPublished: string;
+  yearPublished: number | undefined;
   channel?: Channel;
   doi?: string;
   categoryName: string;
@@ -70,7 +70,7 @@ export interface Language {
 export const emptyImportPublication: ImportPublication = {
   externalCategory: '',
   externalId: '',
-  yearPublished: '',
+  yearPublished: undefined,
   channel: {
     title: '',
   },

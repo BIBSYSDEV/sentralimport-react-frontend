@@ -18,7 +18,7 @@ function generateSearchParams(
   perPage: string,
   doi: string | undefined,
   title: string | undefined,
-  yearPublished: string | undefined,
+  yearPublished: number | undefined,
   issn: string | undefined,
   contributor?: string | undefined
 ): string {
@@ -32,7 +32,7 @@ function generateSearchParams(
     if (title) {
       searchParams.set(SearchChristinPublicationsSearchParams.title, title);
     }
-    if (yearPublished) {
+    if (yearPublished && Number.isInteger(yearPublished)) {
       searchParams.set(SearchChristinPublicationsSearchParams.publishedSince, `${+yearPublished - 1}`);
       searchParams.set(SearchChristinPublicationsSearchParams.publishedBefore, `${yearPublished}`);
     }
@@ -55,7 +55,7 @@ export async function searchChristinPublications(
   perPage: string,
   doi: string | undefined,
   title: string | undefined,
-  yearPublished: string | undefined,
+  yearPublished: number | undefined,
   issn: string | undefined,
   contributor?: string
 ): Promise<SearchChristinPublicationsResponse> {

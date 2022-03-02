@@ -115,7 +115,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
       maxResults,
       isDoiChecked ? doi.trim() : undefined,
       isTitleChecked ? title.trim() : undefined,
-      isYearPublishedChecked ? yearPublished.trim() : undefined,
+      isYearPublishedChecked ? yearPublished : undefined,
       isIssnChecked ? issn.trim() : undefined,
       isAuthorChecked ? author.trim() : undefined
     );
