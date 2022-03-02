@@ -46,7 +46,7 @@ context('duplication-check-modal', () => {
     );
     cy.get(`[data-testid="search-panel-author-textfield"] .MuiInputBase-input`).should(
       'have.value',
-      mockImportData[0].authors[0].authorName
+      mockImportData[0].authors[0].surname
     );
     cy.get(`[data-testid="search-panel-doi-textfield"] .MuiInputBase-input`).should(
       'have.value',
