@@ -109,6 +109,9 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
           )}
           <StyledMetaDataTypography>
             {cristinPublication.year_published + ';'}
+            {cristinPublication.volume && cristinPublication.volume + ';'}
+            {cristinPublication.pages?.from && cristinPublication.pages.from + '-'}
+            {cristinPublication.pages?.to && cristinPublication.pages.to + ';'}
             {doi && ' doi:' + doi}
           </StyledMetaDataTypography>
         </StyledResultLink>
