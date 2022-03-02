@@ -165,8 +165,9 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
                 <div data-testid={`filter-institution-select-${option.cristin_institution_id}-option`}>
                   <Typography
                     data-testid={`filter-institution-select-${option.cristin_institution_id}-option-english-main`}>
-                    {option.institution_name.en ? option.institution_name.en : option.institution_name.nb ?? ''}(
-                    {option.country})
+                    {`${option.institution_name.en ? option.institution_name.en : option.institution_name.nb ?? ''} (${
+                      option.country
+                    })`}
                   </Typography>
                   {option.institution_name.en && (
                     <Typography
