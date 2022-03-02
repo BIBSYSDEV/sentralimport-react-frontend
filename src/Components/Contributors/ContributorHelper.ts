@@ -12,11 +12,15 @@ import { CRIST_REST_API } from '../../utils/constants';
 import { removeInstitutionsDuplicatesBasedOnCristinId, replaceNonCristinInstitutions } from './InstututionHelper';
 import clone from 'just-clone';
 
-export async function searchCristinPersons(authors: ImportPublicationPerson[]) {
+export async function searchCristinPersons(
+  authors: ImportPublicationPerson[],
+  setLoadingContributorsProgress: (progress: number) => void
+) {
   let unitNameCache = new Map();
   let institutionNameCache = new Map();
   const suggestedAuthors = [];
   for (let i = 0; i < authors.length; i++) {
+    //TODO: break out of loop if modal closes
     let cristinPerson = { ...emptyContributor };
     let affiliations: Affiliation[] = [];
     if (authors[i].cristinId !== 0) {
@@ -51,6 +55,7 @@ export async function searchCristinPersons(authors: ImportPublicationPerson[]) {
       };
     }
     suggestedAuthors[i] = cristinPerson;
+    setLoadingContributorsProgress(Math.floor((i * 100) / authors.length));
   }
   return suggestedAuthors;
 }
