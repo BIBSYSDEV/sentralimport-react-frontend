@@ -162,9 +162,19 @@ const AddAffiliation: FC<AddAffiliationProps> = ({ contributorData, resultListIn
               noOptionsText="fant ingen institusjon"
               filterOptions={(options: Institution[], state) => filterByInstitutionNameAndAcronym(options, state)}
               renderOption={(option) => (
-                <div data-testid={`${option.cristin_institution_id}-option`}>
-                  <Typography>{`${option.institution_name.en ?? ''} (${option.country})`}</Typography>
-                  <Typography variant="body2">{option.institution_name.nb ?? ''}</Typography>
+                <div data-testid={`filter-institution-select-${option.cristin_institution_id}-option`}>
+                  <Typography
+                    data-testid={`filter-institution-select-${option.cristin_institution_id}-option-english-main`}>
+                    {option.institution_name.en ? option.institution_name.en : option.institution_name.nb ?? ''}(
+                    {option.country})
+                  </Typography>
+                  {option.institution_name.en && (
+                    <Typography
+                      data-testid={`filter-institution-select-${option.cristin_institution_id}-option-norwegian-alternative`}
+                      variant="body2">
+                      {option.institution_name.nb ?? ''}
+                    </Typography>
+                  )}
                 </div>
               )}
               getOptionLabel={(option) => option.institution_name.en ?? option.institution_name.nb}
