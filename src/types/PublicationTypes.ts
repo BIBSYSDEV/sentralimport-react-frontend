@@ -1,4 +1,5 @@
 import { ImportPublicationPerson } from './ContributorTypes';
+import { ImportSources } from './ContextType';
 
 export enum Order {
   asc = 'asc',
@@ -12,7 +13,7 @@ export interface ImportPublication {
   category?: any;
   pubId: string;
   authors: ImportPublicationPerson[];
-  yearPublished: string;
+  yearPublished: number | undefined;
   channel?: Channel;
   doi?: string;
   categoryName: string;
@@ -21,7 +22,6 @@ export interface ImportPublication {
   externalCategory: string;
   languages: Language[];
 }
-
 export interface CristinPublication {
   authorTotalCount: number;
   authors: any;
@@ -30,13 +30,17 @@ export interface CristinPublication {
   year_published: any;
   category: any;
   title: any;
-  original_language?: any;
+  original_language: string;
   created: {
     date: string;
   };
   links?: any[];
   journal?: any;
   cristin_result_id: string;
+  issue?: string;
+  volume?: string;
+  pages?: Pages;
+  import_sources?: ImportSources[];
 }
 
 export interface Channel {
@@ -66,7 +70,7 @@ export interface Language {
 export const emptyImportPublication: ImportPublication = {
   externalCategory: '',
   externalId: '',
-  yearPublished: '',
+  yearPublished: undefined,
   channel: {
     title: '',
   },
@@ -127,8 +131,8 @@ export interface Journal {
 }
 
 export interface Pages {
-  from: string | number;
-  to: string | number;
+  from: string;
+  to: string;
   count: string;
 }
 

@@ -6,6 +6,7 @@ import { Typography } from '@material-ui/core';
 import { ImportPublication } from '../../types/PublicationTypes';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { ImportPublicationPerson } from '../../types/ContributorTypes';
+import { NumberOfContributorsToDefineMonsterPost } from '../Contributors/ContributorModal';
 
 const StyledImportPublicationPresentation = styled.div`
   padding-left: 1rem;
@@ -29,7 +30,7 @@ const StyledMetaDataTypography = styled(Typography)`
   }
 `;
 
-const StyledMonsterPostWarningTypography = styled(StyledMetaDataTypography)`
+const StyledWarningTypography = styled(StyledMetaDataTypography)`
   color: ${Colors.WARNING};
   && {
     font-weight: 700;
@@ -71,19 +72,29 @@ const ImportPublicationPresentation: FC<ImportPublicationPresentationProps> = ({
       {!isInImportTable && importPublication.category && (
         <StyledMetaDataTypography>{importPublication.categoryName}</StyledMetaDataTypography>
       )}
-      <StyledMetaDataTypography>{generateAuthorPresentation(importPublication)}</StyledMetaDataTypography>
+      <StyledMetaDataTypography data-testid={`importdata-author-presentation-${importPublication.pubId}`}>
+        {generateAuthorPresentation(importPublication)}
+      </StyledMetaDataTypography>
       {isInImportTable &&
-        (importPublication.authors.length > 100 ? (
-          <StyledMonsterPostWarningTypography>
+        (importPublication.authors.length > NumberOfContributorsToDefineMonsterPost ? (
+          <StyledWarningTypography
+            data-testid={`importdata-author-presentation-${importPublication.pubId}-monster-warning`}>
             ({importPublication.authors.length}) Stort antall bidragsytere
-          </StyledMonsterPostWarningTypography>
+          </StyledWarningTypography>
         ) : (
-          <StyledMetaDataTypography variant="caption">
+          <StyledMetaDataTypography
+            data-testid={`importdata-author-presentation-${importPublication.pubId}-auhtor-count`}
+            variant="caption">
             {`(${countFoundPersons(importPublication.authors)} av ${importPublication.authors.length} er verifisert)`}
           </StyledMetaDataTypography>
         ))}
-      {importPublication.channel?.title && (
-        <StyledMetaDataTypography>{importPublication.channel?.title}</StyledMetaDataTypography>
+      {importPublication.channel?.title ? (
+        <StyledMetaDataTypography>{importPublication.channel.title}</StyledMetaDataTypography>
+      ) : (
+        <StyledWarningTypography
+          data-testid={`importdata-author-presentation-${importPublication.pubId}-journal-warning`}>
+          Tidskrift mangler
+        </StyledWarningTypography>
       )}
       <StyledMetaDataTypography>
         {importPublication.yearPublished + ';'}

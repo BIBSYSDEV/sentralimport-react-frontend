@@ -25,6 +25,7 @@ interface DuplicateSearchProps {
   importPublication: ImportPublication;
   selectedRadioButton: string;
   setSelectedRadioButton: (value: string) => void;
+  setSelectedPublication: any;
 }
 
 const maxResults = '5';
@@ -33,6 +34,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
   importPublication,
   selectedRadioButton,
   setSelectedRadioButton,
+  setSelectedPublication,
 }) => {
   const [resultList, setResultList] = useState<CristinPublication[]>([]);
   const [foundDuplicates, setFoundDuplicates] = useState(false);
@@ -70,6 +72,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
   useEffect(() => {
     if (resultList.length > 0) {
       setSelectedRadioButton(resultList[0].cristin_result_id);
+      setSelectedPublication(resultList[0]);
       dispatch({ type: 'setSelectedPublication', payload: resultList[0] });
     }
   }, [resultList]);

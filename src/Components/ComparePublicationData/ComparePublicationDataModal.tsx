@@ -2,12 +2,10 @@ import React, { FC, useContext, useEffect, useLayoutEffect, useState } from 'rea
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Button, CircularProgress, Grid, Typography } from '@material-ui/core';
 import ConfirmImportDialog from '../Dialogs/ConfirmImportDialog';
-import GenericConfirmDialog from '../Dialogs/GenericConfirmDialog';
 import { Context } from '../../Context';
 import ContributorModal from '../Contributors/ContributorModal';
 import styled from 'styled-components';
 import { useSnackbar } from 'notistack';
-import clone from 'just-clone';
 import {
   CristinPublication,
   ImportPublication,
@@ -16,7 +14,6 @@ import {
   Journal,
   Language,
 } from '../../types/PublicationTypes';
-import { getPersonDetailById } from '../../api/contributorApi';
 import CommonErrorMessage from '../CommonErrorMessage';
 import { handlePotentialExpiredSession } from '../../api/api';
 import { ChannelQueryMethod, getJournalsByQuery } from '../../api/publicationApi';
@@ -44,7 +41,6 @@ import CompareFormVolume from './CompareFormVolume';
 import CompareFormIssue from './CompareFormIssue';
 import CompareFormPages from './CompareFormPages';
 import CompareFormJournal from './CompareFormJournal';
-import CompareFormLanguage from './CompareFormLanguage';
 import { CompareFormValuesType } from './CompareFormTypes';
 import { ContributorType, ContributorWrapper, emptyContributor } from '../../types/ContributorTypes';
 import { formatCristinCreatedDate, NoDatePlaceHolder } from '../../utils/stringUtils';
@@ -62,7 +58,7 @@ import {
 } from '../Contributors/ContributorHelper';
 import { getDuplicateAffiliations } from '../Contributors/InstututionHelper';
 import { extractDoiFromCristinPublication } from '../DuplicateCheck/ResultItem';
-import { formValidationSchema } from './CompareFormValidationSchema';
+import { generateFormValidationSchema } from './CompareFormValidationSchema';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -79,8 +75,9 @@ const StyledSnackBarButton: any = styled(Button)`
   }
 `;
 
-const CircularProgressWrapper = styled.div`
+const ProgressWrapper = styled.div`
   display: flex;
+  gap: 1rem;
   width: 100%;
   align-items: center;
   justify-content: center;
@@ -91,21 +88,12 @@ const StyledAlert = styled(Alert)`
   margin-bottom: 0.5rem;
 `;
 
-const generateLanguageObjectFromCristinPublication = (publ: CristinPublication) => {
-  return {
-    title: publ.title ? publ.title[publ.original_language] : '',
-    lang: publ.original_language?.toUpperCase(),
-    original: true,
-  };
-};
-
 interface ComparePublicationDataModalProps {
   isComparePublicationDataModalOpen: boolean;
   handleComparePublicationDataModalClose: () => void;
   importPublication: ImportPublication;
-  cristinPublication: CristinPublication; //TODO: Rydd i dette tullet
+  cristinPublication?: CristinPublication;
   handleDuplicateCheckModalClose: () => void;
-  isDuplicate: boolean;
 }
 
 const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
@@ -114,12 +102,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   importPublication,
   cristinPublication,
   handleDuplicateCheckModalClose,
-  isDuplicate,
 }) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Context);
   const [isConfirmImportDialogOpen, setIsConfirmImportDialogOpen] = useState(false);
-  const [isConfirmAbortDialogOpen, setIsConfirmAbortDialogOpen] = useState(false);
   const [importPublicationError, setImportPublicationError] = useState<Error | undefined>();
   const [loadJournalIdError, setLoadJournalIdError] = useState<Error | undefined>();
 
@@ -127,97 +113,98 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   const [contributorErrors, setContributorErrors] = useState<string[]>([]);
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors, setContributors] = useState<ContributorWrapper[]>(
-    isDuplicate ? state.selectedPublication.authors : importPublication?.authors || []
+    cristinPublication ? cristinPublication.authors : importPublication?.authors ?? []
   );
   const [isLoadingContributors, setIsLoadingContributors] = useState(false);
   const [loadingContributorsError, setLoadingContributorsError] = useState<Error | undefined>();
+  const [loadingContributorsProgress, setLoadingContributorsProgress] = useState(0);
 
   //publication-form-stuff
   const [initialFormValues, setInitialFormValues] = useState<CompareFormValuesType | undefined>();
   const [formValues, setFormValues] = useState<CompareFormValuesType | undefined>();
-  const sortedLanguagesFromImportPublication = clone(importPublication)
-    .languages.sort((a: any, b: any) => a.original - b.original)
-    .reverse();
-  const [publicationLanguages, setPublicationLanguages] = useState(
-    isDuplicate
-      ? [generateLanguageObjectFromCristinPublication(state.selectedPublication)]
-      : sortedLanguagesFromImportPublication
-  ); //TODO: putt hele publicationLanguages i formik
-  const [selectedLang, setSelectedLang] = useState<Language>(
-    isDuplicate
-      ? {
-          title: state.selectedPublication.title
-            ? state.selectedPublication.title[state.selectedPublication.original_language]
-            : '',
-          lang: state.selectedPublication.original_language?.toUpperCase(),
-          original: true,
-        }
-      : importPublication.languages?.find((lang: Language) => lang.original) ?? importPublication.languages[0]
-  );
-  const kildeId = isDuplicate
-    ? (state.selectedPublication.import_sources && state.selectedPublication.import_sources[0]?.source_reference_id) ||
+
+  //title-stuff
+  const titlesFromImportPublicationMap = new Map<string, string>();
+  const titlesToBeImportedMap = new Map<string, string>();
+  importPublication.languages.forEach((language) => {
+    titlesToBeImportedMap.set(language.lang.toUpperCase(), language.title);
+    titlesFromImportPublicationMap.set(language.lang.toUpperCase(), language.title);
+  });
+
+  const kildeId = cristinPublication
+    ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_reference_id) ??
       'Ingen kildeId funnet'
     : importPublication.externalId;
-  const kilde = isDuplicate
-    ? (state.selectedPublication.import_sources && state.selectedPublication.import_sources[0]?.source_name) ||
-      'Ingen kilde funnet'
+
+  const kilde = cristinPublication
+    ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_name) ?? 'Ingen kilde funnet'
     : importPublication.sourceName;
 
-  const updatePublicationLanguages = (title: string, lang: string) => {
-    const index = publicationLanguages.map((lang: any) => lang.lang).indexOf(lang);
-    if (publicationLanguages[index]) {
-      publicationLanguages[index].title = title;
+  if (cristinPublication) {
+    for (const langCode in cristinPublication.title) {
+      titlesToBeImportedMap.set(langCode.toUpperCase(), cristinPublication.title[langCode]);
+      if (!titlesFromImportPublicationMap.get(langCode.toUpperCase()))
+        titlesFromImportPublicationMap.set(langCode.toUpperCase(), '');
     }
-    setPublicationLanguages(publicationLanguages);
+  }
+
+  const originalLanguageStringFromimportPublication: string =
+    importPublication.languages.find((lang: Language) => lang.original)?.lang ?? importPublication.languages[0].lang;
+
+  const generateTitlesToBeImported = () => {
+    const langCodes = [...titlesToBeImportedMap.keys()];
+    return [...titlesToBeImportedMap.values()].map((value, index) => {
+      return {
+        title: value,
+        langCode: langCodes[index],
+      };
+    });
   };
 
   useEffect(() => {
     //init ligger i en useeffect pga asynkront kall til getJournalId
     const initFormik = async () => {
-      //Formik is initiated from either importPublication or state.selectedPublication (set in duplicate-modal)
-
-      //TODO: det trengs en sjekk på om state.selectedPublication.links inneholder en doi - nå settes den uansett
-      setInitialFormValues(
-        isDuplicate && state.selectedPublication
-          ? {
-              isDuplicate: true,
-              title: selectedLang.title ?? '',
-              year: state.selectedPublication.year_published,
-              doi: extractDoiFromCristinPublication(state.selectedPublication),
-              language: selectedLang,
-              journal: {
-                cristinTidsskriftNr: await getJournalId(state.selectedPublication.journal),
-                title: state.selectedPublication.journal?.name || 'Ingen tidsskrift funnet',
-              },
-              category: {
-                value: state.selectedPublication.category?.code,
-                label: state.selectedPublication.category?.name?.nb,
-              },
-              volume: state.selectedPublication.volume ?? '',
-              issue: state.selectedPublication.issue ?? '',
-              pageFrom: state.selectedPublication.pages?.from ?? '',
-              pageTo: state.selectedPublication.pages?.to ?? '',
-            }
-          : {
-              isDuplicate: false,
-              title: selectedLang.title ?? '',
-              year: importPublication.yearPublished,
-              doi: importPublication.doi,
-              language: selectedLang,
-              journal: {
-                cristinTidsskriftNr: importPublication?.channel?.cristinTidsskriftNr?.toString() ?? '',
-                title: importPublication?.channel?.title ?? 'Ingen tidsskrift funnet',
-              },
-              category: findLegalCategory(importPublication),
-              volume: importPublication.channel?.volume ?? '',
-              issue: importPublication.channel?.issue ?? '',
-              pageFrom: importPublication.channel?.pageFrom ?? '',
-              pageTo: importPublication.channel?.pageTo ?? '',
-            }
-      );
+      //Formik is initiated from either importPublication or cristinPublication (set in duplicate-modal)
+      //TODO: det trengs en sjekk på om cristinPublication.links inneholder en doi - nå settes den uansett
+      cristinPublication
+        ? setInitialFormValues({
+            isInitiatedFromCristinPublication: true,
+            originalLanguage: cristinPublication.original_language.toUpperCase() ?? '',
+            titles: generateTitlesToBeImported(),
+            year: cristinPublication.year_published,
+            doi: extractDoiFromCristinPublication(cristinPublication),
+            journal: {
+              cristinTidsskriftNr: await getJournalId(cristinPublication.journal),
+              title: cristinPublication.journal?.name ?? 'Ingen tidsskrift funnet',
+            },
+            category: {
+              value: cristinPublication.category?.code,
+              label: cristinPublication.category?.name?.nb,
+            },
+            volume: cristinPublication.volume ?? '',
+            issue: cristinPublication.issue ?? '',
+            pageFrom: cristinPublication.pages?.from ?? '',
+            pageTo: cristinPublication.pages?.to ?? '',
+          })
+        : setInitialFormValues({
+            isInitiatedFromCristinPublication: false,
+            originalLanguage: originalLanguageStringFromimportPublication.toUpperCase() ?? '',
+            titles: generateTitlesToBeImported(),
+            year: importPublication.yearPublished,
+            doi: importPublication.doi,
+            journal: {
+              cristinTidsskriftNr: importPublication?.channel?.cristinTidsskriftNr?.toString() ?? '',
+              title: importPublication?.channel?.title ?? 'Ingen tidsskrift funnet',
+            },
+            category: findLegalCategory(importPublication),
+            volume: importPublication.channel?.volume ?? '',
+            issue: importPublication.channel?.issue ?? '',
+            pageFrom: importPublication.channel?.pageFrom ?? '',
+            pageTo: importPublication.channel?.pageTo ?? '',
+          });
     };
     initFormik().then();
-  }, [isDuplicate, state.selectedPublication, importPublication]);
+  }, [cristinPublication, importPublication]);
 
   useLayoutEffect(() => {
     async function enrichImportPublicationAuthors() {
@@ -225,37 +212,32 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       try {
         setIsLoadingContributors(true);
         setLoadingContributorsError(undefined);
-        const identified: boolean[] = [];
         const authorsFromImportPublication = importPublication.authors;
 
         let cristinAuthors: ContributorType[];
-        if (isDuplicate) {
-          cristinAuthors = state.selectedPublication.authors;
+        if (cristinPublication) {
+          cristinAuthors = cristinPublication.authors;
         } else {
-          cristinAuthors = await searchCristinPersons(authorsFromImportPublication);
+          cristinAuthors = await searchCristinPersons(authorsFromImportPublication, setLoadingContributorsProgress);
         }
         for (let i = 0; i < Math.max(cristinAuthors.length, authorsFromImportPublication.length); i++) {
           if (cristinAuthors[i]) {
-            if (isDuplicate && state.doSave) {
+            if (cristinPublication) {
               if (i < cristinAuthors.length) {
-                cristinAuthors[i].affiliations = await getDuplicateAffiliations(state.selectedPublication.authors[i]);
+                cristinAuthors[i].affiliations = await getDuplicateAffiliations(cristinPublication.authors[i]);
               } else {
                 cristinAuthors[i] = { ...emptyContributor };
               }
             }
-            identified[i] = cristinAuthors[i].identified_cristin_person || false;
             tempContributors[i] = createContributorWrapper(authorsFromImportPublication, i, cristinAuthors);
             tempContributors[i].toBeCreated = await generateToBeCreatedContributor(
               tempContributors[i],
               cristinAuthors[i],
               authorsFromImportPublication[i],
-              isDuplicate
+              !!cristinPublication
             );
           }
         }
-        dispatch({ type: 'setContributorsLoaded', payload: true });
-        dispatch({ type: 'identified', payload: identified }); //skjer dette to steder ?
-        dispatch({ type: 'identifiedImported', payload: identified });
         validateContributors(tempContributors, setContributorErrors);
       } catch (error) {
         setLoadingContributorsError(error as Error);
@@ -264,44 +246,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       }
       setContributors(tempContributors);
     }
-    !isDuplicate && enrichImportPublicationAuthors().then();
-  }, [importPublication, state.selectedPublication, isDuplicate]);
-
-  useEffect(() => {
-    async function identifyCristinPersonsInContributors_And_CreateListOfIdentified() {
-      try {
-        if (!isLoadingContributors) {
-          return;
-        }
-        const identified: boolean[] = [];
-        const identifiedImported: boolean[] = [];
-        for (let i = 0; i < contributors.length; i++) {
-          if (
-            !contributors[i].imported.identified_cristin_person &&
-            contributors[i].imported.cristin_person_id !== null &&
-            contributors[i].imported.cristin_person_id !== 0 &&
-            i < contributors.length
-          ) {
-            const person = await getPersonDetailById(contributors[i].imported);
-            identifiedImported[i] = person.identified_cristin_person ?? false;
-          }
-          if (!contributors[i].toBeCreated.identified_cristin_person && isDuplicate) {
-            //const person = await getPersonDetailById(contributors[i].toBeCreated); //TODO! Denne gir ingen mening - søker på cristinid=0 som gir 404-feil
-            // identified[i] = person.identified_cristin_person ?? false;
-          }
-        }
-        dispatch({ type: 'identifiedImported', payload: identifiedImported });
-        dispatch({ type: 'identified', payload: identified });
-        //TODO: kan ikke dette ligge direkte på contributor-objektet isteden ?
-      } catch (error) {
-        setLoadingContributorsError(error as Error);
-      } finally {
-        setIsLoadingContributors(false);
-      }
-    }
-    if (!isDuplicate) return;
-    identifyCristinPersonsInContributors_And_CreateListOfIdentified().then();
-  }, [contributors]);
+    !cristinPublication && enrichImportPublicationAuthors().then();
+  }, [importPublication, cristinPublication]);
 
   const successSnackBarActions = (key: any, resultId: string) => (
     <>
@@ -338,20 +284,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       const errorMessage = `Noe gikk galt med import av publikasjon med pub-id: ${importPublication.pubId}.
        Dine endringer er fortsatt lagret i browseren. ${result.errorMessage ?? ''}`;
       setImportPublicationError(new Error(errorMessage));
-      // dispatch({ type: 'setContributorsLoaded', payload: false });
     }
-  }
-
-  function handleConfirmAbortDialogSubmit() {
-    dispatch({ type: 'doSave', payload: false });
-    setIsConfirmAbortDialogOpen(false);
-    handleComparePublicationDataModalClose();
-    handleDuplicateCheckModalClose();
-    dispatch({ type: 'setContributorsLoaded', payload: false });
-  }
-
-  function emptyGlobalFormErrors() {
-    dispatch({ type: 'setFormErrors', payload: [] });
   }
 
   async function getJournalId(journal: Journal): Promise<string> {
@@ -377,31 +310,22 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   const handleImportButtonClick = (values: CompareFormValuesType) => {
     setFormValues(values);
-    if (state.contributors === null) {
-      dispatch({ type: 'contributors', payload: contributors }); //?
-    }
     setIsConfirmImportDialogOpen(true);
   };
 
   function handleImportPublicationConfirmed(annotation: string) {
     if (formValues) {
-      if (!isDuplicate) {
-        handleCreatePublication(
-          formValues,
-          importPublication,
-          contributors,
-          publicationLanguages,
-          annotation,
-          dispatch
-        ).then((response) => handlePublicationImported(response));
+      if (!cristinPublication) {
+        handleCreatePublication(formValues, importPublication, contributors, annotation).then((response) =>
+          handlePublicationImported(response)
+        );
       } else {
         handleUpdatePublication(
           formValues,
           importPublication,
-          state.selectedPublication.cristin_result_id,
-          publicationLanguages,
-          annotation,
-          dispatch
+          cristinPublication.cristin_result_id,
+
+          annotation
         ).then((response) => handlePublicationImported(response));
       }
     }
@@ -415,7 +339,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             onSubmit={handleImportButtonClick}
             initialValues={initialFormValues}
             validateOnMount
-            validationSchema={formValidationSchema}>
+            validationSchema={generateFormValidationSchema(initialFormValues.originalLanguage)}>
             {({ isValid, handleSubmit }) => (
               <Form onSubmit={handleSubmit}>
                 <ModalBody>
@@ -436,7 +360,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                       <StyledActionButtonsPlaceHolder />
                       <StyledLineCristinValue>
                         <StyledDisabledTypography data-testid="cristindata-id">
-                          {isDuplicate ? cristinPublication.cristin_result_id : 'Ingen Cristin-Id'}
+                          {cristinPublication ? cristinPublication.cristin_result_id : 'Ingen Cristin-Id'}
                         </StyledDisabledTypography>
                       </StyledLineCristinValue>
                     </StyledLineWrapper>
@@ -450,7 +374,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                       <StyledActionButtonsPlaceHolder />
                       <StyledLineCristinValue data-testid="cristindata-created">
                         <StyledDisabledTypography>
-                          {isDuplicate && cristinPublication
+                          {cristinPublication
                             ? formatCristinCreatedDate(cristinPublication.created.date)
                             : NoDatePlaceHolder}
                         </StyledDisabledTypography>
@@ -470,29 +394,40 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         </StyledDisabledTypography>
                       </StyledLineCristinValue>
                     </StyledLineWrapper>
-                    <CompareFormLanguage
-                      languages={publicationLanguages}
-                      selectedLang={selectedLang}
-                      setSelectedLang={setSelectedLang}
-                    />
-                    <CompareFormTitle
-                      importPublication={importPublication}
-                      updatePublicationLanguages={updatePublicationLanguages}
-                      selectedLang={selectedLang}
-                    />
+                    <StyledLineWrapper>
+                      <StyledLineLabelTypography>Originalspråk</StyledLineLabelTypography>
+                      <StyledLineImportValue>
+                        <Typography data-testid="importdata-source">
+                          {originalLanguageStringFromimportPublication}
+                        </Typography>
+                      </StyledLineImportValue>
+                      <StyledActionButtonsPlaceHolder />
+                      <StyledLineCristinValue>
+                        <StyledDisabledTypography data-testid="cristindata-source">
+                          {initialFormValues.originalLanguage}
+                        </StyledDisabledTypography>
+                      </StyledLineCristinValue>
+                    </StyledLineWrapper>
+                    <CompareFormTitle titlesFromImportPublicationMap={titlesFromImportPublicationMap} />
                     <CompareFormJournal
                       importPublication={importPublication}
                       loadJournalIdError={loadJournalIdError}
-                      isDuplicate={isDuplicate}
+                      isCristinPublicationSelected={!!cristinPublication}
                     />
                     <CompareFormDoi importPublication={importPublication} />
-                    <CompareFormYear importPublication={importPublication} isDuplicate={isDuplicate} />
-                    <CompareFormCategory importPublication={importPublication} isDuplicate={isDuplicate} />
+                    <CompareFormYear
+                      importPublication={importPublication}
+                      isCristinPublicationSelected={!!cristinPublication}
+                    />
+                    <CompareFormCategory
+                      importPublication={importPublication}
+                      isCristinPublicationSelected={!!cristinPublication}
+                    />
                     <CompareFormVolume importPublication={importPublication} />
                     <CompareFormIssue importPublication={importPublication} />
                     <CompareFormPages importPublication={importPublication} />
                   </StyledFormWrapper>
-                  {isDuplicate ? (
+                  {cristinPublication ? (
                     <StyledCenterContentWrapper>
                       <StyledAlert severity="warning" data-testid="duplicate-warning-box">
                         NB! Posten eksisterer i Cristin.{' '}
@@ -509,10 +444,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                   ) : (
                     <StyledOpenContributorsButtonWrapper>
                       {isLoadingContributors ? (
-                        <CircularProgressWrapper>
-                          <CircularProgress size={'1rem'} />
-                          <Typography style={{ margin: '1rem' }}>Laster inn forfattere</Typography>
-                        </CircularProgressWrapper>
+                        <ProgressWrapper>
+                          <Typography>Laster inn forfattere ({loadingContributorsProgress}%)</Typography>
+                          <CircularProgress />
+                        </ProgressWrapper>
                       ) : loadingContributorsError ? (
                         <StyledOpenContributorsButtonWrapper>
                           <CommonErrorMessage
@@ -553,6 +488,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                   <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline">
                     <Grid item>
                       <Button
+                        disabled={isLoadingContributors}
                         onClick={handleComparePublicationDataModalClose}
                         variant="outlined"
                         color="secondary"
@@ -564,17 +500,16 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                       <div>
                         <Button
                           disabled={
+                            isLoadingContributors ||
                             !isValid ||
-                            (!isDuplicate &&
-                              (contributorErrors.length >= 1 ||
-                                !state.contributorsLoaded ||
-                                !!loadingContributorsError))
+                            contributorErrors.length >= 1 ||
+                            !!loadingContributorsError
                           }
                           color="primary"
                           type="submit"
                           variant="contained"
                           data-testid="import-publication-button">
-                          {isDuplicate ? 'Oppdater Cristinpublikasjon' : 'Importer'}
+                          {cristinPublication ? 'Oppdater Cristinpublikasjon' : 'Importer'}
                         </Button>
                       </div>
                       {!isValid && (
@@ -588,22 +523,11 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           </Formik>
         )}
       </StyledModal>
-      <GenericConfirmDialog
-        doFunction={emptyGlobalFormErrors}
-        title={'Avbryt import'}
-        text={
-          'Er du sikker på at du vil lukke denne publikasjonen? Endringer vil bli lagret fram til man åpner en ny publikasjon'
-        }
-        open={isConfirmAbortDialogOpen}
-        handleClose={handleConfirmAbortDialogSubmit}
-        handleAbort={() => setIsConfirmAbortDialogOpen(false)}
-      />
       <ConfirmImportDialog
         handleImportPublicationConfirmed={handleImportPublicationConfirmed}
         isOpen={isConfirmImportDialogOpen}
         handleAbort={() => setIsConfirmImportDialogOpen(false)}
       />
-
       {importPublication && (
         <ContributorModal
           isContributorModalOpen={isContributorModalOpen}
@@ -612,7 +536,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           setContributors={setContributors}
           handleContributorModalClose={() => setIsContributorModalOpen(false)}
           importPublication={importPublication}
-          isDuplicate={isDuplicate}
         />
       )}
     </>

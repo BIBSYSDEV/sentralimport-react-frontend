@@ -46,7 +46,7 @@ context('duplication-check-modal', () => {
     );
     cy.get(`[data-testid="search-panel-author-textfield"] .MuiInputBase-input`).should(
       'have.value',
-      mockImportData[0].authors[0].authorName
+      mockImportData[0].authors[0].surname
     );
     cy.get(`[data-testid="search-panel-doi-textfield"] .MuiInputBase-input`).should(
       'have.value',
@@ -120,5 +120,11 @@ context('duplication-check-modal', () => {
       'contain',
       mockCristinPublicationWithDoi.links[1].url.substring(17, 30)
     );
+  });
+
+  it('can show no journal-warning in search results', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-689770-journal-warning"]`).should('contain', 'Tidskrift mangler');
+    cy.get(`[data-testid="duplication-result-688231-journal-warning"]`).should('not.exist');
   });
 });

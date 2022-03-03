@@ -10,17 +10,22 @@ export interface CompareFormJournalType {
   eissn?: string;
 }
 
+export interface CompareFormTitleType {
+  title: string;
+  langCode: string;
+}
+
 export const emptyJournal: CompareFormJournalType = {
   cristinTidsskriftNr: '0',
   title: '',
 };
 
 export interface CompareFormValuesType {
-  isDuplicate: boolean;
-  title: string;
-  year: string;
+  isInitiatedFromCristinPublication: boolean;
+  originalLanguage: string;
+  titles: CompareFormTitleType[];
+  year: number | undefined;
   doi?: string;
-  language: any;
   category: CompareFormCategoryOption;
   volume?: string;
   issue?: string;

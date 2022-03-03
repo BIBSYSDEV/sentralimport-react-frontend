@@ -143,8 +143,7 @@ context('contributor', () => {
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid="show-institution-selector-2"]').click(); //adding
     cy.get('[data-testid="filter-institution-select-2"]').click();
-    cy.get(`[data-testid="${mockInstitutions[1].cristin_institution_id}-option"]`).click(); //velger sintef narvik
-    cy.get('[data-testid="add-institution-button-2"]').click();
+    cy.get(`[data-testid="filter-institution-select-${mockInstitutions[1].cristin_institution_id}-option"]`).click(); //velger sintef narvik
     cy.get(
       `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockInstitutions[1].cristin_institution_id}-add-unit"] > .MuiButton-label`
     ).should('not.exist');
@@ -228,8 +227,7 @@ context('contributor', () => {
     ).should('not.exist');
     cy.get('[data-testid="show-institution-selector-2"]').click();
     cy.get('[data-testid="filter-institution-select-2"]').click();
-    cy.get(`[data-testid="${mockInstitutions[0].cristin_institution_id}-option"]`).click();
-    cy.get('[data-testid="add-institution-button-2"]').click();
+    cy.get(`[data-testid="filter-institution-select-${mockInstitutions[0].cristin_institution_id}-option"]`).click();
     cy.get(
       `[data-testid="list-item-author-${mockImportData[1].authors[2].surname}-affiliations-${mockInstitutions[0].cristin_institution_id}-institution-name"]`
     ).should('exist');
@@ -237,9 +235,8 @@ context('contributor', () => {
     //not possible to add the same institution twice:
     cy.get('[data-testid="show-institution-selector-2"]').click();
     cy.get('[data-testid="filter-institution-select-2"]').click();
-    cy.get(`[data-testid="${mockInstitutions[0].cristin_institution_id}-option"]`).click();
-    cy.get('[data-testid="add-institution-button-2"]').click();
-    cy.get('[data-testid="add-institution-error-2"]').should('have.text', 'institusjonen finnes allerede fra før av');
+    cy.get(`[data-testid="filter-institution-select-${mockInstitutions[0].cristin_institution_id}-option"]`).click();
+    cy.get('[data-testid="add-institution-error-2"]').should('have.text', 'Institusjonen finnes allerede fra før');
   });
 
   it('Shows a warning about duplicate authors', () => {
@@ -310,19 +307,18 @@ context('contributor', () => {
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
 
-    cy.wait(300);
-    cy.get('[data-testid="import-contributor-hidden-1"]').should('not.exist');
+    cy.get('[data-testid="import-contributor-hidden-9"]').should('not.exist');
 
     cy.get('[data-testid="filter-contributors-check"]').click();
-    cy.get('[data-testid="import-contributor-hidden-1"]').should('exist');
+    cy.get('[data-testid="import-contributor-hidden-0"]').should('exist');
     cy.get('[data-testid="creator-name-1"]').should('not.exist');
-    cy.get('[data-testid="contributor-form-0-name"]').should('not.be.visible'); //nb. denne skjules kun visuelt
+    cy.get('[data-testid="contributor-form-0-name"]').should('not.exist');
     cy.get('[data-testid="move-up-button-2"]').should('not.exist');
     cy.get('[data-testid="move-down-button-2"]').should('not.exist');
     cy.get('[data-testid="creator-name-5"]').should('exist');
 
     cy.get('[data-testid="filter-contributors-check"]').click();
-    cy.get('[data-testid="import-contributor-hidden-1"]').should('not.exist');
+    cy.get('[data-testid="import-contributor-hidden-0"]').should('not.exist');
     cy.get('[data-testid="creator-name-1"]').should('exist');
   });
 
@@ -336,9 +332,41 @@ context('contributor', () => {
     //adding institution removes error:
     cy.get('[data-testid="show-institution-selector-3"]').click();
     cy.get('[data-testid="filter-institution-select-3"]').click();
-    cy.get(`[data-testid="${mockInstitutions[0].cristin_institution_id}-option"]`).click();
-    cy.get('[data-testid="add-institution-button-3"]').click();
+    cy.get(`[data-testid="filter-institution-select-${mockInstitutions[0].cristin_institution_id}-option"]`).click();
     cy.get('[data-testid="contributor-back-button"]').click();
     cy.get('[data-testid="contributor-errors"]').should('not.contain.text', contributorNumber4IsMissingAffiliation);
+  });
+
+  it('shows institution-name in english and norwegian in institution list', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('[data-testid="show-institution-selector-1"]').click();
+    cy.get('[data-testid="filter-institution-select-1"]').click();
+
+    cy.get(
+      `[data-testid="filter-institution-select-${mockInstitutions[0].cristin_institution_id}-option-english-main"]`
+    ).contains(mockInstitutions[0].institution_name.en);
+    cy.get(
+      `[data-testid="filter-institution-select-${mockInstitutions[0].cristin_institution_id}-option-english-main"]`
+    ).contains(mockInstitutions[0].country);
+    cy.get(
+      `[data-testid="filter-institution-select-${mockInstitutions[0].cristin_institution_id}-option-norwegian-alternative"]`
+    ).contains(mockInstitutions[0].institution_name.nb);
+  });
+
+  it('shows institution-name in norwegian if english doesnt exist', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('[data-testid="show-institution-selector-1"]').click();
+    cy.get('[data-testid="filter-institution-select-1"]').click();
+
+    cy.get(
+      `[data-testid="filter-institution-select-${mockInstitutions[7].cristin_institution_id}-option-english-main"]`
+    ).contains('Denne institusjonen har kun norsk navn');
+    cy.get(
+      `[data-testid="filter-institution-select-${mockInstitutions[7].cristin_institution_id}-option-norwegian-alternative"]`
+    ).should('not.exist');
   });
 });

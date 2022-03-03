@@ -62,10 +62,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
   const [isYearPublishedChecked, setIsYearPublishedChecked] = useState(false);
   const [issn, setIssn] = useState(importPublication.channel?.issn ?? '');
   const [isIssnChecked, setIsIssnChecked] = useState(false);
-  const [author, setAuthor] = useState(
-    importPublication.authors[0].authorName ||
-      importPublication.authors[0].surname + ', ' + importPublication.authors[0]?.first_name?.substr(0, 1)
-  );
+  const [author, setAuthor] = useState(importPublication.authors[0].surname);
   const [isAuthorChecked, setIsAuthorChecked] = useState(false);
 
   useEffect(() => {
@@ -99,10 +96,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
   function resetValues() {
     setDoi(importPublication.doi ?? '');
     setTitle(importPublication.languages && importPublication.languages[0].title);
-    setAuthor(
-      importPublication.authors[0].authorName ||
-        importPublication.authors[0].surname + ', ' + importPublication.authors[0]?.first_name?.substr(0, 1)
-    );
+    setAuthor(importPublication.authors[0].surname);
     setYearPublished(importPublication.yearPublished);
     setIssn(importPublication.channel?.issn ?? '');
     setIsDoiChecked(false);
@@ -121,7 +115,7 @@ const SearchPanel: FC<SearchPanelProps> = ({
       maxResults,
       isDoiChecked ? doi.trim() : undefined,
       isTitleChecked ? title.trim() : undefined,
-      isYearPublishedChecked ? yearPublished.trim() : undefined,
+      isYearPublishedChecked ? yearPublished : undefined,
       isIssnChecked ? issn.trim() : undefined,
       isAuthorChecked ? author.trim() : undefined
     );

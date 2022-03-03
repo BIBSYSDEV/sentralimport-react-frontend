@@ -78,6 +78,16 @@ export const mockInstitutions = [
     cristin_user_institution: true,
     url: 'https://api.cristin.no/v2/institutions/194',
   },
+  {
+    cristin_institution_id: '3331',
+    institution_name: {
+      nb: 'ZZ-Denne institusjonen har kun norsk navn',
+    },
+    acronym: 'DIHKNN',
+    country: 'NO',
+    cristin_user_institution: true,
+    url: 'https://api.cristin.no/v2/institutions/3331',
+  },
 ];
 
 export const resultInstitutionNTNU = {
@@ -378,7 +388,8 @@ export const mockImportPublication1 = {
   },
 };
 
-export const mockDoiForPublicationWithoutDoi = '10.1038/s41467-021-25510-wXXX'; // easiest way to get the one publication
+export const mockDoiForMonsterPublication = '10.1038/s41467-021-25342423'; // easiest way to get the one publication
+export const mockDoiForPublicationWithoutDoi = '10.1038/s41467-021-25510-wXXX';
 
 export const mockImportPublicationWithoutDoi = {
   pubId: 591853,
@@ -651,6 +662,14 @@ export const mockPersonDetailed6 = {
   cristin_person_id: mockPerson6.cristin_person_id,
   first_name: 'Arne',
   surname: 'Ottervik',
+  identified_cristin_person: true,
+  cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
+};
+
+export const mockPersonDetailed7 = {
+  cristin_person_id: 12121212,
+  first_name: 'Gunnar',
+  surname: 'Bottolf',
   identified_cristin_person: true,
   cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
 };

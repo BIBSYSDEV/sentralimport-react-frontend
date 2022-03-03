@@ -1,8 +1,6 @@
-import React, { FC, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Modal, ModalBody, ModalHeader } from 'reactstrap';
-import { Context } from '../../Context';
 import { Button, Checkbox, Divider, FormControlLabel, FormGroup, Typography } from '@material-ui/core';
-import GenericConfirmDialog from '../Dialogs/GenericConfirmDialog';
 import styled from 'styled-components';
 import AddIcon from '@material-ui/icons/Add';
 import ContributorOrderComponent from './ContributorOrderComponent';
@@ -88,12 +86,14 @@ interface ContributorProps {
   contributors: ContributorWrapper[];
   setContributors: (contributors: ContributorWrapper[]) => void;
   isContributorModalOpen: boolean;
-  isDuplicate: boolean;
   handleContributorModalClose: () => void;
   setContributorErrors: (value: string[]) => void;
 }
 
-const NumberOfContributorsToShow = 50;
+const NumberOfContributorsToShow = 30;
+export const NumberOfContributorsToDefineMonsterPost = 100;
+const isMonsterPost = (contributors: ContributorWrapper[]) =>
+  contributors.length > NumberOfContributorsToDefineMonsterPost;
 
 const ContributorModal: FC<ContributorProps> = ({
   contributors,
@@ -102,13 +102,15 @@ const ContributorModal: FC<ContributorProps> = ({
   handleContributorModalClose,
   setContributorErrors,
 }) => {
-  const [isClosingDialogOpen, setIsClosingDialogOpen] = useState(false);
-  const [maxContributorsToShow, setMaxContributorsToShow] = useState(NumberOfContributorsToShow);
-  const { dispatch } = useContext(Context);
+  const [maxContributorsToShow, setMaxContributorsToShow] = useState(
+    isMonsterPost(contributors) ? contributors.length : NumberOfContributorsToShow
+  );
+
   const [arrayOfContributorsWithNorwegianInstitution, setArrayOfContributorsWithNorwegianInstitution] = useState(
     new Array(contributors.length).fill(false)
   );
-  const [isContributorsFiltered, setIsContributorsFiltered] = useState(false);
+
+  const [isContributorsFiltered, setIsContributorsFiltered] = useState(isMonsterPost(contributors));
 
   const firstUpdate = useRef(true);
 
@@ -171,6 +173,7 @@ const ContributorModal: FC<ContributorProps> = ({
       }
     }
     setContributors(tempContrib);
+    validateContributors(tempContrib, setContributorErrors);
   };
 
   function addContributor() {
@@ -181,24 +184,22 @@ const ContributorModal: FC<ContributorProps> = ({
     setContributors([...contributors, newContributor]);
   }
 
-  const handleCloseDeleteConfirmDialog = (rowIndex: number) => {
-    dispatch({ type: 'param', payload: rowIndex });
-    setIsClosingDialogOpen(!isClosingDialogOpen);
-  };
-
-  function handleCloseContributorModal() {
-    handleContributorModalClose();
-    dispatch({ type: 'contributors', payload: contributors });
-  }
-
   const handleToggleFilter = () => {
     setIsContributorsFiltered((prevState) => !prevState);
+  };
+
+  const isFilteredMode = (contributor: ContributorWrapper, contributorIndex: number) => {
+    return (
+      !arrayOfContributorsWithNorwegianInstitution[contributorIndex] &&
+      contributor.toBeCreated?.affiliations?.length !== 0 &&
+      isContributorsFiltered
+    );
   };
 
   return (
     <>
       <StyledModal isOpen={isContributorModalOpen}>
-        <ModalHeader toggle={handleCloseContributorModal}>Bidragsytere</ModalHeader>
+        <ModalHeader toggle={handleContributorModalClose}>Bidragsytere</ModalHeader>
         <ModalBody>
           <StyledContentWrapper>
             <StyledContributorHeader>
@@ -214,6 +215,7 @@ const ContributorModal: FC<ContributorProps> = ({
                         <Checkbox
                           data-testid="filter-contributors-check"
                           color="primary"
+                          disabled={isMonsterPost(contributors)}
                           checked={isContributorsFiltered}
                           onChange={handleToggleFilter}
                           name="filterContributors"
@@ -239,14 +241,12 @@ const ContributorModal: FC<ContributorProps> = ({
                         row={contributor}
                         contributors={contributors}
                         setContributors={setContributors}
-                        hideArrows={!arrayOfContributorsWithNorwegianInstitution[index] && isContributorsFiltered}
+                        hideArrows={isFilteredMode(contributor, index)}
                       />
                     </StyledOrderColumn>
                     <StyledContributorColumn>
-                      {!arrayOfContributorsWithNorwegianInstitution[index] && isContributorsFiltered ? (
-                        <Typography
-                          data-testid={`import-contributor-hidden-${contributor.toBeCreated.order}`}
-                          color="textSecondary">
+                      {isFilteredMode(contributor, index) ? (
+                        <Typography data-testid={`import-contributor-hidden-${index}`} color="textSecondary">
                           Forfatter-info er skjult
                         </Typography>
                       ) : (
@@ -254,14 +254,16 @@ const ContributorModal: FC<ContributorProps> = ({
                       )}
                     </StyledContributorColumn>
                     <StyledContributorColumn>
-                      <div hidden={!arrayOfContributorsWithNorwegianInstitution[index] && isContributorsFiltered}>
-                        <ContributorForm
-                          resultListIndex={index}
-                          contributorData={contributor}
-                          contributors={contributors}
-                          updateContributor={updateContributor}
-                          deleteContributor={handleCloseDeleteConfirmDialog}
-                        />
+                      <div>
+                        {!isFilteredMode(contributor, index) && (
+                          <ContributorForm
+                            resultListIndex={index}
+                            contributorData={contributor}
+                            contributors={contributors}
+                            updateContributor={updateContributor}
+                            removeContributor={removeContributor}
+                          />
+                        )}
                       </div>
                     </StyledContributorColumn>
                   </StyledContributorLineWrapper>
@@ -293,21 +295,13 @@ const ContributorModal: FC<ContributorProps> = ({
                 variant="contained"
                 color="primary"
                 data-testid="contributor-back-button"
-                onClick={handleCloseContributorModal}>
+                onClick={handleContributorModalClose}>
                 Tilbake
               </Button>
             </StyledContributorFooter>
           </StyledContentWrapper>
         </ModalBody>
       </StyledModal>
-      <GenericConfirmDialog
-        doFunction={removeContributor}
-        title={'Slett bidragsyter'}
-        text={'Er du sikker på at du vil slette denne bidragsyteren?'}
-        open={isClosingDialogOpen}
-        handleClose={handleCloseDeleteConfirmDialog}
-        handleAbort={handleCloseDeleteConfirmDialog}
-      />
     </>
   );
 };
