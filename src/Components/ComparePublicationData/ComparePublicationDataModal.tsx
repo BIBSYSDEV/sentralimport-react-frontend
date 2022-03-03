@@ -75,8 +75,9 @@ const StyledSnackBarButton: any = styled(Button)`
   }
 `;
 
-const CircularProgressWrapper = styled.div`
+const ProgressWrapper = styled.div`
   display: flex;
+  gap: 1rem;
   width: 100%;
   align-items: center;
   justify-content: center;
@@ -86,11 +87,6 @@ const StyledAlert = styled(Alert)`
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 `;
-
-export interface CombinedTitleType {
-  titleToBeImported: string;
-  titleFromImportPublication: string;
-}
 
 interface ComparePublicationDataModalProps {
   isComparePublicationDataModalOpen: boolean;
@@ -121,15 +117,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   );
   const [isLoadingContributors, setIsLoadingContributors] = useState(false);
   const [loadingContributorsError, setLoadingContributorsError] = useState<Error | undefined>();
-
-  const kildeId = cristinPublication
-    ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_reference_id) ??
-      'Ingen kildeId funnet'
-    : importPublication.externalId;
-
-  const kilde = cristinPublication
-    ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_name) ?? 'Ingen kilde funnet'
-    : importPublication.sourceName;
+  const [loadingContributorsProgress, setLoadingContributorsProgress] = useState(0);
 
   //publication-form-stuff
   const [initialFormValues, setInitialFormValues] = useState<CompareFormValuesType | undefined>();
@@ -142,6 +130,15 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     titlesToBeImportedMap.set(language.lang.toUpperCase(), language.title);
     titlesFromImportPublicationMap.set(language.lang.toUpperCase(), language.title);
   });
+
+  const kildeId = cristinPublication
+    ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_reference_id) ??
+      'Ingen kildeId funnet'
+    : importPublication.externalId;
+
+  const kilde = cristinPublication
+    ? (cristinPublication.import_sources && cristinPublication.import_sources[0]?.source_name) ?? 'Ingen kilde funnet'
+    : importPublication.sourceName;
 
   if (cristinPublication) {
     for (const langCode in cristinPublication.title) {
@@ -170,47 +167,44 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   useEffect(() => {
     //init ligger i en useeffect pga asynkront kall til getJournalId
     const initFormik = async () => {
-      //Formik is initiated from either importPublication orcristinPublication (set in duplicate-modal)
-
+      //Formik is initiated from either importPublication or cristinPublication (set in duplicate-modal)
       //TODO: det trengs en sjekk på om cristinPublication.links inneholder en doi - nå settes den uansett
-      setInitialFormValues(
-        cristinPublication
-          ? {
-              isInitiatedFromCristinPublication: true,
-              originalLanguage: cristinPublication.original_language.toUpperCase() ?? '',
-              titles: generateTitlesToBeImported(),
-              year: cristinPublication.year_published,
-              doi: extractDoiFromCristinPublication(cristinPublication),
-              journal: {
-                cristinTidsskriftNr: await getJournalId(cristinPublication.journal),
-                title: cristinPublication.journal?.name ?? 'Ingen tidsskrift funnet',
-              },
-              category: {
-                value: cristinPublication.category?.code,
-                label: cristinPublication.category?.name?.nb,
-              },
-              volume: cristinPublication.volume ?? '',
-              issue: cristinPublication.issue ?? '',
-              pageFrom: cristinPublication.pages?.from ?? '',
-              pageTo: cristinPublication.pages?.to ?? '',
-            }
-          : {
-              isInitiatedFromCristinPublication: false,
-              originalLanguage: originalLanguageStringFromimportPublication.toUpperCase() ?? '',
-              titles: generateTitlesToBeImported(),
-              year: importPublication.yearPublished,
-              doi: importPublication.doi,
-              journal: {
-                cristinTidsskriftNr: importPublication?.channel?.cristinTidsskriftNr?.toString() ?? '',
-                title: importPublication?.channel?.title ?? 'Ingen tidsskrift funnet',
-              },
-              category: findLegalCategory(importPublication),
-              volume: importPublication.channel?.volume ?? '',
-              issue: importPublication.channel?.issue ?? '',
-              pageFrom: importPublication.channel?.pageFrom ?? '',
-              pageTo: importPublication.channel?.pageTo ?? '',
-            }
-      );
+      cristinPublication
+        ? setInitialFormValues({
+            isInitiatedFromCristinPublication: true,
+            originalLanguage: cristinPublication.original_language.toUpperCase() ?? '',
+            titles: generateTitlesToBeImported(),
+            year: cristinPublication.year_published,
+            doi: extractDoiFromCristinPublication(cristinPublication),
+            journal: {
+              cristinTidsskriftNr: await getJournalId(cristinPublication.journal),
+              title: cristinPublication.journal?.name ?? 'Ingen tidsskrift funnet',
+            },
+            category: {
+              value: cristinPublication.category?.code,
+              label: cristinPublication.category?.name?.nb,
+            },
+            volume: cristinPublication.volume ?? '',
+            issue: cristinPublication.issue ?? '',
+            pageFrom: cristinPublication.pages?.from ?? '',
+            pageTo: cristinPublication.pages?.to ?? '',
+          })
+        : setInitialFormValues({
+            isInitiatedFromCristinPublication: false,
+            originalLanguage: originalLanguageStringFromimportPublication.toUpperCase() ?? '',
+            titles: generateTitlesToBeImported(),
+            year: importPublication.yearPublished,
+            doi: importPublication.doi,
+            journal: {
+              cristinTidsskriftNr: importPublication?.channel?.cristinTidsskriftNr?.toString() ?? '',
+              title: importPublication?.channel?.title ?? 'Ingen tidsskrift funnet',
+            },
+            category: findLegalCategory(importPublication),
+            volume: importPublication.channel?.volume ?? '',
+            issue: importPublication.channel?.issue ?? '',
+            pageFrom: importPublication.channel?.pageFrom ?? '',
+            pageTo: importPublication.channel?.pageTo ?? '',
+          });
     };
     initFormik().then();
   }, [cristinPublication, importPublication]);
@@ -227,7 +221,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         if (cristinPublication) {
           cristinAuthors = cristinPublication.authors;
         } else {
-          cristinAuthors = await searchCristinPersons(authorsFromImportPublication);
+          cristinAuthors = await searchCristinPersons(authorsFromImportPublication, setLoadingContributorsProgress);
         }
         for (let i = 0; i < Math.max(cristinAuthors.length, authorsFromImportPublication.length); i++) {
           if (cristinAuthors[i]) {
@@ -453,10 +447,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                   ) : (
                     <StyledOpenContributorsButtonWrapper>
                       {isLoadingContributors ? (
-                        <CircularProgressWrapper>
-                          <CircularProgress size={'1rem'} />
-                          <Typography style={{ margin: '1rem' }}>Laster inn forfattere</Typography>
-                        </CircularProgressWrapper>
+                        <ProgressWrapper>
+                          <Typography>Laster inn forfattere ({loadingContributorsProgress}%)</Typography>
+                          <CircularProgress />
+                        </ProgressWrapper>
                       ) : loadingContributorsError ? (
                         <StyledOpenContributorsButtonWrapper>
                           <CommonErrorMessage
@@ -497,6 +491,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                   <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline">
                     <Grid item>
                       <Button
+                        disabled={isLoadingContributors}
                         onClick={handleComparePublicationDataModalClose}
                         variant="outlined"
                         color="secondary"
@@ -507,7 +502,12 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                     <Grid item>
                       <div>
                         <Button
-                          disabled={!isValid || contributorErrors.length >= 1 || !!loadingContributorsError}
+                          disabled={
+                            isLoadingContributors ||
+                            !isValid ||
+                            contributorErrors.length >= 1 ||
+                            !!loadingContributorsError
+                          }
                           color="primary"
                           type="submit"
                           variant="contained"
