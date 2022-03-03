@@ -146,11 +146,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   if (cristinPublication) {
     for (const langCode in cristinPublication.title) {
       titlesToBeImportedMap.set(langCode.toUpperCase(), cristinPublication.title[langCode]);
-      const existingTitle = titlesFromImportPublicationMap.get(langCode);
-      titlesFromImportPublicationMap.set(
-        langCode.toUpperCase(),
-        existingTitle ? cristinPublication.title[langCode] : ''
-      );
+      if (!titlesFromImportPublicationMap.get(langCode.toUpperCase()))
+        titlesFromImportPublicationMap.set(langCode.toUpperCase(), '');
     }
   }
 
