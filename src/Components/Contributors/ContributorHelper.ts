@@ -19,11 +19,11 @@ export async function searchCristinPersons(
   let unitNameCache = new Map();
   let institutionNameCache = new Map();
   const suggestedAuthors = [];
-  for (let i = 0; i < authors.length; i++) {
+  for (let index = 0; index < authors.length; index++) {
     let cristinPerson = { ...emptyContributor };
     let affiliations: Affiliation[] = [];
-    if (authors[i].cristinId !== 0) {
-      cristinPerson.cristin_person_id = authors[i].cristinId;
+    if (authors[index].cristinId !== 0) {
+      cristinPerson.cristin_person_id = authors[index].cristinId;
       cristinPerson = await getPersonDetailById(cristinPerson);
       if (cristinPerson.affiliations) {
         const activeAffiliations = cristinPerson.affiliations.filter((affiliation) => affiliation.active);
@@ -38,7 +38,7 @@ export async function searchCristinPersons(
           if (detailedAffiliationAndCache.affiliation) affiliations.push(detailedAffiliationAndCache.affiliation);
         }
       } else {
-        affiliations = await replaceNonCristinInstitutions(authors[i].institutions);
+        affiliations = await replaceNonCristinInstitutions(authors[index].institutions);
       }
 
       cristinPerson = {
@@ -47,14 +47,14 @@ export async function searchCristinPersons(
         surname: cristinPerson.surname_preferred ?? cristinPerson.surname,
         affiliations: affiliations.filter((item: Affiliation, index: number) => affiliations.indexOf(item) === index),
         url: CRIST_REST_API + '/persons/' + cristinPerson.cristin_person_id + '?lang=' + SearchLanguage.En,
-        order: i + 1,
+        order: index + 1,
         identified_cristin_person: cristinPerson.identified_cristin_person,
         require_higher_authorization: cristinPerson.require_higher_authorization,
         badge_type: getContributorStatus(cristinPerson, affiliations),
       };
     }
-    suggestedAuthors[i] = cristinPerson;
-    setLoadingContributorsProgress(Math.floor((i * 100) / authors.length));
+    suggestedAuthors[index] = cristinPerson;
+    setLoadingContributorsProgress(Math.floor((index * 100) / authors.length));
   }
   return suggestedAuthors;
 }
