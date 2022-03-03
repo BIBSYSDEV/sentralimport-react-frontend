@@ -491,6 +491,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                   <Grid container spacing={2} justifyContent="flex-end" alignItems="baseline">
                     <Grid item>
                       <Button
+                        disabled={isLoadingContributors}
                         onClick={handleComparePublicationDataModalClose}
                         variant="outlined"
                         color="secondary"
@@ -501,7 +502,12 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                     <Grid item>
                       <div>
                         <Button
-                          disabled={!isValid || contributorErrors.length >= 1 || !!loadingContributorsError}
+                          disabled={
+                            isLoadingContributors ||
+                            !isValid ||
+                            contributorErrors.length >= 1 ||
+                            !!loadingContributorsError
+                          }
                           color="primary"
                           type="submit"
                           variant="contained"

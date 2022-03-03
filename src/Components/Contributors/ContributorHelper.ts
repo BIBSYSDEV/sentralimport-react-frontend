@@ -20,7 +20,6 @@ export async function searchCristinPersons(
   let institutionNameCache = new Map();
   const suggestedAuthors = [];
   for (let i = 0; i < authors.length; i++) {
-    //TODO: break out of loop if modal closes
     let cristinPerson = { ...emptyContributor };
     let affiliations: Affiliation[] = [];
     if (authors[i].cristinId !== 0) {
