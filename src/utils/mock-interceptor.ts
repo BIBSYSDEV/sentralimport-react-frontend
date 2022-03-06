@@ -33,6 +33,8 @@ import {
   mockPersonDetailedWithoutAffiliationAttribute,
   mockPersonWithoutActiveAffiliation,
   mockPersonWithoutAffiliationAttribute,
+  mockPerson_234,
+  mockPerson_666,
   mockPublicationCount,
   mockSavedPublication,
   mockSaveErrorResponse,
@@ -221,15 +223,17 @@ export const interceptRequestsOnMock = () => {
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed7.cristin_person_id}`))
     .reply(200, mockPersonDetailed7);
-
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed6.cristin_person_id}`))
     .reply(200, mockPersonDetailed6);
   mock.onGet(new RegExp(`${CRIST_REST_API}/persons/666666`)).reply(200, mockPersonDetailedDuplicate);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPerson_234.cristin_person_id}`)).reply(200, mockPerson_234);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPerson_666.cristin_person_id}`)).reply(200, mockPerson_666);
   mock.onGet(new RegExp(`${CRIST_REST_API}/persons/\\d+`)).reply(200, mockPersonDetailed);
 
   //search persons by id
-  mock.onGet(new RegExp(`${CRIST_REST_API}/persons/\\?id.*`)).reply(200, [mockPerson]);
+  // TODO: ikke i bruk ?
+  //  mock.onGet(new RegExp(`${CRIST_REST_API}/persons/\\?id.*`)).reply(200, [mockPerson]);
 
   mock.onAny().reply(function (config) {
     throw new Error('Could not find mock for ' + config.url + ', with method: ' + config.method);

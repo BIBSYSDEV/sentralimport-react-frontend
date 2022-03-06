@@ -10,7 +10,7 @@
     "yearPublished": 2021,
     "authors": [
       {
-        "cristinId": 123,
+        "cristinId": 0,
         "roleCode": "FORFATTER",
         "sequenceNr": 1,
         "surname": "Mocklastname",
@@ -171,7 +171,8 @@
         ]
       },
       {
-        "cristinId": 0,
+        "cristinId": 2345,
+        "sequenceNr": 11,
         "roleCode": "FORFATTER",
         "surname": "Mocklastname",
         "firstname": "Mockfirstname",
@@ -187,7 +188,8 @@
         ]
       },
       {
-        "cristinId": 0,
+        "cristinId": 2345,
+        "sequenceNr": 12,
         "roleCode": "FORFATTER",
         "surname": "Mocklastname",
         "firstname": "Mockfirstname",
@@ -203,7 +205,8 @@
         ]
       },
       {
-        "cristinId": 0,
+        "cristinId": 666,
+        "sequenceNr": 13,
         "roleCode": "FORFATTER",
         "surname": "Mocklastname",
         "firstname": "Mockfirstname",
@@ -219,7 +222,8 @@
         ]
       },
       {
-        "cristinId": 0,
+        "cristinId": 666,
+        "sequenceNr": 14,
         "roleCode": "FORFATTER",
         "surname": "Mocklastname",
         "firstname": "Mockfirstname",

@@ -111,6 +111,9 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   //contributors-stuff
   const [contributorErrors, setContributorErrors] = useState<string[]>([]);
+  const [duplicateContributors, setDuplicateContributors] = useState<Map<number, number[]>>(
+    new Map<number, number[]>()
+  );
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors, setContributors] = useState<ContributorWrapper[]>(
     cristinPublication ? cristinPublication.authors : importPublication?.authors ?? []
@@ -160,6 +163,11 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       };
     });
   };
+
+  useEffect(() => {
+    console.log('CONTRIBUTORS ENDRET!');
+    //TODO: legge validering her ???
+  }, [contributors]);
 
   useEffect(() => {
     //init ligger i en useeffect pga asynkront kall til getJournalId
@@ -238,7 +246,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             );
           }
         }
-        validateContributors(tempContributors, setContributorErrors);
+        validateContributors(tempContributors, setContributorErrors, setDuplicateContributors);
       } catch (error) {
         setLoadingContributorsError(error as Error);
       } finally {
@@ -476,6 +484,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                         ))}
                       </StyledAlert>
                     )}
+
                     {importPublicationError && (
                       <Typography color="error" data-testid="import-publication-errors">
                         {importPublicationError.message}
@@ -536,6 +545,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
           setContributors={setContributors}
           handleContributorModalClose={() => setIsContributorModalOpen(false)}
           importPublication={importPublication}
+          duplicateContributors={duplicateContributors}
+          setDuplicateContributors={setDuplicateContributors}
         />
       )}
     </>

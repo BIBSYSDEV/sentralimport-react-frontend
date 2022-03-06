@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { Dispatch, FC, SetStateAction, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Modal, ModalBody, ModalHeader } from 'reactstrap';
 import { Button, Checkbox, Divider, FormControlLabel, FormGroup, Typography } from '@material-ui/core';
 import styled from 'styled-components';
@@ -87,7 +87,9 @@ interface ContributorProps {
   setContributors: (contributors: ContributorWrapper[]) => void;
   isContributorModalOpen: boolean;
   handleContributorModalClose: () => void;
-  setContributorErrors: (value: string[]) => void;
+  setContributorErrors: Dispatch<SetStateAction<string[]>>;
+  duplicateContributors: Map<number, number[]>;
+  setDuplicateContributors: Dispatch<SetStateAction<Map<number, number[]>>>;
 }
 
 const NumberOfContributorsToShow = 30;
@@ -101,6 +103,7 @@ const ContributorModal: FC<ContributorProps> = ({
   isContributorModalOpen,
   handleContributorModalClose,
   setContributorErrors,
+  setDuplicateContributors,
 }) => {
   const [maxContributorsToShow, setMaxContributorsToShow] = useState(
     isMonsterPost(contributors) ? contributors.length : NumberOfContributorsToShow
@@ -127,10 +130,10 @@ const ContributorModal: FC<ContributorProps> = ({
   }, [contributors]);
 
   const updateContributor = (author: ContributorWrapper, rowIndex: number) => {
-    const temp = [...contributors];
-    temp[rowIndex] = author;
-    setContributors(temp);
-    validateContributors(temp, setContributorErrors);
+    const tempContrib = [...contributors];
+    tempContrib[rowIndex] = author;
+    setContributors(tempContrib);
+    validateContributors(tempContrib, setContributorErrors, setDuplicateContributors);
   };
 
   // Ved sletting av en bidragsyter, sjekk om indeksering skal bli beholdt / oppdatert for alle andre elementer i bidragsyterlisten
@@ -173,7 +176,7 @@ const ContributorModal: FC<ContributorProps> = ({
       }
     }
     setContributors(tempContrib);
-    validateContributors(tempContrib, setContributorErrors);
+    validateContributors(tempContrib, setContributorErrors, setDuplicateContributors);
   };
 
   function addContributor() {
