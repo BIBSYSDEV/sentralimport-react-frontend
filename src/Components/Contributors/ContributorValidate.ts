@@ -25,7 +25,7 @@ const findDuplicateContributors = (contributors: ContributorWrapper[]): Map<numb
       const indexes: number[] = [];
       allCristinIds.forEach((_id, index) => {
         if (_id === cristinId) {
-          indexes.push(index);
+          indexes.push(index); //TODO: should be index+1 for presentation ???
         }
       });
       if (indexes.length > 1) duplicatesMap.set(cristinId, indexes);
