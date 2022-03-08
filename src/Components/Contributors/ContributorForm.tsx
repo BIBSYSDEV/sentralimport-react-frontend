@@ -12,7 +12,7 @@ import {
 import AddAffiliation from './AddAffiliation';
 import EditAffiliation from './EditAffiliation';
 import { Alert } from '@material-ui/lab';
-import { checkContributorsForDuplicates } from './duplicateCheckHelper';
+import { checkContributorsForNameDuplicates } from './duplicateCheckHelper';
 import { Colors } from '../../assets/styles/StyleConstants';
 import ConfirmRemoveContributorDialog from '../Dialogs/ConfirmRemoveContributorDialog';
 
@@ -39,6 +39,7 @@ interface ContributorFormProps {
   updateContributor: (contributorData: ContributorWrapper, rowIndex: number) => void;
   removeContributor: (index: number) => void;
   contributors: ContributorWrapper[];
+  duplicateContributors: Map<number, number[]>;
 }
 
 const ContributorForm: FC<ContributorFormProps> = ({
@@ -47,18 +48,42 @@ const ContributorForm: FC<ContributorFormProps> = ({
   updateContributor,
   removeContributor,
   contributors,
+  duplicateContributors,
 }) => {
   const [duplicateWarning, setDuplicateWarning] = useState('');
-  const [duplicateError, setDuplicateError] = useState('');
   const [isRemoveContributorDialogOpen, setIsRemoveContributorDialogOpen] = useState(false);
 
   useEffect(() => {
-    checkContributorsForDuplicates(contributorData, contributors, setDuplicateWarning, setDuplicateError, false);
+    setDuplicateWarning(checkContributorsForNameDuplicates(contributorData, contributors, false)); //TODO: Flyttes til felles-valideringen i ContributorValidate
   }, [
     contributorData.toBeCreated.first_name,
     contributorData.toBeCreated.surname,
     contributorData.toBeCreated.cristin_person_id,
   ]);
+
+  const generateValidationAlerts = () => {
+    if (contributorData.toBeCreated?.cristin_person_id && contributorData.toBeCreated?.cristin_person_id !== 0) {
+      const listOfDuplicateItemIndexes = duplicateContributors.get(contributorData.toBeCreated?.cristin_person_id);
+      if (listOfDuplicateItemIndexes) {
+        const indexesOtherThanCurrent = listOfDuplicateItemIndexes
+          .filter((duplicateItemIndex) => duplicateItemIndex !== resultListIndex)
+          .map((value) => value + 1); //fordi plassering er 1-indeksert
+        return (
+          <Grid item xs={12}>
+            <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-error`} severity="error">
+              Det finnes bidragsytere med samme id på plass: {indexesOtherThanCurrent.join(',')}
+            </StyledAlert>
+          </Grid>
+        );
+      }
+    }
+    if (duplicateWarning)
+      return (
+        <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
+          {duplicateWarning}
+        </StyledAlert>
+      );
+  };
 
   return (
     <div data-testid={`contributor-form-${resultListIndex}`}>
@@ -96,21 +121,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
             Fjern bidragsyter
           </Button>
         </Grid>
-        {duplicateError ? (
-          <Grid item xs={12}>
-            <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-error`} severity="error">
-              {duplicateError}
-            </StyledAlert>
-          </Grid>
-        ) : (
-          duplicateWarning && (
-            <Grid item xs={12}>
-              <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
-                {duplicateWarning}
-              </StyledAlert>
-            </Grid>
-          )
-        )}
+        {generateValidationAlerts()}
         <Grid item xs={12}>
           <ContributorSearchPanel
             contributorData={contributorData}

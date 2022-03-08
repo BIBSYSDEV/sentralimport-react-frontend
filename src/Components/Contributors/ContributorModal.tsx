@@ -10,7 +10,6 @@ import { Colors } from '../../assets/styles/StyleConstants';
 import { ImportPublication } from '../../types/PublicationTypes';
 import ContributorForm from './ContributorForm';
 import clone from 'just-clone';
-import { validateContributors } from './ContributorValidate';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -87,9 +86,7 @@ interface ContributorProps {
   setContributors: (contributors: ContributorWrapper[]) => void;
   isContributorModalOpen: boolean;
   handleContributorModalClose: () => void;
-  setContributorErrors: Dispatch<SetStateAction<string[]>>;
   duplicateContributors: Map<number, number[]>;
-  setDuplicateContributors: Dispatch<SetStateAction<Map<number, number[]>>>;
 }
 
 const NumberOfContributorsToShow = 30;
@@ -102,8 +99,7 @@ const ContributorModal: FC<ContributorProps> = ({
   setContributors,
   isContributorModalOpen,
   handleContributorModalClose,
-  setContributorErrors,
-  setDuplicateContributors,
+  duplicateContributors,
 }) => {
   const [maxContributorsToShow, setMaxContributorsToShow] = useState(
     isMonsterPost(contributors) ? contributors.length : NumberOfContributorsToShow
@@ -133,7 +129,6 @@ const ContributorModal: FC<ContributorProps> = ({
     const tempContrib = [...contributors];
     tempContrib[rowIndex] = author;
     setContributors(tempContrib);
-    validateContributors(tempContrib, setContributorErrors, setDuplicateContributors);
   };
 
   // Ved sletting av en bidragsyter, sjekk om indeksering skal bli beholdt / oppdatert for alle andre elementer i bidragsyterlisten
@@ -176,7 +171,6 @@ const ContributorModal: FC<ContributorProps> = ({
       }
     }
     setContributors(tempContrib);
-    validateContributors(tempContrib, setContributorErrors, setDuplicateContributors);
   };
 
   function addContributor() {
@@ -265,6 +259,7 @@ const ContributorModal: FC<ContributorProps> = ({
                             contributors={contributors}
                             updateContributor={updateContributor}
                             removeContributor={removeContributor}
+                            duplicateContributors={duplicateContributors}
                           />
                         )}
                       </div>

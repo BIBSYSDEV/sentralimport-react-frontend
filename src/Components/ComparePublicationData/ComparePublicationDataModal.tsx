@@ -165,8 +165,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   };
 
   useEffect(() => {
-    console.log('CONTRIBUTORS ENDRET!');
-    //TODO: legge validering her ???
+    validateContributors(contributors, setContributorErrors, setDuplicateContributors);
   }, [contributors]);
 
   useEffect(() => {
@@ -246,7 +245,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             );
           }
         }
-        validateContributors(tempContributors, setContributorErrors, setDuplicateContributors);
       } catch (error) {
         setLoadingContributorsError(error as Error);
       } finally {
@@ -541,12 +539,10 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         <ContributorModal
           isContributorModalOpen={isContributorModalOpen}
           contributors={contributors}
-          setContributorErrors={setContributorErrors}
           setContributors={setContributors}
           handleContributorModalClose={() => setIsContributorModalOpen(false)}
           importPublication={importPublication}
           duplicateContributors={duplicateContributors}
-          setDuplicateContributors={setDuplicateContributors}
         />
       )}
     </>

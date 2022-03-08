@@ -6,22 +6,26 @@ const validateBasicMetaData = (contributors: ContributorWrapper[]): string[] => 
   contributors.forEach((contributor, index) => {
     const errors = [];
     const toBeCreated = contributor.toBeCreated;
-    if (!toBeCreated.first_name || toBeCreated.first_name === '') errors.push('fornavn');
-    if (!toBeCreated.surname || toBeCreated.surname === '') errors.push('etternavn');
-    if (toBeCreated.affiliations && toBeCreated.affiliations.length < 1) errors.push('tilknytning');
-    if (errors.length > 0) {
-      contributorErrors.push(`${index + 1} (Mangler ${errors.join(', ')})`);
+    if (toBeCreated) {
+      if (!toBeCreated.first_name || toBeCreated.first_name === '') errors.push('fornavn');
+      if (!toBeCreated.surname || toBeCreated.surname === '') errors.push('etternavn');
+      if (toBeCreated.affiliations && toBeCreated.affiliations.length < 1) errors.push('tilknytning');
+      if (errors.length > 0) {
+        contributorErrors.push(`${index + 1} (Mangler ${errors.join(', ')})`);
+      }
     }
   });
   return contributorErrors;
 };
 
 const findDuplicateContributors = (contributors: ContributorWrapper[]): Map<number, number[]> => {
-  const allCristinIds = contributors.map((contributor) => contributor.toBeCreated.cristin_person_id);
+  const allCristinIds: number[] = contributors
+    .map((contributor) => contributor.toBeCreated?.cristin_person_id ?? 0)
+    .filter((cristin_person_id) => cristin_person_id !== 0);
   const allDifferentCristinIds = new Set(allCristinIds);
   const duplicatesMap = new Map<number, number[]>();
   allDifferentCristinIds.forEach((cristinId) => {
-    if (cristinId && cristinId !== 0) {
+    if (cristinId) {
       const indexes: number[] = [];
       allCristinIds.forEach((_id, index) => {
         if (_id === cristinId) {
