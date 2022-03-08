@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Modal, ModalBody, ModalHeader } from 'reactstrap';
 import { Button, Checkbox, Divider, FormControlLabel, FormGroup, Typography } from '@material-ui/core';
 import styled from 'styled-components';
@@ -185,11 +185,19 @@ const ContributorModal: FC<ContributorProps> = ({
     setIsContributorsFiltered((prevState) => !prevState);
   };
 
+  const hasContributorDuplicate = (contributor: ContributorWrapper) => {
+    if (contributor.toBeCreated?.cristin_person_id) {
+      return !!duplicateContributors.get(contributor.toBeCreated?.cristin_person_id);
+    }
+    return false;
+  };
+
   const isFilteredMode = (contributor: ContributorWrapper, contributorIndex: number) => {
     return (
       !arrayOfContributorsWithNorwegianInstitution[contributorIndex] &&
       contributor.toBeCreated?.affiliations?.length !== 0 &&
-      isContributorsFiltered
+      isContributorsFiltered &&
+      !hasContributorDuplicate(contributor)
     );
   };
 

@@ -19,17 +19,15 @@ const validateBasicMetaData = (contributors: ContributorWrapper[]): string[] => 
 };
 
 const findDuplicateContributors = (contributors: ContributorWrapper[]): Map<number, number[]> => {
-  const allCristinIds: number[] = contributors
-    .map((contributor) => contributor.toBeCreated?.cristin_person_id ?? 0)
-    .filter((cristin_person_id) => cristin_person_id !== 0);
+  const allCristinIds: number[] = contributors.map((contributor) => contributor.toBeCreated?.cristin_person_id ?? 0);
   const allDifferentCristinIds = new Set(allCristinIds);
   const duplicatesMap = new Map<number, number[]>();
   allDifferentCristinIds.forEach((cristinId) => {
-    if (cristinId) {
+    if (cristinId && cristinId !== 0) {
       const indexes: number[] = [];
       allCristinIds.forEach((_id, index) => {
         if (_id === cristinId) {
-          indexes.push(index); //TODO: should be index+1 for presentation ???
+          indexes.push(index);
         }
       });
       if (indexes.length > 1) duplicatesMap.set(cristinId, indexes);
@@ -43,6 +41,8 @@ export const validateContributors = (
   setContributorErrors: Dispatch<SetStateAction<string[]>>,
   setDuplicateContributors: Dispatch<SetStateAction<Map<number, number[]>>>
 ) => {
+  const startTime = performance.now();
+
   const contributorErrors: string[] = validateBasicMetaData(contributors);
 
   const duplicatesMap = findDuplicateContributors(contributors);
@@ -50,6 +50,8 @@ export const validateContributors = (
   duplicatesMap.forEach((duplicateList, key) => {
     contributorErrors.push(`${duplicateList.join(', ')} (Duplisert bidragsyter med cristinId: ${key})`);
   });
+  const endTime = performance.now();
+  console.log(`Validation took ${endTime - startTime} milliseconds`);
 
   setContributorErrors(contributorErrors);
 };
