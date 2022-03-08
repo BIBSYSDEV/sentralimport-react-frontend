@@ -41,8 +41,6 @@ export const validateContributors = (
   setContributorErrors: Dispatch<SetStateAction<string[]>>,
   setDuplicateContributors: Dispatch<SetStateAction<Map<number, number[]>>>
 ) => {
-  const startTime = performance.now();
-
   const contributorErrors: string[] = validateBasicMetaData(contributors);
 
   const duplicatesMap = findDuplicateContributors(contributors);
@@ -50,8 +48,6 @@ export const validateContributors = (
   duplicatesMap.forEach((duplicateList, key) => {
     contributorErrors.push(`${duplicateList.join(', ')} (Duplisert bidragsyter med cristinId: ${key})`);
   });
-  const endTime = performance.now();
-  console.log(`Validation took ${endTime - startTime} milliseconds`);
 
   setContributorErrors(contributorErrors);
 };

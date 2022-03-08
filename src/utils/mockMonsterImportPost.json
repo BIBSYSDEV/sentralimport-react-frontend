@@ -174,8 +174,8 @@
         "cristinId": 2345,
         "sequenceNr": 11,
         "roleCode": "FORFATTER",
-        "surname": "Mocklastname",
-        "firstname": "Mockfirstname",
+        "surname": "Mocklastname11",
+        "firstname": "Mockfirstname11",
         "authorName": "Olsen P.",
         "institutions": [
           {
@@ -191,8 +191,8 @@
         "cristinId": 2345,
         "sequenceNr": 12,
         "roleCode": "FORFATTER",
-        "surname": "Mocklastname",
-        "firstname": "Mockfirstname",
+        "surname": "Mocklastname12",
+        "firstname": "Mockfirstname12",
         "authorName": "Olsen P.",
         "institutions": [
           {
@@ -208,8 +208,8 @@
         "cristinId": 666,
         "sequenceNr": 13,
         "roleCode": "FORFATTER",
-        "surname": "Mocklastname",
-        "firstname": "Mockfirstname",
+        "surname": "Mocklastname13",
+        "firstname": "Mockfirstname13",
         "authorName": "Olsen P.",
         "institutions": [
           {
@@ -225,8 +225,8 @@
         "cristinId": 666,
         "sequenceNr": 14,
         "roleCode": "FORFATTER",
-        "surname": "Mocklastname",
-        "firstname": "Mockfirstname",
+        "surname": "Mocklastname14",
+        "firstname": "Mockfirstname14",
         "authorName": "Olsen P.",
         "institutions": [
           {

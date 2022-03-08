@@ -1,6 +1,10 @@
 import mockImportData from '../../src/utils/mockImportData.json';
 import { Colors } from '../../src/assets/styles/StyleConstants';
-import { mockForbiddenPerson, mockPerson, mockPersonWithoutAffiliationAttribute } from '../../src/utils/mockdata';
+import {
+  mockForbiddenPerson,
+  mockPersonDetailed,
+  mockPersonWithoutAffiliationAttribute,
+} from '../../src/utils/mockdata';
 
 context('contributor badges', () => {
   beforeEach(() => {
@@ -8,13 +12,13 @@ context('contributor badges', () => {
     cy.visit('/');
   });
 
-  it('shows bagdes on verified cristin person from importdata', () => {
+  it('shows badges on verified cristin person from importdata', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid="contributor-form-0-name"]').should('have.css', 'color', Colors.Text.GREEN);
-    cy.get(`[data-testid="verified-contributor-badge-${mockPerson.cristin_person_id}"]`).should('exist');
+    cy.get(`[data-testid="verified-contributor-badge-${mockPersonDetailed.cristin_person_id}"]`).should('exist');
     cy.get('[data-testid="contributor-form-2-name"]').should('have.css', 'color', Colors.Text.OPAQUE_54_BLACK);
   });
 

@@ -92,12 +92,12 @@ context('Search contributor panel', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="open-contributors-modal-button"]`).click();
-    cy.get(`[data-testid="author-name-${mockPerson.cristin_person_id}-verified-badge"]`)
+    cy.get(`[data-testid="author-name-${mockPersonDetailed.cristin_person_id}-verified-badge"]`)
       .first()
       .children('title')
       .first()
       .should('have.text', VerifiedText);
-    cy.get(`[data-testid="author-name-${mockPerson.cristin_person_id}"]`).should(
+    cy.get(`[data-testid="author-name-${mockPersonDetailed.cristin_person_id}"]`).should(
       'have.css',
       'color',
       Colors.Text.GREEN

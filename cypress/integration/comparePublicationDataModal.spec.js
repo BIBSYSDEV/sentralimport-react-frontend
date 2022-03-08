@@ -78,7 +78,7 @@ context('comparePublicationModal', () => {
     cy.get(`[data-testid="import-publication-button"]`).should('be.disabled');
     cy.get(`[data-testid="contributor-errors"]`).contains('Det er feil i bidragsyterlisten');
     cy.get(`[data-testid="contributor-errors"]`).contains('1 (Mangler fornavn)');
-    cy.get(`[data-testid="contributor-errors"]`).contains('4, 5, 6 (Duplisert CristinId)');
+    cy.get(`[data-testid="contributor-errors"]`).contains('4, 5, 6 (Duplisert bidragsyter med cristinId: 666666)');
   });
 
   it('can show validation errors on comparePublicationDataModal-form', () => {

@@ -70,7 +70,7 @@ const ContributorForm: FC<ContributorFormProps> = ({
           .map((value) => value + 1); //fordi plassering er 1-indeksert
         return (
           <Grid item xs={12}>
-            <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-error`} severity="error">
+            <StyledAlert severity="error" data-testid={`contributor-form-${resultListIndex}-duplicate-error`}>
               Det finnes bidragsytere med samme id på plass: {indexesOtherThanCurrent.join(',')}
             </StyledAlert>
           </Grid>
