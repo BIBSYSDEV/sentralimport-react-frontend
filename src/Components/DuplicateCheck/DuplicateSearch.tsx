@@ -40,7 +40,7 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
   const [foundDuplicates, setFoundDuplicates] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isInitialSearchWithDoi, setIsInitialSearchWithDoi] = useState(false);
-  const { state, dispatch } = useContext(Context);
+  const { state } = useContext(Context);
   const relevantStatus = state.currentImportStatus !== 'ikke aktuelle';
   const [totalResults, setTotalResults] = useState(0);
 
@@ -73,18 +73,13 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
     if (resultList.length > 0) {
       setSelectedRadioButton(resultList[0].cristin_result_id);
       setSelectedPublication(resultList[0]);
-      dispatch({ type: 'setSelectedPublication', payload: resultList[0] });
     }
   }, [resultList]);
 
-  function handleRadioGroupChange(event: any) {
+  function handleRadioGroupChange(event: React.ChangeEvent<HTMLInputElement>) {
     setSelectedRadioButton(event.target.value);
-    event.target.value !== SelectValues.CREATE_NEW &&
-      event.target.value !== SelectValues.TOGGLE_RELEVANT &&
-      dispatch({
-        type: 'setSelectedPublication',
-        payload: resultList.find((element: any) => element.cristin_result_id === event.target.value),
-      });
+    if (event.target.value !== SelectValues.CREATE_NEW && event.target.value !== SelectValues.TOGGLE_RELEVANT)
+      setSelectedPublication(resultList.find((element: any) => element.cristin_result_id === event.target.value));
   }
 
   return (
