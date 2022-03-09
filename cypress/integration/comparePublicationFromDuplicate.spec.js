@@ -40,6 +40,13 @@ context('importFromDuplicate', () => {
     cy.get(`[data-testid="import-publication-button"]`).should('exist').should('not.be.disabled');
   });
 
+  it('can open compare-modal from another duplicate-cristin-post (testing radio-button)', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-688390"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.get(`[data-testid="cristindata-id"]`).contains(mockCristinPublications[2].cristin_result_id);
+  });
+
   it('can open compare-modal from duplicate-cristin-post that has errors', () => {
     //year_published has wrong format, journal is missing and category has an illegal value
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
