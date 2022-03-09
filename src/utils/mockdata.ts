@@ -557,7 +557,21 @@ export const mockPerson = {
   first_name: 'Arne',
   surname: 'Benoni',
   url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
-  cristin_person_id: '1234567',
+  cristin_person_id: 1234333567,
+};
+
+export const mockPerson_234 = {
+  first_name: 'Arne',
+  surname: 'Benoni',
+  url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
+  cristin_person_id: 234,
+};
+
+export const mockPerson_666 = {
+  first_name: 'Arne',
+  surname: 'Benoni',
+  url: 'https://api.cristin-test.uio.no/v2/persons/1234567890',
+  cristin_person_id: 666,
 };
 
 export const cristinIDWithoutActiveAffiliation = '9456892';

@@ -10,7 +10,6 @@ import { Colors } from '../../assets/styles/StyleConstants';
 import { ImportPublication } from '../../types/PublicationTypes';
 import ContributorForm from './ContributorForm';
 import clone from 'just-clone';
-import { validateContributors } from './ContributorValidate';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -87,7 +86,7 @@ interface ContributorProps {
   setContributors: (contributors: ContributorWrapper[]) => void;
   isContributorModalOpen: boolean;
   handleContributorModalClose: () => void;
-  setContributorErrors: (value: string[]) => void;
+  duplicateContributors: Map<number, number[]>;
 }
 
 const NumberOfContributorsToShow = 30;
@@ -100,7 +99,7 @@ const ContributorModal: FC<ContributorProps> = ({
   setContributors,
   isContributorModalOpen,
   handleContributorModalClose,
-  setContributorErrors,
+  duplicateContributors,
 }) => {
   const [maxContributorsToShow, setMaxContributorsToShow] = useState(
     isMonsterPost(contributors) ? contributors.length : NumberOfContributorsToShow
@@ -127,10 +126,9 @@ const ContributorModal: FC<ContributorProps> = ({
   }, [contributors]);
 
   const updateContributor = (author: ContributorWrapper, rowIndex: number) => {
-    const temp = [...contributors];
-    temp[rowIndex] = author;
-    setContributors(temp);
-    validateContributors(temp, setContributorErrors);
+    const tempContrib = [...contributors];
+    tempContrib[rowIndex] = author;
+    setContributors(tempContrib);
   };
 
   // Ved sletting av en bidragsyter, sjekk om indeksering skal bli beholdt / oppdatert for alle andre elementer i bidragsyterlisten
@@ -173,7 +171,6 @@ const ContributorModal: FC<ContributorProps> = ({
       }
     }
     setContributors(tempContrib);
-    validateContributors(tempContrib, setContributorErrors);
   };
 
   function addContributor() {
@@ -188,11 +185,19 @@ const ContributorModal: FC<ContributorProps> = ({
     setIsContributorsFiltered((prevState) => !prevState);
   };
 
+  const hasContributorDuplicate = (contributor: ContributorWrapper) => {
+    if (contributor.toBeCreated?.cristin_person_id) {
+      return !!duplicateContributors.get(contributor.toBeCreated?.cristin_person_id);
+    }
+    return false;
+  };
+
   const isFilteredMode = (contributor: ContributorWrapper, contributorIndex: number) => {
     return (
       !arrayOfContributorsWithNorwegianInstitution[contributorIndex] &&
       contributor.toBeCreated?.affiliations?.length !== 0 &&
-      isContributorsFiltered
+      isContributorsFiltered &&
+      !hasContributorDuplicate(contributor)
     );
   };
 
@@ -262,6 +267,7 @@ const ContributorModal: FC<ContributorProps> = ({
                             contributors={contributors}
                             updateContributor={updateContributor}
                             removeContributor={removeContributor}
+                            duplicateContributors={duplicateContributors}
                           />
                         )}
                       </div>
