@@ -115,9 +115,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     new Map<number, number[]>()
   );
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
-  const [contributors, setContributors] = useState<ContributorWrapper[]>(
-    cristinPublication ? cristinPublication.authors : importPublication?.authors ?? []
-  );
+  const [contributors, setContributors] = useState<ContributorWrapper[]>([]);
   const [isLoadingContributors, setIsLoadingContributors] = useState(false);
   const [loadingContributorsError, setLoadingContributorsError] = useState<Error | undefined>();
   const [loadingContributorsProgress, setLoadingContributorsProgress] = useState(0);
@@ -165,7 +163,9 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
   };
 
   useEffect(() => {
-    validateContributors(contributors, setContributorErrors, setDuplicateContributors);
+    if (contributors.length !== 0) {
+      validateContributors(contributors, setContributorErrors, setDuplicateContributors);
+    }
   }, [contributors]);
 
   useEffect(() => {
