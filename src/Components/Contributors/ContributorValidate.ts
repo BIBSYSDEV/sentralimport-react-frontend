@@ -46,7 +46,9 @@ export const validateContributors = (
   const duplicatesMap = findDuplicateContributors(contributors);
   setDuplicateContributors(duplicatesMap);
   duplicatesMap.forEach((duplicateList, key) => {
-    contributorErrors.push(`${duplicateList.join(', ')} (Duplisert bidragsyter med cristinId: ${key})`);
+    contributorErrors.push(
+      `${duplicateList.map((index) => index + 1).join(', ')} (Duplisert bidragsyter med cristinId: ${key})`
+    );
   });
 
   setContributorErrors(contributorErrors);

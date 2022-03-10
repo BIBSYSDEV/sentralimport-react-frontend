@@ -476,7 +476,7 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                   <StyledErrorMessageWrapper>
                     {contributorErrors.length >= 1 && (
                       <StyledAlert data-testid={`contributor-errors`} severity="error">
-                        Det er feil i bidragsyterlisten ved index:
+                        Det er feil i bidragsyterlisten på plass nr.:
                         {contributorErrors.map((error, index) => (
                           <li key={index}> {error} </li>
                         ))}
