@@ -319,20 +319,16 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     setIsConfirmImportDialogOpen(true);
   };
 
-  function handleImportPublicationConfirmed(annotation: string) {
+  function handleImportPublicationConfirmed(annotation?: string) {
     if (formValues) {
       if (!cristinPublication && contributors) {
         handleCreatePublication(formValues, importPublication, contributors, annotation).then((response) =>
           handlePublicationImported(response)
         );
       } else if (cristinPublication) {
-        handleUpdatePublication(
-          formValues,
-          importPublication,
-          cristinPublication.cristin_result_id,
-
-          annotation
-        ).then((response) => handlePublicationImported(response));
+        handleUpdatePublication(formValues, importPublication, cristinPublication.cristin_result_id, annotation).then(
+          (response) => handlePublicationImported(response)
+        );
       }
     }
   }
