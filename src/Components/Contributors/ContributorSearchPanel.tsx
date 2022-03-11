@@ -81,8 +81,6 @@ export interface AddAffiliationError extends Error {
   institutionId: string;
 }
 
-const MaxContributorsToSearchAutomatic = 50;
-
 interface ContributorSearchPanelProps {
   resultListIndex: number;
   contributorData: ContributorWrapper;
@@ -110,11 +108,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   }, [contributorData.toBeCreated.affiliations]);
 
   useEffect(() => {
-    if (
-      contributorData.toBeCreated.badge_type !== ContributorStatus.Verified &&
-      contributorData.toBeCreated.order &&
-      contributorData.toBeCreated.order <= MaxContributorsToSearchAutomatic
-    ) {
+    if (contributorData.toBeCreated.badge_type !== ContributorStatus.Verified) {
       openSearchPanelAndSearchContributors();
     }
   }, [
