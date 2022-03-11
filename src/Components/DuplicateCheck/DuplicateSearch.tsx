@@ -54,9 +54,10 @@ const DuplicateSearch: FC<DuplicateSearchProps> = ({
       const results = await searchChristinPublications(
         maxResults,
         importPublication.doi,
-        importPublication.languages[0].title.substring(0, 20),
+        importPublication.languages[0].title,
         importPublication.yearPublished,
-        importPublication.channel?.issn
+        importPublication.channel?.issn,
+        importPublication.authors[0].surname
       );
       if (results.cristinPublications.length > 0) {
         setFoundDuplicates(true);
