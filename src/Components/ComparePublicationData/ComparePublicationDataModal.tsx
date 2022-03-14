@@ -111,10 +111,11 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   //contributors-stuff
   const [contributorErrors, setContributorErrors] = useState<string[]>([]);
-  const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
-  const [contributors, setContributors] = useState<ContributorWrapper[]>(
-    cristinPublication ? cristinPublication.authors : importPublication?.authors ?? []
+  const [duplicateContributors, setDuplicateContributors] = useState<Map<number, number[]>>(
+    new Map<number, number[]>()
   );
+  const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
+  const [contributors, setContributors] = useState<ContributorWrapper[] | undefined>(undefined);
   const [isLoadingContributors, setIsLoadingContributors] = useState(false);
   const [loadingContributorsError, setLoadingContributorsError] = useState<Error | undefined>();
   const [loadingContributorsProgress, setLoadingContributorsProgress] = useState(0);
@@ -160,6 +161,12 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       };
     });
   };
+
+  useEffect(() => {
+    if (contributors && contributors.length !== 0) {
+      validateContributors(contributors, setContributorErrors, setDuplicateContributors);
+    }
+  }, [contributors]);
 
   useEffect(() => {
     //init ligger i en useeffect pga asynkront kall til getJournalId
@@ -238,7 +245,6 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             );
           }
         }
-        validateContributors(tempContributors, setContributorErrors);
       } catch (error) {
         setLoadingContributorsError(error as Error);
       } finally {
@@ -313,20 +319,16 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
     setIsConfirmImportDialogOpen(true);
   };
 
-  function handleImportPublicationConfirmed(annotation: string) {
+  function handleImportPublicationConfirmed(annotation?: string) {
     if (formValues) {
-      if (!cristinPublication) {
+      if (!cristinPublication && contributors) {
         handleCreatePublication(formValues, importPublication, contributors, annotation).then((response) =>
           handlePublicationImported(response)
         );
-      } else {
-        handleUpdatePublication(
-          formValues,
-          importPublication,
-          cristinPublication.cristin_result_id,
-
-          annotation
-        ).then((response) => handlePublicationImported(response));
+      } else if (cristinPublication) {
+        handleUpdatePublication(formValues, importPublication, cristinPublication.cristin_result_id, annotation).then(
+          (response) => handlePublicationImported(response)
+        );
       }
     }
   }
@@ -470,12 +472,13 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
                   <StyledErrorMessageWrapper>
                     {contributorErrors.length >= 1 && (
                       <StyledAlert data-testid={`contributor-errors`} severity="error">
-                        Det er feil i bidragsyterlisten ved index:
+                        Det er feil i bidragsyterlisten på plass nr.:
                         {contributorErrors.map((error, index) => (
                           <li key={index}> {error} </li>
                         ))}
                       </StyledAlert>
                     )}
+
                     {importPublicationError && (
                       <Typography color="error" data-testid="import-publication-errors">
                         {importPublicationError.message}
@@ -528,14 +531,14 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
         isOpen={isConfirmImportDialogOpen}
         handleAbort={() => setIsConfirmImportDialogOpen(false)}
       />
-      {importPublication && (
+      {importPublication && contributors && (
         <ContributorModal
           isContributorModalOpen={isContributorModalOpen}
           contributors={contributors}
-          setContributorErrors={setContributorErrors}
           setContributors={setContributors}
           handleContributorModalClose={() => setIsContributorModalOpen(false)}
           importPublication={importPublication}
+          duplicateContributors={duplicateContributors}
         />
       )}
     </>

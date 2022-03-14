@@ -49,8 +49,6 @@ const reducer = (state: ContextType, action: { type: string; payload: any }) => 
       return { ...state, currentSortValue: action.payload };
     case 'setSortOrder':
       return { ...state, currentSortOrder: action.payload };
-    case 'setSelectedPublication':
-      return { ...state, selectedPublication: action.payload };
     case 'setTotalCount':
       return { ...state, totalCount: action.payload };
     case 'institutions':

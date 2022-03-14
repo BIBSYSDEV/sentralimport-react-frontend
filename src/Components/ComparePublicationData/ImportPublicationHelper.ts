@@ -58,7 +58,7 @@ export const createCristinPublicationForSaving = (
   values: CompareFormValuesType,
   importPublication: ImportPublication,
   contributors: ContributorWrapper[],
-  annotation: string
+  annotation?: string
 ) => {
   const publication: PostPublication = {
     category: {
@@ -102,7 +102,7 @@ export const createCristinPublicationForUpdating = (
   values: CompareFormValuesType,
   importPublication: ImportPublication,
   cristinResultId: string,
-  annotation: string
+  annotation?: string
 ) => {
   const publication: PatchPublication = {
     cristinResultId,
@@ -142,7 +142,7 @@ export async function handleCreatePublication(
   formValues: CompareFormValuesType,
   importPublication: ImportPublication,
   contributors: ContributorWrapper[],
-  annotation: string
+  annotation?: string
 ) {
   const publication = createCristinPublicationForSaving(formValues, importPublication, contributors, annotation);
   try {
@@ -183,7 +183,7 @@ export async function handleUpdatePublication(
   formValues: CompareFormValuesType,
   importPublication: ImportPublication,
   cristinResultId: string,
-  annotation: string
+  annotation?: string
 ) {
   const publication = createCristinPublicationForUpdating(formValues, importPublication, cristinResultId, annotation);
   try {
