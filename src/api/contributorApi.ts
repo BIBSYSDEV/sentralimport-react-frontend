@@ -76,6 +76,15 @@ export async function getPersonDetailById(person: ContributorType): Promise<Cont
         badge_type: ContributorStatus.Unknown,
       };
     }
+    //hvis man har en cristinId allerede og søker på det, kan man få tilbake persondata med tom cristinId
+    if (axios.isAxiosError(error) && error.response && error.response.status === 404) {
+      return {
+        cristin_person_id: 0,
+        first_name: person.first_name,
+        surname: person.surname,
+        badge_type: ContributorStatus.Verified,
+      };
+    }
     throw error;
   }
 }
