@@ -38,6 +38,7 @@ const CompareFormIssue: FC<CompareFormIssueProps> = ({ importPublication }) => {
               id="cristindata-issue"
               name="issue"
               placeholder="Hefte"
+              autoComplete="off"
               data-testid="cristindata-issue-textfield"
               inputProps={{ 'data-testid': 'cristindata-issue-textfield-input' }}
               fullWidth
