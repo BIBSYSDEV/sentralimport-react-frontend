@@ -756,7 +756,7 @@
     }
   },
   {
-    "pubId": 61021122,
+    "pubId": 6102441122,
     "category": "ARTICLE",
     "categoryName": "Vitenskapelig artikkel",
     "registered": "Oct 30, 2021",
@@ -769,52 +769,18 @@
       {
         "cristinId": 0,
         "roleCode": "FORFATTER",
-        "sequenceNr": 2,
-        "surname": "Dutta",
-        "firstname": "Debasish",
-        "authorName": "Dutta D.",
+        "sequenceNr": 1,
+        "surname": "Lei",
+        "firstname": "Guowen",
+        "authorName": "Lei G.",
         "institutions": [
           {
-            "unitName": "Indian Institute of Technology Kharagpur",
-            "countryCode": "IN",
-            "institutionName": "Indian Institute of Technology Kharagpur",
-            "cristinInstitutionNr": 0,
-            "isCristinInstitution": false
-          }
-        ]
-      },
-      {
-        "cristinId": 29685,
-        "roleCode": "FORFATTER",
-        "sequenceNr": 3,
-        "surname": "Bihs",
-        "firstname": "Hans",
-        "authorName": "Bihs H.",
-        "institutions": [
-          {
-            "unitName": "Norwegian University of Science and Technology",
+            "unitName": "Department of Geoscience and Petroleum;Norwegian University of Science and Technology",
             "countryCode": "NO",
             "institutionName": "Norwegian University of Science and Technology",
             "acronym": "NTNU",
             "cristinInstitutionNr": 194,
             "isCristinInstitution": true
-          }
-        ]
-      },
-      {
-        "cristinId": 0,
-        "roleCode": "FORFATTER",
-        "sequenceNr": 4,
-        "surname": "Afzal",
-        "firstname": "Mohammad Saud",
-        "authorName": "Afzal M.S.",
-        "institutions": [
-          {
-            "unitName": "Indian Institute of Technology Kharagpur",
-            "countryCode": "IN",
-            "institutionName": "Indian Institute of Technology Kharagpur",
-            "cristinInstitutionNr": 0,
-            "isCristinInstitution": false
           }
         ]
       }
@@ -823,18 +789,9 @@
       {
         "lang": "EN",
         "langName": "Engelsk",
-        "title": "Publication that fails on import",
-        "summary": "Some description.",
+        "summary": "No title.",
         "original": true
       }
-    ],
-    "channel": {
-      "cristinTidsskriftNr": 2588,
-      "title": "Coastal Engineering",
-      "issn": "0378-3839",
-      "eissn": "1872-7379",
-      "isbns": [],
-      "volume": "170"
-    }
+    ]
   }
 ]

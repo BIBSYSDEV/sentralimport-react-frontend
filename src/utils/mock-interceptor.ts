@@ -151,8 +151,6 @@ export const interceptRequestsOnMock = () => {
     'x-total-count': 0,
   });
 
-  mock.onGet(new RegExp(`${CRIST_REST_API}/results&.*`)).reply(200, mockCristinPublications);
-
   //search for title
   mock.onGet(new RegExp(`${CRIST_REST_API}/results.*title=${mockTitleForEmptyCristinSearch}.*`)).reply(200, [], {
     'x-total-count': 0,
@@ -178,6 +176,10 @@ export const interceptRequestsOnMock = () => {
     .reply(200, mockCristinPublications, {
       'x-total-count': 32,
     });
+
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results?.*`)).reply(200, mockCristinPublications, {
+    'x-total-count': 20000,
+  });
 
   //search persons by name
   mock
