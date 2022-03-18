@@ -127,4 +127,12 @@ context('duplication-check-modal', () => {
     cy.get(`[data-testid="duplication-result-689770-journal-warning"]`).should('contain', 'Tidskrift mangler');
     cy.get(`[data-testid="duplication-result-688231-journal-warning"]`).should('not.exist');
   });
+
+  it('can search for duplicates with doi using title - when title and authors does not exist', () => {
+    cy.get(`#rowsPerPageSelector`).click().type('10{enter}{enter}');
+    cy.get(`[data-testid="import-table-row-${mockImportData[6].pubId}"]`).click();
+    cy.get(`[data-testid="search-panel-title-checkbox"]`).click();
+    cy.get(`[data-testid="search-panel-retry-search-button"]`).click();
+    cy.get(`[data-testid="duplicates-result-list"]`).should('contain', mockCristinPublications[0].title.de);
+  });
 });

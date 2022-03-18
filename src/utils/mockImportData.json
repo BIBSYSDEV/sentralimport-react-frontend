@@ -766,25 +766,7 @@
     "externalId": "2-s2.0-85114934135",
     "yearPublished": 2021,
     "authors": [
-      {
-        "cristinId": 0,
-        "roleCode": "FORFATTER",
-        "sequenceNr": 1,
-        "surname": "Lei",
-        "firstname": "Guowen",
-        "authorName": "Lei G.",
-        "institutions": [
-          {
-            "unitName": "Department of Geoscience and Petroleum;Norwegian University of Science and Technology",
-            "countryCode": "NO",
-            "institutionName": "Norwegian University of Science and Technology",
-            "acronym": "NTNU",
-            "cristinInstitutionNr": 194,
-            "isCristinInstitution": true
-          }
-        ]
-      }
-    ],
+        ],
     "languages": [
       {
         "lang": "EN",
