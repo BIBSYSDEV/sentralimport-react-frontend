@@ -9,6 +9,10 @@ import { CompareFormJournalType, CompareFormValuesType } from './CompareFormType
 import { patchPiaPublication, patchPublication, postPublication } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
 import { ContributorWrapper } from '../../types/ContributorTypes';
+import {
+  generateAuthorPresentationForCristinAuthors,
+  generateAuthorPresentationFromImportPublication,
+} from '../../utils/contributorUtils';
 
 const getNumberOfPages = (pageFrom?: string, pageTo?: string) => {
   //Dette har blitt lagt inn pga. edge-casen med sidetall med bokstaven "e" i seg.
@@ -138,6 +142,17 @@ export const createCristinPublicationForUpdating = (
   return publication;
 };
 
+const addToLog = (id: string, title: string, authorsPresentation: string) => {
+  const log: SavedPublicationLogLine[] = JSON.parse(localStorage.getItem('log') || '[]') ?? [];
+  if (log.length > 15) log.shift();
+  log.push({
+    id,
+    title,
+    authorsPresentation,
+  });
+  localStorage.setItem('log', JSON.stringify(log));
+};
+
 export async function handleCreatePublication(
   formValues: CompareFormValuesType,
   importPublication: ImportPublication,
@@ -147,9 +162,14 @@ export async function handleCreatePublication(
   const publication = createCristinPublicationForSaving(formValues, importPublication, contributors, annotation);
   try {
     const postPublicationResponse = await postPublication(publication);
-    const cristinResultId = postPublicationResponse.data.cristin_result_id;
+    const cristinResultId = postPublicationResponse.data.cristin_result_id.toString();
     await patchPiaPublication(cristinResultId, publication.pub_id);
-    addToLog(publication, cristinResultId);
+    addToLog(
+      cristinResultId,
+      publication.title[publication.original_language.toLowerCase()],
+      generateAuthorPresentationForCristinAuthors(publication.contributors.list)
+    );
+
     return {
       result: { id: cristinResultId, title: publication.title[publication.original_language.toLowerCase()] },
       status: 200,
@@ -159,25 +179,6 @@ export async function handleCreatePublication(
     return generateErrorMessage(error);
   }
 }
-
-const generateAuthorPresentation = (publication: any) => {
-  return publication.contributors.list
-    .slice(0, 5)
-    .map((author: any) => [author.surname, author.first_name].join(', '))
-    .join('; ')
-    .concat(publication.contributors.list.length > 5 ? ' et al.' : '');
-};
-
-const addToLog = (publication: any, cristinResultId: any) => {
-  const log: SavedPublicationLogLine[] = JSON.parse(localStorage.getItem('log') || '[]') ?? [];
-  if (log.length > 15) log.shift();
-  log.push({
-    id: cristinResultId,
-    title: publication.title[publication.original_language.toLowerCase()],
-    authorsPresentation: generateAuthorPresentation(publication),
-  });
-  localStorage.setItem('log', JSON.stringify(log));
-};
 
 export async function handleUpdatePublication(
   formValues: CompareFormValuesType,
@@ -189,6 +190,11 @@ export async function handleUpdatePublication(
   try {
     await patchPublication(publication);
     await patchPiaPublication(cristinResultId, publication.pub_id);
+    addToLog(
+      cristinResultId,
+      publication.title[publication.original_language.toLowerCase()],
+      generateAuthorPresentationFromImportPublication(importPublication)
+    );
   } catch (error) {
     handlePotentialExpiredSession(error);
     return generateErrorMessage(error);

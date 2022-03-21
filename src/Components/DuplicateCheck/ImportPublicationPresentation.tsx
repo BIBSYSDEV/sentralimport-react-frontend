@@ -7,6 +7,7 @@ import { ImportPublication } from '../../types/PublicationTypes';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { ImportPublicationPerson } from '../../types/ContributorTypes';
 import { NumberOfContributorsToDefineMonsterPost } from '../Contributors/ContributorModal';
+import { generateAuthorPresentationFromImportPublication } from '../../utils/contributorUtils';
 
 const StyledImportPublicationPresentation = styled.div`
   padding-left: 1rem;
@@ -41,14 +42,6 @@ const countFoundPersons = (persons: ImportPublicationPerson[]) => {
   return persons.filter((person: ImportPublicationPerson) => person.cristinId && person.cristinId !== 0).length;
 };
 
-const generateAuthorPresentation = (importPublication: ImportPublication) => {
-  return importPublication.authors
-    .slice(0, 5)
-    .map((author: any) => author.authorName)
-    .join('; ')
-    .concat(importPublication.authors.length > 3 ? ' et al.' : '');
-};
-
 const filterTitle = (importPublication: ImportPublication) => {
   if (importPublication.languages) {
     return importPublication.languages.filter((l) => l.original)[0].title;
@@ -73,7 +66,7 @@ const ImportPublicationPresentation: FC<ImportPublicationPresentationProps> = ({
         <StyledMetaDataTypography>{importPublication.categoryName}</StyledMetaDataTypography>
       )}
       <StyledMetaDataTypography data-testid={`importdata-author-presentation-${importPublication.pubId}`}>
-        {generateAuthorPresentation(importPublication)}
+        {generateAuthorPresentationFromImportPublication(importPublication)}
       </StyledMetaDataTypography>
       {isInImportTable &&
         (importPublication.authors.length > NumberOfContributorsToDefineMonsterPost ? (
