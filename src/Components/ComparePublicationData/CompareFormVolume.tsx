@@ -38,6 +38,7 @@ const CompareFormVolume: FC<CompareFormVolumeProps> = ({ importPublication }) =>
               id="cristindata-volume"
               name="volume"
               placeholder="Volum"
+              autoComplete="off"
               data-testid="cristindata-volume-textfield"
               inputProps={{ 'data-testid': 'cristindata-volume-textfield-input' }}
               fullWidth

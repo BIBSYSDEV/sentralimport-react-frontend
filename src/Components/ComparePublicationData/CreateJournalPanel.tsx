@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { Button, CircularProgress, TextField, Typography } from '@material-ui/core';
+import { Button, CircularProgress, Link, TextField, Typography } from '@material-ui/core';
 import styled from 'styled-components';
 import { ErrorMessage, Field, FieldProps, Formik } from 'formik';
 import * as Yup from 'yup';
@@ -7,13 +7,25 @@ import CommonErrorMessage from '../CommonErrorMessage';
 import { IssnFormat } from '../../utils/stringUtils';
 import { ChannelQueryMethod, getJournalsByQuery } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
+import { BiLinkExternal } from 'react-icons/bi';
+import { Colors } from '../../assets/styles/StyleConstants';
 
 const StyledFormWrapper = styled.div`
-  padding: 1rem;
+  padding: 0 1rem 1rem 1rem;
 `;
 
 const StyledButtonWrapper = styled.div`
   margin-top: 1rem;
+`;
+
+const StyledLink = styled(Link)`
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  && {
+    margin-bottom: 1rem;
+    color: ${Colors.PURPLE};
+  }
 `;
 
 const StyledTextField = styled(TextField)`
@@ -91,6 +103,10 @@ const CreateJournalPanel: FC<CreateJournalPanelProps> = ({ handleCreateJournal }
 
   return (
     <StyledFormWrapper>
+      <StyledLink href="https://portal.issn.org/" target="_blank" rel="noopener noreferrer">
+        <BiLinkExternal size="1.2rem" />
+        Søk i ISSN-portal
+      </StyledLink>
       <Typography gutterBottom variant="caption">
         Felter merket med * er obligatoriske
       </Typography>

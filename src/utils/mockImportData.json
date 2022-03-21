@@ -760,9 +760,6 @@
     "category": "ARTICLE",
     "categoryName": "Vitenskapelig artikkel",
     "registered": "Oct 30, 2021",
-    "doi": "10.1016/j.coastaleng.2021.104002",
-    "sourceName": "Scopus",
-    "sourceCode": "SCOPUS",
     "externalId": "2-s2.0-85114934135",
     "yearPublished": 2021,
     "authors": [
@@ -836,5 +833,26 @@
       "isbns": [],
       "volume": "170"
     }
+  },
+  {
+    "pubId": 6102441122,
+    "category": "ARTICLE",
+    "categoryName": "Vitenskapelig artikkel",
+    "registered": "Oct 30, 2021",
+    "doi": "10.1016/j.coastaleng.2021.104002",
+    "sourceName": "Scopus",
+    "sourceCode": "SCOPUS",
+    "externalId": "2-s2.0-85114934135",
+    "yearPublished": 2021,
+    "authors": [
+        ],
+    "languages": [
+      {
+        "lang": "EN",
+        "langName": "Engelsk",
+        "summary": "No title.",
+        "original": true
+      }
+    ]
   }
 ]

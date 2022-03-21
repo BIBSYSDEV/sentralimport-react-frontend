@@ -1,5 +1,6 @@
 import {
   mockImportPublication1,
+  mockImportPublication2,
   mockInstitutions,
   mockPersonDetailed,
   mockSimpleUnitResponse,
@@ -16,12 +17,21 @@ context('contributor', () => {
   });
 
   it('handles publication with contributor-errors', () => {
-    cy.get(`[data-testid="import-table-row-${mockImportData[3].pubId}"]`).click();
+    cy.get('[data-testid="doi-filter"]').type(mockImportPublication2.doi);
+    cy.get(`[data-testid="import-table-row-${mockImportPublication2.pubId}"]`).click();
     cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="contributor-loading-error"]').contains(
-      'Feil ved lasting av bidragsytere: (Request failed with status code 404)'
+      'Feil ved lasting av bidragsytere: (Request failed with status code 500)'
     );
+  });
+
+  it('handles cristinId not found (404) / does not prevent loading', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[3].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get(`[data-testid="contributor-form-4-name"]`).contains(mockImportData[3].authors[4].surname);
   });
 
   it('shows contributor-list', () => {

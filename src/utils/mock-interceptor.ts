@@ -45,6 +45,9 @@ import {
   responseCountryInstitutionCN,
   responseCountryInstitutionIT,
   resultInstitutionNTNU,
+  mockServerErrorResponse,
+  mockContributorCristinIdThatTriggersServerError,
+  mockImportPublication2,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
@@ -79,6 +82,14 @@ export const interceptRequestsOnMock = () => {
   mock
     .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*${urlSearchParams3.toString()}.*`))
     .reply(200, [mockMonsterImportPost], {
+      'x-total-count': 1,
+    });
+
+  const urlSearchParams4 = new URLSearchParams();
+  urlSearchParams4.set('doi', mockImportPublication2.doi);
+  mock
+    .onGet(new RegExp(`${PIA_REST_API}/sentralimport/publications.*${urlSearchParams4.toString()}.*`))
+    .reply(200, [mockImportPublication2], {
       'x-total-count': 1,
     });
 
@@ -140,8 +151,6 @@ export const interceptRequestsOnMock = () => {
     'x-total-count': 0,
   });
 
-  mock.onGet(new RegExp(`${CRIST_REST_API}/results&.*`)).reply(200, mockCristinPublications);
-
   //search for title
   mock.onGet(new RegExp(`${CRIST_REST_API}/results.*title=${mockTitleForEmptyCristinSearch}.*`)).reply(200, [], {
     'x-total-count': 0,
@@ -167,6 +176,10 @@ export const interceptRequestsOnMock = () => {
     .reply(200, mockCristinPublications, {
       'x-total-count': 32,
     });
+
+  mock.onGet(new RegExp(`${CRIST_REST_API}/results?.*`)).reply(200, mockCristinPublications, {
+    'x-total-count': 20000,
+  });
 
   //search persons by name
   mock
@@ -208,6 +221,9 @@ export const interceptRequestsOnMock = () => {
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockCristinPersonNotFound}`))
     .reply(404, mockCristinPersonNotFoundResponse);
   mock
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockContributorCristinIdThatTriggersServerError}`))
+    .reply(500, mockServerErrorResponse);
+  mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${cristinIDWithoutActiveAffiliation}`))
     .reply(200, mockPersonDetailedWithoutActiveAffiliations);
   mock
@@ -226,7 +242,9 @@ export const interceptRequestsOnMock = () => {
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed6.cristin_person_id}`))
     .reply(200, mockPersonDetailed6);
-  mock.onGet(new RegExp(`${CRIST_REST_API}/persons/666666`)).reply(200, mockPersonDetailedDuplicate);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailedDuplicate.cristin_person_id}`))
+    .reply(200, mockPersonDetailedDuplicate);
   mock.onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPerson_234.cristin_person_id}`)).reply(200, mockPerson_234);
   mock.onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPerson_666.cristin_person_id}`)).reply(200, mockPerson_666);
   mock.onGet(new RegExp(`${CRIST_REST_API}/persons/\\d+`)).reply(200, mockPersonDetailed);
