@@ -83,3 +83,6 @@ export const emptyContributorWrapper: ContributorWrapper = {
     role_code: RoleCodes.Author,
   },
 };
+
+export const MaxLengthFirstName = 30;
+export const MaxLengthLastName = 30;

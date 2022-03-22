@@ -1,6 +1,5 @@
 import {
   mockImportPublication1,
-  mockImportPublication2,
   mockInstitutions,
   mockPersonDetailed,
   mockSimpleUnitResponse,
@@ -345,6 +344,29 @@ context('contributor', () => {
     cy.get(`[data-testid="filter-institution-select-${mockInstitutions[0].cristin_institution_id}-option"]`).click();
     cy.get('[data-testid="contributor-back-button"]').click();
     cy.get('[data-testid="contributor-errors"]').should('not.contain.text', contributorNumber4IsMissingAffiliation);
+  });
+
+  it('handles contributor-errors long names', () => {
+    cy.get(`#rowsPerPageSelector`).click().type('10{enter}{enter}');
+    cy.get(`[data-testid="import-table-row-${mockImportData[8].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+
+    cy.get('[data-testid="contributor-errors"]').should('contain.text', '1 (Fornavn er for langt)');
+    cy.get('[data-testid="contributor-errors"]').should('contain.text', '1 (Etternavn er for langt)');
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('#firstName0-helper-text').should('contain.text', 'Fornavn kan maksimalt være 30 tegn');
+    cy.get('#surname0-helper-text').should('contain.text', 'Etternavn kan maksimalt være 30 tegn');
+
+    //changing names removes error:
+    cy.get('[data-testid="contributor-0-firstname-text-field-input"]').clear().type('fornavn');
+    cy.get('[data-testid="contributor-0-surname-text-field-input"]').clear().type('etternavn');
+    cy.get('#firstName0-helper-text').should('not.contain.text', 'Fornavn kan maksimalt være 30 tegn');
+    cy.get('#surname0-helper-text').should('not.contain.text', 'Fornavn kan maksimalt være 30 tegn');
+    cy.get('[data-testid="choose-text-field-person-0"]').click();
+    cy.get('[data-testid="contributor-back-button"]').click();
+    cy.get('[data-testid="contributor-errors"]').should('not.contain.text', 'Fornavn er for langt');
+    cy.get('[data-testid="contributor-errors"]').should('not.contain.text', 'Etternavn er for langt');
   });
 
   it('shows institution-name in english and norwegian in institution list', () => {
