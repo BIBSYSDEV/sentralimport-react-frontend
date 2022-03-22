@@ -1,4 +1,4 @@
-import { ImportPublicationPerson } from './ContributorTypes';
+import { ContributorType, ImportPublicationPerson } from './ContributorTypes';
 import { ImportSources } from './ContextType';
 
 export enum Order {
@@ -162,7 +162,7 @@ export interface PostPublication {
   links: Link[];
   pages: Pages;
   contributors: {
-    list: any[];
+    list: ContributorType[];
   };
   annotation?: string;
 }

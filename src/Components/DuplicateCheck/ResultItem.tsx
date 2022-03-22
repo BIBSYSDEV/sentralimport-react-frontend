@@ -3,6 +3,7 @@ import { Radio, Typography } from '@material-ui/core';
 import { CristinPublication, InternationalStandardNumber, UrlTypes } from '../../types/PublicationTypes';
 import styled from 'styled-components';
 import { Colors } from '../../assets/styles/StyleConstants';
+import { generateAuthorPresentationForCristinAuthors } from '../../utils/contributorUtils';
 
 const StyledResultItem = styled.li`
   display: flex;
@@ -55,14 +56,6 @@ interface ResultItemProps {
   cristinPublication: CristinPublication;
 }
 
-const generateAuthorPresentation = (cristinPublication: CristinPublication) => {
-  return cristinPublication.authors
-    .slice(0, 5)
-    .map((author: any) => [author.surname, author.first_name].join(', '))
-    .join('; ')
-    .concat(cristinPublication.authors.length > 5 ? ' et al.' : '');
-};
-
 export function extractDoiFromCristinPublication(cristinPublication: CristinPublication) {
   const doiLink = 'https://doi.org/';
   const url = cristinPublication.links?.find((link) => link.url_type === UrlTypes.Doi)?.url;
@@ -92,7 +85,9 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
           {cristinPublication.category.name.nb && (
             <StyledMetaDataTypography>{cristinPublication.category.name.nb}</StyledMetaDataTypography>
           )}
-          <StyledMetaDataTypography>{generateAuthorPresentation(cristinPublication)}</StyledMetaDataTypography>
+          <StyledMetaDataTypography>
+            {generateAuthorPresentationForCristinAuthors(cristinPublication.authors)}
+          </StyledMetaDataTypography>
           <StyledStandardNumberTypography>
             {cristinPublication.international_standard_numbers &&
               cristinPublication.international_standard_numbers?.map(
