@@ -1,5 +1,6 @@
 import {
   mockImportPublication1,
+  mockImportPublication2,
   mockInstitutions,
   mockPersonDetailed,
   mockSimpleUnitResponse,
