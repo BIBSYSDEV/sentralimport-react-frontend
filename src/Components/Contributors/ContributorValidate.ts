@@ -1,4 +1,4 @@
-import { ContributorWrapper } from '../../types/ContributorTypes';
+import { ContributorWrapper, MaxLengthFirstName, MaxLengthLastName } from '../../types/ContributorTypes';
 import { Dispatch, SetStateAction } from 'react';
 
 const validateBasicMetaData = (contributors: ContributorWrapper[]): string[] => {
@@ -13,6 +13,10 @@ const validateBasicMetaData = (contributors: ContributorWrapper[]): string[] => 
       if (errors.length > 0) {
         contributorErrors.push(`${index + 1} (Mangler ${errors.join(', ')})`);
       }
+      if (toBeCreated.first_name?.length > MaxLengthFirstName)
+        contributorErrors.push(`${index + 1} (Fornavn er for langt)`);
+      if (toBeCreated.surname?.length > MaxLengthLastName)
+        contributorErrors.push(`${index + 1} (Etternavn er for langt)`);
     }
   });
   return contributorErrors;

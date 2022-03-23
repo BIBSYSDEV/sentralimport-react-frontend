@@ -1,6 +1,12 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Button, Card, CircularProgress, Collapse, Grid, TextField, Typography } from '@material-ui/core';
-import { ContributorStatus, ContributorType, ContributorWrapper } from '../../types/ContributorTypes';
+import {
+  ContributorStatus,
+  ContributorType,
+  ContributorWrapper,
+  MaxLengthFirstName,
+  MaxLengthLastName,
+} from '../../types/ContributorTypes';
 import ContributorSearchResultItem from './ContributorSearchResultItem';
 import { getPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
 import { Affiliation } from '../../types/InstitutionTypes';
@@ -255,11 +261,14 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   };
 
   const formValidationSchema = Yup.object().shape({
-    firstName: Yup.string().trim().required('Fornavn er et obligatorisk felt').max(30, 'Fornavn kan maks være 30 tegn'),
+    firstName: Yup.string()
+      .trim()
+      .required('Fornavn er et obligatorisk felt')
+      .max(MaxLengthFirstName, `Fornavn kan maksimalt være ${MaxLengthFirstName} tegn`),
     surName: Yup.string()
       .trim()
       .required('Etternavn er et obligatorisk felt')
-      .max(30, 'Etternavn kan maks være 30 tegn'),
+      .max(MaxLengthLastName, `Etternavn kan maksimalt være ${MaxLengthLastName} tegn`),
   });
 
   return (
