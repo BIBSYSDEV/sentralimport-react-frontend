@@ -87,7 +87,7 @@ context('Search contributor panel', () => {
     //active contributors are defined as person with identified_cristin_person = true AND at least one active affiliation.
     //getPersonDetailed may respond with not-authorized, in which case it is not possible to assert whether or not a contributor is verified
     const VerifiedText = 'Verifisert';
-    const notVerifiedText = 'Ikke verifisert';
+    const notVerifiedText = 'Ingen aktiv tilknytning';
     const unknownVerificationText = 'Ukjent verifikasjonsstatus';
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
