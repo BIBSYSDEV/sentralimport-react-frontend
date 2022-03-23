@@ -53,7 +53,7 @@ context('contributor', () => {
       'Engineering Research Center of Learning-Based Intelligent System (Ministry of Education)'
     );
     cy.get(`[data-testid=creator-1-institution-0-country-code]`).contains(
-      mockImportData[0].authors[0].institutions[0].countryCode
+      `People's Republic of China (${mockImportData[0].authors[0].institutions[0].countryCode})`
     );
     cy.get(`[data-testid="creator-name-2"]`).contains(mockImportData[0].authors[1].firstname);
     cy.get(`[data-testid="creator-name-2"]`).contains(mockImportData[0].authors[1].surname);
