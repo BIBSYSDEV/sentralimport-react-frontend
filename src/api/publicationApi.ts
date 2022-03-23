@@ -46,6 +46,14 @@ export async function getJournalsByQuery(
   });
 }
 
+export async function getJournalsByIssn(issn: string): Promise<ChannelLight[]> {
+  const promiseArray: Promise<AxiosResponse<ChannelLight[]>>[] = [];
+  promiseArray.push(getJournalsByQuery(issn, ChannelQueryMethod.issn));
+  promiseArray.push(getJournalsByQuery(issn, ChannelQueryMethod.eissn));
+  const responses = await Promise.all(promiseArray);
+  return [...responses[0].data, ...responses[1].data];
+}
+
 export async function getCategories(searchLanguage: SearchLanguage): Promise<AxiosResponse<CategoryItem[]>> {
   return authenticatedApiRequest({
     url: encodeURI(`${CRIST_REST_API}/results/categories?lang=${searchLanguage}`),
