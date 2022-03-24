@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { SimpleUnitResponse } from '../../types/InstitutionTypes';
 import { AddAffiliationError } from './ContributorSearchPanel';
 import { Colors } from '../../assets/styles/StyleConstants';
+import { convertIso3166ToCountryString } from '../../utils/stringUtils';
 
 const StyledAffiliationsWrapper = styled.div<{ backgroundcolor: string }>`
   margin-bottom: 1rem;
@@ -95,7 +96,8 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
                 data-testid={`${dataTestid}-country-code`}
                 display="inline"
                 variant="caption">
-                {affiliation.countryCode && 'Land: ' + affiliation.countryCode}
+                {affiliation.countryCode &&
+                  `${convertIso3166ToCountryString(affiliation.countryCode)} (${affiliation.countryCode})`}
               </StyledTypographyWithRightPadding>
             </Grid>
           )}
