@@ -1,11 +1,16 @@
 import React, { FC, useLayoutEffect, useRef, useState } from 'react';
 import { Modal, ModalBody, ModalHeader } from 'reactstrap';
-import { Button, Divider, Typography } from '@material-ui/core';
+import { Button, Checkbox, Divider, FormControlLabel, FormGroup, Typography } from '@material-ui/core';
 import styled from 'styled-components';
 import AddIcon from '@material-ui/icons/Add';
 import ContributorOrderComponent from './ContributorOrderComponent';
 import ImportContributorComponent from './ImportContributorComponent';
-import { ContributorWrapper, emptyContributorWrapper } from '../../types/ContributorTypes';
+import {
+  ContributorWrapper,
+  emptyContributorWrapper,
+  MaxLengthFirstName,
+  MaxLengthLastName,
+} from '../../types/ContributorTypes';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { ImportPublication } from '../../types/PublicationTypes';
 import ContributorForm from './ContributorForm';
@@ -37,6 +42,7 @@ const StyledContributorHeader = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  margin-bottom: 0.5rem;
 `;
 
 const StyledOrderColumn = styled.div`
@@ -52,6 +58,12 @@ const StyledHiddenContributorWrapper = styled.div`
 const StyledImportHeaderWrapper = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
+`;
+
+const StyledModalHeaderWrapper = styled.div`
+  display: flex;
+  gap: 3rem;
   align-items: center;
 `;
 
@@ -88,6 +100,24 @@ const NorwegianCountryCode = 'NO';
 const doesContributorHaveNorwegianAffiliation = (contributor: ContributorWrapper) =>
   contributor.imported?.affiliations?.some((inst) => inst.countryCode === NorwegianCountryCode);
 
+const NumberOfContributorsToShow = 30;
+
+export const NumberOfContributorsToDefineMonsterPost = 100;
+
+const contributorHasErrors = (contributor: ContributorWrapper): boolean =>
+  contributor.toBeCreated?.affiliations?.length === 0 ||
+  contributor.toBeCreated?.first_name === '' ||
+  contributor.toBeCreated?.surname === '' ||
+  contributor.toBeCreated?.first_name?.length > MaxLengthFirstName ||
+  contributor.toBeCreated?.surname?.length > MaxLengthLastName;
+
+const hasContributorDuplicate = (contributor: ContributorWrapper, duplicateContributors: Map<number, number[]>) => {
+  if (contributor.toBeCreated?.cristin_person_id) {
+    return !!duplicateContributors.get(contributor.toBeCreated?.cristin_person_id);
+  }
+  return false;
+};
+
 interface ContributorProps {
   importPublication: ImportPublication;
   contributors: ContributorWrapper[];
@@ -97,23 +127,6 @@ interface ContributorProps {
   duplicateContributors: Map<number, number[]>;
 }
 
-const NumberOfContributorsToShow = 30;
-
-export const NumberOfContributorsToDefineMonsterPost = 100;
-
-const isMonsterPost = (contributors: ContributorWrapper[]) =>
-  contributors.length > NumberOfContributorsToDefineMonsterPost;
-
-const contributorHasErrors = (contributor: ContributorWrapper): boolean =>
-  contributor.toBeCreated?.affiliations?.length === 0;
-
-const hasContributorDuplicate = (contributor: ContributorWrapper, duplicateContributors: Map<number, number[]>) => {
-  if (contributor.toBeCreated?.cristin_person_id) {
-    return !!duplicateContributors.get(contributor.toBeCreated?.cristin_person_id);
-  }
-  return false;
-};
-
 const ContributorModal: FC<ContributorProps> = ({
   contributors,
   setContributors,
@@ -121,12 +134,17 @@ const ContributorModal: FC<ContributorProps> = ({
   handleContributorModalClose,
   duplicateContributors,
 }) => {
+  const isMonsterPost = contributors.length > NumberOfContributorsToDefineMonsterPost;
   const [maxContributorsToShow, setMaxContributorsToShow] = useState(
-    isMonsterPost(contributors) ? contributors.length : NumberOfContributorsToShow
+    isMonsterPost ? contributors.length : NumberOfContributorsToShow
   );
-
-  const [isContributorHiddenList, setIsContributorHiddenList] = useState<boolean[]>(
-    isMonsterPost(contributors)
+  const arrayOfContributorsWithForreignInstitution = contributors.map(
+    (contributor) =>
+      !contributor.imported?.affiliations?.some((inst) => inst.countryCode === NorwegianCountryCode) ?? false
+  );
+  const [isFilterChecked, setIsFilterChecked] = useState(false);
+  const [listOfHiddenContributors, setListOfHiddenContributors] = useState<boolean[]>(
+    isMonsterPost
       ? contributors.map((contributor) => {
           return (
             !doesContributorHaveNorwegianAffiliation(contributor) &&
@@ -136,12 +154,27 @@ const ContributorModal: FC<ContributorProps> = ({
         })
       : new Array(contributors.length).fill(false)
   );
-
   const firstUpdate = useRef(true);
 
   useLayoutEffect(() => {
     if (firstUpdate.current) firstUpdate.current = false;
   }, [contributors]);
+
+  const handleShowContributor = (index: number) => {
+    setListOfHiddenContributors((prevState) => {
+      prevState[index] = !prevState[index];
+      return [...prevState];
+    });
+  };
+
+  const handleToggleFilterForNonMonsterPosts = () => {
+    if (isFilterChecked) {
+      setListOfHiddenContributors(new Array(contributors.length).fill(false));
+    } else {
+      setListOfHiddenContributors(arrayOfContributorsWithForreignInstitution);
+    }
+    setIsFilterChecked((prevState) => !prevState);
+  };
 
   const updateContributor = (author: ContributorWrapper, rowIndex: number) => {
     const tempContrib = [...contributors];
@@ -199,23 +232,33 @@ const ContributorModal: FC<ContributorProps> = ({
     setContributors([...contributors, newContributor]);
   }
 
-  const handleShowContributor = (index: number) => {
-    setIsContributorHiddenList((prevState) => {
-      prevState[index] = !prevState[index];
-      return [...prevState];
-    });
-  };
-
   return (
     <>
       <StyledModal isOpen={isContributorModalOpen}>
         <ModalHeader toggle={handleContributorModalClose}>
-          Bidragsytere
-          {isMonsterPost(contributors) && (
-            <Typography variant="body2" display="inline">
-              {`  ("Monsterpost" - bidragsytere uten norsk tilknytning og uten feil er skjult)`}
-            </Typography>
-          )}
+          <StyledModalHeaderWrapper>
+            Bidragsytere
+            {isMonsterPost ? (
+              <Typography variant="body2">
+                ("Monsterpost" - bidragsytere uten norsk tilknytning og uten feil er skjult)
+              </Typography>
+            ) : (
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      data-testid="filter-contributors-check"
+                      color="primary"
+                      checked={isFilterChecked}
+                      onChange={handleToggleFilterForNonMonsterPosts}
+                      name="filterContributors"
+                    />
+                  }
+                  label="Vis kun forfattere ved norske institusjoner"
+                />
+              </FormGroup>
+            )}
+          </StyledModalHeaderWrapper>
         </ModalHeader>
         <ModalBody>
           <StyledContentWrapper>
@@ -243,11 +286,11 @@ const ContributorModal: FC<ContributorProps> = ({
                         row={contributor}
                         contributors={contributors}
                         setContributors={setContributors}
-                        hideArrows={isContributorHiddenList[index]}
+                        hideArrows={listOfHiddenContributors[index]}
                       />
                     </StyledOrderColumn>
                     <StyledContributorColumn>
-                      {isContributorHiddenList[index] ? (
+                      {listOfHiddenContributors[index] ? (
                         <StyledHiddenContributorWrapper>
                           <Typography
                             variant="h6"
@@ -266,7 +309,7 @@ const ContributorModal: FC<ContributorProps> = ({
                     </StyledContributorColumn>
                     <StyledContributorColumn>
                       <div>
-                        {!isContributorHiddenList[index] && (
+                        {!listOfHiddenContributors[index] && (
                           <ContributorForm
                             resultListIndex={index}
                             contributorData={contributor}
