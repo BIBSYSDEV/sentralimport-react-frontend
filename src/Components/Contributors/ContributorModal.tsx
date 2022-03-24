@@ -202,7 +202,6 @@ const ContributorModal: FC<ContributorProps> = ({
   const handleShowContributor = (index: number) => {
     setIsContributorHiddenList((prevState) => {
       prevState[index] = !prevState[index];
-      console.log(prevState);
       return [...prevState];
     });
   };
