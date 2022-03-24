@@ -4,8 +4,7 @@ import styled from 'styled-components';
 import { SimpleUnitResponse } from '../../types/InstitutionTypes';
 import { AddAffiliationError } from './ContributorSearchPanel';
 import { Colors } from '../../assets/styles/StyleConstants';
-import countries from 'i18n-iso-countries';
-import en_countries_locale from 'i18n-iso-countries/langs/en.json';
+import { convertIso3166ToCountryString } from '../../utils/stringUtils';
 
 const StyledAffiliationsWrapper = styled.div<{ backgroundcolor: string }>`
   margin-bottom: 1rem;
@@ -82,10 +81,6 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
   addAffiliationSuccessful,
   removeInstitutionByCristinNrOrName,
 }) => {
-  countries.registerLocale(en_countries_locale);
-  const getCountryName = (countryCode: string) => {
-    return countries.getName(countryCode, en_countries_locale.locale) ?? '';
-  };
   return (
     <StyledAffiliationsWrapper backgroundcolor={backgroundcolor} data-testid={dataTestid}>
       <StyledContent>
@@ -101,7 +96,8 @@ const AffiliationDisplay: FC<AffiliationDisplayProps> = ({
                 data-testid={`${dataTestid}-country-code`}
                 display="inline"
                 variant="caption">
-                {affiliation.countryCode && `${getCountryName(affiliation.countryCode)} (${affiliation.countryCode})`}
+                {affiliation.countryCode &&
+                  `${convertIso3166ToCountryString(affiliation.countryCode)} (${affiliation.countryCode})`}
               </StyledTypographyWithRightPadding>
             </Grid>
           )}
