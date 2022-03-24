@@ -75,3 +75,21 @@ export async function getInstitutionName(
     cachedInstitutionResult: cachedInstitutionResult,
   };
 }
+
+export async function getInstitutionNameNoCache(
+  institutionId: string | undefined,
+  searchLanguage: SearchLanguage
+): Promise<string> {
+  if (!institutionId || institutionId === '0') return '';
+  try {
+    const institution = await (authenticatedApiRequest({
+      url: encodeURI(`${CRIST_REST_API}/institutions/${institutionId}?lang=${searchLanguage}`),
+      method: 'GET',
+    }) as AxiosPromise<Institution>);
+    return institution.data.institution_name.en || institution.data.institution_name.nb;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.message === 'Network Error') {
+      return `NAVN IKKE FUNNET FOR KODE: ${institutionId}`;
+    } else throw error;
+  }
+}
