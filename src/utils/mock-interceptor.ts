@@ -48,6 +48,7 @@ import {
   mockServerErrorResponse,
   mockContributorCristinIdThatTriggersServerError,
   mockImportPublication2,
+  mockEIssnChannel,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
@@ -145,6 +146,9 @@ export const interceptRequestsOnMock = () => {
   //Get journal for issn
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=issn:1234-1234`)).reply(200, {});
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=issn.*`)).reply(200, mockIssnChannel);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=eissn.*`))
+    .reply(200, mockEIssnChannel);
 
   //doi-search
   mock.onGet(new RegExp(`${CRIST_REST_API}/results.*doi=.*`)).reply(200, [], {

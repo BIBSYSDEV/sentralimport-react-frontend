@@ -545,6 +545,16 @@ export const mockIssnChannel: ChannelLight[] = [
   },
 ];
 
+export const mockEIssnChannel: ChannelLight[] = [
+  {
+    id: '4181',
+    issn: '1054-3135',
+    issn_electronic: '1095-9285',
+    title: 'International Journal of Veterinary Market Research',
+    type: 'journal',
+  },
+];
+
 export const mockAllJournals: ChannelLight[] = [
   {
     id: '51160',
