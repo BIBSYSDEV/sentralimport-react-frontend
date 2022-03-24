@@ -299,7 +299,11 @@ const ContributorModal: FC<ContributorProps> = ({
                             color="textSecondary">
                             {contributor.imported.first_name + ' ' + contributor.imported.surname}{' '}
                           </Typography>
-                          <Button variant="text" color="primary" onClick={() => handleShowContributor(index)}>
+                          <Button
+                            variant="text"
+                            color="primary"
+                            data-testid={`show-contributor-button-${index}`}
+                            onClick={() => handleShowContributor(index)}>
                             Vis bidragsyter
                           </Button>
                         </StyledHiddenContributorWrapper>

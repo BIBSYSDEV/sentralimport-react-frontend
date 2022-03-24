@@ -160,6 +160,7 @@
       },
       {
         "cristinId": 0,
+        "sequenceNr": 9,
         "roleCode": "FORFATTER",
         "surname": "Mocklastname",
         "firstname": "Mockfirstname",
@@ -324,6 +325,7 @@
       },
       {
         "cristinId": 0,
+        "sequenceNr": 19,
         "roleCode": "FORFATTER",
         "surname": "Mocklastname",
         "firstname": "Mockfirstname",
@@ -332,7 +334,7 @@
           {
             "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
             "countryCode": "NO",
-            "institutionName": "Tianjin University of Technology",
+            "institutionName": "Tianjin University of Technology-19",
             "cristinInstitutionNr": 9127,
             "isCristinInstitution": false
           }
@@ -1646,6 +1648,7 @@
       },
       {
         "cristinId": 0,
+        "sequenceNr": 102,
         "roleCode": "FORFATTER",
         "surname": "",
         "firstname": "Mockfirstfsdfklsdklfsdløfksdløfksdløfksdløfksølfkslødkfsløname",
@@ -1653,7 +1656,7 @@
           {
             "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
             "countryCode": "CN",
-            "institutionName": "Tianjin University of Technology",
+            "institutionName": "Tianjin University of Technology-102",
             "cristinInstitutionNr": 9127,
             "isCristinInstitution": false
           }
