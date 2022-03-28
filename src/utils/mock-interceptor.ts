@@ -49,6 +49,7 @@ import {
   mockContributorCristinIdThatTriggersServerError,
   mockImportPublication2,
   mockEIssnChannel,
+  mockPersonDetailed8,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
@@ -243,6 +244,9 @@ export const interceptRequestsOnMock = () => {
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed7.cristin_person_id}`))
     .reply(200, mockPersonDetailed7);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed8.cristin_person_id}`))
+    .reply(200, mockPersonDetailed8);
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed6.cristin_person_id}`))
     .reply(200, mockPersonDetailed6);

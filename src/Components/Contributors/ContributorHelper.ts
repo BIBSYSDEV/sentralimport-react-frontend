@@ -25,6 +25,7 @@ export async function searchCristinPersons(
     if (authors[index].cristinId !== 0) {
       cristinPerson.cristin_person_id = authors[index].cristinId;
       cristinPerson = await getPersonDetailById(cristinPerson);
+      if (!cristinPerson.identified_cristin_person) cristinPerson.cristin_person_id = 0;
       if (cristinPerson.affiliations) {
         const activeAffiliations = cristinPerson.affiliations.filter((affiliation) => affiliation.active);
         for (const activeAffiliation of activeAffiliations) {
@@ -64,6 +65,7 @@ export const createContributorWrapper = (
   index: number,
   cristinAuthors: ContributorType[]
 ): ContributorWrapper => {
+  console.log('0:', cristinAuthors);
   const author = authorsFromImportPublication[index];
   const importedContributor: ContributorType =
     authorsFromImportPublication.length > index && author
@@ -119,6 +121,7 @@ export const generateToBeCreatedContributor = async (
   const personToBeCreated: ContributorType = hasFoundCristinPerson
     ? { ...contributor.cristin }
     : { ...contributor.imported };
+  if (cristinAuthor.identified_cristin_person === false) tempCristinPerson.cristin_person_id = 0;
   return cristinAuthor.cristin_person_id !== 0
     ? tempCristinPerson
     : {

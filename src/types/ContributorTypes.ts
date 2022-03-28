@@ -49,7 +49,6 @@ export enum RoleCodes {
 export const emptyContributor: ContributorType = {
   order: 0,
   cristin_person_id: 0,
-  identified_cristin_person: false,
   first_name: '',
   surname: '',
   affiliations: [],
