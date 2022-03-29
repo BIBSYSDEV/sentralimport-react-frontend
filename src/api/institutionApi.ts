@@ -48,7 +48,7 @@ export async function searchForInstitutionsByName(
   });
 }
 
-export async function getInstitutionName(
+export async function getInstitutionNameWithCache(
   institutionId: string | undefined,
   searchLanguage: SearchLanguage,
   cachedInstitutionResult: Map<string, string>
@@ -57,18 +57,7 @@ export async function getInstitutionName(
   if (institutionId === '0') return { institutionName: '', cachedInstitutionResult };
   if (cachedInstitutionResult.get(institutionId))
     return { institutionName: cachedInstitutionResult.get(institutionId) ?? '', cachedInstitutionResult };
-  let institutionName = '';
-  try {
-    const institution = await (authenticatedApiRequest({
-      url: encodeURI(`${CRIST_REST_API}/institutions/${institutionId}?lang=${searchLanguage}`),
-      method: 'GET',
-    }) as AxiosPromise<Institution>);
-    institutionName = institution.data.institution_name.en || institution.data.institution_name.nb;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.message === 'Network Error') {
-      institutionName = `NAVN IKKE FUNNET FOR KODE: ${institutionId}`;
-    } else throw error;
-  }
+  const institutionName = await getInstitutionName(institutionId, searchLanguage);
   cachedInstitutionResult.set(institutionId, institutionName);
   return {
     institutionName,
@@ -76,7 +65,7 @@ export async function getInstitutionName(
   };
 }
 
-export async function getInstitutionNameNoCache(
+export async function getInstitutionName(
   institutionId: string | undefined,
   searchLanguage: SearchLanguage
 ): Promise<string> {

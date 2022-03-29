@@ -2,7 +2,7 @@ import { Affiliation, ImportPublicationPersonInstutution } from '../../types/Ins
 import {
   getCountryInformationByCountryCode,
   getInstitutionName,
-  getInstitutionNameNoCache,
+  getInstitutionNameWithCache,
 } from '../../api/institutionApi';
 import { SearchLanguage } from '../../api/contributorApi';
 import { ContributorType } from '../../types/ContributorTypes';
@@ -86,7 +86,7 @@ export async function replaceNonCristinInstitution(affiliation: Affiliation): Pr
       }
     }
   } else if (affiliation.cristinInstitutionNr?.toString() !== '0') {
-    affiliation.institutionName = await getInstitutionNameNoCache(affiliation.cristinInstitutionNr, SearchLanguage.En);
+    affiliation.institutionName = await getInstitutionName(affiliation.cristinInstitutionNr, SearchLanguage.En);
     return affiliation;
   }
   return null;
@@ -109,7 +109,7 @@ export async function getDuplicateAffiliations(author: ContributorType) {
           unitName: author.affiliations[i].unit?.unit_name?.nb ?? '',
         });
       } else {
-        const institutionNameAndCache = await getInstitutionName(
+        const institutionNameAndCache = await getInstitutionNameWithCache(
           author.affiliations[i].institution?.cristin_institution_id,
           SearchLanguage.En,
           institutionNameCache
