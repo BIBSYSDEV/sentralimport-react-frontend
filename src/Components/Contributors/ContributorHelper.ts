@@ -66,7 +66,6 @@ export const createContributorWrapper = (
   index: number,
   cristinAuthors: ContributorType[]
 ): ContributorWrapper => {
-  console.log('0:', cristinAuthors);
   const author = authorsFromImportPublication[index];
   const importedContributor: ContributorType =
     authorsFromImportPublication.length > index && author
