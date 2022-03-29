@@ -138,10 +138,6 @@ const ContributorModal: FC<ContributorProps> = ({
   const [maxContributorsToShow, setMaxContributorsToShow] = useState(
     isMonsterPost ? contributors.length : NumberOfContributorsToShow
   );
-  const arrayOfContributorsWithForreignInstitution = contributors.map(
-    (contributor) =>
-      !contributor.imported?.affiliations?.some((inst) => inst.countryCode === NorwegianCountryCode) ?? false
-  );
   const [isFilterChecked, setIsFilterChecked] = useState(false);
   const [listOfHiddenContributors, setListOfHiddenContributors] = useState<boolean[]>(
     isMonsterPost
@@ -171,7 +167,11 @@ const ContributorModal: FC<ContributorProps> = ({
     if (isFilterChecked) {
       setListOfHiddenContributors(new Array(contributors.length).fill(false));
     } else {
-      setListOfHiddenContributors(arrayOfContributorsWithForreignInstitution);
+      const arrayOfContributorsWithForeignInstitution = contributors.map(
+        (contributor) =>
+          !contributor.imported?.affiliations?.some((inst) => inst.countryCode === NorwegianCountryCode) ?? false
+      );
+      setListOfHiddenContributors(arrayOfContributorsWithForeignInstitution);
     }
     setIsFilterChecked((prevState) => !prevState);
   };
