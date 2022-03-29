@@ -31,6 +31,12 @@ const StyledMetaDataTypography = styled(Typography)`
   }
 `;
 
+const StyledCategoryTypography = styled(StyledMetaDataTypography)`
+  && {
+    font-weight: 900;
+  }
+`;
+
 const StyledWarningTypography = styled(StyledMetaDataTypography)`
   color: ${Colors.WARNING};
   && {
@@ -63,7 +69,7 @@ const ImportPublicationPresentation: FC<ImportPublicationPresentationProps> = ({
         {importPublication?.languages && <Markup content={cleanTitleForMarkup(filterTitle(importPublication))} />}
       </StyledTitleTypography>
       {!isInImportTable && importPublication.category && (
-        <StyledMetaDataTypography>{importPublication.categoryName}</StyledMetaDataTypography>
+        <StyledCategoryTypography>{importPublication.categoryName}</StyledCategoryTypography>
       )}
       <StyledMetaDataTypography data-testid={`importdata-author-presentation-${importPublication.pubId}`}>
         {generateAuthorPresentationFromImportPublication(importPublication)}
