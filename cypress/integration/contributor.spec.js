@@ -117,8 +117,6 @@ context('contributor', () => {
     cy.get(`[data-testid="contributor-form-0"]`).contains(
       mockImportPublication1.authors[0].institutions[0].institutionName
     );
-    //cy.get('[data-testid="list-item-author-Capriolo-affiliations-12300052-institution-name"]')
-    //cy.get(`[data-testid="list-item-author-Capriolo-affiliations-12300052-institution-name"]`);
     cy.get(`[data-testid="contributor-form-0"]`).contains(
       mockImportPublication1.authors[0].institutions[0].institutionName
     );
