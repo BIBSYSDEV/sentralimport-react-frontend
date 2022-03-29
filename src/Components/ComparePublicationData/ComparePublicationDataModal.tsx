@@ -42,7 +42,7 @@ import CompareFormIssue from './CompareFormIssue';
 import CompareFormPages from './CompareFormPages';
 import CompareFormJournal from './CompareFormJournal';
 import { CompareFormValuesType } from './CompareFormTypes';
-import { ContributorType, ContributorWrapper, emptyContributor } from '../../types/ContributorTypes';
+import { ContributorType, ContributorWrapper, Duplicates, emptyContributor } from '../../types/ContributorTypes';
 import { formatCristinCreatedDate, NoDatePlaceHolder } from '../../utils/stringUtils';
 import { handleCreatePublication, handleUpdatePublication } from './ImportPublicationHelper';
 import { CRISTIN_REACT_APP_URL } from '../../utils/constants';
@@ -50,7 +50,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import LaunchIcon from '@material-ui/icons/Launch';
 import { Alert } from '@material-ui/lab';
 import { findLegalCategory } from '../../utils/categoryUtils';
-import { Duplicate, validateContributors } from '../Contributors/ContributorValidate';
+import { validateContributors } from '../Contributors/ContributorValidate';
 import {
   createContributorWrapper,
   generateToBeCreatedContributor,
@@ -111,8 +111,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   //contributors-stuff
   const [contributorErrors, setContributorErrors] = useState<string[]>([]);
-  const [duplicateContributors, setDuplicateContributors] = useState<Map<number, Duplicate>>(
-    new Map<number, Duplicate>()
+  const [duplicateContributors, setDuplicateContributors] = useState<Map<number, Duplicates>>(
+    new Map<number, Duplicates>()
   );
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors, setContributors] = useState<ContributorWrapper[] | undefined>(undefined);

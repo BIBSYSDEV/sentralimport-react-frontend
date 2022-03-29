@@ -1,4 +1,4 @@
-import { ContributorWrapper, MaxLengthFirstName, MaxLengthLastName } from '../../types/ContributorTypes';
+import { ContributorWrapper, Duplicates, MaxLengthFirstName, MaxLengthLastName } from '../../types/ContributorTypes';
 import { Dispatch, SetStateAction } from 'react';
 
 const validateBasicMetaData = (contributors: ContributorWrapper[]): string[] => {
@@ -30,13 +30,8 @@ const hasSameName = (contributorA: ContributorWrapper, contributorB: Contributor
   );
 };
 
-export interface Duplicate {
-  cristinDuplicates: number[];
-  nameDuplicate: number[];
-}
-
-const findDuplicateContributors = (contributors: ContributorWrapper[]): Map<number, Duplicate> => {
-  const duplicatesMap = new Map<number, Duplicate>();
+const findDuplicateContributors = (contributors: ContributorWrapper[]): Map<number, Duplicates> => {
+  const duplicatesMap = new Map<number, Duplicates>();
   contributors.forEach((contributorA, contributorAIndex) => {
     const nameIndexes: number[] = [];
     const cristinIndexes: number[] = [];
@@ -70,7 +65,7 @@ const hasSameCristinId = (contributorA: ContributorWrapper, contributorB: Contri
 export const validateContributors = (
   contributors: ContributorWrapper[],
   setContributorErrors: Dispatch<SetStateAction<string[]>>,
-  setDuplicateContributors: Dispatch<SetStateAction<Map<number, Duplicate>>>
+  setDuplicateContributors: Dispatch<SetStateAction<Map<number, Duplicates>>>
 ) => {
   const contributorErrors: string[] = validateBasicMetaData(contributors);
 

@@ -5,12 +5,11 @@ import styled from 'styled-components';
 import AddIcon from '@material-ui/icons/Add';
 import ContributorOrderComponent from './ContributorOrderComponent';
 import ImportContributorComponent from './ImportContributorComponent';
-import { ContributorWrapper, emptyContributorWrapper } from '../../types/ContributorTypes';
+import { ContributorWrapper, Duplicates, emptyContributorWrapper } from '../../types/ContributorTypes';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { ImportPublication } from '../../types/PublicationTypes';
 import ContributorForm from './ContributorForm';
 import clone from 'just-clone';
-import { Duplicate } from './ContributorValidate';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -87,7 +86,7 @@ interface ContributorProps {
   setContributors: (contributors: ContributorWrapper[]) => void;
   isContributorModalOpen: boolean;
   handleContributorModalClose: () => void;
-  duplicateContributors: Map<number, Duplicate>;
+  duplicateContributors: Map<number, Duplicates>;
 }
 
 const NumberOfContributorsToShow = 30;

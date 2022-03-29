@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { Button, Grid, Typography } from '@material-ui/core';
 import ContributorSearchPanel from './ContributorSearchPanel';
 import { Affiliation } from '../../types/InstitutionTypes';
-import { ContributorStatus, ContributorWrapper } from '../../types/ContributorTypes';
+import { ContributorStatus, ContributorWrapper, Duplicates } from '../../types/ContributorTypes';
 import styled from 'styled-components';
 import {
   StyledNotVerifiedBadge,
@@ -14,7 +14,6 @@ import EditAffiliation from './EditAffiliation';
 import { Alert } from '@material-ui/lab';
 import { Colors } from '../../assets/styles/StyleConstants';
 import ConfirmRemoveContributorDialog from '../Dialogs/ConfirmRemoveContributorDialog';
-import { Duplicate } from './ContributorValidate';
 
 const StyledVerifiedNameTypography = styled(Typography)`
   color: ${Colors.Text.GREEN};
@@ -38,7 +37,7 @@ interface ContributorFormProps {
   contributorData: ContributorWrapper;
   updateContributor: (contributorData: ContributorWrapper, rowIndex: number) => void;
   removeContributor: (index: number) => void;
-  duplicateContributors: Map<number, Duplicate>;
+  duplicateContributors: Map<number, Duplicates>;
 }
 
 const ContributorForm: FC<ContributorFormProps> = ({
