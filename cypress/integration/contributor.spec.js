@@ -264,11 +264,28 @@ context('contributor', () => {
   });
 
   it('Shows an error for authors without affiliation', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get(`[data-testid=contributor-form-3-missing-affiliation-error]`).contains('Bidragsyter mangler tilknytning');
+    cy.get('[data-testid="show-institution-selector-3"]').click();
+    cy.get('[data-testid="filter-institution-select-3"]').click();
+    cy.get(`[data-testid="filter-institution-select-${mockInstitutions[0].cristin_institution_id}-option"]`).click();
+    cy.get(`[data-testid=contributor-form-3-missing-affiliation-error]`).should('not.exist');
+    cy.get('[data-testid="list-item-author-Afzal-affiliations-5737-delete-institution"]').click();
+    cy.get(`[data-testid=contributor-form-3-missing-affiliation-error]`).contains('Bidragsyter mangler tilknytning');
+  });
+
+  it('retains affiliations for unconfirmed cristin authors', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
-    cy.get(`[data-testid=contributor-form-5-missing-affiliation-error]`).contains('Bidragsyter mangler tilknytning');
+    cy.get('[data-testid="list-item-author-Persson-affiliations-184"] > .sc-iCfMLu').should(
+      'contain.text',
+      mockImportData[1].authors[5].institutions[0].institutionName
+    );
   });
 
   it('removes duplicate institutions from import data', () => {
