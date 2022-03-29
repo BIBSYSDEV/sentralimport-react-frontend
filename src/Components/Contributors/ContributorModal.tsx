@@ -278,32 +278,32 @@ const ContributorModal: FC<ContributorProps> = ({
             <Divider />
 
             <StyledOrderedList>
-              {contributors.slice(0, maxContributorsToShow).map((contributor, index) => (
-                <li key={index} data-testid={`contributor-line-${index}`}>
+              {contributors.slice(0, maxContributorsToShow).map((contributor, contributorIndex) => (
+                <li key={contributorIndex} data-testid={`contributor-line-${contributorIndex}`}>
                   <StyledContributorLineWrapper>
                     <StyledOrderColumn>
                       <ContributorOrderComponent
                         row={contributor}
                         contributors={contributors}
                         setContributors={setContributors}
-                        hideArrows={listOfHiddenContributors[index]}
+                        hideArrows={listOfHiddenContributors[contributorIndex]}
                       />
                     </StyledOrderColumn>
                     <StyledContributorColumn>
-                      {listOfHiddenContributors[index] ? (
+                      {listOfHiddenContributors[contributorIndex] ? (
                         <StyledHiddenContributorWrapper>
                           <Typography
                             variant="h6"
                             gutterBottom
-                            data-testid={`import-contributor-hidden-${index}`}
+                            data-testid={`import-contributor-hidden-${contributorIndex}`}
                             color="textSecondary">
-                            {contributor.imported.first_name + ' ' + contributor.imported.surname}{' '}
+                            {contributor.imported.first_name + ' ' + contributor.imported.surname}
                           </Typography>
                           <Button
                             variant="text"
                             color="primary"
-                            data-testid={`show-contributor-button-${index}`}
-                            onClick={() => handleShowContributor(index)}>
+                            data-testid={`show-contributor-button-${contributorIndex}`}
+                            onClick={() => handleShowContributor(contributorIndex)}>
                             Vis bidragsyter
                           </Button>
                         </StyledHiddenContributorWrapper>
@@ -313,9 +313,9 @@ const ContributorModal: FC<ContributorProps> = ({
                     </StyledContributorColumn>
                     <StyledContributorColumn>
                       <div>
-                        {!listOfHiddenContributors[index] && (
+                        {!listOfHiddenContributors[contributorIndex] && (
                           <ContributorForm
-                            resultListIndex={index}
+                            resultListIndex={contributorIndex}
                             contributorData={contributor}
                             contributors={contributors}
                             updateContributor={updateContributor}
