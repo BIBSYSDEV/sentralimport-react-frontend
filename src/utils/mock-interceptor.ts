@@ -49,6 +49,8 @@ import {
   mockContributorCristinIdThatTriggersServerError,
   mockImportPublication2,
   mockEIssnChannel,
+  resultInstitutionPadova,
+  resultInstitutionGranada,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
@@ -106,6 +108,12 @@ export const interceptRequestsOnMock = () => {
   mock.onPatch(new RegExp(`${PIA_REST_API}/sentralimport/publication.*`)).reply(204);
 
   //get cristin institutions by id
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/institutions/${resultInstitutionGranada.cristin_institution_id}`))
+    .reply(200, resultInstitutionGranada);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/institutions/${resultInstitutionPadova.cristin_institution_id}`))
+    .reply(200, resultInstitutionPadova);
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/([1-9][0-9]*).*`)).reply(200, resultInstitutionNTNU);
   //mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/1234567.*`)).networkError();
 

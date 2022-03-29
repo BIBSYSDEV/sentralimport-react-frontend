@@ -1,7 +1,7 @@
 import { getInstitutionUnitNameBasedOnIDAndInstitutionStatus, SearchLanguage } from '../api/contributorApi';
 import { Affiliation } from '../types/InstitutionTypes';
 import { ContributorStatus, ContributorType } from '../types/ContributorTypes';
-import { getInstitutionName } from '../api/institutionApi';
+import { getInstitutionNameWithCache } from '../api/institutionApi';
 import { ImportPublication } from '../types/PublicationTypes';
 
 export async function getAffiliationDetails(
@@ -14,7 +14,7 @@ export async function getAffiliationDetails(
   affiliation: Affiliation | undefined;
 }> {
   if (affiliation) {
-    const institutionNameAndCache = await getInstitutionName(
+    const institutionNameAndCache = await getInstitutionNameWithCache(
       affiliation.institution?.cristin_institution_id,
       SearchLanguage.En,
       institutionNameCache
