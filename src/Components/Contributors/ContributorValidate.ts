@@ -76,13 +76,18 @@ export const validateContributors = (
 
   const duplicatesMap = findDuplicateContributors(contributors);
   setDuplicateContributors(duplicatesMap);
+  const duplicateCristinIds = new Set<number>();
   duplicatesMap.forEach((duplicateList, key) => {
     if (duplicateList.cristinDuplicates.length > 0) {
-      contributorErrors.push(
-        `${duplicateList.cristinDuplicates
-          .map((index) => index + 1)
-          .join(', ')} (Duplisert bidragsyter med cristinId: ${contributors[key].toBeCreated.cristin_person_id})`
-      );
+      const cristinId = contributors[key].toBeCreated.cristin_person_id;
+      if (!!cristinId && !duplicateCristinIds.has(cristinId)) {
+        duplicateCristinIds.add(cristinId);
+        contributorErrors.push(
+          `${key + 1}, ${duplicateList.cristinDuplicates
+            .map((index) => index + 1)
+            .join(', ')} (Duplisert bidragsyter med cristinId: ${cristinId})`
+        );
+      }
     }
   });
 
