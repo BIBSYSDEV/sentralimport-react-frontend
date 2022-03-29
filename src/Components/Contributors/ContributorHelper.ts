@@ -21,7 +21,7 @@ export async function searchCristinPersons(
   const suggestedAuthors = [];
   for (let index = 0; index < authors.length; index++) {
     let cristinPerson = { ...emptyContributor };
-    let affiliations: Affiliation[] = [];
+    const affiliations: Affiliation[] = [];
     if (authors[index].cristinId !== 0) {
       cristinPerson.cristin_person_id = authors[index].cristinId;
       cristinPerson = await getPersonDetailById(cristinPerson);
@@ -38,15 +38,16 @@ export async function searchCristinPersons(
           institutionNameCache = detailedAffiliationAndCache.institutionNameCache;
           if (detailedAffiliationAndCache.affiliation) affiliations.push(detailedAffiliationAndCache.affiliation);
         }
-      } else {
-        affiliations = await replaceNonCristinInstitutions(authors[index].institutions);
       }
 
       cristinPerson = {
         cristin_person_id: cristinPerson.cristin_person_id,
         first_name: cristinPerson.first_name_preferred ?? cristinPerson.first_name,
         surname: cristinPerson.surname_preferred ?? cristinPerson.surname,
-        affiliations: affiliations.filter((item: Affiliation, index: number) => affiliations.indexOf(item) === index),
+        affiliations:
+          affiliations.length > 0
+            ? affiliations.filter((item: Affiliation, index: number) => affiliations.indexOf(item) === index)
+            : await replaceNonCristinInstitutions(authors[index].institutions),
         url: CRIST_REST_API + '/persons/' + cristinPerson.cristin_person_id + '?lang=' + SearchLanguage.En,
         order: index + 1,
         identified_cristin_person: cristinPerson.identified_cristin_person,
