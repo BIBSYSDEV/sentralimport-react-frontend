@@ -50,7 +50,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import LaunchIcon from '@material-ui/icons/Launch';
 import { Alert } from '@material-ui/lab';
 import { findLegalCategory } from '../../utils/categoryUtils';
-import { validateContributors } from '../Contributors/ContributorValidate';
+import { Duplicate, validateContributors } from '../Contributors/ContributorValidate';
 import {
   createContributorWrapper,
   generateToBeCreatedContributor,
@@ -111,8 +111,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   //contributors-stuff
   const [contributorErrors, setContributorErrors] = useState<string[]>([]);
-  const [duplicateContributors, setDuplicateContributors] = useState<Map<number, number[]>>(
-    new Map<number, number[]>()
+  const [duplicateContributors, setDuplicateContributors] = useState<Map<number, Duplicate>>(
+    new Map<number, Duplicate>()
   );
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors, setContributors] = useState<ContributorWrapper[] | undefined>(undefined);

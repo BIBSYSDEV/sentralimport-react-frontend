@@ -10,6 +10,7 @@ import { Colors } from '../../assets/styles/StyleConstants';
 import { ImportPublication } from '../../types/PublicationTypes';
 import ContributorForm from './ContributorForm';
 import clone from 'just-clone';
+import { Duplicate } from './ContributorValidate';
 
 const StyledModal = styled(Modal)`
   width: 96%;
@@ -86,7 +87,7 @@ interface ContributorProps {
   setContributors: (contributors: ContributorWrapper[]) => void;
   isContributorModalOpen: boolean;
   handleContributorModalClose: () => void;
-  duplicateContributors: Map<number, number[]>;
+  duplicateContributors: Map<number, Duplicate>;
 }
 
 const NumberOfContributorsToShow = 30;
@@ -185,9 +186,9 @@ const ContributorModal: FC<ContributorProps> = ({
     setIsContributorsFiltered((prevState) => !prevState);
   };
 
-  const hasContributorDuplicate = (contributor: ContributorWrapper) => {
+  const hasContributorDuplicate = (contributor: ContributorWrapper, contributorIndex: number) => {
     if (contributor.toBeCreated?.cristin_person_id) {
-      return !!duplicateContributors.get(contributor.toBeCreated?.cristin_person_id);
+      return !!duplicateContributors.get(contributorIndex);
     }
     return false;
   };
@@ -197,118 +198,115 @@ const ContributorModal: FC<ContributorProps> = ({
       !arrayOfContributorsWithNorwegianInstitution[contributorIndex] &&
       contributor.toBeCreated?.affiliations?.length !== 0 &&
       isContributorsFiltered &&
-      !hasContributorDuplicate(contributor)
+      !hasContributorDuplicate(contributor, contributorIndex)
     );
   };
 
   return (
-    <>
-      <StyledModal isOpen={isContributorModalOpen}>
-        <ModalHeader toggle={handleContributorModalClose}>Bidragsytere</ModalHeader>
-        <ModalBody>
-          <StyledContentWrapper>
-            <StyledContributorHeader>
-              <StyledOrderColumn>
-                <StyledHeaderText>Rekkefølge</StyledHeaderText>
-              </StyledOrderColumn>
-              <StyledContributorColumn>
-                <StyledImportHeaderWrapper>
-                  <StyledHeaderText>Import-Forfatter</StyledHeaderText>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          data-testid="filter-contributors-check"
-                          color="primary"
-                          disabled={isMonsterPost(contributors)}
-                          checked={isContributorsFiltered}
-                          onChange={handleToggleFilter}
-                          name="filterContributors"
-                        />
-                      }
-                      label="Vis kun forfattere ved norske institusjoner"
-                    />
-                  </FormGroup>
-                </StyledImportHeaderWrapper>
-              </StyledContributorColumn>
-              <StyledContributorColumn>
-                <StyledHeaderText>Cristin-Forfatter</StyledHeaderText>
-              </StyledContributorColumn>
-            </StyledContributorHeader>
-            <Divider />
-
-            <StyledOrderedList>
-              {contributors.slice(0, maxContributorsToShow).map((contributor, index) => (
-                <li key={index} data-testid={`contributor-line-${index}`}>
-                  <StyledContributorLineWrapper>
-                    <StyledOrderColumn>
-                      <ContributorOrderComponent
-                        row={contributor}
-                        contributors={contributors}
-                        setContributors={setContributors}
-                        hideArrows={isFilteredMode(contributor, index)}
+    <StyledModal isOpen={isContributorModalOpen}>
+      <ModalHeader toggle={handleContributorModalClose}>Bidragsytere</ModalHeader>
+      <ModalBody>
+        <StyledContentWrapper>
+          <StyledContributorHeader>
+            <StyledOrderColumn>
+              <StyledHeaderText>Rekkefølge</StyledHeaderText>
+            </StyledOrderColumn>
+            <StyledContributorColumn>
+              <StyledImportHeaderWrapper>
+                <StyledHeaderText>Import-Forfatter</StyledHeaderText>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        data-testid="filter-contributors-check"
+                        color="primary"
+                        disabled={isMonsterPost(contributors)}
+                        checked={isContributorsFiltered}
+                        onChange={handleToggleFilter}
+                        name="filterContributors"
                       />
-                    </StyledOrderColumn>
-                    <StyledContributorColumn>
-                      {isFilteredMode(contributor, index) ? (
-                        <Typography data-testid={`import-contributor-hidden-${index}`} color="textSecondary">
-                          Forfatter-info er skjult
-                        </Typography>
-                      ) : (
-                        <ImportContributorComponent contributor={contributor} />
+                    }
+                    label="Vis kun forfattere ved norske institusjoner"
+                  />
+                </FormGroup>
+              </StyledImportHeaderWrapper>
+            </StyledContributorColumn>
+            <StyledContributorColumn>
+              <StyledHeaderText>Cristin-Forfatter</StyledHeaderText>
+            </StyledContributorColumn>
+          </StyledContributorHeader>
+          <Divider />
+
+          <StyledOrderedList>
+            {contributors.slice(0, maxContributorsToShow).map((contributor, index) => (
+              <li key={index} data-testid={`contributor-line-${index}`}>
+                <StyledContributorLineWrapper>
+                  <StyledOrderColumn>
+                    <ContributorOrderComponent
+                      row={contributor}
+                      contributors={contributors}
+                      setContributors={setContributors}
+                      hideArrows={isFilteredMode(contributor, index)}
+                    />
+                  </StyledOrderColumn>
+                  <StyledContributorColumn>
+                    {isFilteredMode(contributor, index) ? (
+                      <Typography data-testid={`import-contributor-hidden-${index}`} color="textSecondary">
+                        Forfatter-info er skjult
+                      </Typography>
+                    ) : (
+                      <ImportContributorComponent contributor={contributor} />
+                    )}
+                  </StyledContributorColumn>
+                  <StyledContributorColumn>
+                    <div>
+                      {!isFilteredMode(contributor, index) && (
+                        <ContributorForm
+                          resultListIndex={index}
+                          contributorData={contributor}
+                          updateContributor={updateContributor}
+                          removeContributor={removeContributor}
+                          duplicateContributors={duplicateContributors}
+                        />
                       )}
-                    </StyledContributorColumn>
-                    <StyledContributorColumn>
-                      <div>
-                        {!isFilteredMode(contributor, index) && (
-                          <ContributorForm
-                            resultListIndex={index}
-                            contributorData={contributor}
-                            contributors={contributors}
-                            updateContributor={updateContributor}
-                            removeContributor={removeContributor}
-                            duplicateContributors={duplicateContributors}
-                          />
-                        )}
-                      </div>
-                    </StyledContributorColumn>
-                  </StyledContributorLineWrapper>
-                  <Divider />
-                </li>
-              ))}
-            </StyledOrderedList>
+                    </div>
+                  </StyledContributorColumn>
+                </StyledContributorLineWrapper>
+                <Divider />
+              </li>
+            ))}
+          </StyledOrderedList>
 
-            {maxContributorsToShow < contributors.length && (
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={() => setMaxContributorsToShow((prevState) => prevState + NumberOfContributorsToShow)}>
-                (Viser {maxContributorsToShow} av {contributors.length}) Vis flere ...
-              </Button>
-            )}
+          {maxContributorsToShow < contributors.length && (
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={() => setMaxContributorsToShow((prevState) => prevState + NumberOfContributorsToShow)}>
+              (Viser {maxContributorsToShow} av {contributors.length}) Vis flere ...
+            </Button>
+          )}
 
-            <StyledContributorFooter>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={addContributor}
-                data-testid="add-contributor-button"
-                startIcon={<AddIcon />}>
-                Legg til bidragsyter
-              </Button>
-              <Button
-                style={{ marginLeft: '1rem' }}
-                variant="contained"
-                color="primary"
-                data-testid="contributor-back-button"
-                onClick={handleContributorModalClose}>
-                Tilbake
-              </Button>
-            </StyledContributorFooter>
-          </StyledContentWrapper>
-        </ModalBody>
-      </StyledModal>
-    </>
+          <StyledContributorFooter>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={addContributor}
+              data-testid="add-contributor-button"
+              startIcon={<AddIcon />}>
+              Legg til bidragsyter
+            </Button>
+            <Button
+              style={{ marginLeft: '1rem' }}
+              variant="contained"
+              color="primary"
+              data-testid="contributor-back-button"
+              onClick={handleContributorModalClose}>
+              Tilbake
+            </Button>
+          </StyledContributorFooter>
+        </StyledContentWrapper>
+      </ModalBody>
+    </StyledModal>
   );
 };
 
