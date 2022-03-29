@@ -53,6 +53,8 @@ export const getContributorStatus = (contributor: ContributorType, activeAffilia
     return ContributorStatus.Verified;
   } else if (contributor.require_higher_authorization) {
     return ContributorStatus.Unknown;
+  } else if (contributor.cristin_person_id && contributor.cristin_person_id !== 0) {
+    return ContributorStatus.NotVerified;
   } else {
     return ContributorStatus.None;
   }
