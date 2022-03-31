@@ -116,17 +116,19 @@ export const generateToBeCreatedContributor = async (
 ) => {
   const importClone = clone(importPerson);
   const hasFoundCristinPerson = contributor.cristin.cristin_person_id !== 0;
-  const tempCristinPerson = clone(cristinAuthor);
-  tempCristinPerson.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(tempCristinPerson.affiliations ?? []);
+  const clonedCristinPerson = clone(cristinAuthor);
+  clonedCristinPerson.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(
+    clonedCristinPerson.affiliations ?? []
+  );
   const personToBeCreated: ContributorType = hasFoundCristinPerson
-    ? { ...clone(contributor.cristin) }
-    : { ...clone(contributor.imported) };
-  return cristinAuthor.cristin_person_id !== 0
-    ? tempCristinPerson
+    ? { ...contributor.cristin }
+    : { ...contributor.imported };
+  return clonedCristinPerson.cristin_person_id !== 0
+    ? clonedCristinPerson
     : {
         ...personToBeCreated,
         affiliations: removeInstitutionsDuplicatesBasedOnCristinId(
-          await replaceNonCristinInstitutions(isDuplicate ? tempCristinPerson.affiliations : importClone.institutions)
+          await replaceNonCristinInstitutions(isDuplicate ? clonedCristinPerson.affiliations : importClone.institutions)
         ),
       };
 };

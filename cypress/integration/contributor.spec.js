@@ -7,7 +7,6 @@ import {
   mockUnits,
   responseCountryInstitutionCN,
   responseCountryInstitutionIT,
-  resultInstitutionNTNU,
 } from '../../src/utils/mockdata';
 import mockImportData from '../../src/utils/mockImportData.json';
 
@@ -285,7 +284,7 @@ context('contributor', () => {
     cy.get('[data-testid="open-contributors-modal-button"]').click();
     cy.get('[data-testid="list-item-author-Persson-affiliations-184"]').should(
       'contain.text',
-      resultInstitutionNTNU.institution_name
+      mockImportData[1].authors[5].institutions[0].institutionName
     );
   });
 
