@@ -1,7 +1,12 @@
 import { Affiliation, ImportPublicationPersonInstutution } from '../../types/InstitutionTypes';
-import { getCountryInformationByCountryCode, getInstitutionName } from '../../api/institutionApi';
+import {
+  getCountryInformationByCountryCode,
+  getInstitutionName,
+  getInstitutionNameWithCache,
+} from '../../api/institutionApi';
 import { SearchLanguage } from '../../api/contributorApi';
 import { ContributorType } from '../../types/ContributorTypes';
+import clone from 'just-clone';
 
 const Foreign_educational_institution_generic_code = '9127';
 const Other_institutions_generic_code = '9126';
@@ -81,7 +86,9 @@ export async function replaceNonCristinInstitution(affiliation: Affiliation): Pr
         return newAffiliation;
       }
     }
-  } else if (affiliation.cristinInstitutionNr && affiliation.cristinInstitutionNr.toString() !== '0') {
+  } else if (affiliation.cristinInstitutionNr?.toString() !== '0') {
+    const clonedAffiliation = clone(affiliation);
+    clonedAffiliation.institutionName = await getInstitutionName(affiliation.cristinInstitutionNr, SearchLanguage.En);
     return affiliation;
   }
   return null;
@@ -104,7 +111,7 @@ export async function getDuplicateAffiliations(author: ContributorType) {
           unitName: author.affiliations[i].unit?.unit_name?.nb ?? '',
         });
       } else {
-        const institutionNameAndCache = await getInstitutionName(
+        const institutionNameAndCache = await getInstitutionNameWithCache(
           author.affiliations[i].institution?.cristin_institution_id,
           SearchLanguage.En,
           institutionNameCache
