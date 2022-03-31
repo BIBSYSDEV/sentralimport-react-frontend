@@ -6,6 +6,7 @@ import {
 } from '../../api/institutionApi';
 import { SearchLanguage } from '../../api/contributorApi';
 import { ContributorType } from '../../types/ContributorTypes';
+import clone from 'just-clone';
 
 const Foreign_educational_institution_generic_code = '9127';
 const Other_institutions_generic_code = '9126';
@@ -86,7 +87,8 @@ export async function replaceNonCristinInstitution(affiliation: Affiliation): Pr
       }
     }
   } else if (affiliation.cristinInstitutionNr?.toString() !== '0') {
-    affiliation.institutionName = await getInstitutionName(affiliation.cristinInstitutionNr, SearchLanguage.En);
+    const clonedAffiliation = clone(affiliation);
+    clonedAffiliation.institutionName = await getInstitutionName(affiliation.cristinInstitutionNr, SearchLanguage.En);
     return affiliation;
   }
   return null;
