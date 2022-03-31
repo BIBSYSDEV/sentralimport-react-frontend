@@ -64,7 +64,7 @@ export const generateAuthorPresentationFromImportPublication = (importPublicatio
   const maxAuthorsShown = 5;
   return importPublication.authors
     .slice(0, maxAuthorsShown)
-    .map((author: any) => author.authorName)
+    .map((author: any) => [author.firstname, author.surname].join(' '))
     .join('; ')
     .concat(importPublication.authors.length > maxAuthorsShown ? ' et al.' : '');
 };
@@ -73,7 +73,7 @@ export const generateAuthorPresentationForCristinAuthors = (authors: Contributor
   const maxAuthorsShown = 5;
   return authors
     .slice(0, maxAuthorsShown)
-    .map((author) => [author.surname, author.first_name].join(', '))
+    .map((author) => [author.first_name, author.surname].join(' '))
     .join('; ')
     .concat(authors.length > maxAuthorsShown ? ' et al.' : '');
 };

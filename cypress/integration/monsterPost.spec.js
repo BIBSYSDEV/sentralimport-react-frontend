@@ -21,11 +21,27 @@ context('monsterpost', () => {
     cy.get('[data-testid="importdata-author-presentation-610220"]').click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="open-contributors-modal-button"]`).click();
+    cy.wait(200);
+    cy.get('[data-testid="filter-contributors-check"]').should('not.exist');
 
-    cy.get(`[data-testid="contributor-line-9"]`).contains('Forfatter-info er skjult');
-    cy.get(`[data-testid="contributor-line-19"]`).contains('Mockfirstname Mocklastname');
-    cy.get(`[data-testid="contributor-line-102"]`).contains('Forfatter-info er skjult'); //shows more then 100 contributors
-    cy.get('[data-testid="filter-contributors-check"]').should('have.class', 'Mui-disabled'); //filter disabled
+    //hidden contributor
+    cy.get(`[data-testid="show-contributor-button-9"]`).should('exist');
+    cy.get(`[data-testid="contributor-line-9"]`).contains(mockMonsterImportPost.authors[9].firstname);
+
+    //hidden contributor
+    cy.get(`[data-testid="show-contributor-button-103"]`).should('exist'); //shows more then 100 contributors
+
+    //expanded contributor because norwegian institution
+    cy.get(`[data-testid="contributor-line-19"]`).contains(mockMonsterImportPost.authors[19].firstname);
+    cy.get(`[data-testid="contributor-line-19"]`).contains(
+      mockMonsterImportPost.authors[19].institutions[0].institutionName
+    );
+
+    //expanded contributor contributor-form- errors
+    cy.get(`[data-testid="contributor-form-102-name"]`).contains(mockMonsterImportPost.authors[102].firstname);
+    cy.get(`[data-testid="contributor-line-102"]`).contains(
+      mockMonsterImportPost.authors[102].institutions[0].institutionName
+    );
   });
 
   it('shows contributors without affiliations when monster-post', () => {
