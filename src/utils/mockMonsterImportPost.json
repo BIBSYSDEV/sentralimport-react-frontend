@@ -13,8 +13,8 @@
         "cristinId": 0,
         "roleCode": "FORFATTER",
         "sequenceNr": 1,
-        "surname": "Mocklastname",
-        "firstname": "Mockfirstname",
+        "surname": "Mocklastname1",
+        "firstname": "Mockfirstname1",
         "authorName": "Mocklastname M.",
         "institutions": [
           {
@@ -28,6 +28,58 @@
       },
       {
         "cristinId": 0,
+        "sequenceNr": 2,
+        "roleCode": "FORFATTER",
+        "surname": "Mocklastname2",
+        "firstname": "Mockfirstname2",
+        "authorName": "Olsen P.",
+        "institutions": [
+          {
+            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
+            "countryCode": "CN",
+            "institutionName": "Tianjin University of Technology",
+            "cristinInstitutionNr": 9127,
+            "isCristinInstitution": false
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "sequenceNr": 3,
+        "roleCode": "FORFATTER",
+        "surname": "Mocklastname3",
+        "firstname": "Mockfirstname3",
+        "authorName": "Olsen P.",
+        "institutions": [
+          {
+            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
+            "countryCode": "CN",
+            "institutionName": "Tianjin University of Technology",
+            "cristinInstitutionNr": 9127,
+            "isCristinInstitution": false
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "sequenceNr": 4,
+        "roleCode": "FORFATTER",
+        "surname": "Mocklastname4",
+        "firstname": "Mockfirstname4",
+        "authorName": "Olsen P.",
+        "institutions": [
+          {
+            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
+            "countryCode": "CN",
+            "institutionName": "Tianjin University of Technology",
+            "cristinInstitutionNr": 9127,
+            "isCristinInstitution": false
+          }
+        ]
+      },
+      {
+        "cristinId": 0,
+        "sequenceNr": 5,
         "roleCode": "FORFATTER",
         "surname": "Mocklastname",
         "firstname": "Mockfirstname",
@@ -108,54 +160,7 @@
       },
       {
         "cristinId": 0,
-        "roleCode": "FORFATTER",
-        "surname": "Mocklastname",
-        "firstname": "Mockfirstname",
-        "authorName": "Olsen P.",
-        "institutions": [
-          {
-            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
-            "countryCode": "CN",
-            "institutionName": "Tianjin University of Technology",
-            "cristinInstitutionNr": 9127,
-            "isCristinInstitution": false
-          }
-        ]
-      },
-      {
-        "cristinId": 0,
-        "roleCode": "FORFATTER",
-        "surname": "Mocklastname",
-        "firstname": "Mockfirstname",
-        "authorName": "Olsen P.",
-        "institutions": [
-          {
-            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
-            "countryCode": "CN",
-            "institutionName": "Tianjin University of Technology",
-            "cristinInstitutionNr": 9127,
-            "isCristinInstitution": false
-          }
-        ]
-      },
-      {
-        "cristinId": 0,
-        "roleCode": "FORFATTER",
-        "surname": "Mocklastname",
-        "firstname": "Mockfirstname",
-        "authorName": "Olsen P.",
-        "institutions": [
-          {
-            "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
-            "countryCode": "CN",
-            "institutionName": "Tianjin University of Technology",
-            "cristinInstitutionNr": 9127,
-            "isCristinInstitution": false
-          }
-        ]
-      },
-      {
-        "cristinId": 0,
+        "sequenceNr": 9,
         "roleCode": "FORFATTER",
         "surname": "Mocklastname",
         "firstname": "Mockfirstname",
@@ -320,6 +325,7 @@
       },
       {
         "cristinId": 0,
+        "sequenceNr": 19,
         "roleCode": "FORFATTER",
         "surname": "Mocklastname",
         "firstname": "Mockfirstname",
@@ -328,7 +334,7 @@
           {
             "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
             "countryCode": "NO",
-            "institutionName": "Tianjin University of Technology",
+            "institutionName": "Tianjin University of Technology-19",
             "cristinInstitutionNr": 9127,
             "isCristinInstitution": false
           }
@@ -1642,15 +1648,15 @@
       },
       {
         "cristinId": 0,
+        "sequenceNr": 102,
         "roleCode": "FORFATTER",
-        "surname": "Mocklastname",
-        "firstname": "Mockfirstname",
-        "authorName": "Olsen P.",
+        "surname": "",
+        "firstname": "Mockfirstfsdfklsdklfsdløfksdløfksdløfksdløfksølfkslødkfsløname",
         "institutions": [
           {
             "unitName": "Engineering Research Center of Learning-Based Intelligent System (Ministry of Education);The Key Laboratory of Computer Vision and System (Ministry of Education);The School of Computer Science and Engineering;Tianjin University of Technology",
             "countryCode": "CN",
-            "institutionName": "Tianjin University of Technology",
+            "institutionName": "Tianjin University of Technology-102",
             "cristinInstitutionNr": 9127,
             "isCristinInstitution": false
           }
