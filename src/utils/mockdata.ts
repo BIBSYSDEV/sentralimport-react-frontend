@@ -93,7 +93,7 @@ export const mockInstitutions = [
 export const resultInstitutionNTNU = {
   cristin_institution_id: '194',
   institution_name: {
-    en: 'Norwegian University of Science and Technology and replacement hell',
+    en: 'Norwegian University of Science and Technology',
   },
   acronym: 'NTNU',
   country: 'NO',
