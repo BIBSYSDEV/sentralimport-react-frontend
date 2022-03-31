@@ -104,6 +104,26 @@ export const resultInstitutionNTNU = {
   },
 };
 
+export const resultInstitutionPadova = {
+  cristin_institution_id: '12300052',
+  institution_name: {
+    en: 'University of Padova',
+  },
+  acronym: 'UoP?',
+  country: 'IT',
+  cristin_user_institution: true,
+};
+
+export const resultInstitutionGranada = {
+  cristin_institution_id: '13700046',
+  institution_name: {
+    en: 'University of Granada',
+  },
+  acronym: 'UoG?',
+  country: 'ES',
+  cristin_user_institution: true,
+};
+
 export const mockUnits = {
   cristin_unit_id: '194.67.40.0',
   unit_name: {

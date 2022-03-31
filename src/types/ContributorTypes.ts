@@ -38,7 +38,6 @@ export interface ContributorWrapper {
   imported: ContributorType;
   cristin: ContributorType;
   toBeCreated: ContributorType;
-  isEditing: boolean;
 }
 
 export enum RoleCodes {
@@ -56,7 +55,6 @@ export const emptyContributor: ContributorType = {
 };
 
 export const emptyContributorWrapper: ContributorWrapper = {
-  isEditing: false,
   imported: {
     order: 0,
     affiliations: [],
