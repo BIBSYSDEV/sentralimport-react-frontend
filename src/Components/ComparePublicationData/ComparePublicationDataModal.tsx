@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useLayoutEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Button, CircularProgress, Grid, Typography } from '@material-ui/core';
 import ConfirmImportDialog from '../Dialogs/ConfirmImportDialog';
@@ -42,7 +42,7 @@ import CompareFormIssue from './CompareFormIssue';
 import CompareFormPages from './CompareFormPages';
 import CompareFormJournal from './CompareFormJournal';
 import { CompareFormValuesType } from './CompareFormTypes';
-import { ContributorType, ContributorWrapper, emptyContributor } from '../../types/ContributorTypes';
+import { ContributorWrapper, emptyContributor } from '../../types/ContributorTypes';
 import { formatCristinCreatedDate, NoDatePlaceHolder } from '../../utils/stringUtils';
 import { handleCreatePublication, handleUpdatePublication } from './ImportPublicationHelper';
 import { CRISTIN_REACT_APP_URL } from '../../utils/constants';
@@ -210,23 +210,14 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
             pageTo: importPublication.channel?.pageTo ?? '',
           });
     };
-    initFormik().then();
-  }, [cristinPublication, importPublication]);
 
-  useLayoutEffect(() => {
     async function enrichImportPublicationAuthors() {
       const tempContributors: ContributorWrapper[] = [];
       try {
         setIsLoadingContributors(true);
         setLoadingContributorsError(undefined);
         const authorsFromImportPublication = importPublication.authors;
-
-        let cristinAuthors: ContributorType[];
-        if (cristinPublication) {
-          cristinAuthors = cristinPublication.authors;
-        } else {
-          cristinAuthors = await searchCristinPersons(authorsFromImportPublication, setLoadingContributorsProgress);
-        }
+        const cristinAuthors = await searchCristinPersons(authorsFromImportPublication, setLoadingContributorsProgress);
         for (let i = 0; i < Math.max(cristinAuthors.length, authorsFromImportPublication.length); i++) {
           if (cristinAuthors[i]) {
             if (cristinPublication) {
@@ -253,7 +244,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
       setContributors(tempContributors);
     }
     !cristinPublication && enrichImportPublicationAuthors().then();
-  }, [importPublication, cristinPublication]);
+    initFormik().then();
+  }, [cristinPublication, importPublication]);
 
   const successSnackBarActions = (key: any, resultId: string) => (
     <>

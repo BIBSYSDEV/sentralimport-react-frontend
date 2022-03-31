@@ -282,7 +282,7 @@ context('contributor', () => {
     cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
-    cy.get('[data-testid="list-item-author-Persson-affiliations-184"] > .sc-iCfMLu').should(
+    cy.get('[data-testid="list-item-author-Persson-affiliations-184"]').should(
       'contain.text',
       mockImportData[1].authors[5].institutions[0].institutionName
     );
