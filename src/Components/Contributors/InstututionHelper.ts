@@ -1,7 +1,6 @@
 import { Affiliation, ImportPublicationPersonInstutution } from '../../types/InstitutionTypes';
 import {
   getCountryInformationByCountryCode,
-  getInstitutionName,
   getInstitutionNameWithCache,
   searchForInstitutionsByNameAndCountry,
 } from '../../api/institutionApi';
@@ -129,7 +128,9 @@ export async function replaceNonCristinInstitution(affiliation: Affiliation): Pr
     );
   } else if (affiliation.cristinInstitutionNr?.toString() !== '0') {
     const clonedAffiliation = clone(affiliation);
-    clonedAffiliation.institutionName = await getInstitutionName(affiliation.cristinInstitutionNr, SearchLanguage.En);
+    //TODO: make a getInstitutionName with caching or remove comment if backend supports sending cristin Institution name in addition to scopus institution name
+    //TODO: remove comment when SMILE-1495
+    //clonedAffiliation.institutionName = await getInstitutionName(affiliation.cristinInstitutionNr, SearchLanguage.En);
     return clonedAffiliation;
   }
   return null;
