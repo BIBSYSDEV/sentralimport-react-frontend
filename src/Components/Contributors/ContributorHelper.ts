@@ -26,6 +26,7 @@ export async function searchCristinPersons(
     if (clonedAuthors[index].cristinId !== 0) {
       cristinPerson.cristin_person_id = clonedAuthors[index].cristinId;
       cristinPerson = await getPersonDetailById(cristinPerson);
+      if (!cristinPerson.identified_cristin_person) cristinPerson.cristin_person_id = 0;
       if (cristinPerson.affiliations) {
         const activeAffiliations = cristinPerson.affiliations.filter((affiliation) => affiliation.active);
         for (const activeAffiliation of activeAffiliations) {
@@ -123,6 +124,7 @@ export const generateToBeCreatedContributor = async (
   const personToBeCreated: ContributorType = hasFoundCristinPerson
     ? { ...contributor.cristin }
     : { ...contributor.imported };
+  if (clonedCristinPerson.identified_cristin_person === false) clonedCristinPerson.cristin_person_id = 0;
   return clonedCristinPerson.cristin_person_id !== 0
     ? clonedCristinPerson
     : {

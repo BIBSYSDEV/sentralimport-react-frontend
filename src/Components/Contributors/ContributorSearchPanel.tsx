@@ -133,7 +133,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     temp.toBeCreated.badge_type = ContributorStatus.None;
     temp.toBeCreated.cristin_person_id = 0;
     temp.toBeCreated.require_higher_authorization = false;
-    temp.toBeCreated.identified_cristin_person = false;
+    temp.toBeCreated.identified_cristin_person = undefined;
     updateContributor(temp, resultListIndex);
     setOpenContributorSearchPanel(false);
   };
@@ -141,6 +141,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   const getContributorDetailsAndAffiliation = async (contributor: ContributorType) => {
     const resultAffiliations: Affiliation[] = [];
     const fetchedAuthor = await getPersonDetailById(contributor);
+    if (!fetchedAuthor.identified_cristin_person) fetchedAuthor.cristin_person_id = 0;
     if (fetchedAuthor && fetchedAuthor.affiliations) {
       const activeAffiliations = fetchedAuthor.affiliations.filter((affiliation: Affiliation) => affiliation.active);
       for (const activeAffiliation of activeAffiliations) {
