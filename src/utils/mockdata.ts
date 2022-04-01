@@ -1070,6 +1070,19 @@ export const mockSimpleUnitResponse = [
   },
 ];
 
+export const mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur = [
+  {
+    cristin_institution_id: '48923874823',
+    institution_name: {
+      en: 'Indian Institute of Technology Kharagpur, now with Cristin ID!',
+    },
+    acronym: 'IITK',
+    country: 'IN',
+    cristin_user_institution: false,
+    url: 'https://api.cristin-test.uio.no/v2/institutions/48923874823',
+  },
+];
+
 export const mockInstitutionSearchByName = [
   {
     cristin_institution_id: '65200000',
