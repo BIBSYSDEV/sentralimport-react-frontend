@@ -51,6 +51,7 @@ import {
   mockEIssnChannel,
   resultInstitutionPadova,
   resultInstitutionGranada,
+  mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur,
   mockPersonDetailed8,
 } from './mockdata';
 
@@ -119,6 +120,14 @@ export const interceptRequestsOnMock = () => {
   //mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/1234567.*`)).networkError();
 
   //get institution by name
+  mock
+    .onGet(
+      new RegExp(
+        `${CRIST_REST_API}/institutions\\?lang=en&name=Indian%20Institute%20of%20Technology%20Kharagpur&country=IN`
+      )
+    )
+    .reply(200, mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/institutions\\?lang=en&name=.*&country=.*`)).reply(200, []);
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/institutions\\?cristin_institution=false&lang=en&name.*`))
     .reply(200, mockInstitutionSearchByName);

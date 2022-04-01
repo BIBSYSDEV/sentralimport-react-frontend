@@ -48,6 +48,19 @@ export async function searchForInstitutionsByName(
   });
 }
 
+export async function searchForInstitutionsByNameAndCountry(
+  institutionName: string,
+  searchLanguage: SearchLanguage,
+  countryCode: string
+): Promise<AxiosResponse<Institution[]>> {
+  return authenticatedApiRequest({
+    url: encodeURI(
+      `${CRIST_REST_API}/institutions?lang=${searchLanguage}&name=${institutionName}&country=${countryCode}`
+    ),
+    method: 'GET',
+  });
+}
+
 export async function getInstitutionNameWithCache(
   institutionId: string | undefined,
   searchLanguage: SearchLanguage,
