@@ -1,4 +1,9 @@
-import { ContributorWrapper, Duplicates, MaxLengthFirstName, MaxLengthLastName } from '../../types/ContributorTypes';
+import {
+  ContributorWrapper,
+  ContributorDuplicates,
+  MaxLengthFirstName,
+  MaxLengthLastName,
+} from '../../types/ContributorTypes';
 import { Dispatch, SetStateAction } from 'react';
 
 const validateBasicMetaData = (contributors: ContributorWrapper[]): string[] => {
@@ -30,8 +35,8 @@ const hasSameName = (contributorA: ContributorWrapper, contributorB: Contributor
   );
 };
 
-const findDuplicateContributors = (contributors: ContributorWrapper[]): Map<number, Duplicates> => {
-  const duplicatesMap = new Map<number, Duplicates>();
+const findDuplicateContributors = (contributors: ContributorWrapper[]): Map<number, ContributorDuplicates> => {
+  const duplicatesMap = new Map<number, ContributorDuplicates>();
   contributors.forEach((contributorA, contributorAIndex) => {
     const nameIndexes: number[] = [];
     const cristinIndexes: number[] = [];
@@ -46,7 +51,7 @@ const findDuplicateContributors = (contributors: ContributorWrapper[]): Map<numb
       }
     });
     if (nameIndexes.length > 0 || cristinIndexes.length > 0) {
-      duplicatesMap.set(contributorAIndex, { cristinDuplicates: cristinIndexes, nameDuplicate: nameIndexes });
+      duplicatesMap.set(contributorAIndex, { cristinIdDuplicates: cristinIndexes, nameDuplicate: nameIndexes });
     }
   });
   return duplicatesMap;
@@ -65,7 +70,7 @@ const hasSameCristinId = (contributorA: ContributorWrapper, contributorB: Contri
 export const validateContributors = (
   contributors: ContributorWrapper[],
   setContributorErrors: Dispatch<SetStateAction<string[]>>,
-  setDuplicateContributors: Dispatch<SetStateAction<Map<number, Duplicates>>>
+  setDuplicateContributors: Dispatch<SetStateAction<Map<number, ContributorDuplicates>>>
 ) => {
   const contributorErrors: string[] = validateBasicMetaData(contributors);
 
@@ -73,12 +78,12 @@ export const validateContributors = (
   setDuplicateContributors(duplicatesMap);
   const duplicateCristinIds = new Set<number>();
   duplicatesMap.forEach((duplicateList, key) => {
-    if (duplicateList.cristinDuplicates.length > 0) {
+    if (duplicateList.cristinIdDuplicates.length > 0) {
       const cristinId = contributors[key].toBeCreated.cristin_person_id;
       if (!!cristinId && !duplicateCristinIds.has(cristinId)) {
         duplicateCristinIds.add(cristinId);
         contributorErrors.push(
-          `${key + 1}, ${duplicateList.cristinDuplicates
+          `${key + 1}, ${duplicateList.cristinIdDuplicates
             .map((index) => index + 1)
             .join(', ')} (Duplisert bidragsyter med cristinId: ${cristinId})`
         );

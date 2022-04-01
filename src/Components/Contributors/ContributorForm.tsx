@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { Button, Grid, Typography } from '@material-ui/core';
 import ContributorSearchPanel from './ContributorSearchPanel';
 import { Affiliation } from '../../types/InstitutionTypes';
-import { ContributorStatus, ContributorWrapper, Duplicates } from '../../types/ContributorTypes';
+import { ContributorStatus, ContributorWrapper, ContributorDuplicates } from '../../types/ContributorTypes';
 import styled from 'styled-components';
 import {
   StyledNotVerifiedBadge,
@@ -37,7 +37,7 @@ interface ContributorFormProps {
   contributorData: ContributorWrapper;
   updateContributor: (contributorData: ContributorWrapper, rowIndex: number) => void;
   removeContributor: (index: number) => void;
-  duplicateContributors: Map<number, Duplicates>;
+  duplicateContributors: Map<number, ContributorDuplicates>;
 }
 
 const ContributorForm: FC<ContributorFormProps> = ({
@@ -51,8 +51,8 @@ const ContributorForm: FC<ContributorFormProps> = ({
 
   const generateValidationAlerts = () => {
     const listOfDuplicateItemIndexes = duplicateContributors.get(resultListIndex);
-    if (listOfDuplicateItemIndexes && listOfDuplicateItemIndexes.cristinDuplicates.length > 0) {
-      const duplicateIndexesHumanReadable = listOfDuplicateItemIndexes.cristinDuplicates.map((value) => value + 1); //fordi plassering er 1-indeksert
+    if (listOfDuplicateItemIndexes && listOfDuplicateItemIndexes.cristinIdDuplicates.length > 0) {
+      const duplicateIndexesHumanReadable = listOfDuplicateItemIndexes.cristinIdDuplicates.map((value) => value + 1); //fordi plassering er 1-indeksert
       return (
         <Grid item xs={12}>
           <StyledAlert severity="error" data-testid={`contributor-form-${resultListIndex}-duplicate-error`}>
@@ -64,9 +64,11 @@ const ContributorForm: FC<ContributorFormProps> = ({
     if (listOfDuplicateItemIndexes && listOfDuplicateItemIndexes.nameDuplicate.length > 0) {
       const duplicateIndexesHumanReadable = listOfDuplicateItemIndexes.nameDuplicate.map((value) => value + 1); //fordi plassering er 1-indeksert
       return (
-        <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
-          Det finnes bidragsytere med samme navn på plass: {duplicateIndexesHumanReadable.join(', ')}
-        </StyledAlert>
+        <Grid item xs={12}>
+          <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
+            Det finnes bidragsytere med samme navn på plass: {duplicateIndexesHumanReadable.join(', ')}
+          </StyledAlert>
+        </Grid>
       );
     }
   };

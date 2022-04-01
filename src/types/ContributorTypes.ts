@@ -85,7 +85,7 @@ export const emptyContributorWrapper: ContributorWrapper = {
 export const MaxLengthFirstName = 30;
 export const MaxLengthLastName = 30;
 
-export interface Duplicates {
-  cristinDuplicates: number[];
+export interface ContributorDuplicates {
+  cristinIdDuplicates: number[];
   nameDuplicate: number[];
 }

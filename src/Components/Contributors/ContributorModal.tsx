@@ -7,7 +7,7 @@ import ContributorOrderComponent from './ContributorOrderComponent';
 import ImportContributorComponent from './ImportContributorComponent';
 import {
   ContributorWrapper,
-  Duplicates,
+  ContributorDuplicates,
   emptyContributorWrapper,
   MaxLengthFirstName,
   MaxLengthLastName,
@@ -114,7 +114,7 @@ const contributorHasErrors = (contributor: ContributorWrapper): boolean =>
 
 const hasContributorDuplicate = (
   contributor: ContributorWrapper,
-  duplicateContributors: Map<number, Duplicates>,
+  duplicateContributors: Map<number, ContributorDuplicates>,
   contributorIndex: number
 ) => {
   if (contributor.toBeCreated?.cristin_person_id) {
@@ -129,7 +129,7 @@ interface ContributorProps {
   setContributors: (contributors: ContributorWrapper[]) => void;
   isContributorModalOpen: boolean;
   handleContributorModalClose: () => void;
-  duplicateContributors: Map<number, Duplicates>;
+  duplicateContributors: Map<number, ContributorDuplicates>;
 }
 
 const ContributorModal: FC<ContributorProps> = ({
