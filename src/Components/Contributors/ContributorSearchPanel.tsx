@@ -133,7 +133,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     temp.toBeCreated.badge_type = ContributorStatus.None;
     temp.toBeCreated.cristin_person_id = 0;
     temp.toBeCreated.require_higher_authorization = false;
-    delete temp.toBeCreated.identified_cristin_person;
+    temp.toBeCreated.identified_cristin_person = undefined;
     updateContributor(temp, resultListIndex);
     setOpenContributorSearchPanel(false);
   };
