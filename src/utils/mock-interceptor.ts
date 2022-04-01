@@ -51,6 +51,7 @@ import {
   mockEIssnChannel,
   resultInstitutionPadova,
   resultInstitutionGranada,
+  resultInstitutionBergen,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
@@ -114,6 +115,9 @@ export const interceptRequestsOnMock = () => {
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/institutions/${resultInstitutionPadova.cristin_institution_id}`))
     .reply(200, resultInstitutionPadova);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/institutions/${resultInstitutionBergen.cristin_institution_id}`))
+    .reply(200, resultInstitutionBergen);
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/([1-9][0-9]*).*`)).reply(200, resultInstitutionNTNU);
   //mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/1234567.*`)).networkError();
 
