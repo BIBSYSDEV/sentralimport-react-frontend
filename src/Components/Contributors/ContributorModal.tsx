@@ -7,6 +7,7 @@ import ContributorOrderComponent from './ContributorOrderComponent';
 import ImportContributorComponent from './ImportContributorComponent';
 import {
   ContributorWrapper,
+  ContributorDuplicates,
   emptyContributorWrapper,
   MaxLengthFirstName,
   MaxLengthLastName,
@@ -111,9 +112,13 @@ const contributorHasErrors = (contributor: ContributorWrapper): boolean =>
   contributor.toBeCreated?.first_name?.length > MaxLengthFirstName ||
   contributor.toBeCreated?.surname?.length > MaxLengthLastName;
 
-const hasContributorDuplicate = (contributor: ContributorWrapper, duplicateContributors: Map<number, number[]>) => {
+const hasContributorDuplicate = (
+  contributor: ContributorWrapper,
+  duplicateContributors: Map<number, ContributorDuplicates>,
+  contributorIndex: number
+) => {
   if (contributor.toBeCreated?.cristin_person_id) {
-    return !!duplicateContributors.get(contributor.toBeCreated?.cristin_person_id);
+    return !!duplicateContributors.get(contributorIndex);
   }
   return false;
 };
@@ -124,7 +129,7 @@ interface ContributorProps {
   setContributors: (contributors: ContributorWrapper[]) => void;
   isContributorModalOpen: boolean;
   handleContributorModalClose: () => void;
-  duplicateContributors: Map<number, number[]>;
+  duplicateContributors: Map<number, ContributorDuplicates>;
 }
 
 const ContributorModal: FC<ContributorProps> = ({
@@ -141,10 +146,10 @@ const ContributorModal: FC<ContributorProps> = ({
   const [isFilterChecked, setIsFilterChecked] = useState(false);
   const [listOfHiddenContributors, setListOfHiddenContributors] = useState<boolean[]>(
     isMonsterPost
-      ? contributors.map((contributor) => {
+      ? contributors.map((contributor, contributorIndex) => {
           return (
             !doesContributorHaveNorwegianAffiliation(contributor) &&
-            !hasContributorDuplicate(contributor, duplicateContributors) &&
+            !hasContributorDuplicate(contributor, duplicateContributors, contributorIndex) &&
             !contributorHasErrors(contributor)
           );
         })
@@ -233,135 +238,132 @@ const ContributorModal: FC<ContributorProps> = ({
   }
 
   return (
-    <>
-      <StyledModal isOpen={isContributorModalOpen}>
-        <ModalHeader toggle={handleContributorModalClose}>
-          <StyledModalHeaderWrapper>
-            Bidragsytere
-            {isMonsterPost ? (
-              <Typography variant="body2">
-                ("Monsterpost" - bidragsytere uten norsk tilknytning og uten feil er skjult)
-              </Typography>
-            ) : (
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      data-testid="filter-contributors-check"
-                      color="primary"
-                      checked={isFilterChecked}
-                      onChange={handleToggleFilterForNonMonsterPosts}
-                      name="filterContributors"
+    <StyledModal isOpen={isContributorModalOpen}>
+      <ModalHeader toggle={handleContributorModalClose}>
+        <StyledModalHeaderWrapper>
+          Bidragsytere
+          {isMonsterPost ? (
+            <Typography variant="body2">
+              ("Monsterpost" - bidragsytere uten norsk tilknytning og uten feil er skjult)
+            </Typography>
+          ) : (
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    data-testid="filter-contributors-check"
+                    color="primary"
+                    checked={isFilterChecked}
+                    onChange={handleToggleFilterForNonMonsterPosts}
+                    name="filterContributors"
+                  />
+                }
+                label="Vis kun forfattere ved norske institusjoner"
+              />
+            </FormGroup>
+          )}
+        </StyledModalHeaderWrapper>
+      </ModalHeader>
+      <ModalBody>
+        <StyledContentWrapper>
+          <StyledContributorHeader>
+            <StyledOrderColumn>
+              <StyledHeaderText>Rekkefølge</StyledHeaderText>
+            </StyledOrderColumn>
+            <StyledContributorColumn>
+              <StyledImportHeaderWrapper>
+                <StyledHeaderText>Import-Forfatter</StyledHeaderText>
+              </StyledImportHeaderWrapper>
+            </StyledContributorColumn>
+            <StyledContributorColumn>
+              <StyledHeaderText>Cristin-Forfatter</StyledHeaderText>
+            </StyledContributorColumn>
+          </StyledContributorHeader>
+          <Divider />
+
+          <StyledOrderedList>
+            {contributors.slice(0, maxContributorsToShow).map((contributor, contributorIndex) => (
+              <li key={contributorIndex} data-testid={`contributor-line-${contributorIndex}`}>
+                <StyledContributorLineWrapper>
+                  <StyledOrderColumn>
+                    <ContributorOrderComponent
+                      row={contributor}
+                      contributors={contributors}
+                      setContributors={setContributors}
+                      hideArrows={listOfHiddenContributors[contributorIndex]}
                     />
-                  }
-                  label="Vis kun forfattere ved norske institusjoner"
-                />
-              </FormGroup>
-            )}
-          </StyledModalHeaderWrapper>
-        </ModalHeader>
-        <ModalBody>
-          <StyledContentWrapper>
-            <StyledContributorHeader>
-              <StyledOrderColumn>
-                <StyledHeaderText>Rekkefølge</StyledHeaderText>
-              </StyledOrderColumn>
-              <StyledContributorColumn>
-                <StyledImportHeaderWrapper>
-                  <StyledHeaderText>Import-Forfatter</StyledHeaderText>
-                </StyledImportHeaderWrapper>
-              </StyledContributorColumn>
-              <StyledContributorColumn>
-                <StyledHeaderText>Cristin-Forfatter</StyledHeaderText>
-              </StyledContributorColumn>
-            </StyledContributorHeader>
-            <Divider />
-
-            <StyledOrderedList>
-              {contributors.slice(0, maxContributorsToShow).map((contributor, contributorIndex) => (
-                <li key={contributorIndex} data-testid={`contributor-line-${contributorIndex}`}>
-                  <StyledContributorLineWrapper>
-                    <StyledOrderColumn>
-                      <ContributorOrderComponent
-                        row={contributor}
-                        contributors={contributors}
-                        setContributors={setContributors}
-                        hideArrows={listOfHiddenContributors[contributorIndex]}
-                      />
-                    </StyledOrderColumn>
-                    <StyledContributorColumn>
-                      {listOfHiddenContributors[contributorIndex] ? (
-                        <StyledHiddenContributorWrapper>
-                          <Typography
-                            variant="h6"
-                            gutterBottom
-                            data-testid={`import-contributor-hidden-${contributorIndex}`}
-                            color="textSecondary">
-                            {contributor.imported.first_name + ' ' + contributor.imported.surname}
-                          </Typography>
-                          <Button
-                            variant="text"
-                            color="primary"
-                            data-testid={`show-contributor-button-${contributorIndex}`}
-                            onClick={() => handleShowContributor(contributorIndex)}>
-                            Vis bidragsyter
-                          </Button>
-                        </StyledHiddenContributorWrapper>
-                      ) : (
-                        <ImportContributorComponent contributor={contributor} />
+                  </StyledOrderColumn>
+                  <StyledContributorColumn>
+                    {listOfHiddenContributors[contributorIndex] ? (
+                      <StyledHiddenContributorWrapper>
+                        <Typography
+                          variant="h6"
+                          gutterBottom
+                          data-testid={`import-contributor-hidden-${contributorIndex}`}
+                          color="textSecondary">
+                          {contributor.imported.first_name + ' ' + contributor.imported.surname}
+                        </Typography>
+                        <Button
+                          variant="text"
+                          color="primary"
+                          data-testid={`show-contributor-button-${contributorIndex}`}
+                          onClick={() => handleShowContributor(contributorIndex)}>
+                          Vis bidragsyter
+                        </Button>
+                      </StyledHiddenContributorWrapper>
+                    ) : (
+                      <ImportContributorComponent contributor={contributor} />
+                    )}
+                  </StyledContributorColumn>
+                  <StyledContributorColumn>
+                    <div>
+                      {!listOfHiddenContributors[contributorIndex] && (
+                        <ContributorForm
+                          resultListIndex={contributorIndex}
+                          contributorData={contributor}
+                          updateContributor={updateContributor}
+                          removeContributor={removeContributor}
+                          duplicateContributors={duplicateContributors}
+                        />
                       )}
-                    </StyledContributorColumn>
-                    <StyledContributorColumn>
-                      <div>
-                        {!listOfHiddenContributors[contributorIndex] && (
-                          <ContributorForm
-                            resultListIndex={contributorIndex}
-                            contributorData={contributor}
-                            contributors={contributors}
-                            updateContributor={updateContributor}
-                            removeContributor={removeContributor}
-                            duplicateContributors={duplicateContributors}
-                          />
-                        )}
-                      </div>
-                    </StyledContributorColumn>
-                  </StyledContributorLineWrapper>
-                  <Divider />
-                </li>
-              ))}
-            </StyledOrderedList>
+                    </div>
+                  </StyledContributorColumn>
+                </StyledContributorLineWrapper>
+                <Divider />
+              </li>
+            ))}
+          </StyledOrderedList>
 
-            {maxContributorsToShow < contributors.length && (
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={() => setMaxContributorsToShow((prevState) => prevState + NumberOfContributorsToShow)}>
-                (Viser {maxContributorsToShow} av {contributors.length}) Vis flere ...
-              </Button>
-            )}
+          {maxContributorsToShow < contributors.length && (
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={() => setMaxContributorsToShow((prevState) => prevState + NumberOfContributorsToShow)}>
+              (Viser {maxContributorsToShow} av {contributors.length}) Vis flere ...
+            </Button>
+          )}
 
-            <StyledContributorFooter>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={addContributor}
-                data-testid="add-contributor-button"
-                startIcon={<AddIcon />}>
-                Legg til bidragsyter
-              </Button>
-              <Button
-                style={{ marginLeft: '1rem' }}
-                variant="contained"
-                color="primary"
-                data-testid="contributor-back-button"
-                onClick={handleContributorModalClose}>
-                Tilbake
-              </Button>
-            </StyledContributorFooter>
-          </StyledContentWrapper>
-        </ModalBody>
-      </StyledModal>
-    </>
+          <StyledContributorFooter>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={addContributor}
+              data-testid="add-contributor-button"
+              startIcon={<AddIcon />}>
+              Legg til bidragsyter
+            </Button>
+            <Button
+              style={{ marginLeft: '1rem' }}
+              variant="contained"
+              color="primary"
+              data-testid="contributor-back-button"
+              onClick={handleContributorModalClose}>
+              Tilbake
+            </Button>
+          </StyledContributorFooter>
+        </StyledContentWrapper>
+      </ModalBody>
+    </StyledModal>
   );
 };
 

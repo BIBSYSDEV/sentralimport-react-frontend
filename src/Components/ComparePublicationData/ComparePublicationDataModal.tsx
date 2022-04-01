@@ -42,7 +42,7 @@ import CompareFormIssue from './CompareFormIssue';
 import CompareFormPages from './CompareFormPages';
 import CompareFormJournal from './CompareFormJournal';
 import { CompareFormValuesType } from './CompareFormTypes';
-import { ContributorWrapper, emptyContributor } from '../../types/ContributorTypes';
+import { ContributorWrapper, ContributorDuplicates, emptyContributor } from '../../types/ContributorTypes';
 import { formatCristinCreatedDate, NoDatePlaceHolder } from '../../utils/stringUtils';
 import { handleCreatePublication, handleUpdatePublication } from './ImportPublicationHelper';
 import { CRISTIN_REACT_APP_URL } from '../../utils/constants';
@@ -111,8 +111,8 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   //contributors-stuff
   const [contributorErrors, setContributorErrors] = useState<string[]>([]);
-  const [duplicateContributors, setDuplicateContributors] = useState<Map<number, number[]>>(
-    new Map<number, number[]>()
+  const [duplicateContributors, setDuplicateContributors] = useState<Map<number, ContributorDuplicates>>(
+    new Map<number, ContributorDuplicates>()
   );
   const [isContributorModalOpen, setIsContributorModalOpen] = useState(false);
   const [contributors, setContributors] = useState<ContributorWrapper[] | undefined>(undefined);

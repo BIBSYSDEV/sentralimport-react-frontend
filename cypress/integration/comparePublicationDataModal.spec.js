@@ -76,7 +76,6 @@ context('comparePublicationModal', () => {
   it('shows error if contributors-errors', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
-
     cy.get(`[data-testid="import-publication-button"]`).should('be.disabled');
     cy.get(`[data-testid="contributor-errors"]`).contains('Det er feil i bidragsyterlisten');
     cy.get(`[data-testid="contributor-errors"]`).contains('1 (Mangler fornavn)');

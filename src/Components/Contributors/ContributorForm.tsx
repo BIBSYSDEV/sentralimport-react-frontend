@@ -1,8 +1,8 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Button, Grid, Typography } from '@material-ui/core';
 import ContributorSearchPanel from './ContributorSearchPanel';
 import { Affiliation } from '../../types/InstitutionTypes';
-import { ContributorStatus, ContributorWrapper } from '../../types/ContributorTypes';
+import { ContributorStatus, ContributorWrapper, ContributorDuplicates } from '../../types/ContributorTypes';
 import styled from 'styled-components';
 import {
   StyledNotVerifiedBadge,
@@ -12,7 +12,6 @@ import {
 import AddAffiliation from './AddAffiliation';
 import EditAffiliation from './EditAffiliation';
 import { Alert } from '@material-ui/lab';
-import { checkContributorsForNameDuplicates } from './duplicateCheckHelper';
 import { Colors } from '../../assets/styles/StyleConstants';
 import ConfirmRemoveContributorDialog from '../Dialogs/ConfirmRemoveContributorDialog';
 
@@ -38,8 +37,7 @@ interface ContributorFormProps {
   contributorData: ContributorWrapper;
   updateContributor: (contributorData: ContributorWrapper, rowIndex: number) => void;
   removeContributor: (index: number) => void;
-  contributors: ContributorWrapper[];
-  duplicateContributors: Map<number, number[]>;
+  duplicateContributors: Map<number, ContributorDuplicates>;
 }
 
 const ContributorForm: FC<ContributorFormProps> = ({
@@ -47,42 +45,32 @@ const ContributorForm: FC<ContributorFormProps> = ({
   contributorData,
   updateContributor,
   removeContributor,
-  contributors,
   duplicateContributors,
 }) => {
-  const [duplicateWarning, setDuplicateWarning] = useState('');
   const [isRemoveContributorDialogOpen, setIsRemoveContributorDialogOpen] = useState(false);
 
-  useEffect(() => {
-    setDuplicateWarning(checkContributorsForNameDuplicates(contributorData, contributors, false)); //TODO: Flyttes til felles-valideringen i ContributorValidate
-  }, [
-    contributorData.toBeCreated.first_name,
-    contributorData.toBeCreated.surname,
-    contributorData.toBeCreated.cristin_person_id,
-  ]);
-
   const generateValidationAlerts = () => {
-    if (contributorData.toBeCreated?.cristin_person_id && contributorData.toBeCreated?.cristin_person_id !== 0) {
-      const listOfDuplicateItemIndexes = duplicateContributors.get(contributorData.toBeCreated?.cristin_person_id);
-      if (listOfDuplicateItemIndexes) {
-        const indexesOtherThanCurrent = listOfDuplicateItemIndexes
-          .filter((duplicateItemIndex) => duplicateItemIndex !== resultListIndex)
-          .map((value) => value + 1); //fordi plassering er 1-indeksert
-        return (
-          <Grid item xs={12}>
-            <StyledAlert severity="error" data-testid={`contributor-form-${resultListIndex}-duplicate-error`}>
-              Det finnes bidragsytere med samme id på plass: {indexesOtherThanCurrent.join(',')}
-            </StyledAlert>
-          </Grid>
-        );
-      }
-    }
-    if (duplicateWarning)
+    const listOfDuplicateItemIndexes = duplicateContributors.get(resultListIndex);
+    if (listOfDuplicateItemIndexes && listOfDuplicateItemIndexes.cristinIdDuplicates.length > 0) {
+      const duplicateIndexesHumanReadable = listOfDuplicateItemIndexes.cristinIdDuplicates.map((value) => value + 1); //fordi plassering er 1-indeksert
       return (
-        <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
-          {duplicateWarning}
-        </StyledAlert>
+        <Grid item xs={12}>
+          <StyledAlert severity="error" data-testid={`contributor-form-${resultListIndex}-duplicate-error`}>
+            Det finnes bidragsytere med samme id på plass: {duplicateIndexesHumanReadable.join(',')}
+          </StyledAlert>
+        </Grid>
       );
+    }
+    if (listOfDuplicateItemIndexes && listOfDuplicateItemIndexes.nameDuplicate.length > 0) {
+      const duplicateIndexesHumanReadable = listOfDuplicateItemIndexes.nameDuplicate.map((value) => value + 1); //fordi plassering er 1-indeksert
+      return (
+        <Grid item xs={12}>
+          <StyledAlert data-testid={`contributor-form-${resultListIndex}-duplicate-warning`} severity="warning">
+            Det finnes bidragsytere med samme navn på plass: {duplicateIndexesHumanReadable.join(', ')}
+          </StyledAlert>
+        </Grid>
+      );
+    }
   };
 
   return (
