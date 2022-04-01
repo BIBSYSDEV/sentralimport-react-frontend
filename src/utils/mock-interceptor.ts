@@ -119,12 +119,12 @@ export const interceptRequestsOnMock = () => {
   //mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/1234567.*`)).networkError();
 
   //get institution by name
-  const urlSearchParamsInstitutionName = new URLSearchParams();
-  urlSearchParamsInstitutionName.set('name', 'Indian Institute of Technology Kharagpur');
-  urlSearchParamsInstitutionName.set('lang', 'en');
-  urlSearchParamsInstitutionName.set('country', 'IN');
   mock
-    .onGet(new RegExp(`${CRIST_REST_API}/institutions\\?institutions?${urlSearchParamsInstitutionName.toString()}`))
+    .onGet(
+      new RegExp(
+        `${CRIST_REST_API}/institutions\\?lang=en&name=Indian%20Institute%20of%20Technology%20Kharagpur&country=IN`
+      )
+    )
     .reply(200, mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur);
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions\\?lang=en&name=.*&country=.*`)).reply(200, []);
   mock
