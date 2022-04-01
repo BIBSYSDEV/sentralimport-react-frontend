@@ -150,6 +150,21 @@
             "isCristinInstitution": false
           }
         ]
+      }, {
+        "cristinId": 8409329402,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 8,
+        "surname": "Person",
+        "firstname": "With cristinid, not identified",
+        "institutions": [
+          {
+            "unitName": "Department of Ecology;University of Granada",
+            "countryCode": "ES",
+            "institutionName": "University of Granada",
+            "cristinInstitutionNr": 13700046,
+            "isCristinInstitution": false
+          }
+        ]
       }
     ],
     "languages": [

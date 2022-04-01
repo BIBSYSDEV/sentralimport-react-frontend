@@ -32,6 +32,12 @@ const StyledMetaDataTypography = styled(Typography)`
   }
 `;
 
+const StyledCategoryTypography = styled(StyledMetaDataTypography)`
+  && {
+    font-weight: 900;
+  }
+`;
+
 const StyledStandardNumberTypography = styled(StyledMetaDataTypography)`
   && {
     font-style: italic;
@@ -83,7 +89,7 @@ const ResultItem: FC<ResultItemProps> = ({ cristinPublication }) => {
             {cristinPublication.title && cristinPublication.title[cristinPublication.original_language]}
           </StyledTitleTypography>
           {cristinPublication.category.name.nb && (
-            <StyledMetaDataTypography>{cristinPublication.category.name.nb}</StyledMetaDataTypography>
+            <StyledCategoryTypography>{cristinPublication.category.name.nb}</StyledCategoryTypography>
           )}
           <StyledMetaDataTypography>
             {generateAuthorPresentationForCristinAuthors(cristinPublication.authors)}

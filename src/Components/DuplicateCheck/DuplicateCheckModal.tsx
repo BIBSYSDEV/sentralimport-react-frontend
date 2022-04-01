@@ -22,7 +22,7 @@ const StyledModal = styled(Modal)`
 const StyledBodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  padding: 0 0.5rem;
 `;
 
 const StyledImportPublicationPresentationWrapper = styled.div`

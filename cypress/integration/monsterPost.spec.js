@@ -1,7 +1,7 @@
 import { mockDoiForMonsterPublication } from '../../src/utils/mockdata';
 import mockMonsterImportPost from '../../src/utils/mockMonsterImportPost.json';
 
-context('monster-posts', () => {
+context('monsterpost', () => {
   beforeEach(() => {
     cy.login();
     cy.visit('/');
@@ -63,7 +63,7 @@ context('monster-posts', () => {
     cy.get('[data-testid="importdata-author-presentation-610220"]').click();
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
 
-    cy.get(`[data-testid="contributor-errors"]`).contains('11, 12 (Duplisert bidragsyter med cristinId: 234)');
+    cy.get(`[data-testid="contributor-errors"]`).contains('11, 12 (Duplisert bidragsyter med cristinId: 2345)');
     cy.get(`[data-testid="contributor-errors"]`).contains('13, 14 (Duplisert bidragsyter med cristinId: 666)');
 
     cy.get(`[data-testid="open-contributors-modal-button"]`).click();
