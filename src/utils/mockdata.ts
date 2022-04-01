@@ -114,6 +114,16 @@ export const resultInstitutionPadova = {
   cristin_user_institution: true,
 };
 
+export const resultInstitutionBergen = {
+  cristin_institution_id: '184',
+  institution_name: {
+    en: 'University of Bergen',
+  },
+  acronym: 'Bææærgen',
+  country: 'IT',
+  cristin_user_institution: true,
+};
+
 export const resultInstitutionGranada = {
   cristin_institution_id: '13700046',
   institution_name: {

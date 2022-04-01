@@ -130,7 +130,7 @@ export async function replaceNonCristinInstitution(affiliation: Affiliation): Pr
   } else if (affiliation.cristinInstitutionNr?.toString() !== '0') {
     const clonedAffiliation = clone(affiliation);
     clonedAffiliation.institutionName = await getInstitutionName(affiliation.cristinInstitutionNr, SearchLanguage.En);
-    return affiliation;
+    return clonedAffiliation;
   }
   return null;
 }
