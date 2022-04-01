@@ -123,7 +123,6 @@ async function attemptGettingInstitutionByNameAndCacheResult(affiliation: Affili
 
 export async function replaceNonCristinInstitution(affiliation: Affiliation): Promise<Affiliation | null> {
   if (!isCristinInstitution(affiliation.cristinInstitutionNr) && affiliation.countryCode) {
-    //attempt to do an emergency lookup
     return (
       (await attemptGettingInstitutionByNameAndCacheResult(affiliation)) ??
       (await getCountryInformationByCountryCodeWithCache(affiliation.countryCode))
