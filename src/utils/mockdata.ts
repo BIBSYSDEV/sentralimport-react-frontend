@@ -767,8 +767,16 @@ export const mockPersonDetailed7 = {
   cristin_person_id: 12121212,
   first_name: 'Gunnar',
   surname: 'Bottolf',
-  identified_cristin_person: true,
+  identified_cristin_person: false,
   cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
+};
+
+export const mockPersonDetailed8 = {
+  cristin_person_id: 8409329402,
+  first_name: 'Person',
+  surname: 'With cristinid, not identified',
+  identified_cristin_person: false,
+  cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=8409329402',
 };
 
 export const mockPersonDetailedDuplicate = {

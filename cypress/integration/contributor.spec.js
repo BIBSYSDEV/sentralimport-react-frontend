@@ -90,9 +90,9 @@ context('contributor', () => {
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="open-contributors-modal-button"]`).click();
 
-    cy.get(`[data-testid="contributor-line-7"]`).should('not.exist');
+    cy.get(`[data-testid="contributor-line-8"]`).should('not.exist');
     cy.get(`[data-testid="add-contributor-button`).click();
-    cy.get(`[data-testid="contributor-line-7"]`).should('exist');
+    cy.get(`[data-testid="contributor-line-8"]`).should('exist');
   });
 
   it('can delete contributor', () => {
