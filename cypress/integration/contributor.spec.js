@@ -2,6 +2,7 @@ import {
   mockImportPublication1,
   mockImportPublication2,
   mockInstitutions,
+  mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur,
   mockPersonDetailed,
   mockSimpleUnitResponse,
   mockUnits,
@@ -439,5 +440,16 @@ context('contributor', () => {
     cy.get(
       `[data-testid="filter-institution-select-${mockInstitutions[7].cristin_institution_id}-option-norwegian-alternative"]`
     ).should('not.exist');
+  });
+
+  it('should search for affiliation by name if there is no cristin id', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('[data-testid="list-item-author-Kinshuk-affiliations-48923874823"]');
+    cy.get('[data-testid="list-item-author-Kinshuk-affiliations-48923874823"]').should(
+      'contain.text',
+      mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur[0].institution_name.en
+    );
   });
 });

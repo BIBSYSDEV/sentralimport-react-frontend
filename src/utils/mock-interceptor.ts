@@ -51,7 +51,9 @@ import {
   mockEIssnChannel,
   resultInstitutionPadova,
   resultInstitutionGranada,
+  mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur,
   mockPersonDetailed8,
+  resultInstitutionBergen,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
@@ -115,10 +117,21 @@ export const interceptRequestsOnMock = () => {
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/institutions/${resultInstitutionPadova.cristin_institution_id}`))
     .reply(200, resultInstitutionPadova);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/institutions/${resultInstitutionBergen.cristin_institution_id}`))
+    .reply(200, resultInstitutionBergen);
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/([1-9][0-9]*).*`)).reply(200, resultInstitutionNTNU);
   //mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/1234567.*`)).networkError();
 
   //get institution by name
+  mock
+    .onGet(
+      new RegExp(
+        `${CRIST_REST_API}/institutions\\?lang=en&name=Indian%20Institute%20of%20Technology%20Kharagpur&country=IN`
+      )
+    )
+    .reply(200, mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/institutions\\?lang=en&name=.*&country=.*`)).reply(200, []);
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/institutions\\?cristin_institution=false&lang=en&name.*`))
     .reply(200, mockInstitutionSearchByName);

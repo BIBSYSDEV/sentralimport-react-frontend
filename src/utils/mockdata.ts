@@ -114,6 +114,16 @@ export const resultInstitutionPadova = {
   cristin_user_institution: true,
 };
 
+export const resultInstitutionBergen = {
+  cristin_institution_id: '184',
+  institution_name: {
+    en: 'University of Bergen',
+  },
+  acronym: 'Bææærgen',
+  country: 'IT',
+  cristin_user_institution: true,
+};
+
 export const resultInstitutionGranada = {
   cristin_institution_id: '13700046',
   institution_name: {
@@ -1067,6 +1077,19 @@ export const mockSimpleUnitResponse = [
     },
     url: 'https://api.cristin-test.uio.no/v2/units/194.16.90.0',
     acronym: 'OD-KOMM',
+  },
+];
+
+export const mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur = [
+  {
+    cristin_institution_id: '48923874823',
+    institution_name: {
+      en: 'Indian Institute of Technology Kharagpur, now with Cristin ID!',
+    },
+    acronym: 'IITK',
+    country: 'IN',
+    cristin_user_institution: false,
+    url: 'https://api.cristin-test.uio.no/v2/institutions/48923874823',
   },
 ];
 
