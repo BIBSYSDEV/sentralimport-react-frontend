@@ -32,7 +32,7 @@ const StyledUnverifiedPersonNameTypography = styled(Typography)`
   color: ${Colors.Text.OPAQUE_87_BLACK};
 `;
 
-const StyledAffiliationsWrapper2 = styled.div`
+const StyledAffiliationsWrapper = styled.div`
   margin-left: 0.5rem;
 `;
 
@@ -69,7 +69,7 @@ export default function AuthorListModal({
                   </StyledUnverifiedPersonNameTypography>
                 )}
                 {author.institutions.map((inst) => (
-                  <StyledAffiliationsWrapper2>{inst.unitName}</StyledAffiliationsWrapper2>
+                  <StyledAffiliationsWrapper>{inst.unitName}</StyledAffiliationsWrapper>
                 ))}
               </StyledListItem>
             ))}
