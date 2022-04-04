@@ -26,11 +26,23 @@ context('application', () => {
   });
 
   it('can show import-data', () => {
-    cy.get('[data-testid="import-table-panel"]').contains(mockImportData[0].languages[0].title);
-    cy.get('[data-testid="import-table-panel"]').contains(mockImportData[0].categoryName);
-    cy.get('[data-testid="import-table-panel"]').contains(mockImportData[0].sourceName);
-    cy.get('[data-testid="import-table-panel"]').contains('30.10.2021');
-    cy.get('[data-testid="import-table-panel"]').contains(mockImportData[0].doi);
+    cy.get('[data-testid="import-table-row-610220"]').contains(mockImportData[0].languages[0].title);
+    cy.get('[data-testid="import-table-row-610220"]').contains(mockImportData[0].categoryName);
+    cy.get('[data-testid="import-table-row-610220"]').contains(mockImportData[0].sourceName);
+    cy.get('[data-testid="import-table-row-610220"]').contains('30.10.2021');
+    cy.get('[data-testid="import-table-row-610220"]').contains(mockImportData[0].doi);
+
+    cy.get('[data-testid="import-table-row-610213"]').contains(mockImportData[1].languages[0].title);
+  });
+
+  it('can show author modal for import-data', () => {
+    cy.get('[data-testid="open-author-list-modal-for-610220"]').click();
+    cy.get('[data-testid="author-list-name-0"]').contains(mockImportData[0].authors[0].surname);
+    cy.get('[data-testid="author-list-name-1"]').contains(mockImportData[0].authors[1].surname);
+    cy.get('[data-testid="author-list-name-2"]').contains(mockImportData[0].authors[2].surname);
+
+    cy.get('[data-testid="author-list-name-0-verified-badge"]').should('exist');
+    cy.get('[data-testid="author-list-name-1-verified-badge"]').should('not.exist');
   });
 
   it('can search post with doi', () => {

@@ -44,7 +44,6 @@ interface ImportTableListItemProps {
   ) => void;
   index: number;
   handleAuthorClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, row: ImportPublication) => void;
-  handleAuthorPress: (event: React.KeyboardEvent<HTMLButtonElement>, row: ImportPublication) => void;
 }
 
 export default function ImportTableListItem({
@@ -57,7 +56,6 @@ export default function ImportTableListItem({
   index,
   handleCheckBoxChange,
   handleAuthorClick,
-  handleAuthorPress,
 }: ImportTableListItemProps) {
   const handleOwnerInstitutions = (row: ImportPublication) => {
     let inst: any[] = [];
@@ -112,12 +110,9 @@ export default function ImportTableListItem({
       <TableCell align="right">{handleOwnerInstitutions(importData)}</TableCell>
       <TableCell align="right">
         <IconButton
+          data-testid={`open-author-list-modal-for-${importData.pubId}`}
           onClick={(e) => {
             handleAuthorClick(e, importData);
-            e.stopPropagation();
-          }}
-          onKeyDown={(e) => {
-            handleAuthorPress(e, importData);
             e.stopPropagation();
           }}
           aria-label="Forfatterliste">

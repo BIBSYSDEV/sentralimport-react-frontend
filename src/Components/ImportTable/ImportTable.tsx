@@ -232,15 +232,6 @@ export default function ImportTable(this: any) {
     }
   }
 
-  function handleAuthorPress(event: React.KeyboardEvent<HTMLButtonElement>, row: ImportPublication) {
-    if (!isAuthorListModalOpen) {
-      if (event.key === 'Enter' || event.key === 'Space') {
-        setIsAuthorListModalOpen(true);
-        setAuthorData(row);
-      }
-    }
-  }
-
   const openImportModal = (event: any, row: { row: any }) => {
     setIsDuplicateCheckModalOpen(true);
     if (openSeveral.length > 0) {
@@ -338,7 +329,6 @@ export default function ImportTable(this: any) {
             handleCheckBoxChange={handleCheckBoxChange}
             index={i}
             handleAuthorClick={handleAuthorClick}
-            handleAuthorPress={handleAuthorPress}
           />
         );
       });
