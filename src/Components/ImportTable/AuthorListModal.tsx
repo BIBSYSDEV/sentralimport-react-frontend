@@ -48,23 +48,26 @@ const StyledAffiliationsWrapper = styled.div`
   background-color: ${Colors.LIGHT_GREY};
   padding: 0.5rem;
 `;
+const StyledAffiliationsWrapper2 = styled.div`
+  margin-left: 0.5rem;
+`;
 
-const generateAffiliationView = (author: ImportPublicationPerson) => {
-  const unitSplit: string[][] = author.institutions.map(
-    (institution) => institution.unitName?.split(';').reverse() ?? []
-  );
-  return unitSplit.map((unit, index) => (
-    <StyledAffiliationsWrapper key={index}>
-      {unit.map((name, index) => {
-        return index === 0 ? (
-          <StyledMainUnitTypography key={index}>{name}</StyledMainUnitTypography>
-        ) : (
-          <StyledUnitTypography key={index}>{name}</StyledUnitTypography>
-        );
-      })}
-    </StyledAffiliationsWrapper>
-  ));
-};
+// const generateAffiliationView = (author: ImportPublicationPerson) => {
+//   const unitSplit: string[][] = author.institutions.map(
+//     (institution) => institution.unitName?.split(';').reverse() ?? []
+//   );
+//   return unitSplit.map((unit, index) => (
+//     <StyledAffiliationsWrapper key={index}>
+//       {unit.map((name, index) => {
+//         return index === 0 ? (
+//           <StyledMainUnitTypography key={index}>{name}</StyledMainUnitTypography>
+//         ) : (
+//           <StyledUnitTypography key={index}>{name}</StyledUnitTypography>
+//         );
+//       })}
+//     </StyledAffiliationsWrapper>
+//   ));
+// };
 
 interface AuthorListModalProps {
   isAuthorListModalOpen: boolean;
@@ -89,15 +92,17 @@ export default function AuthorListModal({
               <StyledListItem key={authorIndex}>
                 {author.cristinId !== 0 ? (
                   <StyledActivePersonNameTypography data-testid={`authorlist-name-${authorIndex}`} variant="h6">
+                    {`${author.sequenceNr}. ${author.firstname ?? ''} ${author.surname ?? ''} `}
                     <StyledVerifiedBadge data-testid={`authorlist-name-${authorIndex}-verified-badge`} />
-                    {`${author.firstname ?? ''} ${author.surname ?? ''}`}
                   </StyledActivePersonNameTypography>
                 ) : (
                   <StyledUnverifiedPersonNameTypography data-testid={`authorlist-name-${authorIndex}`} variant="h6">
-                    {`${author.firstname ?? ''} ${author.surname ?? ''}`}
+                    {`${author.sequenceNr}. ${author.firstname ?? ''} ${author.surname ?? ''}`}
                   </StyledUnverifiedPersonNameTypography>
                 )}
-                {generateAffiliationView(author)}
+                {author.institutions.map((inst) => (
+                  <StyledAffiliationsWrapper2>{inst.unitName}</StyledAffiliationsWrapper2>
+                ))}
               </StyledListItem>
             ))}
           </StyledUnorderedList>
