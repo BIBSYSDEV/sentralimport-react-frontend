@@ -90,20 +90,25 @@ async function getCountryInformationByCountryCodeWithCache(countryCode: string):
 
 async function attemptGettingInstitutionByName(affiliation: Affiliation): Promise<Affiliation | null> {
   if (affiliation.institutionName) {
-    const guessedByNameFromCristinAffiliations = await searchForInstitutionsByNameAndCountry(
-      affiliation.institutionName,
-      SearchLanguage.En,
-      affiliation.countryCode ?? ''
-    );
-    const foundOnlyOneMatch = guessedByNameFromCristinAffiliations.data.length === 1;
-    if (foundOnlyOneMatch) {
-      const institution = guessedByNameFromCristinAffiliations.data[0];
-      return {
-        cristinInstitutionNr: institution.cristin_institution_id,
-        institutionName: institution.institution_name.en ?? institution.institution_name.nb,
-        countryCode: institution.country,
-        isCristinInstitution: institution.cristin_user_institution,
-      };
+    try {
+      const guessedByNameFromCristinAffiliations = await searchForInstitutionsByNameAndCountry(
+        affiliation.institutionName,
+        SearchLanguage.En,
+        affiliation.countryCode ?? ''
+      );
+      const foundOnlyOneMatch = guessedByNameFromCristinAffiliations.data.length === 1;
+      if (foundOnlyOneMatch) {
+        const institution = guessedByNameFromCristinAffiliations.data[0];
+        return {
+          cristinInstitutionNr: institution.cristin_institution_id,
+          institutionName: institution.institution_name.en ?? institution.institution_name.nb,
+          countryCode: institution.country,
+          isCristinInstitution: institution.cristin_user_institution,
+        };
+      }
+    } catch (_error) {
+      //we tried, we failed, and it was no big deal.
+      return null;
     }
   }
   return null;

@@ -40,10 +40,12 @@ export async function searchForInstitutionsByName(
   institutionName: string,
   searchLanguage: SearchLanguage
 ): Promise<AxiosResponse<Institution[]>> {
+  const searchParameters = new URLSearchParams();
+  searchParameters.set('lang', searchLanguage);
+  searchParameters.set('name', institutionName);
+  searchParameters.set('cristin_institution', 'false');
   return authenticatedApiRequest({
-    url: encodeURI(
-      `${CRIST_REST_API}/institutions?cristin_institution=false&lang=${searchLanguage}&name=${institutionName}`
-    ),
+    url: encodeURI(`${CRIST_REST_API}/institutions?${searchParameters.toString()}`),
     method: 'GET',
   });
 }
@@ -53,10 +55,12 @@ export async function searchForInstitutionsByNameAndCountry(
   searchLanguage: SearchLanguage,
   countryCode: string
 ): Promise<AxiosResponse<Institution[]>> {
+  const searchParameters = new URLSearchParams();
+  searchParameters.set('lang', searchLanguage);
+  searchParameters.set('name', institutionName);
+  searchParameters.set('country', countryCode);
   return authenticatedApiRequest({
-    url: encodeURI(
-      `${CRIST_REST_API}/institutions?lang=${searchLanguage}&name=${institutionName}&country=${countryCode}`
-    ),
+    url: encodeURI(`${CRIST_REST_API}/institutions?${searchParameters.toString()}`),
     method: 'GET',
   });
 }
