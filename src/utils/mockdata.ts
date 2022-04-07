@@ -104,6 +104,36 @@ export const resultInstitutionNTNU = {
   },
 };
 
+export const resultInstitutionPadova = {
+  cristin_institution_id: '12300052',
+  institution_name: {
+    en: 'University of Padova',
+  },
+  acronym: 'UoP?',
+  country: 'IT',
+  cristin_user_institution: true,
+};
+
+export const resultInstitutionBergen = {
+  cristin_institution_id: '184',
+  institution_name: {
+    en: 'University of Bergen',
+  },
+  acronym: 'Bææærgen',
+  country: 'IT',
+  cristin_user_institution: true,
+};
+
+export const resultInstitutionGranada = {
+  cristin_institution_id: '13700046',
+  institution_name: {
+    en: 'University of Granada',
+  },
+  acronym: 'UoG?',
+  country: 'ES',
+  cristin_user_institution: true,
+};
+
 export const mockUnits = {
   cristin_unit_id: '194.67.40.0',
   unit_name: {
@@ -545,6 +575,16 @@ export const mockIssnChannel: ChannelLight[] = [
   },
 ];
 
+export const mockEIssnChannel: ChannelLight[] = [
+  {
+    id: '4181',
+    issn: '1054-3135',
+    issn_electronic: '1095-9285',
+    title: 'International Journal of Veterinary Market Research',
+    type: 'journal',
+  },
+];
+
 export const mockAllJournals: ChannelLight[] = [
   {
     id: '51160',
@@ -727,8 +767,16 @@ export const mockPersonDetailed7 = {
   cristin_person_id: 12121212,
   first_name: 'Gunnar',
   surname: 'Bottolf',
-  identified_cristin_person: true,
+  identified_cristin_person: false,
   cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=1234567890',
+};
+
+export const mockPersonDetailed8 = {
+  cristin_person_id: 8409329402,
+  first_name: 'Person',
+  surname: 'With cristinid, not identified',
+  identified_cristin_person: false,
+  cristin_profile_url: 'https://app.cristin-test.uio.no/persons/show.jsf?id=8409329402',
 };
 
 export const mockPersonDetailedDuplicate = {
@@ -1029,6 +1077,19 @@ export const mockSimpleUnitResponse = [
     },
     url: 'https://api.cristin-test.uio.no/v2/units/194.16.90.0',
     acronym: 'OD-KOMM',
+  },
+];
+
+export const mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur = [
+  {
+    cristin_institution_id: '48923874823',
+    institution_name: {
+      en: 'Indian Institute of Technology Kharagpur, now with Cristin ID!',
+    },
+    acronym: 'IITK',
+    country: 'IN',
+    cristin_user_institution: false,
+    url: 'https://api.cristin-test.uio.no/v2/institutions/48923874823',
   },
 ];
 

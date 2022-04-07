@@ -7,6 +7,7 @@ import { ImportPublication } from '../../types/PublicationTypes';
 import { Colors } from '../../assets/styles/StyleConstants';
 import { ImportPublicationPerson } from '../../types/ContributorTypes';
 import { NumberOfContributorsToDefineMonsterPost } from '../Contributors/ContributorModal';
+import { generateAuthorPresentationFromImportPublication } from '../../utils/contributorUtils';
 
 const StyledImportPublicationPresentation = styled.div`
   padding-left: 1rem;
@@ -30,6 +31,12 @@ const StyledMetaDataTypography = styled(Typography)`
   }
 `;
 
+const StyledCategoryTypography = styled(StyledMetaDataTypography)`
+  && {
+    font-weight: 900;
+  }
+`;
+
 const StyledWarningTypography = styled(StyledMetaDataTypography)`
   color: ${Colors.WARNING};
   && {
@@ -39,14 +46,6 @@ const StyledWarningTypography = styled(StyledMetaDataTypography)`
 
 const countFoundPersons = (persons: ImportPublicationPerson[]) => {
   return persons.filter((person: ImportPublicationPerson) => person.cristinId && person.cristinId !== 0).length;
-};
-
-const generateAuthorPresentation = (importPublication: ImportPublication) => {
-  return importPublication.authors
-    .slice(0, 5)
-    .map((author: any) => author.authorName)
-    .join('; ')
-    .concat(importPublication.authors.length > 3 ? ' et al.' : '');
 };
 
 const filterTitle = (importPublication: ImportPublication) => {
@@ -70,16 +69,17 @@ const ImportPublicationPresentation: FC<ImportPublicationPresentationProps> = ({
         {importPublication?.languages && <Markup content={cleanTitleForMarkup(filterTitle(importPublication))} />}
       </StyledTitleTypography>
       {!isInImportTable && importPublication.category && (
-        <StyledMetaDataTypography>{importPublication.categoryName}</StyledMetaDataTypography>
+        <StyledCategoryTypography>{importPublication.categoryName}</StyledCategoryTypography>
       )}
       <StyledMetaDataTypography data-testid={`importdata-author-presentation-${importPublication.pubId}`}>
-        {generateAuthorPresentation(importPublication)}
+        {generateAuthorPresentationFromImportPublication(importPublication)}
       </StyledMetaDataTypography>
       {isInImportTable &&
         (importPublication.authors.length > NumberOfContributorsToDefineMonsterPost ? (
           <StyledWarningTypography
             data-testid={`importdata-author-presentation-${importPublication.pubId}-monster-warning`}>
-            ({importPublication.authors.length}) Stort antall bidragsytere
+            Stort antall bidragsytere!
+            {` (${countFoundPersons(importPublication.authors)} av ${importPublication.authors.length} er verifisert)`}
           </StyledWarningTypography>
         ) : (
           <StyledMetaDataTypography

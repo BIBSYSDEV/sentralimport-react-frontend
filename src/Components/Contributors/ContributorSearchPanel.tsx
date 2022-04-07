@@ -1,6 +1,12 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Button, Card, CircularProgress, Collapse, Grid, TextField, Typography } from '@material-ui/core';
-import { ContributorStatus, ContributorType, ContributorWrapper } from '../../types/ContributorTypes';
+import {
+  ContributorStatus,
+  ContributorType,
+  ContributorWrapper,
+  MaxLengthFirstName,
+  MaxLengthLastName,
+} from '../../types/ContributorTypes';
 import ContributorSearchResultItem from './ContributorSearchResultItem';
 import { getPersonDetailById, searchPersonDetailByName } from '../../api/contributorApi';
 import { Affiliation } from '../../types/InstitutionTypes';
@@ -127,7 +133,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     temp.toBeCreated.badge_type = ContributorStatus.None;
     temp.toBeCreated.cristin_person_id = 0;
     temp.toBeCreated.require_higher_authorization = false;
-    temp.toBeCreated.identified_cristin_person = false;
+    temp.toBeCreated.identified_cristin_person = undefined;
     updateContributor(temp, resultListIndex);
     setOpenContributorSearchPanel(false);
   };
@@ -135,6 +141,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   const getContributorDetailsAndAffiliation = async (contributor: ContributorType) => {
     const resultAffiliations: Affiliation[] = [];
     const fetchedAuthor = await getPersonDetailById(contributor);
+    if (!fetchedAuthor.identified_cristin_person) fetchedAuthor.cristin_person_id = 0;
     if (fetchedAuthor && fetchedAuthor.affiliations) {
       const activeAffiliations = fetchedAuthor.affiliations.filter((affiliation: Affiliation) => affiliation.active);
       for (const activeAffiliation of activeAffiliations) {
@@ -255,11 +262,14 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
   };
 
   const formValidationSchema = Yup.object().shape({
-    firstName: Yup.string().trim().required('Fornavn er et obligatorisk felt').max(30, 'Fornavn kan maks være 30 tegn'),
+    firstName: Yup.string()
+      .trim()
+      .required('Fornavn er et obligatorisk felt')
+      .max(MaxLengthFirstName, `Fornavn kan maksimalt være ${MaxLengthFirstName} tegn`),
     surName: Yup.string()
       .trim()
       .required('Etternavn er et obligatorisk felt')
-      .max(30, 'Etternavn kan maks være 30 tegn'),
+      .max(MaxLengthLastName, `Etternavn kan maksimalt være ${MaxLengthLastName} tegn`),
   });
 
   return (

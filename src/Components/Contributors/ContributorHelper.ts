@@ -16,15 +16,17 @@ export async function searchCristinPersons(
   authors: ImportPublicationPerson[],
   setLoadingContributorsProgress: (progress: number) => void
 ) {
+  const clonedAuthors = clone(authors);
   let unitNameCache = new Map();
   let institutionNameCache = new Map();
   const suggestedAuthors = [];
-  for (let index = 0; index < authors.length; index++) {
+  for (let index = 0; index < clonedAuthors.length; index++) {
     let cristinPerson = { ...emptyContributor };
-    let affiliations: Affiliation[] = [];
-    if (authors[index].cristinId !== 0) {
-      cristinPerson.cristin_person_id = authors[index].cristinId;
+    const affiliations: Affiliation[] = [];
+    if (clonedAuthors[index].cristinId !== 0) {
+      cristinPerson.cristin_person_id = clonedAuthors[index].cristinId;
       cristinPerson = await getPersonDetailById(cristinPerson);
+      if (!cristinPerson.identified_cristin_person) cristinPerson.cristin_person_id = 0;
       if (cristinPerson.affiliations) {
         const activeAffiliations = cristinPerson.affiliations.filter((affiliation) => affiliation.active);
         for (const activeAffiliation of activeAffiliations) {
@@ -37,15 +39,16 @@ export async function searchCristinPersons(
           institutionNameCache = detailedAffiliationAndCache.institutionNameCache;
           if (detailedAffiliationAndCache.affiliation) affiliations.push(detailedAffiliationAndCache.affiliation);
         }
-      } else {
-        affiliations = await replaceNonCristinInstitutions(authors[index].institutions);
       }
 
       cristinPerson = {
         cristin_person_id: cristinPerson.cristin_person_id,
         first_name: cristinPerson.first_name_preferred ?? cristinPerson.first_name,
         surname: cristinPerson.surname_preferred ?? cristinPerson.surname,
-        affiliations: affiliations.filter((item: Affiliation, index: number) => affiliations.indexOf(item) === index),
+        affiliations:
+          affiliations.length > 0
+            ? affiliations.filter((item: Affiliation, index: number) => affiliations.indexOf(item) === index)
+            : await replaceNonCristinInstitutions(clone(clonedAuthors[index].institutions)),
         url: CRIST_REST_API + '/persons/' + cristinPerson.cristin_person_id + '?lang=' + SearchLanguage.En,
         order: index + 1,
         identified_cristin_person: cristinPerson.identified_cristin_person,
@@ -54,7 +57,7 @@ export async function searchCristinPersons(
       };
     }
     suggestedAuthors[index] = cristinPerson;
-    setLoadingContributorsProgress(Math.floor((index * 100) / authors.length));
+    setLoadingContributorsProgress(Math.floor((index * 100) / clonedAuthors.length));
   }
   return suggestedAuthors;
 }
@@ -85,7 +88,6 @@ export const createContributorWrapper = (
     imported: importedContributor,
     cristin: cristinAuthors[index],
     toBeCreated: emptyContributor,
-    isEditing: false,
   };
 };
 
@@ -113,18 +115,22 @@ export const generateToBeCreatedContributor = async (
   importPerson: ImportPublicationPerson,
   isDuplicate: boolean
 ) => {
+  const importClone = clone(importPerson);
   const hasFoundCristinPerson = contributor.cristin.cristin_person_id !== 0;
-  const tempCristinPerson = clone(cristinAuthor);
-  tempCristinPerson.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(tempCristinPerson.affiliations ?? []);
+  const clonedCristinPerson = clone(cristinAuthor);
+  clonedCristinPerson.affiliations = removeInstitutionsDuplicatesBasedOnCristinId(
+    clonedCristinPerson.affiliations ?? []
+  );
   const personToBeCreated: ContributorType = hasFoundCristinPerson
     ? { ...contributor.cristin }
     : { ...contributor.imported };
-  return cristinAuthor.cristin_person_id !== 0
-    ? tempCristinPerson
+  if (clonedCristinPerson.identified_cristin_person === false) clonedCristinPerson.cristin_person_id = 0;
+  return clonedCristinPerson.cristin_person_id !== 0
+    ? clonedCristinPerson
     : {
         ...personToBeCreated,
         affiliations: removeInstitutionsDuplicatesBasedOnCristinId(
-          await replaceNonCristinInstitutions(isDuplicate ? cristinAuthor.affiliations : importPerson.institutions)
+          await replaceNonCristinInstitutions(isDuplicate ? clonedCristinPerson.affiliations : importClone.institutions)
         ),
       };
 };

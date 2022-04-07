@@ -2,6 +2,7 @@ import {
   mockImportPublication1,
   mockImportPublication2,
   mockInstitutions,
+  mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur,
   mockPersonDetailed,
   mockSimpleUnitResponse,
   mockUnits,
@@ -53,7 +54,7 @@ context('contributor', () => {
       'Engineering Research Center of Learning-Based Intelligent System (Ministry of Education)'
     );
     cy.get(`[data-testid=creator-1-institution-0-country-code]`).contains(
-      mockImportData[0].authors[0].institutions[0].countryCode
+      `People's Republic of China (${mockImportData[0].authors[0].institutions[0].countryCode})`
     );
     cy.get(`[data-testid="creator-name-2"]`).contains(mockImportData[0].authors[1].firstname);
     cy.get(`[data-testid="creator-name-2"]`).contains(mockImportData[0].authors[1].surname);
@@ -90,9 +91,9 @@ context('contributor', () => {
     cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
     cy.get(`[data-testid="open-contributors-modal-button"]`).click();
 
-    cy.get(`[data-testid="contributor-line-7"]`).should('not.exist');
+    cy.get(`[data-testid="contributor-line-8"]`).should('not.exist');
     cy.get(`[data-testid="add-contributor-button`).click();
-    cy.get(`[data-testid="contributor-line-7"]`).should('exist');
+    cy.get(`[data-testid="contributor-line-8"]`).should('exist');
   });
 
   it('can delete contributor', () => {
@@ -117,8 +118,6 @@ context('contributor', () => {
     cy.get(`[data-testid="contributor-form-0"]`).contains(
       mockImportPublication1.authors[0].institutions[0].institutionName
     );
-    //cy.get('[data-testid="list-item-author-Capriolo-affiliations-12300052-institution-name"]')
-    //cy.get(`[data-testid="list-item-author-Capriolo-affiliations-12300052-institution-name"]`);
     cy.get(`[data-testid="contributor-form-0"]`).contains(
       mockImportPublication1.authors[0].institutions[0].institutionName
     );
@@ -266,11 +265,28 @@ context('contributor', () => {
   });
 
   it('Shows an error for authors without affiliation', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get(`[data-testid=contributor-form-3-missing-affiliation-error]`).contains('Bidragsyter mangler tilknytning');
+    cy.get('[data-testid="show-institution-selector-3"]').click();
+    cy.get('[data-testid="filter-institution-select-3"]').click();
+    cy.get(`[data-testid="filter-institution-select-${mockInstitutions[0].cristin_institution_id}-option"]`).click();
+    cy.get(`[data-testid=contributor-form-3-missing-affiliation-error]`).should('not.exist');
+    cy.get('[data-testid="list-item-author-Afzal-affiliations-5737-delete-institution"]').click();
+    cy.get(`[data-testid=contributor-form-3-missing-affiliation-error]`).contains('Bidragsyter mangler tilknytning');
+  });
+
+  it('retains affiliations for unconfirmed cristin authors', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[1].pubId}"]`).click();
     cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
     cy.get('[data-testid="open-contributors-modal-button"]').click();
-    cy.get(`[data-testid=contributor-form-5-missing-affiliation-error]`).contains('Bidragsyter mangler tilknytning');
+    cy.get('[data-testid="list-item-author-Persson-affiliations-184"]').should(
+      'contain.text',
+      mockImportData[1].authors[5].institutions[0].institutionName
+    );
   });
 
   it('removes duplicate institutions from import data', () => {
@@ -347,6 +363,52 @@ context('contributor', () => {
     cy.get('[data-testid="contributor-errors"]').should('not.contain.text', contributorNumber4IsMissingAffiliation);
   });
 
+  it('handles contributor-errors long names', () => {
+    cy.get(`#rowsPerPageSelector`).click().type('10{enter}{enter}');
+    cy.get(`[data-testid="import-table-row-${mockImportData[8].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+
+    cy.get('[data-testid="contributor-errors"]').should('contain.text', '1 (Fornavn er for langt)');
+    cy.get('[data-testid="contributor-errors"]').should('contain.text', '1 (Etternavn er for langt)');
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('#firstName0-helper-text').should('contain.text', 'Fornavn kan maksimalt være 30 tegn');
+    cy.get('#surname0-helper-text').should('contain.text', 'Etternavn kan maksimalt være 30 tegn');
+
+    //changing names removes error:
+    cy.get('[data-testid="contributor-0-firstname-text-field-input"]').clear().type('fornavn');
+    cy.get('[data-testid="contributor-0-surname-text-field-input"]').clear().type('etternavn');
+    cy.get('#firstName0-helper-text').should('not.contain.text', 'Fornavn kan maksimalt være 30 tegn');
+    cy.get('#surname0-helper-text').should('not.contain.text', 'Fornavn kan maksimalt være 30 tegn');
+    cy.get('[data-testid="choose-text-field-person-0"]').click();
+    cy.get('[data-testid="contributor-back-button"]').click();
+    cy.get('[data-testid="contributor-errors"]').should('not.contain.text', 'Fornavn er for langt');
+    cy.get('[data-testid="contributor-errors"]').should('not.contain.text', 'Etternavn er for langt');
+  });
+
+  it('handles contributor-errors missing names', () => {
+    cy.get(`#rowsPerPageSelector`).click().type('10{enter}{enter}');
+    cy.get(`[data-testid="import-table-row-${mockImportData[8].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-result-radio-create-new"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('#firstName1-helper-text').should('contain.text', 'Fornavn er et obligatorisk felt');
+    cy.get('#surname1-helper-text').should('contain.text', 'Etternavn er et obligatorisk felt');
+    cy.get('[data-testid="contributor-back-button"]').click();
+    cy.get('[data-testid="contributor-errors"]').should('contain.text', '2 (Mangler fornavn, etternavn');
+
+    //changing names removes error:
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('[data-testid="contributor-1-firstname-text-field-input"]').clear().type('fornavn');
+    cy.get('[data-testid="contributor-1-surname-text-field-input"]').clear().type('etternavn');
+    cy.get('#firstName1-helper-text').should('not.contain.text', 'Fornavn er et obligatorisk felt');
+    cy.get('#surname1-helper-text').should('not.contain.text', "Etternavn er et obligatorisk felt'");
+    cy.get('[data-testid="choose-text-field-person-1"]').click();
+    cy.get('[data-testid="contributor-back-button"]').click();
+    cy.get('[data-testid="contributor-errors"]').should('not.contain.text', '2 (Mangler fornavn, etternavn');
+  });
+
   it('shows institution-name in english and norwegian in institution list', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
@@ -378,5 +440,16 @@ context('contributor', () => {
     cy.get(
       `[data-testid="filter-institution-select-${mockInstitutions[7].cristin_institution_id}-option-norwegian-alternative"]`
     ).should('not.exist');
+  });
+
+  it('should search for affiliation by name if there is no cristin id', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
+    cy.get('[data-testid="duplication-modal-ok-button"]').click();
+    cy.get('[data-testid="open-contributors-modal-button"]').click();
+    cy.get('[data-testid="list-item-author-Kinshuk-affiliations-48923874823"]');
+    cy.get('[data-testid="list-item-author-Kinshuk-affiliations-48923874823"]').should(
+      'contain.text',
+      mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur[0].institution_name.en
+    );
   });
 });

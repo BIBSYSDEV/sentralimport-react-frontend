@@ -38,7 +38,6 @@ export interface ContributorWrapper {
   imported: ContributorType;
   cristin: ContributorType;
   toBeCreated: ContributorType;
-  isEditing: boolean;
 }
 
 export enum RoleCodes {
@@ -49,7 +48,6 @@ export enum RoleCodes {
 export const emptyContributor: ContributorType = {
   order: 0,
   cristin_person_id: 0,
-  identified_cristin_person: false,
   first_name: '',
   surname: '',
   affiliations: [],
@@ -57,7 +55,6 @@ export const emptyContributor: ContributorType = {
 };
 
 export const emptyContributorWrapper: ContributorWrapper = {
-  isEditing: false,
   imported: {
     order: 0,
     affiliations: [],
@@ -83,3 +80,11 @@ export const emptyContributorWrapper: ContributorWrapper = {
     role_code: RoleCodes.Author,
   },
 };
+
+export const MaxLengthFirstName = 30;
+export const MaxLengthLastName = 30;
+
+export interface ContributorDuplicates {
+  cristinIdDuplicates: number[];
+  nameDuplicate: number[];
+}

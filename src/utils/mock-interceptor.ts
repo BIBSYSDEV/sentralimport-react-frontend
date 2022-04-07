@@ -48,6 +48,12 @@ import {
   mockServerErrorResponse,
   mockContributorCristinIdThatTriggersServerError,
   mockImportPublication2,
+  mockEIssnChannel,
+  resultInstitutionPadova,
+  resultInstitutionGranada,
+  mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur,
+  mockPersonDetailed8,
+  resultInstitutionBergen,
 } from './mockdata';
 
 import mockImportData from './mockImportData.json';
@@ -105,10 +111,27 @@ export const interceptRequestsOnMock = () => {
   mock.onPatch(new RegExp(`${PIA_REST_API}/sentralimport/publication.*`)).reply(204);
 
   //get cristin institutions by id
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/institutions/${resultInstitutionGranada.cristin_institution_id}`))
+    .reply(200, resultInstitutionGranada);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/institutions/${resultInstitutionPadova.cristin_institution_id}`))
+    .reply(200, resultInstitutionPadova);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/institutions/${resultInstitutionBergen.cristin_institution_id}`))
+    .reply(200, resultInstitutionBergen);
   mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/([1-9][0-9]*).*`)).reply(200, resultInstitutionNTNU);
   //mock.onGet(new RegExp(`${CRIST_REST_API}/institutions/1234567.*`)).networkError();
 
   //get institution by name
+  mock
+    .onGet(
+      new RegExp(
+        `${CRIST_REST_API}/institutions\\?lang=en&name=Indian\\+Institute\\+of\\+Technology\\+Kharagpur&country=IN`
+      )
+    )
+    .reply(200, mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur);
+  mock.onGet(new RegExp(`${CRIST_REST_API}/institutions\\?lang=en&name=.*&country=.*`)).reply(200, []);
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/institutions\\?cristin_institution=false&lang=en&name.*`))
     .reply(200, mockInstitutionSearchByName);
@@ -145,6 +168,9 @@ export const interceptRequestsOnMock = () => {
   //Get journal for issn
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=issn:1234-1234`)).reply(200, {});
   mock.onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=issn.*`)).reply(200, mockIssnChannel);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/results/channels\\?type=journal&query=eissn.*`))
+    .reply(200, mockEIssnChannel);
 
   //doi-search
   mock.onGet(new RegExp(`${CRIST_REST_API}/results.*doi=.*`)).reply(200, [], {
@@ -239,6 +265,9 @@ export const interceptRequestsOnMock = () => {
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed7.cristin_person_id}`))
     .reply(200, mockPersonDetailed7);
+  mock
+    .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed8.cristin_person_id}`))
+    .reply(200, mockPersonDetailed8);
   mock
     .onGet(new RegExp(`${CRIST_REST_API}/persons/${mockPersonDetailed6.cristin_person_id}`))
     .reply(200, mockPersonDetailed6);

@@ -1,7 +1,8 @@
 import { getInstitutionUnitNameBasedOnIDAndInstitutionStatus, SearchLanguage } from '../api/contributorApi';
 import { Affiliation } from '../types/InstitutionTypes';
 import { ContributorStatus, ContributorType } from '../types/ContributorTypes';
-import { getInstitutionName } from '../api/institutionApi';
+import { getInstitutionNameWithCache } from '../api/institutionApi';
+import { ImportPublication } from '../types/PublicationTypes';
 
 export async function getAffiliationDetails(
   affiliation: Affiliation | undefined,
@@ -13,7 +14,7 @@ export async function getAffiliationDetails(
   affiliation: Affiliation | undefined;
 }> {
   if (affiliation) {
-    const institutionNameAndCache = await getInstitutionName(
+    const institutionNameAndCache = await getInstitutionNameWithCache(
       affiliation.institution?.cristin_institution_id,
       SearchLanguage.En,
       institutionNameCache
@@ -57,4 +58,22 @@ export const getContributorStatus = (contributor: ContributorType, activeAffilia
   } else {
     return ContributorStatus.None;
   }
+};
+
+export const generateAuthorPresentationFromImportPublication = (importPublication: ImportPublication) => {
+  const maxAuthorsShown = 5;
+  return importPublication.authors
+    .slice(0, maxAuthorsShown)
+    .map((author: any) => [author.firstname, author.surname].join(' '))
+    .join('; ')
+    .concat(importPublication.authors.length > maxAuthorsShown ? ' et al.' : '');
+};
+
+export const generateAuthorPresentationForCristinAuthors = (authors: ContributorType[]) => {
+  const maxAuthorsShown = 5;
+  return authors
+    .slice(0, maxAuthorsShown)
+    .map((author) => [author.first_name, author.surname].join(' '))
+    .join('; ')
+    .concat(authors.length > maxAuthorsShown ? ' et al.' : '');
 };

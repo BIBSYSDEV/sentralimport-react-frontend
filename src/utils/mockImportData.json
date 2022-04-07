@@ -150,6 +150,21 @@
             "isCristinInstitution": false
           }
         ]
+      }, {
+        "cristinId": 8409329402,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 8,
+        "surname": "Person",
+        "firstname": "With cristinid, not identified",
+        "institutions": [
+          {
+            "unitName": "Department of Ecology;University of Granada",
+            "countryCode": "ES",
+            "institutionName": "University of Granada",
+            "cristinInstitutionNr": 13700046,
+            "isCristinInstitution": false
+          }
+        ]
       }
     ],
     "languages": [
@@ -849,6 +864,45 @@
     "languages": [
       {
         "lang": "EN",
+        "langName": "Engelsk",
+        "summary": "No title.",
+        "original": true
+      }
+    ]
+  }, {
+    "pubId": 610244112233,
+    "category": "ARTICLE",
+    "categoryName": "Vitenskapelig artikkel",
+    "registered": "Oct 30, 2021",
+    "doi": "10.1016/j.coastaleng.2021.1040302",
+    "sourceName": "Scopus",
+    "sourceCode": "SCOPUS",
+    "externalId": "2-s2.0-85114934135",
+    "yearPublished": 2021,
+    "authors": [
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 2,
+        "surname": "Dfsdfsdfsdffffffffffffffffffffffffffffutta",
+        "firstname": "Debasffsdf sdfsd fsd fsdfsf sfsdf ish",
+        "authorName": "Dutta D.",
+        "institutions": [
+        ]
+      },
+      {
+        "cristinId": 0,
+        "roleCode": "FORFATTER",
+        "sequenceNr": 2,
+        "surname": "",
+        "institutions": [
+        ]
+      }
+    ],
+    "languages": [
+      {
+        "lang": "EN",
+        "title": "post with contrinutor validation-errors",
         "langName": "Engelsk",
         "summary": "No title.",
         "original": true

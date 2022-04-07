@@ -36,19 +36,41 @@ export async function getParentsUnitName(
   });
 }
 
+const LANGUAGE_SEARCH_PARAMETER_FIELD_NAME = 'lang';
+const NAME_SEARC_PARAMETER_FIELD_NAME = 'name';
+const CRISTIN_INSTITUTION_FIELD_NAME = 'cristin_institution';
+const COUNTRY_FIELD_NAME = 'country';
+
 export async function searchForInstitutionsByName(
   institutionName: string,
   searchLanguage: SearchLanguage
 ): Promise<AxiosResponse<Institution[]>> {
+  const searchParameters = new URLSearchParams();
+  searchParameters.set(LANGUAGE_SEARCH_PARAMETER_FIELD_NAME, searchLanguage);
+  searchParameters.set(NAME_SEARC_PARAMETER_FIELD_NAME, institutionName);
+  searchParameters.set(CRISTIN_INSTITUTION_FIELD_NAME, 'false');
   return authenticatedApiRequest({
-    url: encodeURI(
-      `${CRIST_REST_API}/institutions?cristin_institution=false&lang=${searchLanguage}&name=${institutionName}`
-    ),
+    url: encodeURI(`${CRIST_REST_API}/institutions?${searchParameters.toString()}`),
     method: 'GET',
   });
 }
 
-export async function getInstitutionName(
+export async function searchForInstitutionsByNameAndCountry(
+  institutionName: string,
+  searchLanguage: SearchLanguage,
+  countryCode: string
+): Promise<AxiosResponse<Institution[]>> {
+  const searchParameters = new URLSearchParams();
+  searchParameters.set(LANGUAGE_SEARCH_PARAMETER_FIELD_NAME, searchLanguage);
+  searchParameters.set(NAME_SEARC_PARAMETER_FIELD_NAME, institutionName);
+  searchParameters.set(COUNTRY_FIELD_NAME, countryCode);
+  return authenticatedApiRequest({
+    url: encodeURI(`${CRIST_REST_API}/institutions?${searchParameters.toString()}`),
+    method: 'GET',
+  });
+}
+
+export async function getInstitutionNameWithCache(
   institutionId: string | undefined,
   searchLanguage: SearchLanguage,
   cachedInstitutionResult: Map<string, string>
@@ -57,21 +79,28 @@ export async function getInstitutionName(
   if (institutionId === '0') return { institutionName: '', cachedInstitutionResult };
   if (cachedInstitutionResult.get(institutionId))
     return { institutionName: cachedInstitutionResult.get(institutionId) ?? '', cachedInstitutionResult };
-  let institutionName = '';
-  try {
-    const institution = await (authenticatedApiRequest({
-      url: encodeURI(`${CRIST_REST_API}/institutions/${institutionId}?lang=${searchLanguage}`),
-      method: 'GET',
-    }) as AxiosPromise<Institution>);
-    institutionName = institution.data.institution_name.en || institution.data.institution_name.nb;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.message === 'Network Error') {
-      institutionName = `NAVN IKKE FUNNET FOR KODE: ${institutionId}`;
-    } else throw error;
-  }
+  const institutionName = await getInstitutionName(institutionId, searchLanguage);
   cachedInstitutionResult.set(institutionId, institutionName);
   return {
     institutionName,
     cachedInstitutionResult: cachedInstitutionResult,
   };
+}
+
+export async function getInstitutionName(
+  institutionId: string | undefined,
+  searchLanguage: SearchLanguage
+): Promise<string> {
+  if (!institutionId || institutionId === '0') return '';
+  try {
+    const institution = await (authenticatedApiRequest({
+      url: encodeURI(`${CRIST_REST_API}/institutions/${institutionId}?lang=${searchLanguage}`),
+      method: 'GET',
+    }) as AxiosPromise<Institution>);
+    return institution.data.institution_name.en || institution.data.institution_name.nb;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.message === 'Network Error') {
+      return `NAVN IKKE FUNNET FOR KODE: ${institutionId}`;
+    } else throw error;
+  }
 }

@@ -4,11 +4,10 @@ import TableBody from '@material-ui/core/TableBody';
 import { Context } from '../../Context';
 import DuplicateCheckModal from '../DuplicateCheck/DuplicateCheckModal';
 import Pagination from './Pagination';
-import ListModal from '../ListModal/ListModal';
 import EnhancedTableHead from './EnhancedTableHead';
 import { emptyImportPublication, ImportPublication, Order } from '../../types/PublicationTypes';
 import ImportTableListItem from './ImportTableListItem';
-import AuthorList from './AuthorList';
+import AuthorListModal from './AuthorListModal';
 import styled from 'styled-components';
 import { SortValue } from '../../types/ContextType';
 import { getImportData } from '../../api/publicationApi';
@@ -108,7 +107,7 @@ export default function ImportTable(this: any) {
   const [isDuplicateCheckModalOpen, setIsDuplicateCheckModalOpen] = useState(false);
   const [resultsPerPage, setResultsPerPage] = useState(state.currentPerPage.value);
   const [importPublications, setImportPublications] = useState<ImportPublication[]>([]);
-  const [authorList, setAuthorList] = useState(false);
+  const [isAuthorListModalOpen, setIsAuthorListModalOpen] = useState(false);
   const [authorData, setAuthorData] = useState<ImportPublication>();
   const [isSearchingForImportData, setIsSearchingForImportData] = useState(false);
   const [checked, setChecked] = useState<boolean[]>([]);
@@ -222,23 +221,14 @@ export default function ImportTable(this: any) {
     }
   }
 
-  function handleCloseList() {
-    setAuthorList(false);
+  function handleCloseAuthorListModal() {
+    setIsAuthorListModalOpen(false);
   }
 
   function handleAuthorClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, row: ImportPublication) {
-    if (!authorList) {
-      setAuthorList(true);
+    if (!isAuthorListModalOpen) {
+      setIsAuthorListModalOpen(true);
       setAuthorData(row);
-    }
-  }
-
-  function handleAuthorPress(event: React.KeyboardEvent<HTMLButtonElement>, row: ImportPublication) {
-    if (!authorList) {
-      if (event.key === 'Enter' || event.key === 'Space') {
-        setAuthorList(true);
-        setAuthorData(row);
-      }
     }
   }
 
@@ -339,7 +329,6 @@ export default function ImportTable(this: any) {
             handleCheckBoxChange={handleCheckBoxChange}
             index={i}
             handleAuthorClick={handleAuthorClick}
-            handleAuthorPress={handleAuthorPress}
           />
         );
       });
@@ -352,11 +341,11 @@ export default function ImportTable(this: any) {
           importPublication={modalData}
           handleDuplicateCheckModalClose={handleClose.bind(this)}
         />
-        <ListModal
-          title={'Forfatterliste'}
-          open={authorList}
-          body={<AuthorList authors={authorData?.authors} />}
-          handleClose={handleCloseList}
+
+        <AuthorListModal
+          isAuthorListModalOpen={isAuthorListModalOpen}
+          authors={authorData?.authors}
+          handleCloseAuthorListModal={handleCloseAuthorListModal}
         />
       </div>
     ) : (

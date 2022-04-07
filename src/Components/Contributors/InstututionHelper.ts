@@ -1,12 +1,18 @@
 import { Affiliation, ImportPublicationPersonInstutution } from '../../types/InstitutionTypes';
-import { getCountryInformationByCountryCode, getInstitutionName } from '../../api/institutionApi';
+import {
+  getCountryInformationByCountryCode,
+  getInstitutionNameWithCache,
+  searchForInstitutionsByNameAndCountry,
+} from '../../api/institutionApi';
 import { SearchLanguage } from '../../api/contributorApi';
 import { ContributorType } from '../../types/ContributorTypes';
+import clone from 'just-clone';
 
 const Foreign_educational_institution_generic_code = '9127';
 const Other_institutions_generic_code = '9126';
 
 const countriesApiResultCache: any = {};
+const institutionNameCache = new Map<string, Affiliation | null>();
 
 export function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
   const cristinIdSet = new Set();
@@ -60,29 +66,78 @@ export async function replaceNonCristinInstitutions(
   );
 }
 
+async function getCountryInformationByCountryCodeWithCache(countryCode: string): Promise<Affiliation | null> {
+  if (countriesApiResultCache[countryCode]) {
+    return countriesApiResultCache[countryCode];
+  } else {
+    const institutionCountryInformation = (await getCountryInformationByCountryCode(countryCode, SearchLanguage.En))
+      .data;
+    if (institutionCountryInformation.length > 0) {
+      const newAffiliation = {
+        cristinInstitutionNr: institutionCountryInformation[0].cristin_institution_id,
+        institutionName:
+          (institutionCountryInformation[0].institution_name.en ||
+            institutionCountryInformation[0].institution_name.nb) + ' (Ukjent institusjon)',
+        countryCode: institutionCountryInformation[0].country,
+        isCristinInstitution: institutionCountryInformation[0].cristin_user_institution,
+      };
+      countriesApiResultCache[countryCode] = newAffiliation;
+      return newAffiliation;
+    }
+  }
+  return null;
+}
+
+async function attemptGettingInstitutionByName(affiliation: Affiliation): Promise<Affiliation | null> {
+  if (affiliation.institutionName) {
+    try {
+      const guessedByNameFromCristinAffiliations = await searchForInstitutionsByNameAndCountry(
+        affiliation.institutionName,
+        SearchLanguage.En,
+        affiliation.countryCode ?? ''
+      );
+      const foundOnlyOneMatch = guessedByNameFromCristinAffiliations.data.length === 1;
+      if (foundOnlyOneMatch) {
+        const institution = guessedByNameFromCristinAffiliations.data[0];
+        return {
+          cristinInstitutionNr: institution.cristin_institution_id,
+          institutionName: institution.institution_name.en ?? institution.institution_name.nb,
+          countryCode: institution.country,
+          isCristinInstitution: institution.cristin_user_institution,
+        };
+      }
+    } catch (error) {
+      // As this function is designed to try to find an institution that might have identical names,
+      // we can ignore the error and return null if it fails for whatever reason.
+      return null;
+    }
+  }
+  return null;
+}
+
+async function attemptGettingInstitutionByNameAndCacheResult(affiliation: Affiliation): Promise<Affiliation | null> {
+  if (affiliation.institutionName && institutionNameCache.has(affiliation.institutionName)) {
+    return institutionNameCache.get(affiliation.institutionName) ?? null;
+  } else if (affiliation.institutionName) {
+    const newAffiliation = await attemptGettingInstitutionByName(affiliation);
+    institutionNameCache.set(affiliation.institutionName, newAffiliation);
+    return newAffiliation;
+  }
+  return null;
+}
+
 export async function replaceNonCristinInstitution(affiliation: Affiliation): Promise<Affiliation | null> {
   if (!isCristinInstitution(affiliation.cristinInstitutionNr) && affiliation.countryCode) {
-    if (countriesApiResultCache[affiliation.countryCode]) {
-      return countriesApiResultCache[affiliation.countryCode];
-    } else {
-      const institutionCountryInformation = (
-        await getCountryInformationByCountryCode(affiliation.countryCode, SearchLanguage.En)
-      ).data;
-      if (institutionCountryInformation.length > 0) {
-        const newAffiliation = {
-          cristinInstitutionNr: institutionCountryInformation[0].cristin_institution_id,
-          institutionName:
-            (institutionCountryInformation[0].institution_name.en ||
-              institutionCountryInformation[0].institution_name.nb) + ' (Ukjent institusjon)',
-          countryCode: institutionCountryInformation[0].country,
-          isCristinInstitution: institutionCountryInformation[0].cristin_user_institution,
-        };
-        countriesApiResultCache[affiliation.countryCode] = newAffiliation;
-        return newAffiliation;
-      }
-    }
-  } else if (affiliation.cristinInstitutionNr && affiliation.cristinInstitutionNr.toString() !== '0') {
-    return affiliation;
+    return (
+      (await attemptGettingInstitutionByNameAndCacheResult(affiliation)) ??
+      (await getCountryInformationByCountryCodeWithCache(affiliation.countryCode))
+    );
+  } else if (affiliation.cristinInstitutionNr?.toString() !== '0') {
+    const clonedAffiliation = clone(affiliation);
+    //TODO: make a getInstitutionName with caching or remove comment if backend supports sending cristin Institution name in addition to scopus institution name
+    //TODO: remove comment when SMILE-1495
+    //clonedAffiliation.institutionName = await getInstitutionName(affiliation.cristinInstitutionNr, SearchLanguage.En);
+    return clonedAffiliation;
   }
   return null;
 }
@@ -104,7 +159,7 @@ export async function getDuplicateAffiliations(author: ContributorType) {
           unitName: author.affiliations[i].unit?.unit_name?.nb ?? '',
         });
       } else {
-        const institutionNameAndCache = await getInstitutionName(
+        const institutionNameAndCache = await getInstitutionNameWithCache(
           author.affiliations[i].institution?.cristin_institution_id,
           SearchLanguage.En,
           institutionNameCache

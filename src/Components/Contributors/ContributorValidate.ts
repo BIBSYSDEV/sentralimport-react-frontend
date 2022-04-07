@@ -1,4 +1,9 @@
-import { ContributorWrapper } from '../../types/ContributorTypes';
+import {
+  ContributorWrapper,
+  ContributorDuplicates,
+  MaxLengthFirstName,
+  MaxLengthLastName,
+} from '../../types/ContributorTypes';
 import { Dispatch, SetStateAction } from 'react';
 
 const validateBasicMetaData = (contributors: ContributorWrapper[]): string[] => {
@@ -13,42 +18,77 @@ const validateBasicMetaData = (contributors: ContributorWrapper[]): string[] => 
       if (errors.length > 0) {
         contributorErrors.push(`${index + 1} (Mangler ${errors.join(', ')})`);
       }
+      if (toBeCreated.first_name?.length > MaxLengthFirstName)
+        contributorErrors.push(`${index + 1} (Fornavn er for langt)`);
+      if (toBeCreated.surname?.length > MaxLengthLastName)
+        contributorErrors.push(`${index + 1} (Etternavn er for langt)`);
     }
   });
   return contributorErrors;
 };
 
-const findDuplicateContributors = (contributors: ContributorWrapper[]): Map<number, number[]> => {
-  const allCristinIds: number[] = contributors.map((contributor) => contributor.toBeCreated?.cristin_person_id ?? 0);
-  const allDifferentCristinIds = new Set(allCristinIds);
-  const duplicatesMap = new Map<number, number[]>();
-  allDifferentCristinIds.forEach((cristinId) => {
-    if (cristinId && cristinId !== 0) {
-      const indexes: number[] = [];
-      allCristinIds.forEach((_id, index) => {
-        if (_id === cristinId) {
-          indexes.push(index);
+const hasSameName = (contributorA: ContributorWrapper, contributorB: ContributorWrapper): boolean => {
+  return (
+    contributorA.toBeCreated.first_name.trim().toLowerCase() ===
+      contributorB.toBeCreated.first_name.trim().toLowerCase() &&
+    contributorA.toBeCreated.surname.trim().toLowerCase() === contributorB.toBeCreated.surname.trim().toLowerCase()
+  );
+};
+
+const findDuplicateContributors = (contributors: ContributorWrapper[]): Map<number, ContributorDuplicates> => {
+  const duplicatesMap = new Map<number, ContributorDuplicates>();
+  contributors.forEach((contributorA, contributorAIndex) => {
+    const nameIndexes: number[] = [];
+    const cristinIndexes: number[] = [];
+    contributors.forEach((contributorB, contributorBIndex) => {
+      if (contributorBIndex !== contributorAIndex) {
+        if (hasSameName(contributorA, contributorB)) {
+          nameIndexes.push(contributorBIndex);
         }
-      });
-      if (indexes.length > 1) duplicatesMap.set(cristinId, indexes);
+        if (hasSameCristinId(contributorA, contributorB)) {
+          cristinIndexes.push(contributorBIndex);
+        }
+      }
+    });
+    if (nameIndexes.length > 0 || cristinIndexes.length > 0) {
+      duplicatesMap.set(contributorAIndex, { cristinIdDuplicates: cristinIndexes, nameDuplicate: nameIndexes });
     }
   });
   return duplicatesMap;
 };
 
+const hasSameCristinId = (contributorA: ContributorWrapper, contributorB: ContributorWrapper): boolean => {
+  return (
+    !!contributorA.toBeCreated.cristin_person_id &&
+    !!contributorB.toBeCreated.cristin_person_id &&
+    contributorB.toBeCreated.cristin_person_id.toString() !== '0' &&
+    contributorA.toBeCreated.cristin_person_id.toString() !== '0' &&
+    contributorA.toBeCreated.cristin_person_id === contributorB.toBeCreated.cristin_person_id
+  );
+};
+
 export const validateContributors = (
   contributors: ContributorWrapper[],
   setContributorErrors: Dispatch<SetStateAction<string[]>>,
-  setDuplicateContributors: Dispatch<SetStateAction<Map<number, number[]>>>
+  setDuplicateContributors: Dispatch<SetStateAction<Map<number, ContributorDuplicates>>>
 ) => {
   const contributorErrors: string[] = validateBasicMetaData(contributors);
 
   const duplicatesMap = findDuplicateContributors(contributors);
   setDuplicateContributors(duplicatesMap);
+  const duplicateCristinIds = new Set<number>();
   duplicatesMap.forEach((duplicateList, key) => {
-    contributorErrors.push(
-      `${duplicateList.map((index) => index + 1).join(', ')} (Duplisert bidragsyter med cristinId: ${key})`
-    );
+    if (duplicateList.cristinIdDuplicates.length > 0) {
+      const cristinId = contributors[key].toBeCreated.cristin_person_id;
+      if (!!cristinId && !duplicateCristinIds.has(cristinId)) {
+        duplicateCristinIds.add(cristinId);
+        contributorErrors.push(
+          `${key + 1}, ${duplicateList.cristinIdDuplicates
+            .map((index) => index + 1)
+            .join(', ')} (Duplisert bidragsyter med cristinId: ${cristinId})`
+        );
+      }
+    }
   });
 
   setContributorErrors(contributorErrors);

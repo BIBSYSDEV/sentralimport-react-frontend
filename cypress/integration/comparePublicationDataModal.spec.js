@@ -2,7 +2,9 @@ import mockImportData from '../../src/utils/mockImportData.json';
 import {
   mockAllJournals,
   mockDoiForPublicationWithoutDoi,
+  mockEIssnChannel,
   mockImportPublicationWithoutDoi,
+  mockIssnChannel,
 } from '../../src/utils/mockdata';
 
 context('comparePublicationModal', () => {
@@ -74,7 +76,6 @@ context('comparePublicationModal', () => {
   it('shows error if contributors-errors', () => {
     cy.get(`[data-testid="import-table-row-${mockImportData[4].pubId}"]`).click();
     cy.get('[data-testid="duplication-modal-ok-button"]').click();
-
     cy.get(`[data-testid="import-publication-button"]`).should('be.disabled');
     cy.get(`[data-testid="contributor-errors"]`).contains('Det er feil i bidragsyterlisten');
     cy.get(`[data-testid="contributor-errors"]`).contains('1 (Mangler fornavn)');
@@ -221,6 +222,15 @@ context('comparePublicationModal', () => {
     cy.get(`#cristindata-journal-option-3`).click();
     cy.get(`[data-testid="submit-search-journal-button"]`).click();
     cy.get(`[data-testid="cristindata-journal-title"]`).contains(mockAllJournals[3].title); //"Final Case report"
+  });
+
+  it('can search for journals by issn', () => {
+    cy.get(`[data-testid="import-table-row-${mockImportData[0].pubId}"]`).click();
+    cy.get(`[data-testid="duplication-modal-ok-button"]`).click();
+    cy.get(`#search-journal-header`).click();
+    cy.get(`[data-testid="cristindata-journal-select-textfield"]`).type('1257-1256');
+    cy.get(`#cristindata-journal-option-0`).contains(mockIssnChannel[0].title);
+    cy.get(`#cristindata-journal-option-1`).contains(mockEIssnChannel[0].title);
   });
 
   it('can open a publication without doi', () => {

@@ -13,6 +13,15 @@ export const StyledVerifiedBadge = styled(VerifiedBadge)`
   }
 `;
 
+export const StyledVerifiedBadgeSmall = styled(VerifiedBadge)`
+  margin-right: 0.5rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  & path {
+    fill: ${Colors.Text.GREEN};
+  }
+`;
+
 export const StyledNotVerifiedBadge = styled(NotVerifiedBadge)`
   margin-right: 0.5rem;
   width: 1.7rem;
