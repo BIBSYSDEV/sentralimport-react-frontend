@@ -127,7 +127,7 @@ export const interceptRequestsOnMock = () => {
   mock
     .onGet(
       new RegExp(
-        `${CRIST_REST_API}/institutions\\?lang=en&name=Indian%20Institute%20of%20Technology%20Kharagpur&country=IN`
+        `${CRIST_REST_API}/institutions\\?lang=en&name=Indian\\+Institute\\+of\\+Technology\\+Kharagpur&country=IN`
       )
     )
     .reply(200, mockInstitutionSearchForIndianInstituteOfTechnologyKharagpur);

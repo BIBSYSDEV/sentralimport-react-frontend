@@ -90,20 +90,26 @@ async function getCountryInformationByCountryCodeWithCache(countryCode: string):
 
 async function attemptGettingInstitutionByName(affiliation: Affiliation): Promise<Affiliation | null> {
   if (affiliation.institutionName) {
-    const guessedByNameFromCristinAffiliations = await searchForInstitutionsByNameAndCountry(
-      affiliation.institutionName,
-      SearchLanguage.En,
-      affiliation.countryCode ?? ''
-    );
-    const foundOnlyOneMatch = guessedByNameFromCristinAffiliations.data.length === 1;
-    if (foundOnlyOneMatch) {
-      const institution = guessedByNameFromCristinAffiliations.data[0];
-      return {
-        cristinInstitutionNr: institution.cristin_institution_id,
-        institutionName: institution.institution_name.en ?? institution.institution_name.nb,
-        countryCode: institution.country,
-        isCristinInstitution: institution.cristin_user_institution,
-      };
+    try {
+      const guessedByNameFromCristinAffiliations = await searchForInstitutionsByNameAndCountry(
+        affiliation.institutionName,
+        SearchLanguage.En,
+        affiliation.countryCode ?? ''
+      );
+      const foundOnlyOneMatch = guessedByNameFromCristinAffiliations.data.length === 1;
+      if (foundOnlyOneMatch) {
+        const institution = guessedByNameFromCristinAffiliations.data[0];
+        return {
+          cristinInstitutionNr: institution.cristin_institution_id,
+          institutionName: institution.institution_name.en ?? institution.institution_name.nb,
+          countryCode: institution.country,
+          isCristinInstitution: institution.cristin_user_institution,
+        };
+      }
+    } catch (error) {
+      // As this function is designed to try to find an institution that might have identical names,
+      // we can ignore the error and return null if it fails for whatever reason.
+      return null;
     }
   }
   return null;
