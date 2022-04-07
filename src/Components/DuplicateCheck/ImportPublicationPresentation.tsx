@@ -78,7 +78,8 @@ const ImportPublicationPresentation: FC<ImportPublicationPresentationProps> = ({
         (importPublication.authors.length > NumberOfContributorsToDefineMonsterPost ? (
           <StyledWarningTypography
             data-testid={`importdata-author-presentation-${importPublication.pubId}-monster-warning`}>
-            ({importPublication.authors.length}) Stort antall bidragsytere
+            Stort antall bidragsytere!
+            {` (${countFoundPersons(importPublication.authors)} av ${importPublication.authors.length} er verifisert)`}
           </StyledWarningTypography>
         ) : (
           <StyledMetaDataTypography
