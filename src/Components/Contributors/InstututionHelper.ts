@@ -106,8 +106,9 @@ async function attemptGettingInstitutionByName(affiliation: Affiliation): Promis
           isCristinInstitution: institution.cristin_user_institution,
         };
       }
-    } catch (_error) {
-      //we tried, we failed, and it was no big deal.
+    } catch (error) {
+      // As this function is designed to try to find an institution that might have identical names,
+      // we can ignore the error and return null if it fails for whatever reason.
       return null;
     }
   }

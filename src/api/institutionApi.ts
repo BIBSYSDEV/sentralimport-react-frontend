@@ -36,14 +36,18 @@ export async function getParentsUnitName(
   });
 }
 
+const LANGUAGE_SEARCH_PARAMETER_FIELD_NAME = 'lang';
+const NAME_SEARC_PARAMETER_FIELD_NAME = 'name';
+const CRISTIN_INSTITUTION_FIELD_NAME = 'cristin_institution';
+
 export async function searchForInstitutionsByName(
   institutionName: string,
   searchLanguage: SearchLanguage
 ): Promise<AxiosResponse<Institution[]>> {
   const searchParameters = new URLSearchParams();
-  searchParameters.set('lang', searchLanguage);
-  searchParameters.set('name', institutionName);
-  searchParameters.set('cristin_institution', 'false');
+  searchParameters.set(LANGUAGE_SEARCH_PARAMETER_FIELD_NAME, searchLanguage);
+  searchParameters.set(NAME_SEARC_PARAMETER_FIELD_NAME, institutionName);
+  searchParameters.set(CRISTIN_INSTITUTION_FIELD_NAME, 'false');
   return authenticatedApiRequest({
     url: encodeURI(`${CRIST_REST_API}/institutions?${searchParameters.toString()}`),
     method: 'GET',
@@ -56,9 +60,9 @@ export async function searchForInstitutionsByNameAndCountry(
   countryCode: string
 ): Promise<AxiosResponse<Institution[]>> {
   const searchParameters = new URLSearchParams();
-  searchParameters.set('lang', searchLanguage);
-  searchParameters.set('name', institutionName);
-  searchParameters.set('country', countryCode);
+  searchParameters.set(LANGUAGE_SEARCH_PARAMETER_FIELD_NAME, searchLanguage);
+  searchParameters.set(NAME_SEARC_PARAMETER_FIELD_NAME, institutionName);
+  searchParameters.set(CRISTIN_INSTITUTION_FIELD_NAME, countryCode);
   return authenticatedApiRequest({
     url: encodeURI(`${CRIST_REST_API}/institutions?${searchParameters.toString()}`),
     method: 'GET',
