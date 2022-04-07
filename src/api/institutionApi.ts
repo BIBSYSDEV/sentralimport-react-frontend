@@ -39,6 +39,7 @@ export async function getParentsUnitName(
 const LANGUAGE_SEARCH_PARAMETER_FIELD_NAME = 'lang';
 const NAME_SEARC_PARAMETER_FIELD_NAME = 'name';
 const CRISTIN_INSTITUTION_FIELD_NAME = 'cristin_institution';
+const COUNTRY_FIELD_NAME = 'country';
 
 export async function searchForInstitutionsByName(
   institutionName: string,
@@ -62,7 +63,7 @@ export async function searchForInstitutionsByNameAndCountry(
   const searchParameters = new URLSearchParams();
   searchParameters.set(LANGUAGE_SEARCH_PARAMETER_FIELD_NAME, searchLanguage);
   searchParameters.set(NAME_SEARC_PARAMETER_FIELD_NAME, institutionName);
-  searchParameters.set(CRISTIN_INSTITUTION_FIELD_NAME, countryCode);
+  searchParameters.set(COUNTRY_FIELD_NAME, countryCode);
   return authenticatedApiRequest({
     url: encodeURI(`${CRIST_REST_API}/institutions?${searchParameters.toString()}`),
     method: 'GET',
