@@ -53,7 +53,7 @@ const sortContributorAffiliations = (affiliations: Affiliation[] | undefined) =>
 export const generateAffiliationDisplayData = (affiliation: Affiliation) => {
   return {
     institutionName: affiliation.institutionName ?? '',
-    cristinInstitutionNr: affiliation.cristinInstitutionNr ? affiliation.cristinInstitutionNr.toString() : undefined,
+    cristinInstitutionNr: affiliation.cristinInstitutionNr?.toString(),
     units: affiliation.units
       ? affiliation.units
           .filter((unit) => unit.unitName !== affiliation.institutionName)

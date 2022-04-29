@@ -17,9 +17,8 @@ const institutionNameCache = new Map<string, Affiliation | null>();
 export function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
   const cristinIdSet = new Set();
   return affiliations.filter((affiliation: Affiliation) => {
-    if (cristinIdSet.has(affiliation.cristinInstitutionNr ? affiliation.cristinInstitutionNr.toString() : ''))
-      return false;
-    cristinIdSet.add(affiliation.cristinInstitutionNr ? affiliation.cristinInstitutionNr.toString() : '');
+    if (cristinIdSet.has(affiliation.cristinInstitutionNr?.toString() ?? '')) return false;
+    cristinIdSet.add(affiliation.cristinInstitutionNr?.toString() ?? '');
     return true;
   });
 }

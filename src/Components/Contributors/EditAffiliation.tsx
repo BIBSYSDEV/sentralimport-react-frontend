@@ -161,10 +161,7 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
       dataTestid={`list-item-author-${contributorData.toBeCreated.surname}-affiliations-${affiliation.cristinInstitutionNr}`} //TODO: burde vært index/order - flere kan ha samme navn
       backgroundcolor={Colors.LIGHT_GREY}
       handleDeleteUnitClick={(unit) => {
-        deleteUnitToInstitutionAndHandleError(
-          unit,
-          affiliation.cristinInstitutionNr ? affiliation.cristinInstitutionNr.toString() : ''
-        );
+        deleteUnitToInstitutionAndHandleError(unit, affiliation.cristinInstitutionNr?.toString() ?? '');
       }}>
       <Grid container spacing={1}>
         {isLoadingUnits ? (
@@ -198,10 +195,7 @@ const EditAffiliation: FC<EditAffiliationProps> = ({
                   units={units}
                   handleUnitChange={(unit: any) => {
                     setShowUnitSelector(false);
-                    addUnitToInstitutionAndHandleError(
-                      unit,
-                      affiliation.cristinInstitutionNr ? affiliation.cristinInstitutionNr.toString() : ''
-                    );
+                    addUnitToInstitutionAndHandleError(unit, affiliation.cristinInstitutionNr?.toString() ?? '');
                   }}
                 />
               </Grid>
