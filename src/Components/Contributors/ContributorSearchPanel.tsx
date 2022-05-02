@@ -212,7 +212,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
       setAddAffiliationError({
         name: 'Add institution error',
         message: 'Institusjonen finnes allerede',
-        institutionId: newaffiliation.cristinInstitutionNr ?? '',
+        institutionId: newaffiliation.cristinInstitutionNr?.toString() ?? '',
       });
       return;
     }
@@ -223,7 +223,7 @@ const ContributorSearchPanel: FC<ContributorSearchPanelProps> = ({
     } else {
       temp.toBeCreated.affiliations = [clone(newaffiliation)];
     }
-    setAddAffiliationSuccessful(newaffiliation.cristinInstitutionNr);
+    setAddAffiliationSuccessful(newaffiliation.cristinInstitutionNr?.toString());
     updateContributor(temp, resultListIndex);
   }
 

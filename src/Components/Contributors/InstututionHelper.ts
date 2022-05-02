@@ -17,12 +17,12 @@ const institutionNameCache = new Map<string, Affiliation | null>();
 export function removeInstitutionsDuplicatesBasedOnCristinId(affiliations: Affiliation[]) {
   const cristinIdSet = new Set();
   return affiliations.filter((affiliation: Affiliation) => {
-    if (cristinIdSet.has(affiliation.cristinInstitutionNr)) return false;
-    cristinIdSet.add(affiliation.cristinInstitutionNr);
+    if (cristinIdSet.has(affiliation.cristinInstitutionNr?.toString() ?? '')) return false;
+    cristinIdSet.add(affiliation.cristinInstitutionNr?.toString() ?? '');
     return true;
   });
 }
-export const isCristinInstitution = (cristinInstitutionNr: string | undefined) => {
+export const isCristinInstitution = (cristinInstitutionNr: string | number | undefined) => {
   cristinInstitutionNr = '' + cristinInstitutionNr; //cristinInstitutionNr from pia is a number
   return (
     cristinInstitutionNr !== Foreign_educational_institution_generic_code &&
