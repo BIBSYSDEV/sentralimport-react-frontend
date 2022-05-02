@@ -52,7 +52,7 @@ export interface ImportPublicationPersonInstutution {
   unitName?: string;
   countryCode?: string;
   institutionName?: string;
-  cristinInstitutionNr?: string; //tODO denne kommer inn som number - men det sparer vi til en annen dag.
+  cristinInstitutionNr?: string | number;
   isCristinInstitution?: boolean;
   acronym?: string;
 }
