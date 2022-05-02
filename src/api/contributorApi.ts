@@ -61,20 +61,18 @@ export async function getPersonDetailById(person: ContributorType): Promise<Cont
   } catch (error) {
     //Intentionally ignore persons that return forbidden error. See jira task SMILE-1142 for details.
     //It seems regular forbidden users receive error.response.data.errors[0]: 'User dataporten-piarest does not have role PIAREST_CAN_GET'
-    if (
-      axios.isAxiosError(error) &&
-      error.response &&
-      error.response.status === 403 &&
-      error.response.data.errors[0] === ForbiddenPersonErrorMessage
-    ) {
-      return {
-        cristin_person_id: person.cristin_person_id,
-        first_name: person.first_name,
-        surname: person.surname,
-        identified_cristin_person: true,
-        require_higher_authorization: true,
-        badge_type: ContributorStatus.Unknown,
-      };
+    if (axios.isAxiosError(error) && error.response && error.response.status === 403) {
+      const axiosErrorResponse: any = error.response;
+      if (axiosErrorResponse.data.errors[0] === ForbiddenPersonErrorMessage) {
+        return {
+          cristin_person_id: person.cristin_person_id,
+          first_name: person.first_name,
+          surname: person.surname,
+          identified_cristin_person: true,
+          require_higher_authorization: true,
+          badge_type: ContributorStatus.Unknown,
+        };
+      }
     }
     //hvis man har en cristinId allerede og søker på det, kan man få tilbake persondata med tom cristinId
     if (axios.isAxiosError(error) && error.response && error.response.status === 404) {
