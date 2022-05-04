@@ -50,7 +50,7 @@ export async function searchForInstitutionsByName(
   searchParameters.set(NAME_SEARC_PARAMETER_FIELD_NAME, institutionName);
   searchParameters.set(CRISTIN_INSTITUTION_FIELD_NAME, 'false');
   return authenticatedApiRequest({
-    url: encodeURI(`${CRIST_REST_API}/institutions?${searchParameters.toString()}`),
+    url: `${CRIST_REST_API}/institutions?${searchParameters.toString()}`,
     method: 'GET',
   });
 }
@@ -65,7 +65,7 @@ export async function searchForInstitutionsByNameAndCountry(
   searchParameters.set(NAME_SEARC_PARAMETER_FIELD_NAME, institutionName);
   searchParameters.set(COUNTRY_FIELD_NAME, countryCode);
   return authenticatedApiRequest({
-    url: encodeURI(`${CRIST_REST_API}/institutions?${searchParameters.toString()}`),
+    url: `${CRIST_REST_API}/institutions?${searchParameters.toString()}`,
     method: 'GET',
   });
 }
