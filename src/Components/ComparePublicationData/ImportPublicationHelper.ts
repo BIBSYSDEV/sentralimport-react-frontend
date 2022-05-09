@@ -216,7 +216,7 @@ export const createContributorObject = (contributors: ContributorWrapper[]) => {
   contributors?.forEach((contributor: ContributorWrapper) => {
     const affiliations: SubmitAffiliation[] = [];
     contributor.toBeCreated.affiliations?.forEach((affiliation) => {
-      if (!affiliation.units) {
+      if (!affiliation.units || (affiliation.units && affiliation.units.length === 0)) {
         affiliations.push({
           role_code: contributor.imported.role_code === 'FORFATTER' ? 'AUTHOR' : contributor.imported.role_code + '',
           institution: affiliation.institution
