@@ -45,6 +45,7 @@ export async function searchCristinPersons(
         cristin_person_id: cristinPerson.cristin_person_id,
         first_name: cristinPerson.first_name_preferred ?? cristinPerson.first_name,
         surname: cristinPerson.surname_preferred ?? cristinPerson.surname,
+        externalId: clonedAuthors[index].externalId ?? undefined,
         affiliations:
           affiliations.length > 0
             ? affiliations.filter((item: Affiliation, index: number) => affiliations.indexOf(item) === index)
@@ -76,6 +77,8 @@ export const createContributorWrapper = (
           surname: generateLastName(author),
           authorName: author.authorName,
           order: author.sequenceNr,
+          externalId: author.externalId ?? undefined,
+          orcid: author.orcid ?? undefined,
           affiliations: author.institutions,
           role_code: author.roleCode
             ? author.roleCode === RoleCodes.Forfatter

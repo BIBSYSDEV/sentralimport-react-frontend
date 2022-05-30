@@ -7,6 +7,8 @@ export interface ContributorType {
   surname_preferred?: string;
   surname: string;
   cristin_person_id?: number;
+  externalId?: string;
+  orcid?: string;
   role_code?: string;
   authorName?: string;
   identified_cristin_person?: boolean;
@@ -27,7 +29,8 @@ export interface ImportPublicationPerson {
   cristinId?: number;
   roleCode: string;
   sequenceNr: number;
-  first_name?: string; //todo: denne må avklares (den skal slettes fra typen - er sannsynligvis brukt feil)
+  externalId?: string;
+  orcid?: string;
   firstname?: string;
   surname: string;
   authorName: string;
