@@ -1,8 +1,8 @@
 import axios, { AxiosPromise, AxiosResponse } from 'axios';
-import { CRIST_REST_API } from '../utils/constants';
+import { CRIST_REST_API, PIA_REST_API } from '../utils/constants';
 import { authenticatedApiRequest, handlePotentialExpiredSession } from './api';
 import { Affiliation, UnitResponse } from '../types/InstitutionTypes';
-import { ContributorStatus, ContributorType } from '../types/ContributorTypes';
+import { ContributorPiaIdUpdate, ContributorStatus, ContributorType } from '../types/ContributorTypes';
 
 export enum SearchLanguage {
   En = 'en',
@@ -110,5 +110,13 @@ export async function getContributorsByPublicationCristinResultId(
       `${CRIST_REST_API}/results/${publicationResultCristinId}/contributors?page=${page}&per_page=${resultsPerPage}&lang=${searchLanguage}`
     ),
     method: 'GET',
+  });
+}
+
+export async function updateCristinIdAndExternalIdToPia(contributors: ContributorPiaIdUpdate[]) {
+  return authenticatedApiRequest({
+    url: encodeURI(`${PIA_REST_API}/sentralimport/authors`),
+    method: 'POST',
+    data: contributors,
   });
 }

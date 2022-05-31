@@ -46,6 +46,7 @@ export async function searchCristinPersons(
         first_name: cristinPerson.first_name_preferred ?? cristinPerson.first_name,
         surname: cristinPerson.surname_preferred ?? cristinPerson.surname,
         externalId: clonedAuthors[index].externalId ?? undefined,
+        sequenceNr: clonedAuthors[index].sequenceNr ?? undefined,
         affiliations:
           affiliations.length > 0
             ? affiliations.filter((item: Affiliation, index: number) => affiliations.indexOf(item) === index)

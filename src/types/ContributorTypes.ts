@@ -2,6 +2,7 @@ import { Affiliation, ImportPublicationPersonInstutution } from './InstitutionTy
 
 export interface ContributorType {
   order?: number;
+  sequenceNr?: number;
   first_name: string;
   first_name_preferred?: string;
   surname_preferred?: string;
@@ -90,4 +91,22 @@ export const MaxLengthLastName = 30;
 export interface ContributorDuplicates {
   cristinIdDuplicates: number[];
   nameDuplicate: number[];
+}
+
+export interface ContributorPiaIdUpdate {
+  publication: {
+    externalId: string;
+    sourceCode: SourceCode;
+  };
+  cristinId: number;
+  externalId: string;
+  orcid?: string;
+  sequenceNr: number;
+  surname: string;
+  firstname: string;
+  authorName: string;
+}
+
+export enum SourceCode {
+  SCOPUS = 'SCOPUS',
 }

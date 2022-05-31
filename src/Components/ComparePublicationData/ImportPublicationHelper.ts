@@ -8,11 +8,12 @@ import {
 import { CompareFormJournalType, CompareFormValuesType } from './CompareFormTypes';
 import { patchPiaPublication, patchPublication, postPublication } from '../../api/publicationApi';
 import { handlePotentialExpiredSession } from '../../api/api';
-import { ContributorWrapper } from '../../types/ContributorTypes';
+import { ContributorPiaIdUpdate, ContributorWrapper, SourceCode } from '../../types/ContributorTypes';
 import {
   generateAuthorPresentationForCristinAuthors,
   generateAuthorPresentationFromImportPublication,
 } from '../../utils/contributorUtils';
+import { updateCristinIdAndExternalIdToPia } from '../../api/contributorApi';
 
 const getNumberOfPages = (pageFrom?: string, pageTo?: string) => {
   //Dette har blitt lagt inn pga. edge-casen med sidetall med bokstaven "e" i seg.
@@ -100,6 +101,33 @@ export const createCristinPublicationForSaving = (
     publication.annotation = annotation;
   }
   return publication;
+};
+
+export const updateExternalIdToPia = async (
+  importPublication: ImportPublication,
+  contributors: ContributorWrapper[]
+) => {
+  const updateRequest: ContributorPiaIdUpdate[] = contributors
+    .filter((contributor) => hasBothCristinIdAndExternalId(contributor))
+    .map((contributor) => ({
+      publication: { sourceCode: SourceCode.SCOPUS, externalId: importPublication.externalId ?? '' },
+      externalId: contributor.toBeCreated.externalId ?? '',
+      cristinId: contributor.toBeCreated.cristin_person_id ? +contributor.toBeCreated.cristin_person_id : 0,
+      orcid: contributor.toBeCreated.orcid ?? undefined,
+      sequenceNr: contributor.toBeCreated.sequenceNr ?? 0,
+      surname: contributor.toBeCreated.surname,
+      firstname: contributor.toBeCreated.first_name,
+      authorName: contributor.toBeCreated.surname + ' ' + contributor.toBeCreated.first_name.charAt(0) + '.',
+    }));
+  return updateCristinIdAndExternalIdToPia(updateRequest);
+};
+
+const hasBothCristinIdAndExternalId = (contribur: ContributorWrapper): boolean => {
+  return (
+    !!contribur.toBeCreated.externalId &&
+    contribur.toBeCreated.externalId.toString() !== '0' &&
+    !!contribur.toBeCreated.cristin_person_id
+  );
 };
 
 export const createCristinPublicationForUpdating = (
@@ -214,6 +242,8 @@ interface SubmitAffiliation {
 export const createContributorObject = (contributors: ContributorWrapper[]) => {
   const submitContributors: any = [];
   contributors?.forEach((contributor: ContributorWrapper) => {
+    delete contributor.toBeCreated.externalId;
+    delete contributor.toBeCreated.sequenceNr;
     const affiliations: SubmitAffiliation[] = [];
     contributor.toBeCreated.affiliations?.forEach((affiliation) => {
       if (!affiliation.units || (affiliation.units && affiliation.units.length === 0)) {
