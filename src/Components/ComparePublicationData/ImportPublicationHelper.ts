@@ -122,11 +122,11 @@ export const updateExternalIdToPia = async (
   return updateCristinIdAndExternalIdToPia(updateRequest);
 };
 
-const hasBothCristinIdAndExternalId = (contribur: ContributorWrapper): boolean => {
+const hasBothCristinIdAndExternalId = (contributor: ContributorWrapper): boolean => {
   return (
-    !!contribur.toBeCreated.externalId &&
-    contribur.toBeCreated.externalId.toString() !== '0' &&
-    !!contribur.toBeCreated.cristin_person_id
+    !!contributor.toBeCreated.externalId &&
+    contributor.toBeCreated.externalId.toString() !== '0' &&
+    !!contributor.toBeCreated.cristin_person_id
   );
 };
 
