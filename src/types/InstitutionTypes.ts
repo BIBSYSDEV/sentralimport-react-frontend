@@ -1,5 +1,3 @@
-//TODO: identifiser bruk og rydd
-
 export interface Institution {
   url: string;
   cristin_user_institution: boolean;
