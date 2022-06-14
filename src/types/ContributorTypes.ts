@@ -102,9 +102,6 @@ export interface ContributorPiaIdUpdate {
   externalId: string;
   orcid?: string;
   sequenceNr: number;
-  surname: string;
-  firstname: string;
-  authorName: string;
 }
 
 export enum SourceCode {

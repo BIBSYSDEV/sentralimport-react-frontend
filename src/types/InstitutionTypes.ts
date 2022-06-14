@@ -88,19 +88,3 @@ export interface InstitutionSelector {
   label: string;
   value: string;
 }
-
-export interface UnitSelector {
-  label: string;
-  value: string;
-}
-
-export const emptyInstitutionSelector: InstitutionSelector = {
-  value: '',
-  label: '',
-  cristinInstitutionNr: '0',
-};
-
-export const emptyUnitSelector: UnitSelector = {
-  value: '',
-  label: '',
-};
