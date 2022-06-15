@@ -115,9 +115,6 @@ export const updateExternalIdToPia = async (
       cristinId: contributor.toBeCreated.cristin_person_id ? +contributor.toBeCreated.cristin_person_id : 0,
       orcid: contributor.toBeCreated.orcid ?? undefined,
       sequenceNr: contributor.toBeCreated.sequenceNr ?? 0,
-      surname: contributor.toBeCreated.surname,
-      firstname: contributor.toBeCreated.first_name,
-      authorName: contributor.toBeCreated.surname + ' ' + contributor.toBeCreated.first_name.charAt(0) + '.',
     }));
   return updateCristinIdAndExternalIdToPia(updateRequest);
 };
