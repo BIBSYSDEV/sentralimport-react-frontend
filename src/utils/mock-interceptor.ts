@@ -75,6 +75,9 @@ export const interceptRequestsOnMock = () => {
       'x-total-count': 1,
     });
 
+  //post update crist and scopus id:
+  mock.onPost(`${PIA_REST_API}/sentralimport/authors`).reply(204);
+
   const urlSearchParams2 = new URLSearchParams();
   urlSearchParams2.set('doi', mockImportPublication1.doi);
   mock

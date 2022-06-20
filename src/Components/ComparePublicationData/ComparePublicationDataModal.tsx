@@ -44,7 +44,7 @@ import CompareFormJournal from './CompareFormJournal';
 import { CompareFormValuesType } from './CompareFormTypes';
 import { ContributorWrapper, ContributorDuplicates, emptyContributor } from '../../types/ContributorTypes';
 import { formatCristinCreatedDate, NoDatePlaceHolder } from '../../utils/stringUtils';
-import { handleCreatePublication, handleUpdatePublication } from './ImportPublicationHelper';
+import { handleCreatePublication, handleUpdatePublication, updateExternalIdToPia } from './ImportPublicationHelper';
 import { CRISTIN_REACT_APP_URL } from '../../utils/constants';
 import CancelIcon from '@material-ui/icons/Cancel';
 import LaunchIcon from '@material-ui/icons/Launch';
@@ -313,6 +313,9 @@ const ComparePublicationDataModal: FC<ComparePublicationDataModalProps> = ({
 
   function handleImportPublicationConfirmed(annotation?: string) {
     if (formValues) {
+      if (contributors) {
+        updateExternalIdToPia(importPublication, contributors);
+      }
       if (!cristinPublication && contributors) {
         handleCreatePublication(formValues, importPublication, contributors, annotation).then((response) =>
           handlePublicationImported(response)

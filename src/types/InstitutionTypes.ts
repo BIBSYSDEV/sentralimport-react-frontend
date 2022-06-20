@@ -1,5 +1,3 @@
-//TODO: identifiser bruk og rydd
-
 export interface Institution {
   url: string;
   cristin_user_institution: boolean;
@@ -88,19 +86,3 @@ export interface InstitutionSelector {
   label: string;
   value: string;
 }
-
-export interface UnitSelector {
-  label: string;
-  value: string;
-}
-
-export const emptyInstitutionSelector: InstitutionSelector = {
-  value: '',
-  label: '',
-  cristinInstitutionNr: '0',
-};
-
-export const emptyUnitSelector: UnitSelector = {
-  value: '',
-  label: '',
-};
