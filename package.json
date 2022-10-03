@@ -62,7 +62,6 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/react-truncate": "^2.3.4",
     "@types/styled-components": "^5.1.26",
-    "@types/yup": "^0.29.14",
     "axios-mock-adapter": "^1.21.2",
     "cypress": "^10.8.0",
     "eslint-config-prettier": "^8.5.0",
