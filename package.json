@@ -55,7 +55,7 @@
     "@cypress/code-coverage": "^3.10.0",
     "@cypress/instrument-cra": "^1.4.0",
     "@types/history": "^5.0.0",
-    "@types/node": "^18.8.4",
+    "@types/node": "^18.11.9",
     "@types/react": "^17.0.43",
     "@types/react-dom": "^17.0.16",
     "@types/react-redux": "^7.1.24",
