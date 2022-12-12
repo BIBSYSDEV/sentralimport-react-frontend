@@ -37,7 +37,7 @@
     "interweave": "^13.0.0",
     "jsonwebtoken": "^8.5.1",
     "just-clone": "^6.1.1",
-    "node-sass": "^6.0.1",
+    "node-sass": "^8.0.0",
     "notistack": "^1.0.10",
     "query-string": "^7.1.1",
     "react": "^17.0.2",
