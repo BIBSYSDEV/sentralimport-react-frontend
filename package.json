@@ -34,7 +34,7 @@
     "env-cmd": "^10.1.0",
     "formik": "^2.2.9",
     "i18n-iso-countries": "^7.5.0",
-    "interweave": "^13.0.0",
+    "interweave": "^13.1.0",
     "jsonwebtoken": "^8.5.1",
     "just-clone": "^6.1.1",
     "node-sass": "^8.0.0",
