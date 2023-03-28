@@ -36,7 +36,7 @@
     "i18n-iso-countries": "^7.5.0",
     "interweave": "^13.1.0",
     "jsonwebtoken": "^8.5.1",
-    "just-clone": "^6.1.1",
+    "just-clone": "^6.2.0",
     "node-sass": "^8.0.0",
     "notistack": "^1.0.10",
     "query-string": "^7.1.1",
