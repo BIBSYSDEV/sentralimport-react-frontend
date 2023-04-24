@@ -63,7 +63,7 @@
     "@types/react-truncate": "^2.3.4",
     "@types/styled-components": "^5.1.26",
     "axios-mock-adapter": "^1.21.2",
-    "cypress": "^12.3.0",
+    "cypress": "^12.10.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-cypress": "^2.13.2",
     "eslint-plugin-prettier": "^4.2.1",
