@@ -48,7 +48,7 @@
     "react-router-dom": "^5.3.4",
     "react-select": "^5.7.2",
     "reactstrap": "^8.0.1",
-    "styled-components": "^5.3.9",
+    "styled-components": "^5.3.10",
     "yup": "^0.32.11"
   },
   "devDependencies": {
