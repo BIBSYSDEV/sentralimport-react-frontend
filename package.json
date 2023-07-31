@@ -52,7 +52,7 @@
     "yup": "^1.2.0"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "^3.10.4",
+    "@cypress/code-coverage": "^3.11.0",
     "@cypress/instrument-cra": "^1.4.0",
     "@types/history": "^5.0.0",
     "@types/node": "^20.4.1",
